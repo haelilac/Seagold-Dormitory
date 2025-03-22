@@ -1,0 +1,482 @@
+/* === Global Variables for Themes === */
+:root {
+    --color-background: #ecf0f1;
+    --color-text: #333;
+    --color-sidebar: #2c3e50;
+    --color-sidebar-text: #fff;
+    --color-topbar: #2c3e50;
+    --color-button: #3498db;
+}
+
+[data-theme='dark'] {
+    --color-background: #2b3e50;
+    --color-text: #996515;
+    --color-sidebar: #000034;
+    --color-sidebar-text: #f0f3f4;
+    --color-topbar: #000034;
+    --color-button: #996515;
+}
+
+/* === Dashboard Container === */
+.dashboardContainer {
+    display: flex;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    margin: 0;
+    min-height: 1050px;
+    width: 100%;
+}
+
+/* === Sidebar === */
+.sidebar {
+    width: 250px;
+    background-color: #000034;
+    color: #996515;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: 100vh;
+    transition: left 0.3s ease;
+    z-index: 1100;
+    padding-top: 20px;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #996515;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin: 5px 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sidebar ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.sidebar ul li a {
+    color: var(--color-sidebar-text);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+    color: var(--color-button);
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: var(--color-sidebar-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.closeButton:hover {
+    color: var(--color-button);
+    transform: scale(1.1);
+}
+
+
+/* === Logout Button === */
+
+.logoutButton:hover {
+    background-color: #145a32;
+    transform: scale(1.1);
+}
+
+/* === Hamburger Button === */
+.hamburgerButton {
+    background: transparent;
+    border: none;
+    color: var(--color-sidebar-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+    margin: 0;
+}
+
+.hamburgerButton:hover {
+    color: var(--color-button);
+    transform: scale(1.1);
+}
+
+/* === Top Bar === */
+.topBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #000034;;
+    color: var(--color-sidebar-text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    z-index: 1000;
+    height: 50px;
+    transition: left 0.3s ease;
+}
+
+.topBar.shifted {
+    left: 250px;
+}
+
+.dashboardTitle {
+    font-size: 1.5rem;
+}
+
+/* === Notifications === */
+.notificationContainer {
+    position: absolute;
+    top: 5px;
+    right: 230px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.notificationContainer:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background change on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+.notificationBadge {
+    position: absolute;
+    top: 0px;
+    right: -1px;
+    background-color: #e74c3c; /* Red color for notifications */
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a shadow for better visibility */
+}
+
+/* Notification Bell Icon */
+.notificationIcon {
+    font-size: 1.5rem;
+    color: var(--color-sidebar-text);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.notificationIcon {
+    font-size: 1.6rem;
+    color: white;
+    margin-left: 50px;
+    /* Add animation */
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.notificationIcon:hover {
+    transform: rotate(15deg) scale(1.1); /* Slight rotation and zoom */
+    color: #f1c40f; /* Change color to gold on hover */
+}
+
+
+.notificationContainer:hover .notificationIcon {
+    color: var(--color-button); /* Change color on hover */
+}
+
+.notificationDropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 300px;
+    z-index: 1100;
+    max-height: 400px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.notificationDropdown.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.notificationHeader {
+    padding: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    background-color: var(--color-topbar);
+    color: var(--color-sidebar-text);
+}
+
+.notificationList {
+    flex-grow: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.notificationList li {
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.notificationList li:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Subtle hover effect */
+}
+
+.notificationList li.read {
+    color: #7f8c8d;
+}
+
+/* Empty Notification Message */
+.noNotifications {
+    padding: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+/* Notification Actions */
+.notificationActions {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #ddd;
+}
+
+.notificationActions button {
+    background-color: var(--color-button);
+    color: var(--color-sidebar-text);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.notificationActions button:hover {
+    background-color: #145a32; /* Darker green for hover */
+    transform: scale(1.05); /* Slight scaling effect */
+}
+
+/* === Profile Section === */
+
+/* === Main Content === */
+.mainContent {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    margin-top: 60px;
+    margin-left: 0;
+    padding: 20px;
+    width: 100%;
+    transition: margin-left 0.3s ease;
+}
+
+.mainContent.shifted {
+    margin-left: 250px;
+}
+
+/* Profile Section */
+
+.topBarProfile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
+
+.profileContainer {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.profileDropdown {
+    position: absolute;
+    width: 210px; /* Fixed width */
+    height: 280px; /* Fixed height */
+    top: 50px; /* Positioned below the profile */
+    right: 5px;
+    background: rgb(255, 255, 255);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 100;
+}
+
+.profileDropdown ul {
+    list-style-type: none; /* Remove default bullet points */
+    padding-left: 0;       /* Remove default padding */
+    margin: 0;
+}
+
+.profileDropdown li {
+    margin-bottom: 10px; /* Space between items */
+}
+
+.profileDropdown span {
+    display: block;  /* Ensure each item is on a new line */
+    font-size: 1rem; /* Adjust size */
+    color: #555;     /* Adjust color */
+    text-align: center; /* Center the text */
+}
+
+.profileDropdown .userName {
+    font-weight: bold; /* Make the name bold */
+    color: #000000;
+    margin-left: 50px;
+    margin-bottom: 5px; /* Space between name and email */
+}
+
+.dropdownProfilePicture {
+    width: 80px; /* or any desired size */
+    height: 80px;
+    margin-left: 60px;
+    margin-top: 10px;
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover;
+    border: 3px solid #4CAF50; /* Green border, customize color as needed */
+    transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    animation: popIn 0.5s ease;
+}
+
+/* Animation for when the profile picture appears */
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.profileEmail {
+    font-size: 0.9rem; /* Adjust size */
+    color: #000000;      /* Adjust color */
+    display: block;   /* Ensure it appears below the name */
+    margin-top: 0px;  /* Optional spacing */
+    margin-bottom: 48px;
+    margin-right: 50px;
+}
+
+.profileDropdown button {
+    width: 100%; /* Make logout button span the full width */
+    padding: 8px;
+    background-color: #f44336; /* Red color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.profileDropdown button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+
+.profileContainer span {
+    margin-left: 10px;
+}
+
+.profilePicture {
+    width: 40px; /* or any desired size */
+    height: 40px;
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover;
+    border: 3px solid #4CAF50; /* Green border, customize color as needed */
+    transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    animation: popIn 0.5s ease;
+}
+
+/* Hover effect: scale up slightly and change border color */
+.profilePicture:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+    border-color: #2196F3; /* Change border color to blue */
+}
+
+/* Animation for when the profile picture appears */
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+
+
+/* Dark Mode Toggle Styling */
+.profileDropdown .darkModeToggle {
+    padding: 8px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid #555;
+    color: #555;
+    cursor: pointer;
+}
+
+.profileDropdown .darkModeToggle:hover {
+    background-color: #f0f0f0;
+}
+
+
+/* Animation for Dropdown Appearance */
+.profileDropdown.show {
+    animation: dropdownAppear 0.3s ease forwards;
+}
+
+@keyframes dropdownAppear {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

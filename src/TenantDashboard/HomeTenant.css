@@ -1,0 +1,224 @@
+/* General container styling */
+.home-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--background-color, #f4f4f4);
+    color: var(--text-color, #333);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Calendar */
+
+.calendar-title {
+    position: absolute; /* Use absolute positioning */
+    bottom: 620px; /* Position it at the top */
+    right: 680px;;
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #666;
+}
+.selected-date {
+    position: absolute; /* Use absolute positioning */
+    bottom: 610px; /* Position it at the top */
+    right: 430px;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #666;
+}
+.react-calendar {
+    font-family: Arial, sans-serif;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    position: absolute; /* Use absolute positioning */
+    bottom: 365px; /* Position it at the top */
+    right: 400px; /* Align it to the right */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 350px;
+    height: 250px;
+    padding: 10px;
+}
+
+.react-calendar__tile {
+    text-align: center;
+    padding: 3px;
+    font-size: 12px;
+    color: #333; /* Default text color for dates */
+    background: none;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.react-calendar__tile--active {
+    background: #007bff; /* Highlight for selected date */
+    color: white;
+}
+
+.react-calendar__tile--now {
+    background: #ffeb3b; /* Highlight for current date */
+    color: #333;
+    font-weight: bold;
+}
+
+.react-calendar__tile--disabled {
+    color: #ccc; /* Disabled dates */
+    cursor: not-allowed;
+}
+
+.react-calendar__navigation button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.react-calendar__navigation button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Transaction Box Styling */
+.transaction-box {
+    position: absolute; /* Use absolute positioning */
+    margin-top: 30px;
+    bottom: 20px; /* Position it at the top */
+    right: 40px; /* Align it to the right */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Adjust width for a smaller box */
+    height: 330px; /* Fixed height for the box */
+    overflow-y: auto;
+}
+
+.transaction-box-title {
+    font-size: 1.5rem;
+    color: #3498db;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.transaction-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-date {
+    font-size: 0.9rem;
+    color: #555;
+    margin-right: 10px;
+}
+
+.transaction-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.transaction-description {
+    font-size: 1rem;
+    color: #333;
+    flex: 1;
+}
+
+.transaction-amount {
+    font-size: 1rem;
+    color: #007bff;
+    font-weight: bold;
+    margin-left: 15px;
+}
+
+.no-transactions {
+    text-align: center;
+    color: #888;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+
+/* Event Board Styling */
+.event-board {
+    position: absolute; /* Use absolute positioning */
+    bottom: 365px; /* Position it at the top */
+    right: 40px; /* Align it to the right */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 350px; /* Adjust width for a smaller box */
+    height: 280px; /* Fixed height for the box */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+}
+
+.event-board-title {
+    font-size: 1.5rem;
+    color: #3498db;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.event-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.event-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.event-item h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.event-item p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.no-events {
+    text-align: center;
+    color: #888;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .event-board {
+        position: relative; /* Reset positioning for smaller screens */
+        margin-top: 30px;
+        max-width: 100%; /* Make it full width */
+        height: auto; /* Allow auto height on smaller screens */
+    }
+}

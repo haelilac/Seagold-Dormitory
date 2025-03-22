@@ -1,0 +1,159 @@
+/* General Styling for Landlord Contact Panel */
+
+
+/* Sliding Panel */
+.slide-panel {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Start off-screen */
+    width: 400px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.slide-panel.visible {
+    right: 0; /* Slide into view */
+}
+
+.slide-panel .close-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.slide-panel h2 {
+    margin-top: 0;
+    color: #333;
+}
+.slide-panel .landlord-contact-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.slide-panel .update-contact-button {
+    background-color: #bba711;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slide-panel .update-contact-button:hover {
+    background-color: #bdc82e;
+    transform: scale(1.05);
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.admin-profile .profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.admin-profile .profile-details p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #333;
+}
+
+/* Label Styling */
+.landlord-contact-container label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 1rem;
+    color: #333;
+    text-align: left;
+}
+
+/* Input Field Styling */
+.landlord-contact-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.landlord-contact-container input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0px 0px 5px rgba(76, 175, 80, 0.4);
+}
+
+/* Button Styling */
+.update-contact-button,
+.cancel-button,
+.edit-button {
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-contact-button {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.update-contact-button:hover {
+    background-color: #45a049;
+}
+
+.cancel-button {
+    background-color: #bdc3c7;
+    color: #333;
+}
+
+.cancel-button:hover {
+    background-color: #95a5a6;
+}
+
+.edit-button {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.edit-button:hover {
+    background-color: #e67e22;
+}
+
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .landlord-contact-container {
+        width: 100%;
+        padding: 15px;
+    }
+}

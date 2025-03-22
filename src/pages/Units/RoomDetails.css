@@ -1,0 +1,243 @@
+#RoomContainer
+.room-details-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  margin-bottom: 30px; /* Added spacing below the container */
+}
+
+.room-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px; /* Added spacing below the header */
+}
+
+.image-gallery {
+  display: flex;
+  flex-direction: column; /* Stack images vertically */
+  gap: 15px; /* Space between images */
+  margin-bottom: 30px; /* Added spacing below the gallery */
+}
+
+.image-gallery img {
+  width: 400px; /* Set width for each image */
+  height: 250px; /* Set height for each image */
+  object-fit: cover;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.image-gallery img:hover {
+  transform: scale(1.05); /* Add a hover effect */
+  border-color: #007bff;
+}
+
+.image-modal {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Black background with transparency */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border: 2px solid white;
+  border-radius: 8px;
+}
+
+.image-modal .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  color: black;
+  border: none;
+  font-size: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#RoomIinfo
+.room-info {
+  font-family: Arial, sans-serif;
+  color: #333; /* Dark gray for text */
+  line-height: 1.6;
+  margin-bottom: 30px; /* Increased spacing below the room info */
+}
+
+.room-title {
+  font-family: Arial, sans-serif;
+  font-size: 26px; /* Slightly larger font for the title */
+  font-weight: 800; /* Extra bold for emphasis */
+  margin-bottom: 5px; /* Small gap below the title */
+  color: #000; /* Solid black for the title */
+}
+
+.room-address {
+  font-size: 13px; /* Slightly smaller font for the address */
+  color: #666; /* Lighter gray for secondary text */
+  margin-top: 3px; /* Add some space above the address */
+  margin-bottom: 15px; /* Space below the address */
+}
+
+#Contact
+.room-contact {
+  font-size: 16px;
+  color: #333; /* Dark gray for text */
+  display: flex;
+  align-items: center; /* Align icon and text vertically */
+  gap: 10px; /* Add space between the icon and text */
+  margin-bottom: 30px; /* Added spacing below */
+}
+
+.phone-icon {
+  width: 20px; /* Set the width of the icon */
+  height: 20px; /* Set the height of the icon */
+  object-fit: contain; /* Ensure the icon scales proportionally */
+}
+
+#description
+
+.description-title {
+  font-size: 14px; /* Smaller font size for the title */
+  font-weight: bold; /* Bold for emphasis */
+  color: #007bff; /* Light blue color for the title */
+  text-transform: uppercase; /* Make the text uppercase */
+  margin-bottom: 15px; /* Increased spacing below the title */
+}
+
+.room-description {
+  font-size: 16px; /* Regular font size for the description */
+  line-height: 1.6; /* Add proper spacing between lines */
+  color: #333; /* Dark gray color for readability */
+  margin-bottom: 30px; /* Increased spacing below the description */
+}
+
+#hightlight
+.highlights-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff; /* Light blue color */
+  text-transform: uppercase;
+  margin-bottom: 15px; /* Added spacing below the title */
+}
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap for smaller screens */
+  gap: 15px; /* Space between highlight items */
+  margin-bottom: 30px; /* Added spacing below the highlights section */
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center; /* Vertically align icon and text */
+  background-color: #f0f0f5; /* Light gray background */
+  padding: 10px 15px;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  gap: 10px; /* Space between icon and text */
+  font-size: 14px;
+  color: #333; /* Dark gray for text */
+  white-space: nowrap; /* Prevent text wrapping */
+  cursor: pointer; /* Pointer cursor for interactivity */
+  transition: all 0.3s ease; /* Smooth transitions for hover and active states */
+}
+
+.highlight-item:hover {
+  background-color: #e0e7ff; /* Light blue background on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Slightly larger shadow */
+  transform: translateY(-2px); /* Lift the item slightly */
+}
+
+.highlight-item:active {
+  background-color: #d6dfff; /* Darker light blue when clicked */
+  transform: scale(0.98); /* Slightly shrink the item */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduce shadow on active */
+}
+
+.highlight-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain; /* Ensure the image scales proportionally */
+  transition: transform 0.3s ease; /* Add smooth animation for hover */
+}
+
+.highlight-item:hover .highlight-icon {
+  transform: rotate(10deg); /* Slight rotation effect on hover */
+}
+
+#amenities
+.amenities-section {
+  margin-top: 30px; /* Increased spacing above */
+  margin-bottom: 30px; /* Added spacing below */
+}
+
+.amenities-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff; /* Light blue color */
+  text-transform: uppercase;
+  margin-bottom: 15px; /* Increased spacing below the title */
+}
+
+.amenities-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 15px; /* Space between rows and columns */
+  margin-bottom: 30px; /* Added spacing below the amenities list */
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center; /* Vertically align icon and text */
+  gap: 10px; /* Space between icon and text */
+  font-size: 14px;
+  color: #333; /* Dark gray text */
+}
+
+.amenity-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain; /* Ensure the image scales proportionally */
+}
+
+#payment
+.payment-terms {
+  margin-top: 30px; /* Increased spacing above */
+  margin-bottom: 30px; /* Added spacing below */
+}
+
+.payment-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px; /* Increased spacing below the title */
+}
+
+.payment-item {
+  display: flex;
+  align-items: center; /* Align icon and text vertically */
+  gap: 10px; /* Space between icon and text */
+  font-size: 14px;
+  color: #333; /* Dark gray text */
+  margin-bottom: 15px; /* Increased spacing between payment items */
+}
+
+.payment-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain; /* Ensure the image scales proportionally */
+}

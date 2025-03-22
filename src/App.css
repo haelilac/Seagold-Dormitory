@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', Arial, sans-serif;
+  background: #f9f9f9;
+  color: #333;
+}
+.app-container {
+  overflow: visible; /* Allow sticky behavior */
+}
+.main-content {
+  margin-top: 80px; /* Avoid overlapping with the sticky navbar */
+}
