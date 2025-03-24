@@ -1,0 +1,153 @@
+/* General Page Styling */
+.location-page {
+    font-family: 'Roboto', sans-serif;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 20px;
+    transition: margin-left 0.3s ease; /* Smooth transition */
+    background: none; /* Removes any background color */
+}
+
+.location-page.shifted {
+    margin-left: 200px; /* Adjust when sidebar retracts */
+}
+
+.location-header {
+    font-size: 2.5rem;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.location-description {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+/* Map and List Container */
+.map-container {
+    width: 70%; /* Stretch to full width of parent container */
+    height: 500px; /* Set the desired height */
+    display: flex;
+    gap: 1.5rem;
+    right: 20px;
+    background: none; /* Removes background */
+    box-shadow: none; /* Removes any shadow effect */
+}
+
+.map-container-wrapper {
+    flex: 1;
+    background: none; /* Ensures no background */
+}
+
+.map-container {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important; /* Removes any shadow effects */
+}
+
+.map-container:hover {
+    transform: scale(1.02);
+}
+
+/* Places List */
+.places-list {
+    background: none; /* Removes background color */
+    border: none; /* Removes border */
+    box-shadow: none; /* Removes any shadow effect */
+    padding: 0; /* Adjusts spacing */
+}
+
+/* Buttons for "Locate Me" and "Clear Route" */
+.action-buttons {
+    position: absolute;
+    bottom: 340px;
+    right: 300px;
+    display: flex;
+    gap: 10px; /* Add spacing between the buttons */
+    z-index: 1; /* Ensure they appear above other elements */
+}
+
+/* Style for individual buttons */
+.action-buttons button {
+    background-color: #3498db; /* Default button color (blue) */
+    color: #fff; /* White text color */
+    font-size: 1.2rem; /* Make the text larger */
+    padding: 15px 20px; /* Add more padding to make buttons bigger */
+    border: none; /* Remove border */
+    border-radius: 8px; /* Add rounded corners */
+    cursor: pointer; /* Show pointer on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+/* Hover Effect for Buttons */
+.action-buttons button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+/* Specific Style for "Locate Me" Button */
+.action-buttons .location-btn-primary {
+    background-color: #2ecc71; /* Green color for Locate Me */
+}
+
+.action-buttons .location-btn-primary:hover {
+    background-color: #27ae60; /* Darker green on hover */
+}
+
+/* Specific Style for "Clear Route" Button */
+.action-buttons .location-btn-secondary {
+    background-color: #e74c3c; /* Red color for Clear Route */
+}
+
+.action-buttons .location-btn-secondary:hover {
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+/* Button Styling */
+.location-btn-primary,
+.location-btn-secondary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Hover Effects */
+.location-btn-primary:hover,
+.location-btn-secondary:hover {
+    opacity: 0.9;
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Map */
+
+/* Leaflet Zoom */
+.leaflet-control {
+    z-index: 500; /* Lower than your top nav */
+}
+
+.leaflet-container {
+    z-index: 0; /* Base map layer */
+}
+
+
+.leaflet-control-zoom-in, .leaflet-control-zoom-out {
+    background-color: #3498db;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+/* Leaflet Icon */
+.leaflet-control-attribution {
+    display: none;
+}

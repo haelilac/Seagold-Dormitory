@@ -1,0 +1,231 @@
+.manage-tenants {
+    padding: 20px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.manage-tenants h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.tenants-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tenants-table thead {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.tenants-table th,
+.tenants-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tenants-table th {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.tenants-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tenants-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.tenants-table a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.tenants-table a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    color: #e74c3c;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.clickable-row:hover {
+    background-color: #d5e8f6; /* Highlight on hover */
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Box */
+.modal-box {
+    background-color: #ffffff; /* Solid white background */
+    border-radius: 16px; /* Rounded corners */
+    padding: 20px;
+    width: 90%;
+    max-width: 1050px; /* Ensure the box is contained within this size */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Smooth shadow */
+    animation: fadeIn 0.3s ease-in-out;
+    overflow: hidden; /* Prevent content overflow */
+}
+
+/* Modal Header */
+.modal-header {
+    font-size: 1.8rem;
+    color: #2c3e50; /* Muted dark blue */
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: capitalize;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    word-wrap: break-word; /* Ensure long text breaks properly */
+}
+
+/* Modal Content */
+.modal-content {
+    font-size: 14px;
+    color: #575e34; /* Deep gray for readability */
+    line-height: 1.8; /* Spacing between lines */
+    font-family: 'Roboto', sans-serif; /* Clean modern font */
+    padding: 10px 10px;
+    text-align: left; /* Align text to the left */
+    word-wrap: break-word; /* Prevent long content overflow */
+}
+
+/* Individual Text Items */
+.modal-content p {
+    margin-bottom: 10px; /* Spacing between paragraphs */
+    display: flex; /* Use flexbox for label-value pairs */
+    justify-content: normal; /* Separate label and value */
+}
+
+/* Label Formatting */
+.modal-content p strong {
+    font-weight: bold; /* Bold labels */
+    color: #2c3e50; /* Muted dark blue for labels */
+    margin-right: 5px;
+}
+
+/* Value Formatting */
+.modal-content span {
+    font-weight: normal; /* Regular weight for values */
+    color: #34495e; /* Slightly lighter gray */
+}
+
+/* Styling for Valid ID Display */
+.modal-valid-id {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.valid-id-image {
+    width: 100%;
+    max-width: 300px; /* Restrict the size of the image */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Close Button */
+.close-modal-button {
+    background-color: #e74c3c; /* Red color for close button */
+    color: #ffffff; /* White text */
+    margin-top: 20px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Stretch button width to match modal */
+    text-align: center;
+}
+
+.close-modal-button:hover {
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.termination-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.terminate-button, .new-contract-button {
+    padding: 10px 20px;
+    top: 100px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #e74c3c;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.terminate-button:hover {
+    background-color: #c0392b;
+}
+
+.new-contract-button {
+    background-color: #3498db;
+}
+
+.new-contract-button:hover {
+    background-color: #2980b9;
+}
+
+.manage-terminated-tenants {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+}
+.manage-terminated-tenants h2 {
+    color: #721c24;
+}

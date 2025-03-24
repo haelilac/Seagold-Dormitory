@@ -1,0 +1,105 @@
+.client-tour-booking {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+    max-width: 600px;
+}
+
+.client-tour-booking .calendar {
+    margin-bottom: 2rem;
+}
+
+.client-tour-booking .days-of-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* Align with date grid */
+    gap: 1rem;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 1rem; /* Space between days of the week and dates */
+}
+
+.client-tour-booking .date-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1rem;
+    justify-items: center;
+}
+
+.client-tour-booking .date-button {
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+}
+
+.client-tour-booking .date-button.available {
+    background-color: #ccffcc;
+    color: #008000;
+}
+
+.client-tour-booking .date-button.booked {
+    background-color: #ffcccc;
+    color: #ff0000;
+    cursor: not-allowed;
+}
+
+.client-tour-booking .date-button.unavailable {
+    background-color: #f0f0f0;
+    color: #808080;
+    cursor: not-allowed;
+}
+
+.client-tour-booking .time-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.client-tour-booking .time-slot {
+    padding: 0.8rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.client-tour-booking .time-slot.unavailable,
+.client-tour-booking .time-slot.booked {
+    background-color: #f0f0f0; /* Light grey */
+    color: #808080; /* Dark grey */
+    cursor: not-allowed;
+}
+
+.client-tour-booking .time-slot.available {
+    background-color: #ccffcc; /* Light green */
+    color: #008000; /* Dark green */
+}
+
+.client-tour-booking .time-slot.selected {
+    background-color: #ffeb3b; /* Yellow */
+    color: #000; /* Black text */
+    font-weight: bold;
+}
+
+.client-tour-booking .book-button {
+    margin-top: 2rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.client-tour-booking .book-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.client-tour-booking .message {
+    margin-top: 1rem;
+    text-align: center;
+    color: #007bff;
+}

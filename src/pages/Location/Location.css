@@ -1,0 +1,74 @@
+.map-ui {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.map-sidebar {
+  width: 350px;
+  padding: 15px;
+  background: white;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.map-container {
+  flex: 1;
+  height: 100vh;
+}
+
+.search-box {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.map-btn {
+  width: 100%;
+  background-color: #4285F4;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.map-btn:hover {
+  background-color: #357ae8;
+}
+
+.travel-mode select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.travel-details {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.traffic-toggle {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.traffic-toggle input {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.polyline-dotted {
+  stroke-dasharray: 5, 5;
+  stroke-width: 2;
+  stroke: #34A853; /* Green for walking */
+}
