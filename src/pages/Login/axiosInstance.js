@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000',
-  withCredentials: true, // Sends cookies with requests
+  baseURL: process.env.REACT_APP_LARAVEL_URL, // Use environment variable
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -10,3 +10,4 @@ const axiosInstance = axios.create({
 });
 
 export default axiosInstance;
+
