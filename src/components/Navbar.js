@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
-  const logoUrl = 'http://127.0.0.1:8000/storage/icons/SeagoldLogo.svg'; // Update to your backend logo URL
+  const logoUrl = 'https://seagold-laravel-production.up.railway.app/storage/icons/SeagoldLogo.svg'; // Update to your backend logo URL
 
   return (
     <div className="navbar-container">
