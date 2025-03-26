@@ -38,7 +38,6 @@ const Login = () => {
     }
   };
   
-  
   const handleLogin = async (event) => {
     event.preventDefault();
     setErrorMessage('');
@@ -78,6 +77,29 @@ const Login = () => {
         console.error("Login error:", error);
         setErrorMessage(error.response?.data?.error || "Invalid credentials or CSRF issue");
     }
+};
+
+// Helper function to refresh token periodically
+const scheduleTokenRefresh = (token) => {
+  setTimeout(async () => {
+    try {
+      const response = await axiosInstance.post('/api/auth/refresh-token', null, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const newToken = response.data.access_token;
+      if (newToken) {
+        localStorage.setItem('token', newToken);
+        scheduleTokenRefresh(newToken); // Schedule the next refresh
+      }
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+  }, 1000 * 60 * 50); // Refresh token every 50 minutes
 };
 
 
