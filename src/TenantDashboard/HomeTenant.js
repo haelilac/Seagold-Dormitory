@@ -17,7 +17,7 @@ const Home = ({ userName, darkMode }) => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/events', {
+                const response = await fetch('https://seagold-dormitory.vercel.app/api/events', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 });
                 const data = await response.json();

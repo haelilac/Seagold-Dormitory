@@ -23,7 +23,7 @@ const MaintenanceTenant = () => {
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/tenant/maintenance-requests', {
+                const response = await fetch('https://seagold-dormitory.vercel.app/api/tenant/maintenance-requests', {
                     method: 'GET',
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -76,7 +76,7 @@ const MaintenanceTenant = () => {
 
     const handleCancel = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/maintenance-requests/${id}/cancel`, {
+            const response = await fetch(`https://seagold-dormitory.vercel.app/api/maintenance-requests/${id}/cancel`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -176,13 +176,13 @@ const MaintenanceTenant = () => {
                         <div className="file-preview">
                             {selectedFile.match(/\.(jpeg|jpg|png)$/i) ? (
                                 <img
-                                    src={`http://localhost:8000/storage/${selectedFile}`}
+                                    src={`https://seagold-dormitory.vercel.app/storage/${selectedFile}`}
                                     alt="Uploaded File"
                                     style={{ maxWidth: '100%', maxHeight: '400px' }}
                                 />
                             ) : (
                                 <video controls style={{ maxWidth: '100%', maxHeight: '400px' }}>
-                                    <source src={`http://localhost:8000/storage/${selectedFile}`} type="video/mp4" />
+                                    <source src={`https://seagold-dormitory.vercel.app/storage/${selectedFile}`} type="video/mp4" />
                                 </video>
                             )}
                         </div>

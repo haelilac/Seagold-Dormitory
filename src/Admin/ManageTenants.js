@@ -16,6 +16,45 @@ const ManageTenants = () => {
     const [formData, setFormData] = useState({
         stay_type: '',
     });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/combined-data');
+                if (!response.ok) throw new Error('Failed to fetch data.');
+    
+                const { tenants, units, terminatedTenants } = await response.json();
+    
+                // Format tenants data
+                const formattedTenants = tenants.map((tenant) => ({
+                    id: tenant.id,
+                    name: tenant.full_name,
+                    email: tenant.email,
+                    address: tenant.address,
+                    contact_number: tenant.contact_number || 'N/A',
+                    check_in_date: tenant.check_in_date,
+                    duration: tenant.duration || 'N/A',
+                    occupation: tenant.occupation || 'N/A',
+                    unit_code: tenant.unit_id || 'Not Assigned',
+                    valid_id_url: tenant.valid_id_url || null,
+                }));
+    
+                setTenants(formattedTenants);
+                setUnits(units.filter(unit => unit.status === 'available'));
+                setTerminatedTenants(terminatedTenants);
+            } catch (error) {
+                console.error('Error fetching data:', error.message);
+                setError('Unable to load data.');
+            } finally {
+                setLoading(false);
+                setLoadingTerminated(false);
+            }
+        };
+    
+        fetchData();
+    }, []);
+    
     
     useEffect(() => {
         const fetchTerminatedTenants = async () => {

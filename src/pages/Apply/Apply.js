@@ -130,7 +130,7 @@ const ContactUs = () => {
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/units');
+                const response = await fetch('https://seagold-dormitory.vercel.app/api/units');
                 if (!response.ok) {
                     throw new Error('Failed to fetch units');
                 }
@@ -171,7 +171,7 @@ const ContactUs = () => {
         formDataUpload.append('id_type', formData.id_type);
     
         try {
-            const response = await fetch('http://localhost:8000/api/upload-id', {
+            const response = await fetch('https://seagold-dormitory.vercel.app/api/upload-id', {
                 method: 'POST',
                 body: formDataUpload,
                 headers: { "Accept": "application/json" }
@@ -256,7 +256,7 @@ const ContactUs = () => {
                 }
             });
     
-            const response = await fetch('http://localhost:8000/api/applications', {
+            const response = await fetch('https://seagold-dormitory.vercel.app/api/applications', {
                 method: 'POST',
                 body: requestData,
                 headers: { Accept: 'application/json' },

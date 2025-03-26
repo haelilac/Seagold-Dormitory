@@ -21,7 +21,7 @@ const TourBooking = () => {
     if (!isLoggedIn) return; // Skip fetching if user is not logged in
 
     // Fetch calendar data for the selected month and year
-    fetch(`http://localhost:8000/api/tour-calendar?month=${month}&year=${year}`)
+    fetch(`https://seagold-dormitory.vercel.app/api/tour-calendar?month=${month}&year=${year}`)
       .then((response) => response.json())
       .then((data) => setCalendarDates(generateAlignedCalendar(data.calendar)))
       .catch((error) => console.error("Error fetching calendar:", error));
@@ -34,7 +34,7 @@ const TourBooking = () => {
       return;
     }
 
-    fetch(`http://localhost:8000/api/tour-slots?date=${selectedDate}`)
+    fetch(`https://seagold-dormitory.vercel.app/api/tour-slots?date=${selectedDate}`)
       .then((response) => response.json())
       .then((data) => setAvailableSlots(data.slots))
       .catch((error) => console.error("Error fetching slots:", error));
@@ -71,7 +71,7 @@ const TourBooking = () => {
       num_visitors: numVisitors,
     };
   
-    fetch("http://localhost:8000/api/book-tour", {
+    fetch("https://seagold-dormitory.vercel.app/api/book-tour", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
