@@ -17,23 +17,29 @@ axiosInstance.interceptors.response.use(
     if (error.response && error.response.status === 419 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshResponse = await axiosInstance.post('/api/auth/refresh-token');
-        const newToken = refreshResponse.data.access_token;
+        const response = await axiosInstance.post('/api/auth/refresh-token', {}, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
 
-        localStorage.setItem('token', newToken); // Save new token
-        axiosInstance.defaults.headers['Authorization'] = `Bearer ${newToken}`; // Set the new token in the headers
-
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`; // Retry the failed request with the new token
-
-        return axiosInstance(originalRequest);
+        const newToken = response.data.access_token;
+        if (newToken) {
+          localStorage.setItem('token', newToken);
+          axiosInstance.defaults.headers['Authorization'] = `Bearer ${newToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+          return axiosInstance(originalRequest);
+        }
       } catch (refreshError) {
         console.error("Token refresh failed:", refreshError);
-        return Promise.reject(refreshError);
+        localStorage.removeItem('token');
+        window.location.href = '/login';
       }
     }
     return Promise.reject(error);
   }
 );
+
 
 
 export default axiosInstance;

@@ -77,7 +77,7 @@ const App = () => {
       const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/validate-token", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,  // ✅ Fixed string interpolation issue
           "Content-Type": "application/json",
         },
       });
@@ -85,13 +85,13 @@ const App = () => {
       if (!response.ok) throw new Error("Token invalid");
 
       const user = await response.json();
-      console.log("Fetched User Data:", user); // Debugging the user data
+      console.log("Fetched User Data:", user); 
 
       if (user.role) {
-        setRole(user.role); // Set role as returned by backend
-        localStorage.setItem('role', user.role); // Persist role in localStorage
+        setRole(user.role); 
+        localStorage.setItem('role', user.role); 
       } else {
-        setRole("guest_user"); // Fallback for guest users
+        setRole("guest_user"); 
         localStorage.setItem('role', "guest_user");
       }
       setIsLoggedIn(true);
@@ -102,10 +102,6 @@ const App = () => {
       setIsLoggedIn(false);
     }
   };
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
 
   // Handle logout function
   const handleLogout = () => {

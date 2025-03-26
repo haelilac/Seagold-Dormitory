@@ -90,8 +90,8 @@ const scheduleTokenRefresh = (token) => {
     try {
       const response = await axiosInstance.post('/api/auth/refresh-token', null, {
         headers: {
-            'Authorization': `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`,
+        }        
     });
 
       const newToken = response.data.access_token;
