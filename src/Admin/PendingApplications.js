@@ -18,7 +18,7 @@ const PendingApplications = () => {
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/applications');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications');
                 if (!response.ok) {
                     throw new Error('Failed to fetch applications');
                 }
@@ -58,7 +58,7 @@ const PendingApplications = () => {
 
     const handleUpdateApplication = async (applicationId) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/applications/${applicationId}/update`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -78,7 +78,7 @@ const PendingApplications = () => {
         if (!window.confirm('Accept this application and create a tenant account?')) return;
     
         try {
-            const response = await fetch(`http://localhost:8000/api/applications/${applicationId}/accept`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -103,7 +103,7 @@ const PendingApplications = () => {
         if (!window.confirm('Decline this application?')) return;
 
         try {
-            const response = await fetch(`http://localhost:8000/api/applications/${applicationId}/decline`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/decline`, {
                 method: 'DELETE',
             });
 
@@ -165,7 +165,7 @@ const PendingApplications = () => {
                                 <div>
                                     <p><strong>Valid ID:</strong></p>
                                     <img 
-                                        src={`http://localhost:8000/storage/${selectedApplication.valid_id}`} 
+                                        src={`https://seagold-laravel-production.up.railway.app/storage/${selectedApplication.valid_id}`} 
                                         alt="Valid ID" 
                                         style={{ width: '300px', height: 'auto', marginTop: '10px', border: '1px solid #ccc', padding: '5px' }}
                                     />

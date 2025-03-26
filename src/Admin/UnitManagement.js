@@ -14,7 +14,7 @@ const UnitManagement = ({ onAddUnit }) => {
     // Fetch Units from API
     const fetchUnits = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/units');
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
             if (!response.ok) throw new Error('Failed to fetch units');
 
             const data = await response.json();
@@ -31,7 +31,7 @@ const UnitManagement = ({ onAddUnit }) => {
         const newStatus = currentStatus === 'unavailable' ? 'available' : 'unavailable';
 
         try {
-            await fetch(`http://localhost:8000/api/units/${unitId}/status`, {
+            await fetch(`https://seagold-laravel-production.up.railway.app/api/units/${unitId}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),
@@ -54,7 +54,7 @@ const UnitManagement = ({ onAddUnit }) => {
         };
 
         try {
-            await fetch('http://localhost:8000/api/units', {
+            await fetch('https://seagold-laravel-production.up.railway.app/api/units', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newUnit),

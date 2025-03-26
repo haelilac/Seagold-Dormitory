@@ -17,7 +17,7 @@ const AdminGallery = () => {
 
   const fetchImages = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/gallery', {
+      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       const data = await response.json();
@@ -47,7 +47,7 @@ const AdminGallery = () => {
     formData.append('category', category);
   
     try {
-      const response = await fetch('http://localhost:8000/api/gallery/upload', {
+      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery/upload', {
         method: 'POST',
         body: formData,
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -67,7 +67,7 @@ const AdminGallery = () => {
     if (!window.confirm('Are you sure you want to delete this image?')) return;
   
     try {
-      const response = await fetch(`http://localhost:8000/api/gallery/${id}`, {
+      const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -98,7 +98,7 @@ const AdminGallery = () => {
     formData.append('category', category);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/gallery/${id}`, {
+      const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
         method: 'PUT',
         body: formData,
       });
@@ -184,7 +184,7 @@ const AdminGallery = () => {
       <div className="gallery-grid">
         {images.map((img) => (
           <div key={img.id} className="gallery-card">
-            <img src={`http://localhost:8000/storage/${img.image_path}`} alt={img.title} />
+            <img src={`https://seagold-laravel-production.up.railway.app/storage/${img.image_path}`} alt={img.title} />
             <div className="gallery-info">
               <h4>{img.title}</h4>
               <p>{img.description}</p>

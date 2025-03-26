@@ -20,7 +20,7 @@ const ManageTenants = () => {
     useEffect(() => {
         const fetchTerminatedTenants = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/terminated-tenants');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/terminated-tenants');
                 if (!response.ok) throw new Error('Failed to fetch terminated tenants');
                 
                 const data = await response.json();
@@ -41,7 +41,7 @@ const ManageTenants = () => {
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/units');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
                 if (!response.ok) throw new Error('Failed to fetch units');
     
                 const data = await response.json();
@@ -60,7 +60,7 @@ const ManageTenants = () => {
     useEffect(() => {
         const fetchTenants = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/tenants');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tenants');
                 if (!response.ok) throw new Error('Failed to fetch tenant data');
         
                 const data = await response.json();
@@ -94,7 +94,7 @@ const ManageTenants = () => {
         setIsUpdating(true);
     
         try {
-            const response = await fetch(`http://localhost:8000/api/tenants/${selectedTenant.id}/change-unit`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/change-unit`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ const ManageTenants = () => {
     const handleTerminateContract = async (action) => {
         if (action === 'terminate') {
             try {
-                const response = await fetch(`http://localhost:8000/api/tenants/${selectedTenant.id}/terminate`, {
+                const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/terminate`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`

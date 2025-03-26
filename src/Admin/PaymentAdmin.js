@@ -21,10 +21,10 @@ const PaymentAdmin = () => {
         try {
             setLoading(true);
             const [paymentsRes, unpaidRes] = await Promise.all([
-                fetch(`http://localhost:8000/api/payments?${query}`, {
+                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`http://localhost:8000/api/unpaid-tenants?${query}`, {
+                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ]);
@@ -76,8 +76,8 @@ const PaymentAdmin = () => {
         try {
             const endpoint =
                 status === 'Confirmed'
-                    ? `http://localhost:8000/api/payments/confirm/${user_id}`
-                    : `http://localhost:8000/api/payments/reject/${user_id}`;
+                    ? `https://seagold-laravel-production.up.railway.app/api/payments/confirm/${user_id}`
+                    : `https://seagold-laravel-production.up.railway.app/api/payments/reject/${user_id}`;
     
             const response = await fetch(endpoint, {
                 method: 'POST',

@@ -54,7 +54,7 @@ const EventsBoard = () => {
    */
   const fetchEvents = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/events", {
+      const response = await fetch("https://seagold-laravel-production.up.railway.app/api/events", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 401) {
@@ -83,8 +83,8 @@ const EventsBoard = () => {
     e.preventDefault();
     const method = editMode ? "PUT" : "POST";
     const url = editMode
-      ? `http://localhost:8000/api/events/${editingEventId}`
-      : "http://localhost:8000/api/events";
+      ? `https://seagold-laravel-production.up.railway.app/api/events/${editingEventId}`
+      : "https://seagold-laravel-production.up.railway.app/api/events";
 
     // Convert the date to ISO before sending
     const bodyData = { ...formData, date: convertDateToISO(formData.date) };
@@ -120,7 +120,7 @@ const EventsBoard = () => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     console.log("[handleDelete] Deleting event id:", id);
 
-    await fetch(`http://localhost:8000/api/events/${id}`, {
+    await fetch(`https://seagold-laravel-production.up.railway.app/api/events/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

@@ -23,7 +23,7 @@ const AdminTourBookings = () => {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/tour-bookings')
+        fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings')
             .then((response) => response.json())
             .then((data) => {
                 console.log('Fetched Bookings:', data.bookings);
@@ -34,7 +34,7 @@ const AdminTourBookings = () => {
 
     const fetchBookings = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/tour-bookings', {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             });
             const data = await response.json();
@@ -52,7 +52,7 @@ const AdminTourBookings = () => {
     
     const handleConfirmBooking = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/bookings/confirm/${id}`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/confirm/${id}`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -72,7 +72,7 @@ const AdminTourBookings = () => {
     
     const handleCancelBooking = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/bookings/cancel/${id}`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/cancel/${id}`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -85,7 +85,7 @@ const AdminTourBookings = () => {
     
                 // Refresh available slots for the selected date if applicable
                 if (selectedDate) {
-                    fetch(`http://localhost:8000/api/tour-slots?date=${selectedDate}`)
+                    fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${selectedDate}`)
                         .then((res) => res.json())
                         .then((data) => setAvailability(data.slots))
                         .catch((error) => console.error('Error fetching updated slots:', error));

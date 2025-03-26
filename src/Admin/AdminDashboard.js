@@ -531,14 +531,14 @@ const getNotificationIcon = (type) => {
                     </div>
                     {/* Profile */}
                     <div className={styles.profileContainer} ref={profileRef} onClick={() => setShowProfileDropdown((prev) => !prev)}>
-                        <img src="http://localhost:8000/storage/profile/admin.png" alt="Admin Profile" className={styles.profilePicture} />
+                        <img src="https://seagold-laravel-production.up.railway.app/storage/profile/admin.png" alt="Admin Profile" className={styles.profilePicture} />
                         <span>{admin.name || "Admin"}</span>
 
                         {showProfileDropdown && (
                             <div className={styles.profileDropdown}>
                                 <ul>
                                     <li>
-                                        <img src="http://localhost:8000/storage/profile/admin.png" alt="Admin Profile" className={styles.dropdownProfilePicture} />
+                                        <img src="https://seagold-laravel-production.up.railway.app/storage/profile/admin.png" alt="Admin Profile" className={styles.dropdownProfilePicture} />
                                     </li>
                                     <span>{admin.name || "Admin"}</span>
                                     <span className={styles.profileEmail}>{admin.email}</span>
