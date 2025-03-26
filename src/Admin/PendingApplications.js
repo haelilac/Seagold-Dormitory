@@ -80,7 +80,10 @@ const PendingApplications = () => {
         try {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 body: JSON.stringify({ 
                     name: tenantName, 
                     email: tenantEmail, 
@@ -89,7 +92,7 @@ const PendingApplications = () => {
             });
     
             if (!response.ok) throw new Error('Failed to accept the application.');
-            
+    
             alert('Application accepted! Tenant account created.');
             setApplications((prev) => prev.filter((app) => app.id !== applicationId));
             handleCloseDetails();
@@ -97,6 +100,7 @@ const PendingApplications = () => {
             alert('An error occurred while accepting the application.');
         }
     };
+    
     
 
     const handleDecline = async (applicationId) => {
