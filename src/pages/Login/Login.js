@@ -65,7 +65,7 @@ const Login = () => {
         localStorage.setItem("user_id", data.user_id);
 
         // Set Authorization header for future requests
-        axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
+        axiosInstance.defaults.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
         if (data.role === "admin") {
             window.location.href = "/admin/dashboard";
@@ -90,9 +90,9 @@ const scheduleTokenRefresh = (token) => {
     try {
       const response = await axiosInstance.post('/api/auth/refresh-token', null, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
         },
-      });
+    });
 
       const newToken = response.data.access_token;
       if (newToken) {
