@@ -33,7 +33,7 @@ const Home = () => {
     }
   
     try {
-      const response = await fetch("http://localhost:8000/api/feedback", {
+      const response = await fetch("https://seagold-laravel-production.up.railway.app/api/feedback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,31 +132,31 @@ const Home = () => {
         </p>
         <div className="emoji-container text-center mb-4">
             <img
-              src="http://localhost:8000/storage/icons/in-love.gif"
+              src="https://seagold-laravel-production.up.railway.app/storage/icons/in-love.gif"
               alt="Happy"
               className={`emoji ${selectedEmoji === "in-love" ? "selected" : ""}`}
               onClick={() => setSelectedEmoji("in-love")}
             />
             <img
-              src="http://localhost:8000/storage/icons/happy.gif"
+              src="https://seagold-laravel-production.up.railway.app/storage/icons/happy.gif"
               alt="Happy"
               className={`emoji ${selectedEmoji === "happy" ? "selected" : ""}`}
               onClick={() => setSelectedEmoji("happy")}
             />
             <img
-              src="http://localhost:8000/storage/icons/neutral.gif"
+              src="https://seagold-laravel-production.up.railway.app/storage/icons/neutral.gif"
               alt="Neutral"
               className={`emoji ${selectedEmoji === "neutral" ? "selected" : ""}`}
               onClick={() => setSelectedEmoji("neutral")}
             />
             <img
-              src="http://localhost:8000/storage/icons/sad.gif"
+              src="https://seagold-laravel-production.up.railway.app/storage/icons/sad.gif"
               alt="Sad"
               className={`emoji ${selectedEmoji === "sad" ? "selected" : ""}`}
               onClick={() => setSelectedEmoji("sad")}
             />
             <img
-              src="http://localhost:8000/storage/icons/angry.gif"
+              src="https://seagold-laravel-production.up.railway.app/storage/icons/angry.gif"
               alt="Angry"
               className={`emoji ${selectedEmoji === "angry" ? "selected" : ""}`}
               onClick={() => setSelectedEmoji("angry")}
