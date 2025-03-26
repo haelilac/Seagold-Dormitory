@@ -43,8 +43,8 @@ const Login = () => {
     setErrorMessage('');
 
     try {
-        // Ensure CSRF token is set
-        await axiosInstance.get('/sanctum/csrf-cookie'); // Ensure CSRF token is set
+        // Get the CSRF token
+        await axiosInstance.get('/sanctum/csrf-cookie'); // This line is important for CSRF protection
 
         // Perform login
         const response = await axiosInstance.post('/api/login-admin-tenant', {
@@ -65,7 +65,7 @@ const Login = () => {
         localStorage.setItem("user_id", data.user_id);
 
         // Set Authorization header for future requests
-        axiosInstance.defaults.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+        axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
 
         if (data.role === "admin") {
             window.location.href = "/admin/dashboard";
