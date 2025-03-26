@@ -105,7 +105,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch("https://seagold-laravel-production.up.railway.app/apinotifications", {
+                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 const data = await response.json();
