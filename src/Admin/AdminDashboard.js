@@ -49,7 +49,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/auth/user", {
+                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 const user = await response.json();
@@ -57,8 +57,8 @@ const AdminDashboard = () => {
                     name: user.name,
                     email: user.email,
                     profilePicture: user.profile_picture
-                    ? `http://localhost:8000/storage/profile/${user.profile_picture}`
-                    : "http://localhost:8000/storage/profile/default-profile.png",
+                        ? `https://seagold-laravel-production.up.railway.app/storage/profile/${user.profile_picture}`
+                        : "https://seagold-laravel-production.up.railway.app/storage/profile/default-profile.png",
                 });
             } catch (error) {
                 console.error("Error fetching admin data:", error);
@@ -105,7 +105,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/notifications", {
+                const response = await fetch("https://seagold-laravel-production.up.railway.app/apinotifications", {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 const data = await response.json();

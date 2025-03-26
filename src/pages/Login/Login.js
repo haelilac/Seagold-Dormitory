@@ -64,6 +64,9 @@ const Login = () => {
         localStorage.setItem("role", data.role);
         localStorage.setItem("user_id", data.user_id);
 
+        // Set the Authorization header for future requests
+        axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
+
         if (data.role === "admin") {
             window.location.href = "/admin/dashboard";
         } else if (data.role === "tenant") {
@@ -78,6 +81,7 @@ const Login = () => {
         setErrorMessage(error.response?.data?.error || "Invalid credentials or CSRF issue");
     }
 };
+
 
 // Helper function to refresh token periodically
 const scheduleTokenRefresh = (token) => {
