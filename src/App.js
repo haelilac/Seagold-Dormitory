@@ -128,7 +128,7 @@ const App = () => {
         <div className="app-content">
           {console.log("Current Role State:", role)}
 
-          {role !== 'admin' && role !== 'tenant' && <Navbar onLogout={handleLogout} />}
+          {(!isLoggedIn || (role !== 'admin' && role !== 'tenant')) && <Navbar onLogout={handleLogout} />}
 
           <Routes>
             <Route path="/" element={<Home />} />
