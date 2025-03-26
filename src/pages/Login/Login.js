@@ -43,10 +43,10 @@ const Login = () => {
     setErrorMessage('');
 
     try {
-        // Get CSRF cookie explicitly with axios instance
+        // Ensure CSRF token is set
         await axiosInstance.get('/sanctum/csrf-cookie'); // Ensure CSRF token is set
 
-        // Perform login explicitly via axios
+        // Perform login
         const response = await axiosInstance.post('/api/login-admin-tenant', {
             email,
             password,
@@ -59,12 +59,12 @@ const Login = () => {
             return;
         }
 
-        // Store tokens and role information in localStorage
+        // Store tokens in localStorage
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("user_id", data.user_id);
 
-        // Set the Authorization header for future requests
+        // Set Authorization header for future requests
         axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
 
         if (data.role === "admin") {
@@ -81,6 +81,7 @@ const Login = () => {
         setErrorMessage(error.response?.data?.error || "Invalid credentials or CSRF issue");
     }
 };
+
 
 
 // Helper function to refresh token periodically
