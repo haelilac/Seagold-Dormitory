@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://seagold-laravel-production.up.railway.app', // Make sure to use your deployed backend URL
+  baseURL: 'https://seagold-laravel-production.up.railway.app/', // deployed backend URL
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -12,23 +12,18 @@ const axiosInstance = axios.create({
 // Automatically refresh token if it expires
 axiosInstance.interceptors.response.use(
   response => response,
-  async error => {
+  async (error) => {
     const originalRequest = error.config;
-
     if (error.response && error.response.status === 419 && !originalRequest._retry) {
       originalRequest._retry = true;
-
       try {
-        // Attempt to refresh the token
         const refreshResponse = await axiosInstance.post('/api/auth/refresh-token');
         const newToken = refreshResponse.data.access_token;
 
-        // Save the new token to localStorage
-        localStorage.setItem('token', newToken);
+        localStorage.setItem('token', newToken); // Save new token
+        axiosInstance.defaults.headers['Authorization'] = `Bearer ${newToken}`; // Set the new token in the headers
 
-        // Attach new token to the original request and retry it
-        axiosInstance.defaults.headers['Authorization'] = `Bearer ${newToken}`;
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`; // Retry the failed request with the new token
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
@@ -39,5 +34,6 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 export default axiosInstance;
