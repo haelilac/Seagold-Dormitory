@@ -164,41 +164,33 @@ const ContactUs = () => {
         const file = e.target.files[0];
         setFormData({ ...formData, valid_id: file });
     
-        const reader = new FileReader();
-        reader.onload = async () => {
-            const base64String = reader.result.split(",")[1]; // Get the base64 data without the prefix
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
+        formDataUpload.append('id_type', formData.id_type);
     
-            try {
-                const response = await fetch('https://api.replicate.com/v1/predictions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Token r8_GmVgnuAZkpq2iRSW1oQcltLJD5IZprv3QNcka`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "version": "c13a1a07-49e9-4f46-9b80-7a89e37c1958", // Use the EasyOCR model version
-                        "input": { "image": `data:image/jpeg;base64,${base64String}` }
-                    })
-                });
+        try {
+            const response = await fetch('https://seagold-python.onrender.com/upload-id/', {
+                method: 'POST',
+                body: formDataUpload,
+            });
     
-                if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(`Server Error: ${response.status} - ${text}`);
-                }
-    
-                const data = await response.json();
-    
-                if (data.status === "succeeded") {
-                    const ocrText = data.output;
-                    alert(`✅ OCR Successful! Extracted Text: ${ocrText}`);
-                } else {
-                    alert("❌ OCR Failed. Please try again.");
-                }
-            } catch (error) {
-                console.error('Error uploading ID:', error);
-                alert("Error processing the ID. Please check the console.");
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Server Error: ${response.status} - ${text}`);
             }
-        };
+    
+            const data = await response.json();
+    
+            if (data.id_type_matched) {
+                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
+            } else {
+                alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
+            }
+        } catch (error) {
+            console.error('Error uploading ID:', error);
+            alert("Error processing the ID. Please check the console.");
+        }
+    };    
     
         reader.readAsDataURL(file); // Read the file as Data URL
     };
