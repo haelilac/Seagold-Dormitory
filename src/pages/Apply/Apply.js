@@ -159,43 +159,41 @@ const ContactUs = () => {
     
         setFormData({ ...formData, [name]: value });
     };
+
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         setFormData({ ...formData, valid_id: file });
     
-        const reader = new FileReader();
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
     
-        reader.onload = async () => {
-            const base64String = reader.result.split(",")[1]; // Get the base64 data without the prefix
-    
-            const formDataUpload = new FormData();
-            formDataUpload.append('file', file);
-    
-            try {
-                const response = await fetch(`https://seagold-python.onrender.com/upload-id/?id_type=${formData.id_type}`, { // <-- Send 'id_type' as query parameter
-                    method: 'POST',
-                    body: formDataUpload,
-                });
-    
-                if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(`Server Error: ${response.status} - ${text}`);
+        try {
+            const response = await fetch(`https://seagold-python-production.up.railway.app/upload-id/?id_type=${formData.id_type}`, { 
+                method: 'POST',
+                body: formDataUpload,
+                headers: { 
+                    Accept: 'application/json'
                 }
-    
-                const data = await response.json();
-    
-                if (data.id_type_matched) {
-                    alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
-                } else {
-                    alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
-                }
-            } catch (error) {
-                console.error('Error uploading ID:', error);
-                alert("Error processing the ID. Please check the console.");
+            });
+        
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Server Error: ${response.status} - ${text}`);
             }
-        };
-    
-        reader.readAsDataURL(file); // Read the file as Data URL
+        
+            const data = await response.json();
+        
+            if (data.error) {
+                alert(`❌ ID Processing Error: ${data.error}`);
+            } else if (data.id_type_matched) {
+                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
+            } else {
+                alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
+            }
+        } catch (error) {
+            console.error('Error uploading ID:', error);
+            alert("Error processing the ID. Please check the console.");
+        }        
     };
     
 

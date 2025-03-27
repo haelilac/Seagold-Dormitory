@@ -1,7 +1,29 @@
-node_modules/ 
-vendor/ 
-build/ 
-.vscode/ 
-.DS_Store 
-*.log 
-.env 
+# Node & PHP dependencies
+node_modules/
+vendor/
+
+# React build folder (if you use `npm run build`)
+build/
+
+# Visual Studio Code configuration files
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Log files
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Temporary files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
