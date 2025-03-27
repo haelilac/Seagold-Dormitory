@@ -167,14 +167,13 @@ const ContactUs = () => {
         setFormData({ ...formData, valid_id: file });
     
         const formDataUpload = new FormData();
-        formDataUpload.append('valid_id', file);
+        formDataUpload.append('file', file); // ✅ Change from 'valid_id' to 'file'
         formDataUpload.append('id_type', formData.id_type);
     
         try {
             const response = await fetch('https://seagold-python.onrender.com/upload-id/', {
                 method: 'POST',
                 body: formDataUpload,
-                headers: { "Accept": "application/json" }
             });
     
             if (!response.ok) {
@@ -184,10 +183,10 @@ const ContactUs = () => {
     
             const data = await response.json();
     
-            if (data.id_verified) {
-                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.ocr_text}`);
+            if (data.id_type_matched) {
+                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
             } else {
-                alert(`❌ ID Mismatch!\nExtracted Text: ${data.ocr_text}`);
+                alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
             }
         } catch (error) {
             console.error('Error uploading ID:', error);
