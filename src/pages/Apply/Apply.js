@@ -175,6 +175,7 @@ const ContactUs = () => {
                     Accept: 'application/json'
                 }
             });
+            
         
             if (!response.ok) {
                 const text = await response.text();
