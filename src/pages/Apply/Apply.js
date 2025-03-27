@@ -160,14 +160,12 @@ const ContactUs = () => {
         setFormData({ ...formData, [name]: value });
     };
     
-    
-
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         setFormData({ ...formData, valid_id: file });
     
         const formDataUpload = new FormData();
-        formDataUpload.append('file', file); // ✅ Change from 'valid_id' to 'file'
+        formDataUpload.append('file', file);
         formDataUpload.append('id_type', formData.id_type);
     
         try {
