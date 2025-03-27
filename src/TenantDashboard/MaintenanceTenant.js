@@ -23,7 +23,7 @@ const MaintenanceTenant = () => {
     useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const response = await fetch('https://seagold-dormitory.vercel.app/api/tenant/maintenance-requests', {
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests', {
                     method: 'GET',
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -76,7 +76,7 @@ const MaintenanceTenant = () => {
 
     const handleCancel = async (id) => {
         try {
-            const response = await fetch(`https://seagold-dormitory.vercel.app/api/maintenance-requests/${id}/cancel`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/cancel`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -176,13 +176,13 @@ const MaintenanceTenant = () => {
                         <div className="file-preview">
                             {selectedFile.match(/\.(jpeg|jpg|png)$/i) ? (
                                 <img
-                                    src={`https://seagold-dormitory.vercel.app/storage/${selectedFile}`}
+                                    src={`https://seagold-laravel-production.up.railway.app/storage/${selectedFile}`}
                                     alt="Uploaded File"
                                     style={{ maxWidth: '100%', maxHeight: '400px' }}
                                 />
                             ) : (
                                 <video controls style={{ maxWidth: '100%', maxHeight: '400px' }}>
-                                    <source src={`https://seagold-dormitory.vercel.app/storage/${selectedFile}`} type="video/mp4" />
+                                    <source src={`https://seagold-laravel-production.up.railway.app/storage/${selectedFile}`} type="video/mp4" />
                                 </video>
                             )}
                         </div>

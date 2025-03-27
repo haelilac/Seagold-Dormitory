@@ -12,7 +12,7 @@ const LandlordContact = () => {
     useEffect(() => {
         const fetchContact = async () => {
             try {
-                const response = await fetch('https://seagold-dormitory.vercel.app:8000/api/settings/landlord-contact');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/settings/landlord-contact');
                 const data = await response.json();
                 setPhoneNumber(data.phone_number || '');
                 setEmail(data.email || '');
@@ -26,7 +26,7 @@ const LandlordContact = () => {
     const handleUpdate = async () => {
         setIsUpdating(true);
         try {
-            const response = await fetch('https://seagold-dormitory.vercel.app:8000/api/settings/landlord-contact', {
+            const response = await fetch('hhttps://seagold-laravel-production.up.railway.app/api/settings/landlord-contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone_number: phoneNumber, email }),

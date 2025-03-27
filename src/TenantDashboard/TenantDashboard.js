@@ -221,7 +221,7 @@ const TenantDashboard = () => {
                     >
                         {/* Profile Picture */}
                         <img 
-                            src="https://seagold-dormitory.vercel.app/storage/profile/admin.png" 
+                            src="https://seagold-laravel-production.up.railway.app/storage/profile/admin.png" 
                             alt="User Profile" 
                             className={styles.profilePicture} 
                         />
@@ -235,7 +235,7 @@ const TenantDashboard = () => {
                                 <li>
                                     {/* Profile Picture in Dropdown */}
                                         <img 
-                                            src="https://seagold-dormitory.vercel.app/storage/profile/admin.png" 
+                                            src="https://seagold-laravel-production.up.railway.app/storage/profile/admin.png" 
                                             alt="User Profile" 
                                             className={styles.dropdownProfilePicture} 
                                         />
