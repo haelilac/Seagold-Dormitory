@@ -29,9 +29,10 @@ const ContactUs = () => {
         accept_privacy: false,
     });
 
+    const [isVerified, setIsVerified] = useState(false); // Google Verification
+    const [isIdVerified, setIsIdVerified] = useState(false); // ID Verification
     const [units, setUnits] = useState([]);
-    const [showTermsModal, setShowTermsModal] = useState(false); // State to toggle Terms Modal
-    const [isVerified, setIsVerified] = useState(false);
+    const [showTermsModal, setShowTermsModal] = useState(false);
 
     // Address Data
     const [provinces, setProvinces] = useState([]);
@@ -130,7 +131,7 @@ const ContactUs = () => {
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('https://seagold-dormitory.vercel.app/api/units');
+                const response = await fetch('https://seagold-dormitory.vercel.app/api/available-units');
                 if (!response.ok) {
                     throw new Error('Failed to fetch units');
                 }
@@ -169,7 +170,6 @@ const ContactUs = () => {
     
         try {
             const response = await fetch(`https://seagold-python-production.up.railway.app/upload-id/?id_type=${formData.id_type}`, { 
-
                 method: 'POST',
                 body: formDataUpload,
                 headers: { 
@@ -177,7 +177,6 @@ const ContactUs = () => {
                 }
             });
             
-        
             if (!response.ok) {
                 const text = await response.text();
                 throw new Error(`Server Error: ${response.status} - ${text}`);
@@ -187,17 +186,20 @@ const ContactUs = () => {
         
             if (data.error) {
                 alert(`❌ ID Processing Error: ${data.error}`);
+                setIsIdVerified(false); // Mark ID as not verified
             } else if (data.id_type_matched) {
                 alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
+                setIsIdVerified(true); // Mark ID as verified
             } else {
                 alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
+                setIsIdVerified(false); // Mark ID as not verified
             }
         } catch (error) {
             console.error('Error uploading ID:', error);
             alert("Error processing the ID. Please check the console.");
+            setIsIdVerified(false); // Mark ID as not verified
         }        
     };
-    
 
     const formatDateTime = (date) => {
         if (!date) return null;
@@ -683,7 +685,7 @@ const ContactUs = () => {
                     </div>
                 </div>
 
-                <button type="submit" className="send-message-button">Submit</button>
+                <button type="submit" className="send-message-button" disabled={!isVerified || !isIdVerified}>Submit</button>
             </form> 
             </div>
             
