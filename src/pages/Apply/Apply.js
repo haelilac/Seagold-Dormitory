@@ -171,7 +171,7 @@ const ContactUs = () => {
         formDataUpload.append('id_type', formData.id_type);
     
         try {
-            const response = await fetch('https://seagold-dormitory.vercel.app/api/upload-id', {
+            const response = await fetch('https://seagold-python.onrender.com/upload-id/', {
                 method: 'POST',
                 body: formDataUpload,
                 headers: { "Accept": "application/json" }
