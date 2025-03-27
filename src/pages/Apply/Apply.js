@@ -159,7 +159,6 @@ const ContactUs = () => {
     
         setFormData({ ...formData, [name]: value });
     };
-    
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         setFormData({ ...formData, valid_id: file });
@@ -171,10 +170,9 @@ const ContactUs = () => {
     
             const formDataUpload = new FormData();
             formDataUpload.append('file', file);
-            formDataUpload.append('id_type', formData.id_type);
     
             try {
-                const response = await fetch('https://seagold-python.onrender.com/upload-id/', {
+                const response = await fetch(`https://seagold-python.onrender.com/upload-id/?id_type=${formData.id_type}`, { // <-- Send 'id_type' as query parameter
                     method: 'POST',
                     body: formDataUpload,
                 });
@@ -196,7 +194,7 @@ const ContactUs = () => {
                 alert("Error processing the ID. Please check the console.");
             }
         };
-        
+    
         reader.readAsDataURL(file); // Read the file as Data URL
     };
     
