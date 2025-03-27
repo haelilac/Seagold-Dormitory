@@ -131,7 +131,7 @@ const ContactUs = () => {
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('https://seagold-dormitory.vercel.app/api/available-units');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
                 if (!response.ok) {
                     throw new Error('Failed to fetch units');
                 }
@@ -261,7 +261,7 @@ const ContactUs = () => {
                 }
             });
     
-            const response = await fetch('https://seagold-dormitory.vercel.app/api/applications', {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
                 headers: { Accept: 'application/json' },
