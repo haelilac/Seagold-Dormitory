@@ -12,6 +12,7 @@ window.Echo = new Echo({
     key: 'fea5d607d4b38ea09320', // Replace with your Pusher app key
     cluster: 'ap1', // Replace with your cluster, e.g., 'mt1'
     forceTLS: true, // Use secure connection
+    encrypted: true,     // To ensure WebSocket connection is encrypted
 });
 
 const PaymentTenant = () => {
