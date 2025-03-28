@@ -27,12 +27,12 @@ const TenantDashboard = () => {
 
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/auth/user', {
+                const response = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUserData(response.data);
 
-                const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications', {
+                const notificationsResponse = await axios.get('https://seagold-laravel-production.up.railway.app/api/notifications', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setNotifications(notificationsResponse.data);
