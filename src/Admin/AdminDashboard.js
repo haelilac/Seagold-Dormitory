@@ -324,7 +324,7 @@ const getNotificationIcon = (type) => {
             <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
                 <div className={styles.sidebarHeader}>
                 <img 
-                    src={process.env.PUBLIC_URL + 'images/seagold-logo2.svg'} 
+                    src={process.env.PUBLIC_URL + 'public/seagold-logo2.svg'} 
                     alt="SEA GOLD LOGO" 
                     className={styles.sidebarLogo} 
                     onClick={toggleSidebar} 
