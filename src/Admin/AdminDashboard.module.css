@@ -916,9 +916,9 @@ body {
     border: 1px solid #ddd;
     background-color: #ffffff;
     color: #222;
-    appearance: none; /* Remove default arrow */
+    -moz-appearance: none; /* Remove default arrow */
     -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
     position: relative;
     cursor: pointer;
 }
