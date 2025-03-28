@@ -44,7 +44,8 @@ const AdminDashboard = () => {
     const dropdownRef = useRef(null);
     const profileRef = useRef(null);
 
-    {console.log("Dropdown State Inside Component:", showNotifications)}  
+    console.log("Dropdown State Inside Component:", showNotifications);
+
     // Fetch Admin Profile
     useEffect(() => {
         const fetchAdminData = async () => {
