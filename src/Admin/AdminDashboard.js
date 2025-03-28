@@ -325,7 +325,7 @@ const getNotificationIcon = (type) => {
                 <div className={styles.sidebarHeader}>
                 <img 
                     src={process.env.PUBLIC_URL + 'public/seagold-logo2.svg'} 
-                    alt="SEA GOLD LOGO" 
+                    alt="SEAGOLD LOGO" 
                     className={styles.sidebarLogo} 
                     onClick={toggleSidebar} 
                     style={{ cursor: 'pointer' }}

@@ -43,43 +43,68 @@ const ContactUs = () => {
 
     // Fetch provinces on mount
     useEffect(() => {
-        axios.get("https://psgc.gitlab.io/api/provinces.json")
-            .then(response => {
-                console.log("Fetched Provinces:", response.data); // Debugging
-                setProvinces(response.data);
-            })
-            .catch(error => console.error("Error fetching provinces:", error));
-    }, []);
+        const fetchProvincesAndNCR = async () => {
+            try {
+                // Fetch Provinces
+                const provincesResponse = await axios.get("https://psgc.gitlab.io/api/provinces.json");
+                const provinces = provincesResponse.data;
+    
+                // Fetch NCR (National Capital Region)
+                const ncrResponse = await axios.get("https://psgc.gitlab.io/api/regions/130000000/cities-municipalities.json");
+                const ncrCities = ncrResponse.data;
+    
+                // Add NCR as a province with its cities
+                const ncrProvince = { 
+                    name: "NCR (Metro Manila)", 
+                    code: "130000000", 
+                    cities: ncrCities 
+                };
+                
+                console.log("Fetched Provinces:", provinces);
+                console.log("Fetched NCR (Metro Manila):", ncrCities);
+    
+                // Update the provinces state to include NCR as a special region
+                setProvinces([...provinces, ncrProvince]);
+            } catch (error) {
+                console.error("Error fetching provinces and NCR:", error);
+            }
+        };
+    
+        fetchProvincesAndNCR();
+    }, []);    
     
     
     const handleProvinceChange = async (e) => {
-        const provinceName = e.target.value; // Get the selected name
-        const selectedProvince = provinces.find(prov => prov.name === provinceName); // Find by name
-    
-        console.log("Selected Province Name:", provinceName);
-        console.log("Matching Province:", selectedProvince);
-    
+        const provinceName = e.target.value; 
+        const selectedProvince = provinces.find(prov => prov.name === provinceName); 
+        
         setFormData(prev => ({
             ...prev,
-            province: selectedProvince ? selectedProvince.name : "", // Store Name Instead of Code
+            province: selectedProvince ? selectedProvince.name : "", 
             city: "",
             barangay: "",
         }));
     
         if (!selectedProvince) return;
     
-        try {
-            const citiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/cities.json`);
-            setCities(citiesResponse.data);
+        if (selectedProvince.name === "NCR (Metro Manila)") {
+            setCities(selectedProvince.cities); // Directly set cities if province is NCR
+            setMunicipalities([]);
+        } else {
+            try {
+                const citiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/cities.json`);
+                setCities(citiesResponse.data);
     
-            const municipalitiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/municipalities.json`);
-            setMunicipalities(municipalitiesResponse.data);
-        } catch (error) {
-            console.error("Error fetching cities or municipalities:", error);
+                const municipalitiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/municipalities.json`);
+                setMunicipalities(municipalitiesResponse.data);
+            } catch (error) {
+                console.error("Error fetching cities or municipalities:", error);
+            }
         }
     
-        setBarangays([]); // Reset barangay options
+        setBarangays([]);
     };
+    
     
     // Handle City Selection
     const handleCityChange = async (e) => {
@@ -381,12 +406,13 @@ const ContactUs = () => {
                     <select name="province" value={formData.province} onChange={handleProvinceChange} required>
                         <option value="">Select Province</option>
                         {provinces.map((prov) => (
-                            <option key={prov.code} value={prov.name}> {/* Store name instead of code */}
+                            <option key={prov.code} value={prov.name}>
                                 {prov.name}
                             </option>
                         ))}
                     </select>
                 </div>
+
     
                 <div className="form-row">
                     <div className="form-group">
