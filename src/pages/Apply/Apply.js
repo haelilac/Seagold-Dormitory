@@ -191,17 +191,18 @@ const ContactUs = () => {
         setFormData({ ...formData, valid_id: file });
     
         const formDataUpload = new FormData();
-        formDataUpload.append('file', file);
-    
+        formDataUpload.append("file", file);
+        formDataUpload.append("id_type", formData.id_type);  // ✅ Append 'id_type' to FormData
+        
         try {
-            const response = await fetch(`https://seagold-python-production.up.railway.app/upload-id/?id_type=${formData.id_type}`, { 
+            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id/", { 
                 method: 'POST',
                 body: formDataUpload,
                 headers: { 
                     Accept: 'application/json'
                 }
             });
-            
+        
             if (!response.ok) {
                 const text = await response.text();
                 throw new Error(`Server Error: ${response.status} - ${text}`);
@@ -211,19 +212,20 @@ const ContactUs = () => {
         
             if (data.error) {
                 alert(`❌ ID Processing Error: ${data.error}`);
-                setIsIdVerified(false); // Mark ID as not verified
+                setIsIdVerified(false);
             } else if (data.id_type_matched) {
                 alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
-                setIsIdVerified(true); // Mark ID as verified
+                setIsIdVerified(true);
             } else {
                 alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
-                setIsIdVerified(false); // Mark ID as not verified
+                setIsIdVerified(false);
             }
         } catch (error) {
             console.error('Error uploading ID:', error);
             alert("Error processing the ID. Please check the console.");
-            setIsIdVerified(false); // Mark ID as not verified
-        }        
+            setIsIdVerified(false);
+        }
+        
     };
 
     const formatDateTime = (date) => {
