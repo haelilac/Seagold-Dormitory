@@ -322,7 +322,7 @@ const getNotificationIcon = (type) => {
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
                 <div className={styles.sidebarHeader}>
-                    <img src="{{ asset('storage/icons/SeagoldLogo.svg') }}" 
+                    <img src="{{ asset('C:\Users\User\OneDrive\Documents\GitHub\Seagold-Dormitory\public\SEA GOLD LOGO 2 (SVG)-01.svg') }}" 
                         alt="Seagold Logo"
                         className={styles.sidebarLogo}
                         onClick={toggleSidebar}
