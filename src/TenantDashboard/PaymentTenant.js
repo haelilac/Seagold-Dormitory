@@ -222,7 +222,6 @@ const PaymentTenant = () => {
     
         console.log("📤 Uploading file:", file.name);
     
-        // ✅ Reset validation and set scanning state
         setReceiptValidated(false);
         setIsScanning(true); // Start scanning
         setFormData((prevData) => ({ ...prevData, receipt: file }));
@@ -241,20 +240,21 @@ const PaymentTenant = () => {
             const textResponse = await response.text();
             console.log("📜 Raw API Response:", textResponse);
     
+            // Check if response is valid JSON
             try {
                 const result = JSON.parse(textResponse);
                 console.log("📊 Parsed JSON:", result);
     
-                if (!response.ok) {
-                    alert(result.message || "❌ Error processing receipt.");
-                    setReceiptValidated(false);
-                } else {
+                if (response.ok && result.extracted_reference && result.extracted_amount) {
                     alert("✅ Receipt validated successfully!");
                     setReceiptValidated(true);
+                } else {
+                    alert(result.message || "❌ Error processing receipt.");
+                    setReceiptValidated(false);
                 }
             } catch (error) {
                 console.error("❌ Error parsing JSON:", error);
-                alert("❌ Server returned an unexpected response.");
+                alert("❌ Server returned an unexpected response. Please check the Laravel backend.");
                 setReceiptValidated(false);
             }
         } catch (error) {
@@ -262,9 +262,10 @@ const PaymentTenant = () => {
             alert("❌ An error occurred while processing the receipt.");
             setReceiptValidated(false);
         } finally {
-            setIsScanning(false); // ✅ Stop scanning once validation is done
+            setIsScanning(false); // Stop scanning once validation is done
         }
-    };    
+    };
+    
     
 
     const handleMonthSelection = (e) => {
