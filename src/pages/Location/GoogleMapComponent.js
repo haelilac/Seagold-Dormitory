@@ -131,7 +131,7 @@ const GoogleMapComponent = () => {
   };
 
   return (
-    <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
+    <LoadScriptNext googleMapsApiKey="AIzaSyBoAmNMyi-pULIdPSAjDMbRsrHMWeXLLrE" libraries={libraries}>
       <div className="map-ui">
         <div className="map-sidebar">
           <h2>📍 Get Directions</h2>
