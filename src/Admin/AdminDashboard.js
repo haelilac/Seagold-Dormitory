@@ -324,7 +324,7 @@ const getNotificationIcon = (type) => {
             <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
                 <div className={styles.sidebarHeader}>
                 <img 
-                    src={process.env.PUBLIC_URL + 'public/seagold-logo2.svg'} 
+                    src="https://seagold-laravel-production.up.railway.app/public/seagold-logo2.svg"
                     alt="SEAGOLD LOGO" 
                     className={styles.sidebarLogo} 
                     onClick={toggleSidebar} 
