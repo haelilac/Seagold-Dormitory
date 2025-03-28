@@ -461,7 +461,7 @@ const PaymentTenant = () => {
                     required
                 />
 
-            <button type="submit" disabled={!receiptValidated || isScanning}>
+            <button type="submit" disabled={isScanning || (!receiptValidated && !isScanning)}>
                 {isScanning ? "Scanning Receipt..." : receiptValidated ? "Submit Payment" : "Waiting for Receipt Validation..."}
             </button>
 
