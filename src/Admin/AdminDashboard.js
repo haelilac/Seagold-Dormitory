@@ -317,15 +317,14 @@ const getNotificationIcon = (type) => {
             )
         );
     };    
-    const logoUrl = 'https://seagold-dormitory.vercel.app/seagold-logo2.svg'; // Your frontend logo URL
 
    return (
     <div className={styles.adminDashboard}>
-        {/* Sidebar */}
-        <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
-            <div className={styles.sidebarHeader}>
+            {/* Sidebar */}
+            <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
+                <div className={styles.sidebarHeader}>
                 <img 
-                    src={logoUrl}  // ✅ Uses the URL variable pointing to your frontend deployment
+                    src="https://seagold-laravel-production.up.railway.app/public/seagold-logo2.svg"
                     alt="SEAGOLD LOGO" 
                     className={styles.sidebarLogo} 
                     onClick={toggleSidebar} 
