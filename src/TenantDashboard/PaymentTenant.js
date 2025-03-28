@@ -245,7 +245,7 @@ const PaymentTenant = () => {
                 const result = JSON.parse(textResponse);
                 console.log("📊 Parsed JSON:", result);
     
-                if (response.ok && result.extracted_reference && result.extracted_amount) {
+                if (response.ok && result.match === true) {
                     alert("✅ Receipt validated successfully!");
                     setReceiptValidated(true);
                 } else {
