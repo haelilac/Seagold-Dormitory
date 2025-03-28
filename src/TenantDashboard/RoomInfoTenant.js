@@ -2,7 +2,7 @@ import React from 'react';
 import './RoomInfo.css';
 
 const RoomCard = () => {
-  const sampleDormImage = '/dormpic1.jpg';
+  const sampleDormImage = 'images/dormpic1.jpg';
   const unitIcon = '/unit.svg';
   const capacityIcon = '/capacity.svg';
   const rentIcon = '/rent.svg';
