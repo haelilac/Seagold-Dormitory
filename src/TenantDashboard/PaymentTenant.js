@@ -221,18 +221,20 @@ const PaymentTenant = () => {
             return;
         }
     
-        console.log("📤 Uploading file:", file.name);
+        const selectedMethod = formData.payment_method;
     
         setFormData((prevData) => ({ ...prevData, receipt: file }));
     
-        // 🚫 Skip validation if payment method is Cash
-        if (formData.payment_method === 'Cash') {
+        // ✅ Skip validation for Cash
+        if (selectedMethod === 'Cash') {
             setReceiptValidated(true);
+            console.log("💰 Cash selected — skipping validation.");
             return;
         }
     
+        // ✅ Continue with GCash validation
         setReceiptValidated(false);
-        setIsScanning(true); // Start scanning
+        setIsScanning(true);
     
         const formDataUpload = new FormData();
         formDataUpload.append("receipt", file);
@@ -246,34 +248,23 @@ const PaymentTenant = () => {
             });
     
             const textResponse = await response.text();
-            console.log("📜 Raw API Response:", textResponse);
+            const result = JSON.parse(textResponse);
     
-            // Check if response is valid JSON
-            try {
-                const result = JSON.parse(textResponse);
-                console.log("📊 Parsed JSON:", result);
-    
-                if (response.ok && result.match === true) {
-                    alert("✅ Receipt validated successfully!");
-                    setReceiptValidated(true);
-                } else {
-                    alert(result.message || "❌ Error processing receipt.");
-                    setReceiptValidated(false);
-                }
-            } catch (error) {
-                console.error("❌ Error parsing JSON:", error);
-                alert("❌ Server returned an unexpected response. Please check the Laravel backend.");
+            if (response.ok && result.match === true) {
+                alert("✅ Receipt validated successfully!");
+                setReceiptValidated(true);
+            } else {
+                alert(result.message || "❌ Error processing receipt.");
                 setReceiptValidated(false);
             }
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ An error occurred while processing the receipt.");
+            alert("❌ Server error while validating receipt.");
             setReceiptValidated(false);
         } finally {
-            setIsScanning(false); // Stop scanning once validation is done
+            setIsScanning(false);
         }
     };
-    
     
 
     const handleMonthSelection = (e) => {
