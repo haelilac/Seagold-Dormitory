@@ -79,6 +79,19 @@ const PaymentTenant = () => {
         });
     }, [tenantId]);
 
+    useEffect(() => {
+        if (tenantId) {
+            window.Echo.channel(`tenant-reminder.${tenantId}`)
+                .listen('.payment.reminder', (data) => {
+                    alert(data.message);
+                })
+                .listen('.payment.rejected', () => {
+                    alert("❌ Your previous payment was rejected.");
+                    fetchPaymentData(tenantId); // 🔄 Re-fetch updated data
+                });
+        }
+    }, [tenantId]);
+
     const [tempAmount, setTempAmount] = useState(""); 
     const [confirmedAmount, setConfirmedAmount] = useState(0); 
     const [displayedRemainingBalance, setDisplayedRemainingBalance] = useState(unitPrice);
@@ -292,7 +305,7 @@ const PaymentTenant = () => {
             alert("⚠️ Please validate your receipt before submitting the payment.");
             return;
         }
-    
+
         if (!formData.payment_for) {
             alert('❌ Please select a payment period.');
             return;
