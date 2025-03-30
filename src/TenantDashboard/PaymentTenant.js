@@ -223,9 +223,16 @@ const PaymentTenant = () => {
     
         console.log("📤 Uploading file:", file.name);
     
+        setFormData((prevData) => ({ ...prevData, receipt: file }));
+    
+        // 🚫 Skip validation if payment method is Cash
+        if (formData.payment_method === 'Cash') {
+            setReceiptValidated(true);
+            return;
+        }
+    
         setReceiptValidated(false);
         setIsScanning(true); // Start scanning
-        setFormData((prevData) => ({ ...prevData, receipt: file }));
     
         const formDataUpload = new FormData();
         formDataUpload.append("receipt", file);
