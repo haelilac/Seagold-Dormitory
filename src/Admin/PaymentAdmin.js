@@ -193,14 +193,15 @@ const PaymentAdmin = () => {
                                         <tr>
                                             <td colSpan="6">
                                                 <div className="expanded-details">
-                                                    <p>Amount Given: ₱{Number(tenant.total_paid || 0).toFixed(2)}</p>
-                                                    <p>Remaining Balance: ₱{Number(tenant.remaining_balance || 0).toFixed(2)}</p>
+                                                    <p>Amount Given: ₱{parseFloat(tenant.total_paid) ? parseFloat(tenant.total_paid).toFixed(2) : '0.00'}</p>
+                                                    <p>Remaining Balance: ₱{parseFloat(tenant.remaining_balance) ? parseFloat(tenant.remaining_balance).toFixed(2) : '0.00'}</p>
+
                                                     <p>Payment Type: {tenant.payment_type}</p>
                                                     <p>Payment Method: {tenant.payment_method}</p>
                                                     <p>Payment Date: {tenant.payment_date}</p>
                                                     <p>Payment Period: {tenant.payment_period}</p>
                                                     <p>Reference Number: {tenant.reference_number}</p>
-                                                    <p>Remaining Balance: ₱{(tenant.remaining_balance || 0).toFixed(2)}</p>
+
 
                                                     {tenant.receipt_path && (
                                                         <img
