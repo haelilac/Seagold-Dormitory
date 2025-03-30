@@ -290,7 +290,7 @@ const PaymentTenant = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!receiptValidated) {
+        if (formData.payment_method === 'GCash' && !receiptValidated) {
             alert("⚠️ Please validate your receipt before submitting the payment.");
             return;
         }
