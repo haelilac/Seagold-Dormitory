@@ -428,43 +428,76 @@ const PaymentTenant = () => {
                     ))}
                 </select>
 
-            <label>Payment Method</label>
-                <select
-                    name="payment_method"
-                    value={formData.payment_method}
-                    onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
-                    required
-                >
-                    <option value="">Select Payment Method</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                    <option value="E-Wallet">E-Wallet</option>
-                </select>
-
+                <label>Payment Method</label>
+                    <select
+                        name="payment_method"
+                        value={formData.payment_method}
+                        onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
+                        required
+                    >
+                        <option value="">Select Payment Method</option>
+                        <option value="GCash">GCash</option>
+                        <option value="Cash">Cash (Please direct to Landlord)</option>
+                    </select>
                 <p>
                     <strong>Payment Type:</strong> {formData.payment_type || "N/A"}
                 </p>
 
+                {formData.payment_method === 'GCash' && (
+                    <>
+                        <label>Reference Number</label>
+                        <input
+                            type="text"
+                            name="reference_number"
+                            onChange={(e) => setFormData({ ...formData, reference_number: e.target.value })}
+                            required
+                        />
 
-                <label>Reference Number</label>
-                <input
-                    type="text"
-                    name="reference_number"
-                    onChange={(e) => setFormData({ ...formData, reference_number: e.target.value })}
-                    required
-                />
+                        <label>Upload Receipt</label>
+                        <input
+                            type="file"
+                            name="receipt"
+                            accept="image/png, image/jpeg, image/jpg, application/pdf"
+                            onChange={(e) => handleReceiptUpload(e)}
+                            required
+                        />
+                    </>
+                )}
 
-                <label>Upload Receipt</label>
-                <input
-                    type="file"
-                    name="receipt"
-                    accept="image/png, image/jpeg, image/jpg, application/pdf"
-                    onChange={(e) => handleReceiptUpload(e)}  // Ensure function is called
-                    required
-                />
+                {formData.payment_method === 'Cash' && (
+                    <>
+                        <label>Proof of Payment (Image)</label>
+                        <input
+                            type="file"
+                            name="receipt"
+                            accept="image/png, image/jpeg, image/jpg"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                setFormData((prevData) => ({
+                                    ...prevData,
+                                    receipt: file || null,
+                                }));
+                            }}
+                        />
+                    </>
+                )}
 
-            <button type="submit" disabled={isScanning || (!receiptValidated && !isScanning)}>
-                {isScanning ? "Scanning Receipt..." : receiptValidated ? "Submit Payment" : "Waiting for Receipt Validation..."}
-            </button>
+                <button
+                    type="submit"
+                    disabled={
+                        isScanning ||
+                        (formData.payment_method === 'GCash' && !receiptValidated && !isScanning)
+                    }
+                >
+                    {formData.payment_method === 'Cash'
+                        ? "Submit Cash Payment"
+                        : isScanning
+                        ? "Scanning Receipt..."
+                        : receiptValidated
+                        ? "Submit Payment"
+                        : "Waiting for Receipt Validation..."}
+                </button>
+
 
             </form>
 
