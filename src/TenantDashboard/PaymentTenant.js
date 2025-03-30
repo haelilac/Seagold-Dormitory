@@ -466,7 +466,7 @@ const PaymentTenant = () => {
 
                 {formData.payment_method === 'Cash' && (
                     <>
-                        <label>Proof of Payment (Image)</label>
+                        <label>Optional Proof of Payment (Image)</label>
                         <input
                             type="file"
                             name="receipt"
@@ -476,6 +476,7 @@ const PaymentTenant = () => {
                                 setFormData((prevData) => ({
                                     ...prevData,
                                     receipt: file || null,
+                                    reference_number: `CASH-${Date.now()}` // auto-ref if needed
                                 }));
                             }}
                         />
