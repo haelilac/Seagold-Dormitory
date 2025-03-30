@@ -55,7 +55,7 @@ const PaymentAdmin = () => {
                     payment_period: p.payment_period
                 })),
                 ...unpaidData.map((u) => ({
-                    id: u.id,
+                    id: null,  // No payment ID
                     user_id: u.id,
                     name: u.name,
                     unit_code: u.unit_code || 'N/A',
@@ -209,24 +209,11 @@ const PaymentAdmin = () => {
                                                             className="receipt-preview"
                                                         />
                                                     )}
-
-                                                    {tenant.status?.toLowerCase() === 'pending' && (
-                                                        <>
-                                                            <button
-                                                                onClick={() =>
-                                                                    handleStatusUpdate(tenant.id, 'Confirmed')
-                                                                }
-                                                            >
-                                                                Confirm
-                                                            </button>
-                                                            <button
-                                                                onClick={() =>
-                                                                    handleStatusUpdate(tenant.id, 'Rejected')
-                                                                }
-                                                            >
-                                                                Reject
-                                                            </button>
-                                                        </>
+                                                    {tenant.status?.toLowerCase() === 'pending' && tenant.id && (
+                                                    <>
+                                                        <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>Confirm</button>
+                                                        <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>Reject</button>
+                                                    </>
                                                     )}
                                                 </div>
                                             </td>
