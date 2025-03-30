@@ -29,11 +29,10 @@ const PaymentAdmin = () => {
                 }),
             ]);
 
-            const paymentsData = paymentsRes.ok ? await paymentsRes.json() : { data: [] };
+            const paymentsData = paymentsRes.ok ? await paymentsRes.json() : [];
             const unpaidData = unpaidRes.ok ? await unpaidRes.json() : [];
 
-            const payments = Array.isArray(paymentsData.data) ? paymentsData.data : [];
-            const unpaid = Array.isArray(unpaidData) ? unpaidData : [];
+            const payments = Array.isArray(paymentsData) ? paymentsData : [];
 
             const merged = [
                 ...payments.map((p) => ({
@@ -42,12 +41,20 @@ const PaymentAdmin = () => {
                     name: p.tenant_name,
                     unit_code: p.unit_code || 'N/A',
                     total_due: `₱${parseFloat(p.amount).toFixed(2)}`,
-                    balance: '₱0.00',
-                    due_date: '-',
+                    balance: `₱${parseFloat(p.remaining_balance || 0).toFixed(2)}`,
+                    due_date: p.payment_period || 'N/A',
                     status: p.status,
                     receipt_path: p.receipt_path || null,
+                    payment_type: p.payment_type,
+                    payment_method: p.payment_method,
+                    reference_number: p.reference_number,
+                    payment_date: p.submitted_at,
+                    remaining_balance: p.remaining_balance,
+                    total_paid: p.amount,
+                    remaining_months: '-', // Optional
+                    payment_period: p.payment_period
                 })),
-                ...unpaid.map((u) => ({
+                ...unpaidData.map((u) => ({
                     id: u.id,
                     user_id: u.id,
                     name: u.name,
@@ -70,15 +77,14 @@ const PaymentAdmin = () => {
         }
     };
 
-    const handleStatusUpdate = async (user_id, status) => {
+    const handleStatusUpdate = async (paymentId, status) => {
         const token = localStorage.getItem('token');
-    
         try {
             const endpoint =
                 status === 'Confirmed'
-                    ? `https://seagold-laravel-production.up.railway.app/api/payments/confirm/${user_id}`
-                    : `https://seagold-laravel-production.up.railway.app/api/payments/reject/${user_id}`;
-    
+                    ? `https://seagold-laravel-production.up.railway.app/api/payments/confirm/${paymentId}`
+                    : `https://seagold-laravel-production.up.railway.app/api/payments/reject/${paymentId}`;
+
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
@@ -86,9 +92,9 @@ const PaymentAdmin = () => {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (!response.ok) throw new Error(`Failed to ${status.toLowerCase()} payment`);
-    
+
             alert(`Payment ${status} successfully!`);
             setExpandedRow(null);
             fetchMergedData();
@@ -97,8 +103,6 @@ const PaymentAdmin = () => {
             alert(`Failed to ${status.toLowerCase()} payment`);
         }
     };
-    
-    
 
     useEffect(() => {
         fetchMergedData();
@@ -109,7 +113,6 @@ const PaymentAdmin = () => {
         setFilters({ ...filters, [name]: value.padStart(2, '0') });
     };
 
-    // Group tenants by unit
     const groupByUnit = (data) => {
         return data.reduce((acc, tenant) => {
             const unit = tenant.unit_code || 'N/A';
@@ -160,7 +163,7 @@ const PaymentAdmin = () => {
                                 <th>Tenant</th>
                                 <th>Total Due</th>
                                 <th>Balance</th>
-                                <th>Due Date</th>
+                                <th>Payment Period</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -172,10 +175,10 @@ const PaymentAdmin = () => {
                                         <td>{tenant.name}</td>
                                         <td>{tenant.total_due}</td>
                                         <td>{tenant.balance}</td>
-                                        <td>{tenant.due_date}</td>
+                                        <td>{tenant.payment_period}</td>
                                         <td>{tenant.status}</td>
                                         <td>
-                                        {tenant.status?.toLowerCase() === 'pending' && (
+                                            {tenant.status?.toLowerCase() === 'pending' && (
                                                 <button
                                                     onClick={() =>
                                                         setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
@@ -192,52 +195,45 @@ const PaymentAdmin = () => {
                                                 <div className="expanded-details">
                                                     <p>Amount Given: ₱{(tenant.total_paid || 0).toFixed(2)}</p>
                                                     <p>Payment Type: {tenant.payment_type}</p>
+                                                    <p>Payment Method: {tenant.payment_method}</p>
                                                     <p>Payment Date: {tenant.payment_date}</p>
+                                                    <p>Payment Period: {tenant.payment_period}</p>
                                                     <p>Reference Number: {tenant.reference_number}</p>
-                                                    <p>Remaining Months: {tenant.remaining_months}</p>
                                                     <p>Remaining Balance: ₱{(tenant.remaining_balance || 0).toFixed(2)}</p>
+
                                                     {tenant.receipt_path && (
-                                                        <>
-                                                            {console.log('Image Path:', tenant.receipt_path)} {/* Log the receipt path */}
-                                                            <img
-                                                                src={`${tenant.receipt_path}`} // Explicitly using the full path
-                                                                alt="Receipt"
-                                                                className="receipt-preview"
-                                                            />
-                                                        </>
+                                                        <img
+                                                            src={tenant.receipt_path}
+                                                            alt="Receipt"
+                                                            className="receipt-preview"
+                                                        />
                                                     )}
 
-
-
-
-                                                    {/* Confirm and Reject Buttons */}
                                                     {tenant.status?.toLowerCase() === 'pending' && (
                                                         <>
-                                                        <button
-                                                            onClick={() =>
-                                                                handleStatusUpdate(tenant.user_id, 'Confirmed')
-                                                            }
-                                                        >
-                                                            Confirm
-                                                        </button>
-                                                        <button
-                                                            onClick={() =>
-                                                                handleStatusUpdate(tenant.user_id, 'Rejected')
-                                                            }
-                                                        >
-                                                            Reject
-                                                        </button>
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleStatusUpdate(tenant.id, 'Confirmed')
+                                                                }
+                                                            >
+                                                                Confirm
+                                                            </button>
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleStatusUpdate(tenant.id, 'Rejected')
+                                                                }
+                                                            >
+                                                                Reject
+                                                            </button>
                                                         </>
                                                     )}
                                                 </div>
                                             </td>
                                         </tr>
                                     )}
-
                                 </React.Fragment>
                             ))}
                         </tbody>
-
                     </table>
                 </div>
             ))}
