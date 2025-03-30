@@ -81,10 +81,10 @@ const PaymentAdmin = () => {
         const token = localStorage.getItem('token');
         try {
             const endpoint =
-                status === 'Confirmed'
-                    ? `https://seagold-laravel-production.up.railway.app/api/payments/confirm/${paymentId}`
-                    : `https://seagold-laravel-production.up.railway.app/api/payments/reject/${paymentId}`;
-
+            status === 'Confirmed'
+                ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
+                : `https://seagold-laravel-production.up.railway.app/api/payments/reject/${paymentId}`;
+        
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
