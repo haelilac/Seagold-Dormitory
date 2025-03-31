@@ -89,16 +89,19 @@ const PaymentAdmin = () => {
                     payment_period: p.payment_period
                 })),
                 ...unpaidData.map((u) => ({
-                    id: null,  // No payment ID
+                    id: null,
                     user_id: u.id,
                     name: u.name,
                     unit_code: u.unit_code || 'N/A',
                     total_due: `₱${parseFloat(u.total_due).toFixed(2)}`,
                     balance: `₱${parseFloat(u.balance).toFixed(2)}`,
                     due_date: u.due_date || 'N/A',
-                    status: u.status,
+                    status: 'Unpaid',
+                    last_payment: u.last_payment || null,
+                    unpaid_months: u.unpaid_months || 1,
                     receipt_path: null,
                 })),
+                     
             ];
 
             setMergedData(merged);
@@ -159,7 +162,7 @@ const PaymentAdmin = () => {
             return acc;
         }, {});
     };
-    
+
     const groupedData = groupByUnit(
         mergedData.filter((tenant) => tenant.status !== 'Unpaid')
       );
