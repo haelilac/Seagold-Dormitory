@@ -269,8 +269,8 @@ const PaymentAdmin = () => {
                                     </tr>
                                     {expandedRow === tenant.id && (
                                         <tr>
-                                            <td colSpan="6">
-                                                <div className="expanded-details">
+                                            <td colSpan="7">
+                                            <table className="inner-table">
                                                 <p>Amount Given: ₱{!isNaN(Number(tenant.total_paid)) ? Number(tenant.total_paid).toFixed(2) : '0.00'}</p>
                                                 <p>Remaining Balance: ₱{!isNaN(Number(tenant.remaining_balance)) ? Number(tenant.remaining_balance).toFixed(2) : '0.00'}</p>
                                                 <p>Payment Type: {tenant.payment_type}</p>
@@ -301,7 +301,7 @@ const PaymentAdmin = () => {
                                                         <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>Reject</button>
                                                     </>
                                                     )}
-                                                </div>
+                                                 </table>
                                             </td>
                                         </tr>
                                     )}
