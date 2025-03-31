@@ -95,8 +95,8 @@ const PaymentAdmin = () => {
     const handleStatusUpdate = async (paymentId, status) => {
         const token = localStorage.getItem('token');
         const endpoint = status === 'Confirmed'
-            ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
-            : `https://seagold-laravel-production.up.railway.app/api/payments/reject/${paymentId}`;
+        ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
+        : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`; // ✅ This will now work!    
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
