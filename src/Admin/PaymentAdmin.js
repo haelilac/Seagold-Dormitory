@@ -310,6 +310,10 @@ const PaymentAdmin = () => {
 
                                 </React.Fragment>
                             ))}
+                        </tbody>
+                    </table>
+                </div>
+            ))}
 
                                                                 {/* === Unpaid Tenants Table === */}
                                                                 <div className="unpaid-section">
@@ -349,11 +353,6 @@ const PaymentAdmin = () => {
                                             </tbody>
                                         </table>
                                     </div>
-                        </tbody>
-                    </table>
-                </div>
-            ))}
-
             <div className="payment-badges">
                 <span className="badge unpaid">
                     Unpaid: {mergedData.filter(d => d.status === 'Unpaid').length} tenants
