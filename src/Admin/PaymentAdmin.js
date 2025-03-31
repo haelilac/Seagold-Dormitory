@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './PaymentAdmin.css';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const PaymentAdmin = () => {
     const [mergedData, setMergedData] = useState([]);
@@ -14,6 +15,29 @@ const PaymentAdmin = () => {
     const [expandedRow, setExpandedRow] = useState(null);
     const [explanation, setExplanation] = useState('');
 
+    const getPaymentStatusCounts = () => {
+        const summary = {
+            Confirmed: 0,
+            Pending: 0,
+            Rejected: 0,
+            Unpaid: 0,
+        };
+    
+        mergedData.forEach((item) => {
+            if (item.status === "Confirmed") summary.Confirmed += 1;
+            else if (item.status === "Pending") summary.Pending += 1;
+            else if (item.status === "Rejected") summary.Rejected += 1;
+            else if (item.status === "Unpaid") summary.Unpaid += 1;
+        });
+    
+        return [
+            { name: 'Paid', value: summary.Confirmed },
+            { name: 'Pending', value: summary.Pending },
+            { name: 'Rejected', value: summary.Rejected },
+            { name: 'Unpaid', value: summary.Unpaid },
+        ];
+    };
+    
     const fetchMergedData = async () => {
         const token = localStorage.getItem('token');
         const query = new URLSearchParams(filters).toString();
@@ -125,6 +149,7 @@ const PaymentAdmin = () => {
     const groupedData = groupByUnit(mergedData);
 
     return (
+        
         <div className="admin-payment-container">
             <h2>Admin Payment Dashboard</h2>
 
@@ -164,6 +189,7 @@ const PaymentAdmin = () => {
                                 <th>Total Due</th>
                                 <th>Balance</th>
                                 <th>Payment Period</th>
+                                <th>Date & Time</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -176,6 +202,15 @@ const PaymentAdmin = () => {
                                         <td>{tenant.total_due}</td>
                                         <td>{tenant.balance}</td>
                                         <td>{tenant.payment_period}</td>
+                                        <td>
+                                        {tenant.payment_date
+                                            ? new Date(tenant.payment_date).toLocaleString('en-PH', {
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short',
+                                            })
+                                            : 'N/A'}
+                                        </td>
+                                        <td>{tenant.status}</td>
                                         <td>{tenant.status}</td>
                                         <td>
                                             {tenant.status?.toLowerCase() === 'pending' && (
@@ -197,7 +232,15 @@ const PaymentAdmin = () => {
                                                 <p>Remaining Balance: ₱{!isNaN(Number(tenant.remaining_balance)) ? Number(tenant.remaining_balance).toFixed(2) : '0.00'}</p>
                                                 <p>Payment Type: {tenant.payment_type}</p>
                                                 <p>Payment Method: {tenant.payment_method}</p>
-                                                <p>Payment Date: {tenant.payment_date}</p>
+                                                <p>
+                                                    Payment Date:{" "}
+                                                    {tenant.payment_date
+                                                        ? new Date(tenant.payment_date).toLocaleString('en-PH', {
+                                                            dateStyle: 'medium',
+                                                            timeStyle: 'short',
+                                                        })
+                                                        : "N/A"}
+                                                    </p>
                                                 <p>Payment Period: {tenant.payment_period}</p>
                                                 <p>Reference Number: {tenant.reference_number}</p>
 
@@ -225,6 +268,30 @@ const PaymentAdmin = () => {
                     </table>
                 </div>
             ))}
+            <div className="chart-container" style={{ width: '100%', height: 300 }}>
+                <h3>Payment Status Overview</h3>
+                <ResponsiveContainer>
+                    <PieChart>
+                        <Pie
+                            data={getPaymentStatusCounts()}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={100}
+                            label
+                        >
+                            <Cell fill="#4CAF50" /> {/* Paid - Green */}
+                            <Cell fill="#FFC107" /> {/* Pending - Yellow */}
+                            <Cell fill="#F44336" /> {/* Rejected - Red */}
+                            <Cell fill="#9E9E9E" /> {/* Unpaid - Gray */}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+
         </div>
     );
 };

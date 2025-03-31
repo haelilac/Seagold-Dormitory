@@ -218,9 +218,25 @@ const PaymentTenant = () => {
                 unpaidMonths.push(month);
             }
         });
+
+        const limitedMonths = [];
+
+            for (let month of months) {
+                const status = monthStatus[month];
+
+                if (status && status.remainingBalance > 0) {
+                    limitedMonths.push(month); // First partially paid month
+                    break;
+                }
+
+                if (!status) {
+                    limitedMonths.push(month); // First fully unpaid month
+                    break;
+                }
+            }
     
-        setAvailableMonths([...partiallyPaidMonths, ...unpaidMonths]);
-        setFirstPartialMonth(firstPartiallyPaid); // ✅ Save first partially paid month
+        setAvailableMonths(limitedMonths);
+        setFirstPartialMonth(limitedMonths[0]); // ✅ Save first partially paid month
     };
     
     
@@ -580,21 +596,26 @@ const PaymentTenant = () => {
                     {paymentHistory.length > 0 ? (
                         <div className="payment-history">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Amount Paid</th>
-                                        <th>Remaining Balance</th>
-                                        <th>Payment Type</th>
-                                        <th>Payment Method</th>
-                                        <th>Reference Number</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Amount Paid</th>
+                                    <th>Remaining Balance</th>
+                                    <th>Payment Type</th>
+                                    <th>Payment Method</th>
+                                    <th>Reference Number</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                                 <tbody>
                                     {paymentHistory.map((payment, index) => (
                                         <tr key={index}>
-                                            <td>{payment.payment_period}</td>
+                                            <td>
+                                            {new Date(payment.created_at || payment.payment_period).toLocaleString('en-PH', {
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short',
+                                            })}
+                                            </td>
                                             <td>₱{payment.amount}</td>
                                             <td>₱{payment.remaining_balance}</td>
                                             <td>{payment.payment_method}</td> {/* ✅ "E-Wallet" or "Bank Transfer" */}
