@@ -149,7 +149,74 @@ const PaymentAdmin = () => {
 
     const groupedData = groupByUnit(mergedData.filter((t) => t.status !== 'Unpaid'));
     const years = getYearsFromData(mergedData);
-
+    const renderTableByStatus = (status) => {
+        const filtered = mergedData.filter(t => t.status === status);
+        if (!filtered.length) return <p>No records found.</p>;
+    
+        return (
+            <table className="payment-table">
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Unit</th>
+                        <th>Amount</th>
+                        <th>Payment Period</th>
+                        <th>Date & Time</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filtered.map((tenant, index) => (
+                        <tr key={index}>
+                            <td>{tenant.name}</td>
+                            <td>{tenant.unit_code}</td>
+                            <td>{tenant.total_due}</td>
+                            <td>{tenant.payment_period}</td>
+                            <td>{formatDate(tenant.payment_date)}</td>
+                            <td>{tenant.reference_number}</td>
+                            <td>{tenant.status}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        );
+    };
+    
+    const renderUnpaidTable = () => {
+        const unpaid = mergedData.filter(t => t.status === 'Unpaid');
+        if (!unpaid.length) return <p>No unpaid tenants.</p>;
+    
+        return (
+            <table className="payment-table">
+                <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Unit</th>
+                        <th>Due For (Month)</th>
+                        <th>Expected Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {unpaid.map((tenant) => (
+                        <tr key={tenant.user_id}>
+                            <td>{tenant.name}</td>
+                            <td>{tenant.unit_code}</td>
+                            <td>{tenant.due_date}</td>
+                            <td>{tenant.total_due}</td>
+                            <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
+                            <td>
+                                <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        );
+    };
+    
     return (
         <div className="admin-payment-container">
             <h2>Admin Payment Dashboard</h2>
@@ -179,13 +246,25 @@ const PaymentAdmin = () => {
                 <button onClick={exportToCSV}>Export CSV</button>
             </div>
 
-            {/* Dynamic summary badges */}
-            <div className="summary-badges">
-                <span className="badge confirmed">Confirmed: {paymentSummary.Confirmed}</span>
-                <span className="badge pending">Pending: {paymentSummary.Pending}</span>
-                <span className="badge rejected">Rejected: {paymentSummary.Rejected}</span>
-                <span className="badge unpaid">Unpaid: {paymentSummary.Unpaid}</span>
+            <div className="summary-sections">
+                <div className="summary-section">
+                    <h3 className="badge confirmed">Confirmed: {paymentSummary.Confirmed}</h3>
+                    {renderTableByStatus('Confirmed')}
+                </div>
+                <div className="summary-section">
+                    <h3 className="badge pending">Pending: {paymentSummary.Pending}</h3>
+                    {renderTableByStatus('Pending')}
+                </div>
+                <div className="summary-section">
+                    <h3 className="badge rejected">Rejected: {paymentSummary.Rejected}</h3>
+                    {renderTableByStatus('Rejected')}
+                </div>
+                <div className="summary-section">
+                    <h3 className="badge unpaid">Unpaid: {paymentSummary.Unpaid}</h3>
+                    {renderUnpaidTable()}
+                </div>
             </div>
+
             {/* Table */}
             {Object.keys(groupedData).map((unit) => (
                 <div key={unit} className="unit-section">
