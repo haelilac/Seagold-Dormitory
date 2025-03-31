@@ -57,6 +57,7 @@ const PaymentAdmin = () => {
             const merged = [
                 ...payments.map((p) => ({
                     ...p,
+                    name: p.tenant_name,
                     total_due: `₱${parseFloat(p.amount).toFixed(2)}`,
                     balance: `₱${parseFloat(p.remaining_balance || 0).toFixed(2)}`,
                     payment_date: p.submitted_at,
