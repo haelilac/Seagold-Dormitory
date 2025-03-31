@@ -167,7 +167,7 @@ const PaymentAdmin = () => {
         mergedData.filter((tenant) => tenant.status !== 'Unpaid')
       );
       
-    const sendReminder = async (id) => {
+      const sendReminder = async (id) => {
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
@@ -178,16 +178,20 @@ const PaymentAdmin = () => {
                 }
             });
     
+            const data = await res.json();
+            console.log('🔔 Reminder API response:', data);
+    
             if (res.ok) {
                 alert("Reminder sent!");
             } else {
-                alert("Failed to send reminder.");
+                alert("Failed to send reminder: " + data.message);
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error sending reminder:", error);
             alert("Error sending reminder.");
         }
     };
+    
     
     const viewProfile = (id) => {
         // If using React Router
