@@ -175,8 +175,10 @@ const PaymentAdmin = () => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({}) // <== force it to be a real POST
             });
+            
     
             const data = await res.json();
             console.log('🔔 Reminder API response:', data);
