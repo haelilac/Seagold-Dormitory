@@ -271,8 +271,8 @@ const PaymentAdmin = () => {
                                         <tr>
                                             <td colSpan="7">
                                                 <div className="expanded-details">
-                                                <p>Amount Given: ₱{...}</p>
-                                                <p>Remaining Balance: ₱{...}</p>
+                                                <p>Amount Given: ₱{Number(tenant.total_paid).toFixed(2)}</p>
+                                                <p>Remaining Balance: ₱{Number(tenant.remaining_balance).toFixed(2)}</p>
                                                 <p>Payment Type: {tenant.payment_type}</p>
                                                 <p>Payment Method: {tenant.payment_method}</p>
                                                 <p>
