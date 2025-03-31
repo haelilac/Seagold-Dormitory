@@ -223,80 +223,134 @@ const PaymentAdmin = () => {
                 </select>
             </div>
 
-                {/* Grouped Payments Table */}
-                {Object.keys(groupedData).map((unit) => (
-                    <div key={unit} className="unit-section">
-                        <h3>Unit {unit}</h3>
-                        <table className="payment-table">
-                            <thead>
-                                <tr>
-                                    <th>Tenant</th>
-                                    <th>Total Due</th>
-                                    <th>Balance</th>
-                                    <th>Payment Period</th>
-                                    <th>Date & Time</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {groupedData[unit].map((tenant) => (
-                                    <React.Fragment key={tenant.id ?? tenant.user_id}>
+            {/* Table */}
+            {Object.keys(groupedData).map((unit) => (
+                <div key={unit} className="unit-section">
+                    <h3>Unit {unit}</h3>
+                    <table className="payment-table">
+                        <thead>
+                            <tr>
+                                <th>Tenant</th>
+                                <th>Total Due</th>
+                                <th>Balance</th>
+                                <th>Payment Period</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {groupedData[unit].map((tenant) => (
+                                <React.Fragment key={tenant.id}>
+                                    <tr>
+                                        <td>{tenant.name}</td>
+                                        <td>{tenant.total_due}</td>
+                                        <td>{tenant.balance}</td>
+                                        <td>{tenant.payment_period}</td>
+                                        <td>
+                                        {tenant.payment_date
+                                            ? new Date(tenant.payment_date).toLocaleString('en-PH', {
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short',
+                                            })
+                                            : 'N/A'}
+                                        </td>
+                                        <td>{tenant.status}</td>
+                                        <td>{tenant.status}</td>
+                                        <td>
+                                            {tenant.status?.toLowerCase() === 'pending' && (
+                                                <button
+                                                    onClick={() =>
+                                                        setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
+                                                    }
+                                                >
+                                                    {expandedRow === tenant.id ? 'Close' : 'Actions'}
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                    {expandedRow === tenant.id && (
                                         <tr>
-                                            <td>{tenant.name}</td>
-                                            <td>{tenant.total_due}</td>
-                                            <td>{tenant.balance}</td>
-                                            <td>{tenant.payment_period}</td>
-                                            <td>{tenant.payment_date
-                                                ? new Date(tenant.payment_date).toLocaleString('en-PH', {
-                                                    dateStyle: 'medium',
-                                                    timeStyle: 'short',
-                                                }) : 'N/A'}
-                                            </td>
-                                            <td>{tenant.status}</td>
-                                            <td>
-                                                {tenant.status?.toLowerCase() === 'pending' && (
-                                                    <button
-                                                        onClick={() =>
-                                                            setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
-                                                        }
-                                                    >
-                                                        {expandedRow === tenant.id ? 'Close' : 'Actions'}
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
+                                            <td colSpan="6">
+                                                <div className="expanded-details">
+                                                <p>Amount Given: ₱{!isNaN(Number(tenant.total_paid)) ? Number(tenant.total_paid).toFixed(2) : '0.00'}</p>
+                                                <p>Remaining Balance: ₱{!isNaN(Number(tenant.remaining_balance)) ? Number(tenant.remaining_balance).toFixed(2) : '0.00'}</p>
+                                                <p>Payment Type: {tenant.payment_type}</p>
+                                                <p>Payment Method: {tenant.payment_method}</p>
+                                                <p>
+                                                    Payment Date:{" "}
+                                                    {tenant.payment_date
+                                                        ? new Date(tenant.payment_date).toLocaleString('en-PH', {
+                                                            dateStyle: 'medium',
+                                                            timeStyle: 'short',
+                                                        })
+                                                        : "N/A"}
+                                                    </p>
+                                                <p>Payment Period: {tenant.payment_period}</p>
+                                                <p>Reference Number: {tenant.reference_number}</p>
 
-                                        {expandedRow === tenant.id && (
-                                            <tr>
-                                                <td colSpan="7">
-                                                    <div className="expanded-details">
-                                                        <p>Amount Given: ₱{Number(tenant.total_paid).toFixed(2)}</p>
-                                                        <p>Remaining Balance: ₱{Number(tenant.remaining_balance).toFixed(2)}</p>
-                                                        <p>Payment Type: {tenant.payment_type}</p>
-                                                        <p>Payment Method: {tenant.payment_method}</p>
-                                                        <p>Payment Date: {tenant.payment_date
-                                                            ? new Date(tenant.payment_date).toLocaleString('en-PH', {
-                                                                dateStyle: 'medium',
-                                                                timeStyle: 'short',
-                                                            }) : 'N/A'}
-                                                        </p>
-                                                        <p>Reference Number: {tenant.reference_number}</p>
-                                                        {tenant.receipt_path && (
-                                                            <img src={tenant.receipt_path} alt="Receipt" className="receipt-preview" />
-                                                        )}
+
+                                                    {tenant.receipt_path && (
+                                                        <img
+                                                            src={tenant.receipt_path}
+                                                            alt="Receipt"
+                                                            className="receipt-preview"
+                                                        />
+                                                    )}
+                                                    {tenant.status?.toLowerCase() === 'pending' && tenant.id && (
+                                                    <>
                                                         <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>Confirm</button>
                                                         <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>Reject</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                ))}
+                                                    </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ))}
+                        {/* === Unpaid Tenants Table === */}
+                        <div className="unpaid-section">
+                <h3>Unpaid Tenants</h3>
+                <table className="payment-table unpaid-table">
+                    <thead>
+                        <tr>
+                            <th>Tenant</th>
+                            <th>Unit</th>
+                            <th>Due For (Month)</th>
+                            <th>Expected Amount</th>
+                            <th>Status</th>
+                            <th>Last Payment</th>
+                            <th>Unpaid Months</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {mergedData.filter((t) => t.status === 'Unpaid').map((tenant) => (
+                            <tr key={tenant.user_id}>
+                                <td>{tenant.name}</td>
+                                <td>{tenant.unit_code}</td>
+                                <td>{tenant.due_date}</td>
+                                <td>{tenant.total_due}</td>
+                                <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
+                                <td>{tenant.last_payment ? new Date(tenant.last_payment).toLocaleDateString('en-PH') : 'N/A'}</td>
+                                <td>{tenant.unpaid_months || '1'}</td>
+                                <td>
+                                    <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
+                                    <button onClick={() => viewProfile(tenant.user_id)}>View</button>
+                                    <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
             <div className="payment-badges">
                 <span className="badge unpaid">
                     Unpaid: {mergedData.filter(d => d.status === 'Unpaid').length} tenants
