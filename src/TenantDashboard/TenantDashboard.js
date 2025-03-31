@@ -24,18 +24,18 @@ const TenantDashboard = () => {
             navigate('/login');
             return;
         }
-
+    
         const fetchData = async () => {
             try {
-                const response = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+                const userRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                setUserData(response.data);
-
-                const notificationsResponse = await axios.get('https://seagold-laravel-production.up.railway.app/api/notifications', {
+                setUserData(userRes.data);
+    
+                const notifRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/notifications', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                setNotifications(notificationsResponse.data);
+                setNotifications(notifRes.data);
             } catch (error) {
                 if (error.response?.status === 401) {
                     localStorage.removeItem('token');
@@ -43,10 +43,13 @@ const TenantDashboard = () => {
                 }
             }
         };
-
+    
         fetchData();
-        setDarkMode(localStorage.getItem('theme') === 'dark');
+        const interval = setInterval(fetchData, 30000); // every 30 seconds
+    
+        return () => clearInterval(interval); // cleanup
     }, [navigate]);
+    
 
     // Filter notifications based on user role
     useEffect(() => {
