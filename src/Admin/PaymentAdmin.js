@@ -270,40 +270,44 @@ const PaymentAdmin = () => {
                                     {expandedRow === tenant.id && (
                                         <tr>
                                             <td colSpan="7">
-                                            <table className="inner-table">
-                                                <p>Amount Given: ₱{!isNaN(Number(tenant.total_paid)) ? Number(tenant.total_paid).toFixed(2) : '0.00'}</p>
-                                                <p>Remaining Balance: ₱{!isNaN(Number(tenant.remaining_balance)) ? Number(tenant.remaining_balance).toFixed(2) : '0.00'}</p>
+                                                <div className="expanded-details">
+                                                <p>Amount Given: ₱{...}</p>
+                                                <p>Remaining Balance: ₱{...}</p>
                                                 <p>Payment Type: {tenant.payment_type}</p>
                                                 <p>Payment Method: {tenant.payment_method}</p>
                                                 <p>
-                                                    Payment Date:{" "}
+                                                    Payment Date:{' '}
                                                     {tenant.payment_date
-                                                        ? new Date(tenant.payment_date).toLocaleString('en-PH', {
-                                                            dateStyle: 'medium',
-                                                            timeStyle: 'short',
+                                                    ? new Date(tenant.payment_date).toLocaleString('en-PH', {
+                                                        dateStyle: 'medium',
+                                                        timeStyle: 'short',
                                                         })
-                                                        : "N/A"}
-                                                    </p>
-                                                <p>Payment Period: {tenant.payment_period}</p>
+                                                    : 'N/A'}
+                                                </p>
                                                 <p>Reference Number: {tenant.reference_number}</p>
 
+                                                {tenant.receipt_path && (
+                                                    <img
+                                                    src={tenant.receipt_path}
+                                                    alt="Receipt"
+                                                    className="receipt-preview"
+                                                    />
+                                                )}
 
-                                                    {tenant.receipt_path && (
-                                                        <img
-                                                            src={tenant.receipt_path}
-                                                            alt="Receipt"
-                                                            className="receipt-preview"
-                                                        />
-                                                    )}
-                                                    {tenant.status?.toLowerCase() === 'pending' && tenant.id && (
+                                                {tenant.status?.toLowerCase() === 'pending' && tenant.id && (
                                                     <>
-                                                        <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>Confirm</button>
-                                                        <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>Reject</button>
+                                                    <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>
+                                                        Confirm
+                                                    </button>
+                                                    <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>
+                                                        Reject
+                                                    </button>
                                                     </>
-                                                    )}
-                                                 </table>
+                                                )}
+                                                </div>
                                             </td>
-                                        </tr>
+                                            </tr>
+
                                     )}
 
                                 </React.Fragment>
