@@ -222,7 +222,44 @@ const PaymentAdmin = () => {
                     <option value="Unpaid">Unpaid</option>
                 </select>
             </div>
-
+                                  {/* === ✅ Unpaid Tenants Table – Now correctly placed OUTSIDE the grouped map === */}
+                                  <div className="unpaid-section">
+                    <h3>Unpaid Tenants</h3>
+                    <table className="payment-table unpaid-table">
+                        <thead>
+                            <tr>
+                                <th>Tenant</th>
+                                <th>Unit</th>
+                                <th>Due For (Month)</th>
+                                <th>Expected Amount</th>
+                                <th>Status</th>
+                                <th>Last Payment</th>
+                                <th>Unpaid Months</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {mergedData
+                                .filter((t) => t.status === 'Unpaid')
+                                .map((tenant) => (
+                                    <tr key={tenant.user_id}>
+                                        <td>{tenant.name}</td>
+                                        <td>{tenant.unit_code}</td>
+                                        <td>{tenant.due_date}</td>
+                                        <td>{tenant.total_due}</td>
+                                        <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
+                                        <td>{tenant.last_payment ? new Date(tenant.last_payment).toLocaleDateString('en-PH') : 'N/A'}</td>
+                                        <td>{tenant.unpaid_months || '1'}</td>
+                                        <td>
+                                            <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
+                                            <button onClick={() => viewProfile(tenant.user_id)}>View</button>
+                                            <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+                </div>
             {/* Table */}
             {Object.keys(groupedData).map((unit) => (
                 <div key={unit} className="unit-section">
@@ -311,44 +348,6 @@ const PaymentAdmin = () => {
                             ))}
                         </tbody>
                     </table>
-                                    {/* === ✅ Unpaid Tenants Table – Now correctly placed OUTSIDE the grouped map === */}
-                <div className="unpaid-section">
-                    <h3>Unpaid Tenants</h3>
-                    <table className="payment-table unpaid-table">
-                        <thead>
-                            <tr>
-                                <th>Tenant</th>
-                                <th>Unit</th>
-                                <th>Due For (Month)</th>
-                                <th>Expected Amount</th>
-                                <th>Status</th>
-                                <th>Last Payment</th>
-                                <th>Unpaid Months</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {mergedData
-                                .filter((t) => t.status === 'Unpaid')
-                                .map((tenant) => (
-                                    <tr key={tenant.user_id}>
-                                        <td>{tenant.name}</td>
-                                        <td>{tenant.unit_code}</td>
-                                        <td>{tenant.due_date}</td>
-                                        <td>{tenant.total_due}</td>
-                                        <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
-                                        <td>{tenant.last_payment ? new Date(tenant.last_payment).toLocaleDateString('en-PH') : 'N/A'}</td>
-                                        <td>{tenant.unpaid_months || '1'}</td>
-                                        <td>
-                                            <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
-                                            <button onClick={() => viewProfile(tenant.user_id)}>View</button>
-                                            <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                        </tbody>
-                    </table>
-                </div>
                 </div>
             ))}
             <div className="payment-badges">
