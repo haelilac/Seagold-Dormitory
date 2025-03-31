@@ -267,55 +267,53 @@ const PaymentAdmin = () => {
                                             )}
                                         </td>
                                     </tr>
-                                    {expandedRow === tenant.id && (
+                                    {expandedRow === tenant.id && tenant.id && (
                                         <tr>
                                             <td colSpan="7">
-                                                <div className="expanded-details">
+                                            <div className="expanded-details">
                                                 <p>Amount Given: ₱{Number(tenant.total_paid).toFixed(2)}</p>
                                                 <p>Remaining Balance: ₱{Number(tenant.remaining_balance).toFixed(2)}</p>
                                                 <p>Payment Type: {tenant.payment_type}</p>
                                                 <p>Payment Method: {tenant.payment_method}</p>
                                                 <p>
-                                                    Payment Date:{' '}
-                                                    {tenant.payment_date
+                                                Payment Date:{' '}
+                                                {tenant.payment_date
                                                     ? new Date(tenant.payment_date).toLocaleString('en-PH', {
                                                         dateStyle: 'medium',
                                                         timeStyle: 'short',
-                                                        })
+                                                    })
                                                     : 'N/A'}
                                                 </p>
                                                 <p>Reference Number: {tenant.reference_number}</p>
 
                                                 {tenant.receipt_path && (
-                                                    <img
+                                                <img
                                                     src={tenant.receipt_path}
                                                     alt="Receipt"
                                                     className="receipt-preview"
-                                                    />
+                                                />
                                                 )}
 
-                                                {tenant.status?.toLowerCase() === 'pending' && tenant.id && (
-                                                    <>
+                                                {tenant.status?.toLowerCase() === 'pending' && (
+                                                <>
                                                     <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>
-                                                        Confirm
+                                                    Confirm
                                                     </button>
                                                     <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>
-                                                        Reject
+                                                    Reject
                                                     </button>
-                                                    </>
+                                                </>
                                                 )}
-                                                </div>
+                                            </div>
                                             </td>
-                                            </tr>
-
-                                    )}
-
+                                        </tr>
+                                        )}
                                 </React.Fragment>
                             ))}
                         </tbody>
                     </table>
-                                                      {/* === ✅ Unpaid Tenants Table – Now correctly placed OUTSIDE the grouped map === */}
-                                                      <div className="unpaid-section">
+            {/* === ✅ Unpaid Tenants Table*/}
+                <div className="unpaid-section">
                     <h3>Unpaid Tenants</h3>
                     <table className="payment-table unpaid-table">
                         <thead>
