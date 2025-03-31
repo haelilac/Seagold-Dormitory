@@ -14,7 +14,13 @@ const PaymentAdmin = () => {
     });
     const [expandedRow, setExpandedRow] = useState(null);
     const [explanation, setExplanation] = useState('');
-
+    const [paymentSummary, setPaymentSummary] = useState({
+        Confirmed: 0,
+        Pending: 0,
+        Rejected: 0,
+        Unpaid: 0,
+    });
+    
     const getPaymentStatusCounts = () => {
         const summary = {
             Confirmed: 0,
@@ -30,6 +36,9 @@ const PaymentAdmin = () => {
             else if (item.status === "Unpaid") summary.Unpaid += 1;
         });
     
+        // Save to state so we can use outside this function
+        setPaymentSummary(summary);
+    
         return [
             { name: 'Paid', value: summary.Confirmed },
             { name: 'Pending', value: summary.Pending },
@@ -37,6 +46,7 @@ const PaymentAdmin = () => {
             { name: 'Unpaid', value: summary.Unpaid },
         ];
     };
+    
     
     const fetchMergedData = async () => {
         const token = localStorage.getItem('token');
@@ -128,6 +138,10 @@ const PaymentAdmin = () => {
         }
     };
 
+    useEffect(() => {
+        getPaymentStatusCounts();
+    }, [mergedData]);
+    
     useEffect(() => {
         fetchMergedData();
     }, [filters]);
@@ -293,8 +307,12 @@ const PaymentAdmin = () => {
                                             </td>
                                         </tr>
                                     )}
-                                    {/* === Unpaid Tenants Table === */}
-                                    <div className="unpaid-section">
+
+                                </React.Fragment>
+                            ))}
+
+                                                                {/* === Unpaid Tenants Table === */}
+                                                                <div className="unpaid-section">
                                         <h3>Unpaid Tenants</h3>
                                         <table className="payment-table unpaid-table">
                                             <thead>
@@ -331,9 +349,6 @@ const PaymentAdmin = () => {
                                             </tbody>
                                         </table>
                                     </div>
-
-                                </React.Fragment>
-                            ))}
                         </tbody>
                     </table>
                 </div>
@@ -349,9 +364,10 @@ const PaymentAdmin = () => {
             </div>
 
             <div className="chart-summary">
-                <span className="badge unpaid">Unpaid: {summary.Unpaid} tenants</span>
-                <span className="badge pending">Pending Confirmations: {summary.Pending}</span>
+                <span className="badge unpaid">Unpaid: {paymentSummary.Unpaid} tenants</span>
+                <span className="badge pending">Pending Confirmations: {paymentSummary.Pending}</span>
             </div>
+
 
             <div className="chart-container" style={{ width: '100%', height: 300 }}>
                 <h3>Payment Status Overview</h3>
