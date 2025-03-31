@@ -256,7 +256,6 @@ const PaymentAdmin = () => {
                                             : 'N/A'}
                                         </td>
                                         <td>{tenant.status}</td>
-                                        <td>{tenant.status}</td>
                                         <td>
                                             {tenant.status?.toLowerCase() === 'pending' && (
                                                 <button
