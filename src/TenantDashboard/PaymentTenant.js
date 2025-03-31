@@ -313,6 +313,8 @@ const PaymentTenant = () => {
         setDisplayedRemainingBalance(originalRemainingBalance);
         setTempAmount("");  // Clear amount input
     };
+
+    
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -324,6 +326,17 @@ const PaymentTenant = () => {
 
         if (!formData.payment_for) {
             alert('❌ Please select a payment period.');
+            return;
+        }
+        
+        const hasPendingPaymentForMonth = paymentHistory.some(
+            (payment) =>
+                payment.payment_period === formData.payment_for &&
+                payment.status === "Pending"
+        );
+        
+        if (hasPendingPaymentForMonth) {
+            alert("⚠️ You already have a pending payment for this month. Please wait for it to be confirmed or rejected before submitting another.");
             return;
         }
     
