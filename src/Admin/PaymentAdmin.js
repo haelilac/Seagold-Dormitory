@@ -147,7 +147,38 @@ const PaymentAdmin = () => {
     };
 
     const groupedData = groupByUnit(mergedData);
-
+    const sendReminder = async (id) => {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (res.ok) {
+                alert("Reminder sent!");
+            } else {
+                alert("Failed to send reminder.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error sending reminder.");
+        }
+    };
+    
+    const viewProfile = (id) => {
+        // If using React Router
+        window.location.href = `/tenant/profile/${id}`;
+    };
+    
+    const markAsPaid = (id) => {
+        // Redirect to payment form
+        window.location.href = `/payment/form/${id}`;
+    };
+    
     return (
         
         <div className="admin-payment-container">
@@ -262,12 +293,66 @@ const PaymentAdmin = () => {
                                             </td>
                                         </tr>
                                     )}
+                                    {/* === Unpaid Tenants Table === */}
+                                    <div className="unpaid-section">
+                                        <h3>Unpaid Tenants</h3>
+                                        <table className="payment-table unpaid-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tenant</th>
+                                                    <th>Unit</th>
+                                                    <th>Due For (Month)</th>
+                                                    <th>Expected Amount</th>
+                                                    <th>Status</th>
+                                                    <th>Last Payment</th>
+                                                    <th>Unpaid Months</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {mergedData
+                                                    .filter((t) => t.status === 'Unpaid')
+                                                    .map((tenant) => (
+                                                        <tr key={tenant.user_id}>
+                                                            <td>{tenant.name}</td>
+                                                            <td>{tenant.unit_code}</td>
+                                                            <td>{tenant.due_date}</td>
+                                                            <td>{tenant.total_due}</td>
+                                                            <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
+                                                            <td>{tenant.last_payment ? new Date(tenant.last_payment).toLocaleDateString('en-PH') : 'N/A'}</td>
+                                                            <td>{tenant.unpaid_months || '1'}</td>
+                                                            <td>
+                                                                <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
+                                                                <button onClick={() => viewProfile(tenant.user_id)}>View</button>
+                                                                <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
                                 </React.Fragment>
                             ))}
                         </tbody>
                     </table>
                 </div>
             ))}
+
+            <div className="payment-badges">
+                <span className="badge unpaid">
+                    Unpaid: {mergedData.filter(d => d.status === 'Unpaid').length} tenants
+                </span>
+                <span className="badge pending">
+                    Pending Confirmations: {mergedData.filter(d => d.status === 'Pending').length}
+                </span>
+            </div>
+
+            <div className="chart-summary">
+                <span className="badge unpaid">Unpaid: {summary.Unpaid} tenants</span>
+                <span className="badge pending">Pending Confirmations: {summary.Pending}</span>
+            </div>
+
             <div className="chart-container" style={{ width: '100%', height: 300 }}>
                 <h3>Payment Status Overview</h3>
                 <ResponsiveContainer>
