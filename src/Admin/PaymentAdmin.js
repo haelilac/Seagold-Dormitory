@@ -316,44 +316,7 @@ const PaymentAdmin = () => {
                     </table>
                 </div>
             ))}
-            <div className="payment-badges">
-                <span className="badge unpaid">
-                    Unpaid: {mergedData.filter(d => d.status === 'Unpaid').length} tenants
-                </span>
-                <span className="badge pending">
-                    Pending Confirmations: {mergedData.filter(d => d.status === 'Pending').length}
-                </span>
-            </div>
 
-            <div className="chart-summary">
-                <span className="badge unpaid">Unpaid: {paymentSummary.Unpaid} tenants</span>
-                <span className="badge pending">Pending Confirmations: {paymentSummary.Pending}</span>
-            </div>
-
-
-            <div className="chart-container" style={{ width: '100%', height: 300 }}>
-                <h3>Payment Status Overview</h3>
-                <ResponsiveContainer>
-                    <PieChart>
-                        <Pie
-                            data={getPaymentStatusCounts()}
-                            dataKey="value"
-                            nameKey="name"
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={100}
-                            label
-                        >
-                            <Cell fill="#4CAF50" /> {/* Paid - Green */}
-                            <Cell fill="#FFC107" /> {/* Pending - Yellow */}
-                            <Cell fill="#F44336" /> {/* Rejected - Red */}
-                            <Cell fill="#9E9E9E" /> {/* Unpaid - Gray */}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
         </div>
     );
 };
