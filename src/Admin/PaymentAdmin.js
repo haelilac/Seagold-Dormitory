@@ -159,8 +159,11 @@ const PaymentAdmin = () => {
             return acc;
         }, {});
     };
-
-    const groupedData = groupByUnit(mergedData);
+    
+    const groupedData = groupByUnit(
+        mergedData.filter((tenant) => tenant.status !== 'Unpaid')
+      );
+      
     const sendReminder = async (id) => {
         const token = localStorage.getItem('token');
         try {
