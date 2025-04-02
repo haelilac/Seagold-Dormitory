@@ -102,8 +102,8 @@
   width: 30px;
   height: auto;
   object-fit: contain;
-  filter: invert(85%) sepia(10%) saturate(700%) hue-rotate(180deg) brightness(110%) contrast(90%);
-}
+  filter: invert(72%) sepia(85%) saturate(698%) hue-rotate(1deg) brightness(104%) contrast(101%);
+  transition: filter 0.2s ease;}
 
 .infoValue {
   font-size: 1.1rem;
