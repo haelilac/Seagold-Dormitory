@@ -23,6 +23,7 @@ const PaymentAdmin = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTenantPayments, setSelectedTenantPayments] = useState([]);
     const [selectedTenantName, setSelectedTenantName] = useState('');
+    const [selectedTenantId, setSelectedTenantId] = useState(null);
 
     const fetchTenantPayments = async (tenantId, unpaidMonth) => {
         if (!tenantId) {
@@ -63,7 +64,10 @@ const PaymentAdmin = () => {
             console.log("✅ Filtered Payments for Modal:", filtered);
     
             setSelectedTenantPayments(filtered);
+            setSelectedTenantName(tenantName); // Already set in your View button
+            setSelectedTenantId(tenantId); // ⬅️ Add this
             setShowModal(true);
+
         } catch (error) {
             console.error("Error fetching tenant payments:", error);
         }
@@ -183,21 +187,31 @@ const PaymentAdmin = () => {
     }, {});
 
     const sendReminder = async (id) => {
+        if (!id) {
+          console.warn("⚠️ No tenant ID provided for reminder.");
+          return;
+        }
+      
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
-            });
-            const data = await res.json();
-            if (res.ok) alert("Reminder sent!");
-            else alert("Failed to send reminder: " + data.message);
+          const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          });
+      
+          const data = await res.json();
+          if (res.ok) alert("Reminder sent!");
+          else alert("Failed to send reminder: " + data.message);
         } catch (error) {
-            console.error("Error sending reminder:", error);
-            alert("Error sending reminder.");
+          console.error("Error sending reminder:", error);
+          alert("Error sending reminder.");
         }
-    };
+      };
+      
 
     const viewProfile = (id) => window.location.href = `/tenant/profile/${id}`;
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
@@ -402,19 +416,18 @@ const filteredData = selectedStatus === 'All'
                                 </tbody>
                             </table>
                         ) : (
-                        <p>
-                        No payments made for this month.
-                        {selectedTenantName && (
-                            <>
-                            {' '}Send a reminder to notify <strong>{selectedTenantName}</strong>.
-                            <br />
-                            <button onClick={() => sendReminder(selectedTenantPayments[0]?.user_id)}>
-                                Send Reminder
-                            </button>
-                            </>
-                        )}
-                        </p>
-
+                            <p>
+                            No payments made for this month.
+                            {selectedTenantName && selectedTenantId && (
+                                <>
+                                {' '}Send a reminder to notify <strong>{selectedTenantName}</strong>.
+                                <br />
+                                <button onClick={() => sendReminder(selectedTenantId)}>
+                                    Send Reminder
+                                </button>
+                                </>
+                            )}
+                            </p>
                         )}
                     </div>
                 </div>
