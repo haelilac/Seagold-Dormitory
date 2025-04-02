@@ -219,6 +219,12 @@
 
 /* Medium to small devices (Tablets & Phones) */
 @media screen and (max-width: 768px) {
+  .roomCard-container {
+    width: 100%;
+    padding: 2rem 1rem;
+    border-radius: 0;
+  }
+
   .roomContent {
     flex-direction: column;
     gap: 1.5rem;
@@ -226,6 +232,7 @@
 
   .roomImage {
     max-height: 30vh;
+    border-radius: 4px;
   }
 
   .roomDetails {
@@ -251,10 +258,6 @@
     padding: 0.75rem;
   }
 
-  .roomCard-container {
-    padding: 2rem 1rem;
-  }
-
   .amenitiesSection h3 {
     font-size: 1.1rem;
   }
@@ -266,6 +269,42 @@
 
   .amenityContainer {
     font-size: 0.95rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+/* Small screens (Phones) */
+@media screen and (max-width: 480px) {
+  .roomCard-header {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+  }
+
+  .roomCard-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .roomDetails {
+    font-size: 0.9rem;
+  }
+
+  .infoLabel,
+  .infoValue {
+    font-size: 0.85rem;
+  }
+
+  .infoIcon,
+  .amenityIcon {
+    width: 20px;
+  }
+
+  .amenitiesList {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .amenityContainer {
+    font-size: 0.9rem;
     padding: 0.4rem 0.6rem;
   }
 }
