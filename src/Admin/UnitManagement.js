@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './UnitManagement.css';
 
 const UnitManagement = ({ onAddUnit }) => {
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     const [units, setUnits] = useState([]);
     const [availableUnits, setAvailableUnits] = useState(0);
     const [unavailableUnits, setUnavailableUnits] = useState(0);
