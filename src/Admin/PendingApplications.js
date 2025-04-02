@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './PendingApplications.css'; // Add custom styles here
 
 const PendingApplications = () => {
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     const [applications, setApplications] = useState([]);
     const [units, setUnits] = useState([]);
     const [loading, setLoading] = useState(true);

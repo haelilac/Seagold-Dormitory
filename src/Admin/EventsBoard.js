@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./EventsBoard.css";
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 // Helper functions to convert between formats
 const convertDateToISO = (mmddyyyy) => {
   const [month, day, year] = mmddyyyy.split("-");

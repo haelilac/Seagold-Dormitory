@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './ManageTenants.css';
 
 const ManageTenants = () => {
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     const [tenants, setTenants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
