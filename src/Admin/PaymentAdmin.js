@@ -35,20 +35,14 @@ const PaymentAdmin = () => {
             console.log("🔍 All Payments:", allPayments);
             console.log("🗓️ Unpaid Month:", unpaidMonth);
     
-            const isSameMonth = (a, b) => {
-                const da = new Date(a);
-                const db = new Date(b);
-                return (
-                    da.getUTCFullYear() === db.getUTCFullYear() &&
-                    da.getUTCMonth() === db.getUTCMonth()
-                );
-            };
+            const isSameMonth = (a, b) => a.slice(0, 7) === b.slice(0, 7);
+
     
             const filtered = allPayments.filter(p =>
                 p.user_id === tenantId &&
                 p.status !== 'Rejected' &&
                 isSameMonth(p.payment_period, unpaidMonth)
-            );
+            );            
     
             console.log("✅ Filtered Payments for Modal:", filtered);
     
@@ -187,16 +181,6 @@ const PaymentAdmin = () => {
 
     const viewProfile = (id) => window.location.href = `/tenant/profile/${id}`;
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
-    const normalizeMonth = (d) => new Date(d.slice(0, 7) + '-01');
-
-    const isSameMonth = (a, b) => {
-        const da = normalizeMonth(a);
-        const db = normalizeMonth(b);
-        return (
-            da.getUTCFullYear() === db.getUTCFullYear() &&
-            da.getUTCMonth() === db.getUTCMonth()
-        );
-    };
     
 const normalizedStatus = selectedStatus.toLowerCase();
 
