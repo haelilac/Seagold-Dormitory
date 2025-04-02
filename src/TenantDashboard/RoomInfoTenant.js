@@ -2,23 +2,6 @@ import React from 'react';
 import './RoomInfo.css';
 
 const RoomCard = () => {
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  // Main room image
-  const sampleDormImage = 'https://seagold-laravel-production.up.railway.app/Dorm.jpg';
-
-  // Info icons
-  const unitIcon = 'https://seagold-laravel-production.up.railway.app/unit.svg';
-  const capacityIcon = 'https://seagold-laravel-production.up.railway.app/capacity.svg';
-  const rentIcon = 'https://seagold-laravel-production.up.railway.app/rent.svg';
-  const dueDateIcon = 'https://seagold-laravel-production.up.railway.app/due-date.svg';
-
-  // Amenity icons
-  const airconIcon = 'https://seagold-laravel-production.up.railway.app/aircon.svg';
-  const bathIcon = 'https://seagold-laravel-production.up.railway.app/bath.svg';
-  const wifiIcon = 'https://seagold-laravel-production.up.railway.app/wifi.svg';
-  const studyIcon = 'https://seagold-laravel-production.up.railway.app/study.svg';
-  const wardrobeIcon = 'https://seagold-laravel-production.up.railway.app/wardrobe.svg';
-
   return (
     <div className="roomCard-wrapper">
       <div className="roomCard-header">
@@ -29,16 +12,22 @@ const RoomCard = () => {
         <div className="roomContent">
           <div className="roomImageContainer">
             <img 
-              src={sampleDormImage} 
+              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg" 
               alt="Dorm" 
               className="roomImage"
+              style={{ cursor: 'default' }}
             />
           </div>
 
           <div className="roomDetails">
             <div className="infoBlock">
               <div className="infoLabel">
-                <img src={unitIcon} alt="Unit icon" className="infoIcon" />
+                <img 
+                  src="https://seagold-laravel-production.up.railway.app/unit.svg" 
+                  alt="Unit icon" 
+                  className="infoIcon" 
+                  style={{ cursor: 'default' }}
+                />
                 UNIT TYPE:
               </div>
               <div className="infoValue">Direct Air-con Room</div>
@@ -46,7 +35,11 @@ const RoomCard = () => {
 
             <div className="infoBlock">
               <div className="infoLabel">
-                <img src={capacityIcon} alt="Capacity icon" className="infoIcon" />
+                <img 
+                  src="https://seagold-laravel-production.up.railway.app/capacity.svg" 
+                  alt="Capacity icon" 
+                  className="infoIcon" 
+                />
                 CAPACITY:
               </div>
               <div className="infoValue">8 occupants</div>
@@ -54,7 +47,11 @@ const RoomCard = () => {
 
             <div className="infoBlock">
               <div className="infoLabel">
-                <img src={rentIcon} alt="Rent icon" className="infoIcon" />
+                <img 
+                  src="https://seagold-laravel-production.up.railway.app/rent.svg" 
+                  alt="Rent icon" 
+                  className="infoIcon" 
+                />
                 MONTHLY RENT:
               </div>
               <div className="infoValue">₱5,000</div>
@@ -62,7 +59,11 @@ const RoomCard = () => {
 
             <div className="infoBlock">
               <div className="infoLabel">
-                <img src={dueDateIcon} alt="Due date icon" className="infoIcon" />
+                <img 
+                  src="https://seagold-laravel-production.up.railway.app/due-date.svg" 
+                  alt="Due date icon" 
+                  className="infoIcon" 
+                />
                 RENT DUE DATE:
               </div>
               <div className="infoValue">15th of every month</div>
@@ -74,23 +75,43 @@ const RoomCard = () => {
           <h3>AMENITIES:</h3>
           <div className="amenitiesList">
             <div className="amenityContainer">
-              <img src={airconIcon} alt="Aircon" className="amenityIcon" />
+              <img 
+                src="https://seagold-laravel-production.up.railway.app/aircon.svg" 
+                alt="Aircon" 
+                className="amenityIcon" 
+              />
               <span>Air Conditioning</span>
             </div>
             <div className="amenityContainer">
-              <img src={bathIcon} alt="Bathroom" className="amenityIcon" />
+              <img 
+                src="https://seagold-laravel-production.up.railway.app/bath.svg" 
+                alt="Bathroom" 
+                className="amenityIcon" 
+              />
               <span>Private Bathroom</span>
             </div>
             <div className="amenityContainer">
-              <img src={wifiIcon} alt="Wi-Fi" className="amenityIcon" />
+              <img 
+                src="https://seagold-laravel-production.up.railway.app/wifi.svg" 
+                alt="Wi-Fi" 
+                className="amenityIcon" 
+              />
               <span>Wi-Fi</span>
             </div>
             <div className="amenityContainer">
-              <img src={studyIcon} alt="Study Table" className="amenityIcon" />
+              <img 
+                src="https://seagold-laravel-production.up.railway.app/study.svg" 
+                alt="Study Table" 
+                className="amenityIcon" 
+              />
               <span>Study Table</span>
             </div>
             <div className="amenityContainer">
-              <img src={wardrobeIcon} alt="Wardrobe" className="amenityIcon" />
+              <img 
+                src="https://seagold-laravel-production.up.railway.app/wardrobe.svg" 
+                alt="Wardrobe" 
+                className="amenityIcon" 
+              />
               <span>Wardrobe</span>
             </div>
           </div>
