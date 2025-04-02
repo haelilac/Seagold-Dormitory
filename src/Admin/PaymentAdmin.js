@@ -32,10 +32,12 @@ const PaymentAdmin = () => {
             });
             const allPayments = await res.json();
     
+            const unpaidMonthStr = new Date(unpaidMonth).toISOString().slice(0, 7); // '2025-04'
+    
             const filtered = allPayments.filter(p =>
                 p.user_id === tenantId &&
                 p.status !== 'Rejected' &&
-                new Date(p.payment_period).toISOString().slice(0, 7) === unpaidMonth.slice(0, 7)
+                new Date(p.payment_period).toISOString().slice(0, 7) === unpaidMonthStr
             );
     
             setSelectedTenantPayments(filtered);
@@ -44,6 +46,7 @@ const PaymentAdmin = () => {
             console.error("Error fetching tenant payments:", error);
         }
     };
+    
     
     const getYearsFromData = (data) => {
         const years = new Set();
