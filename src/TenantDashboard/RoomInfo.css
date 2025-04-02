@@ -22,10 +22,10 @@
   and #f1c40f text
 */
 .roomCard-header {
-  background-color: #64a9ee;
-  color: #f1c40f;
+  background-color: #00bf63;
+  color: #000000;
   width: 80%;
-  max-width: 1200px;
+  max-width: 985px;
   margin: 0 auto;
   padding: 1rem;
   text-align: center;
@@ -37,7 +37,7 @@
  * Main Container (Card)
  *************************************/
 .roomCard-container {
-  background-color: #ffffff; /* ✅ White background */
+  background-color: #f2ede3;
   border-radius: 8px;
   box-shadow: 0 2px 5px #0000001a;
   flex: 1 1;
@@ -140,7 +140,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #1f3a5f	;
+  background-color: #00bf63;
   color: #ffffff;
   border: 1px solid #f1c40f;
   border-radius: 6px;
