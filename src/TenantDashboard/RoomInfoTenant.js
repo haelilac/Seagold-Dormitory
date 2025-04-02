@@ -2,19 +2,21 @@ import React from 'react';
 import './RoomInfo.css';
 
 const RoomCard = () => {
+  // Main room image
   const sampleDormImage = 'https://seagold-laravel-production.up.railway.app/Dorm.jpg';
+
+  // Info icons
   const unitIcon = 'https://seagold-laravel-production.up.railway.app/unit.svg';
   const capacityIcon = 'https://seagold-laravel-production.up.railway.app/capacity.svg';
   const rentIcon = 'https://seagold-laravel-production.up.railway.app/rent.svg';
   const dueDateIcon = 'https://seagold-laravel-production.up.railway.app/due-date.svg';
 
-// Amenity icons
+  // Amenity icons
   const airconIcon = 'https://seagold-laravel-production.up.railway.app/aircon.svg';
   const bathIcon = 'https://seagold-laravel-production.up.railway.app/bath.svg';
   const wifiIcon = 'https://seagold-laravel-production.up.railway.app/wifi.svg';
   const studyIcon = 'https://seagold-laravel-production.up.railway.app/study.svg';
   const wardrobeIcon = 'https://seagold-laravel-production.up.railway.app/wardrobe.svg';
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   return (
     <div className="roomCard-wrapper">
@@ -33,7 +35,6 @@ const RoomCard = () => {
           </div>
 
           <div className="roomDetails">
-            {/* 1) UNIT TYPE */}
             <div className="infoBlock">
               <div className="infoLabel">
                 <img src={unitIcon} alt="Unit icon" className="infoIcon" />
@@ -42,7 +43,6 @@ const RoomCard = () => {
               <div className="infoValue">Direct Air-con Room</div>
             </div>
 
-            {/* 2) CAPACITY */}
             <div className="infoBlock">
               <div className="infoLabel">
                 <img src={capacityIcon} alt="Capacity icon" className="infoIcon" />
@@ -51,7 +51,6 @@ const RoomCard = () => {
               <div className="infoValue">8 occupants</div>
             </div>
 
-            {/* 3) MONTHLY RENT */}
             <div className="infoBlock">
               <div className="infoLabel">
                 <img src={rentIcon} alt="Rent icon" className="infoIcon" />
@@ -60,7 +59,6 @@ const RoomCard = () => {
               <div className="infoValue">₱5,000</div>
             </div>
 
-            {/* 4) RENT DUE DATE */}
             <div className="infoBlock">
               <div className="infoLabel">
                 <img src={dueDateIcon} alt="Due date icon" className="infoIcon" />
