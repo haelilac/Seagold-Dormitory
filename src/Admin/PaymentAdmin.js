@@ -33,16 +33,22 @@ const PaymentAdmin = () => {
             const allPayments = await res.json();
     
             const unpaidDate = new Date(unpaidMonth);
-    
+            console.log("🔍 All Payments:", allPayments);
+            console.log("📅 Unpaid Month:", unpaidMonth, new Date(unpaidMonth).toISOString());
+            
             const filtered = allPayments.filter(p => {
                 const paymentDate = new Date(p.payment_period);
-                return (
+                const unpaidDate = new Date(unpaidMonth);
+                const match = (
                     p.user_id === tenantId &&
                     p.status !== 'Rejected' &&
                     paymentDate.getFullYear() === unpaidDate.getFullYear() &&
                     paymentDate.getMonth() === unpaidDate.getMonth()
                 );
+                if (match) console.log("✅ Matched Payment:", p);
+                return match;
             });
+            
     
             setSelectedTenantPayments(filtered);
             setShowModal(true);
