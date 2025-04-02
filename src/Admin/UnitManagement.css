@@ -29,7 +29,7 @@ body {
 
 /* Unit Header */
 .unit-header {
-    background-color: #14518e; /* Dark Blue Background */
+    background-color: #00bf63; /* Dark Blue Background */
     color: white;
     padding: 15px;
     text-align: center;
@@ -158,7 +158,7 @@ body {
     align-items: flex-start;
     width: 90%;
     max-width: 1200px;
-    background: white;
+    background: #f2ede3;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
