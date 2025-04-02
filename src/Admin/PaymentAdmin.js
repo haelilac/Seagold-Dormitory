@@ -20,7 +20,31 @@ const PaymentAdmin = () => {
     const [expandedRow, setExpandedRow] = useState(null);
     const [paymentSummary, setPaymentSummary] = useState(initSummary());
     const [selectedStatus, setSelectedStatus] = useState('All');
+    const [showModal, setShowModal] = useState(false);
+    const [selectedTenantPayments, setSelectedTenantPayments] = useState([]);
+    const [selectedTenantName, setSelectedTenantName] = useState('');
 
+    const fetchTenantPayments = async (tenantId, unpaidMonth) => {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/payments`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const allPayments = await res.json();
+    
+            const filtered = allPayments.filter(p =>
+                p.user_id === tenantId &&
+                p.status !== 'Rejected' &&
+                new Date(p.payment_period).toISOString().slice(0, 7) === unpaidMonth.slice(0, 7)
+            );
+    
+            setSelectedTenantPayments(filtered);
+            setShowModal(true);
+        } catch (error) {
+            console.error("Error fetching tenant payments:", error);
+        }
+    };
+    
     const getYearsFromData = (data) => {
         const years = new Set();
         data.forEach(item => {
@@ -292,7 +316,10 @@ const filteredData = selectedStatus === 'All'
                                         <td>{tenant.unpaid_months || '1'}</td>
                                         <td>
                                             <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
-                                            <button onClick={() => viewProfile(tenant.user_id)}>View</button>
+                                            <button onClick={() => {
+                                                fetchTenantPayments(tenant.user_id, tenant.due_date);
+                                                setSelectedTenantName(tenant.name);
+                                            }}>View</button>
                                             <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
                                         </td>
                                     </tr>
@@ -300,7 +327,41 @@ const filteredData = selectedStatus === 'All'
                         </tbody>
                     </table>
                 </div>
+                
             )}
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Payment History for {selectedTenantName}</h3>
+                        <button className="close-modal" onClick={() => setShowModal(false)}>✖</button>
+                        {selectedTenantPayments.length > 0 ? (
+                            <table className="modal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Amount</th>
+                                        <th>Payment Method</th>
+                                        <th>Reference</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedTenantPayments.map((payment) => (
+                                        <tr key={payment.id}>
+                                            <td>₱{parseFloat(payment.amount).toFixed(2)}</td>
+                                            <td>{payment.payment_method}</td>
+                                            <td>{payment.reference_number}</td>
+                                            <td>{formatDate(payment.submitted_at)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>No payments made for this month.</p>
+                        )}
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
