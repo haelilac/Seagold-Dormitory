@@ -19,6 +19,7 @@ const PaymentAdmin = () => {
     const [filters, setFilters] = useState({ status: '', month: '', year: '', search: '' });
     const [expandedRow, setExpandedRow] = useState(null);
     const [paymentSummary, setPaymentSummary] = useState(initSummary());
+    const [selectedStatus, setSelectedStatus] = useState('All');
 
     const getYearsFromData = (data) => {
         const years = new Set();
@@ -147,7 +148,12 @@ const PaymentAdmin = () => {
     const viewProfile = (id) => window.location.href = `/tenant/profile/${id}`;
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
 
-    const groupedData = groupByUnit(mergedData.filter((t) => t.status !== 'Unpaid'));
+    const filteredData = selectedStatus === 'All'
+    ? mergedData
+    : mergedData.filter((t) => t.status === selectedStatus);
+
+    const groupedData = groupByUnit(filteredData.filter((t) => t.status !== 'Unpaid'));
+
     const years = getYearsFromData(mergedData);
     const renderTableByStatus = (status) => {
         const filtered = mergedData.filter(t => t.status === status);
@@ -246,7 +252,16 @@ const PaymentAdmin = () => {
                 <button onClick={exportToCSV}>Export CSV</button>
             </div>
 
-            <div className="summary-sections">
+            <div className="status-buttons">
+                <button onClick={() => setSelectedStatus('All')}>All</button>
+                <button onClick={() => setSelectedStatus('Confirmed')}>Paid</button>
+                <button onClick={() => setSelectedStatus('Pending')}>Pending</button>
+                <button onClick={() => setSelectedStatus('Rejected')}>Rejected</button>
+                <button onClick={() => setSelectedStatus('Unpaid')}>Unpaid</button>
+            </div>
+
+            {selectedStatus === 'All' && (
+                <div className="summary-sections">
                 <div className="summary-section">
                     <h3 className="badge confirmed">Confirmed: {paymentSummary.Confirmed}</h3>
                     {renderTableByStatus('Confirmed')}
@@ -264,7 +279,7 @@ const PaymentAdmin = () => {
                     {renderUnpaidTable()}
                 </div>
             </div>
-
+)}
             {/* Table */}
             {Object.keys(groupedData).map((unit) => (
                 <div key={unit} className="unit-section">
@@ -356,8 +371,9 @@ const PaymentAdmin = () => {
                         </tbody>
                     </table>
             {/* === ✅ Unpaid Tenants Table*/}
+            {selectedStatus === 'Unpaid' && (
                 <div className="unpaid-section">
-                    <h3>Unpaid Tenants</h3>
+                  <h3>Unpaid Tenants</h3>
                     <table className="payment-table unpaid-table">
                         <thead>
                             <tr>
@@ -393,8 +409,9 @@ const PaymentAdmin = () => {
                         </tbody>
                     </table>
                 </div>
-
+)}
                 </div>
+                
             ))}
 
         </div>

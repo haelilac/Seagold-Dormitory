@@ -170,7 +170,6 @@ const ManageTenants = () => {
                 <table className="tenants-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Address</th>
@@ -184,7 +183,6 @@ const ManageTenants = () => {
                     <tbody>
                         {tenants.map((tenant) => (
                             <tr key={tenant.id} className="clickable-row" onClick={() => handleRowClick(tenant)}>
-                                <td>{tenant.id}</td>
                                 <td>{tenant.name}</td>
                                 <td>{tenant.email}</td>
                                 <td>{tenant.address}</td>
