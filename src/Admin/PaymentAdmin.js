@@ -25,7 +25,7 @@ const PaymentAdmin = () => {
     const [selectedTenantName, setSelectedTenantName] = useState('');
     const [selectedTenantId, setSelectedTenantId] = useState(null);
 
-    const fetchTenantPayments = async (tenantId, unpaidMonth) => {
+    const fetchTenantPayments = async (tenantId, unpaidMonth, tenantName) => {
         if (!tenantId) {
             console.warn('❗ tenantId is undefined in fetchTenantPayments');
             return;
@@ -364,10 +364,9 @@ const filteredData = selectedStatus === 'All'
                                     <td>
                                     <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
                                     <button onClick={() => {
-                                            fetchTenantPayments(tenant.id, firstDayOfMonth); // ✅ use tenant.id
-                                            setSelectedTenantName(tenant.name);
-                                            setSelectedTenantId(tenant.id); // ✅ also store ID for modal reminder
-                                        }}>
+                                        fetchTenantPayments(tenant.id, firstDayOfMonth, tenant.name); // ✅ pass tenant.name here
+                                        setSelectedTenantId(tenant.id);
+                                    }}>
                                     View</button>
                                     <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
                                     </td>
