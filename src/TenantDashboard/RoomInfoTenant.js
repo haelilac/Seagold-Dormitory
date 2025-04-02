@@ -2,11 +2,11 @@ import React from 'react';
 import './RoomInfo.css';
 
 const RoomCard = () => {
-  const sampleDormImage = 'images/dormpic1.jpg';
-  const unitIcon = '/unit.svg';
-  const capacityIcon = '/capacity.svg';
-  const rentIcon = '/rent.svg';
-  const dueDateIcon = '/due-date.svg';
+  const sampleDormImage = 'public/Dorm.jpg';
+  const unitIcon = 'public/unit.svg';
+  const capacityIcon = 'public/capacity.svg';
+  const rentIcon = 'public/rent.svg';
+  const dueDateIcon = 'public/due-date.svg';
 
   // Amenity icons
   const airconIcon = '/aircon.svg';
