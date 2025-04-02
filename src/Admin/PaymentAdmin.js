@@ -402,7 +402,11 @@ const filteredData = selectedStatus === 'All'
                                 </tbody>
                             </table>
                         ) : (
-                            <p>No payments made for this month.</p>
+                            <p>
+                            No payments made for this month.
+                            {selectedTenantName && <> Send a reminder to notify <strong>{selectedTenantName}</strong>.</>}
+                            </p>
+                        
                         )}
                     </div>
                 </div>
