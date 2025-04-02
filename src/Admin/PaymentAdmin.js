@@ -369,7 +369,14 @@ const filteredData = selectedStatus === 'All'
             {showModal && (
                 <div className="modal-overlay">
                     <div className="custom-modal-content">
-                        <h3>Payment History for {selectedTenantName}</h3>
+                    <h3>
+                        Payment History for {selectedTenantName}{' '}
+                        {selectedTenantPayments[0]?.payment_period && (
+                            <span style={{ fontWeight: 'normal', fontSize: '0.9em' }}>
+                            – {new Date(selectedTenantPayments[0].payment_period).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                            </span>
+                        )}
+                        </h3>
                         <button className="close-modal" onClick={() => setShowModal(false)}>✖</button>
                         {selectedTenantPayments.length > 0 ? (
                             <table className="modal-table">
@@ -388,7 +395,7 @@ const filteredData = selectedStatus === 'All'
                                             <td>₱{parseFloat(payment.amount).toFixed(2)}</td>
                                             <td>{payment.payment_method}</td>
                                             <td>{payment.reference_number}</td>
-                                            <td>{formatDate(payment.payment_date)}</td>
+                                            <td>{formatDate(payment.submitted_at || payment.payment_date)}</td>
                                             <td>{payment.status}</td>
                                         </tr>
                                     ))}
