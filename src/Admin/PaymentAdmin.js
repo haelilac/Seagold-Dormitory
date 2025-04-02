@@ -32,27 +32,32 @@ const PaymentAdmin = () => {
             });
             const allPayments = await res.json();
     
-            const unpaidDate = new Date(unpaidMonth);
             console.log("🔍 All Payments:", allPayments);
-            console.log("📅 Unpaid Month:", unpaidMonth, new Date(unpaidMonth).toISOString());
-            
-            const filtered = allPayments.filter(p => {
-                const period = p.payment_period.slice(0, 7); // '2025-04'
-                const target = new Date(unpaidMonth).toISOString().slice(0, 7); // also '2025-04'
+            console.log("🗓️ Unpaid Month:", unpaidMonth);
+    
+            const isSameMonth = (a, b) => {
+                const da = new Date(a);
+                const db = new Date(b);
                 return (
-                    p.user_id === tenantId &&
-                    p.status !== 'Rejected' &&
-                    period === target
+                    da.getUTCFullYear() === db.getUTCFullYear() &&
+                    da.getUTCMonth() === db.getUTCMonth()
                 );
-            });
-            
+            };
+    
+            const filtered = allPayments.filter(p =>
+                p.user_id === tenantId &&
+                p.status !== 'Rejected' &&
+                isSameMonth(p.payment_period, unpaidMonth)
+            );
+    
+            console.log("✅ Filtered Payments for Modal:", filtered);
+    
             setSelectedTenantPayments(filtered);
             setShowModal(true);
         } catch (error) {
             console.error("Error fetching tenant payments:", error);
         }
     };
-    
     
     
     const getYearsFromData = (data) => {
