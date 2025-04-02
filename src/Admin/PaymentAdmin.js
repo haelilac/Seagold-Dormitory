@@ -37,14 +37,17 @@ const PaymentAdmin = () => {
             console.log("📅 Unpaid Month:", unpaidMonth, new Date(unpaidMonth).toISOString());
             
             const filtered = allPayments.filter(p => {
-                const paymentDate = new Date(p.payment_period);
+                const rawPeriod = p.payment_period;
+                const paymentDate = new Date(rawPeriod.length === 7 ? `${rawPeriod}-01` : rawPeriod); // fixes '2025-04'
                 const unpaidDate = new Date(unpaidMonth);
+            
                 const match = (
                     p.user_id === tenantId &&
                     p.status !== 'Rejected' &&
                     paymentDate.getFullYear() === unpaidDate.getFullYear() &&
                     paymentDate.getMonth() === unpaidDate.getMonth()
                 );
+                
                 if (match) console.log("✅ Matched Payment:", p);
                 return match;
             });
