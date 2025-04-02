@@ -119,7 +119,7 @@ const PaymentAdmin = () => {
                 })),
                 ...unpaid.map((u) => ({
                     ...u,
-                    user_id: u.user_id || u.id,  // ✅ Fallback to `id` if `user_id` is not present
+                    id: u.id || u.user_id,  // ✅ Fallback to `id` if `user_id` is not present
                     name: u.tenant_name || u.name,  // ✅ Normalize tenant name
                     total_due: `₱${parseFloat(u.total_due).toFixed(2)}`,
                     balance: `₱${parseFloat(u.balance).toFixed(2)}`,
@@ -364,11 +364,11 @@ const filteredData = selectedStatus === 'All'
                                     <td>
                                     <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
                                     <button onClick={() => {
-                                        console.log('⚠️ Calling fetchTenantPayments with:', tenant.user_id, firstDayOfMonth);
-                                        if (!tenant.user_id) console.warn("⚠️ Missing user_id for tenant:", tenant);
-                                        fetchTenantPayments(tenant.user_id, firstDayOfMonth);
-                                        setSelectedTenantName(tenant.name);
-                                    }}>View</button>
+                                            fetchTenantPayments(tenant.id, firstDayOfMonth); // ✅ use tenant.id
+                                            setSelectedTenantName(tenant.name);
+                                            setSelectedTenantId(tenant.id); // ✅ also store ID for modal reminder
+                                        }}>
+                                    View</button>
                                     <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
                                     </td>
                                 </tr>
@@ -420,13 +420,11 @@ const filteredData = selectedStatus === 'All'
                             No payments made for this month.
                             {selectedTenantName && selectedTenantId && (
                                 <>
-                                {' '}Send a reminder to notify <strong>{selectedTenantName}</strong>.
-                                <br />
-                                <button onClick={() => sendReminder(selectedTenantId)}>
-                                    Send Reminder
-                                </button>
+                                    Send a reminder to notify <strong>{selectedTenantName}</strong>.
+                                    <br />
+                                    <button onClick={() => sendReminder(selectedTenantId)}>Send Reminder</button>
                                 </>
-                            )}
+                                )}
                             </p>
                         )}
                     </div>
