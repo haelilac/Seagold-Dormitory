@@ -153,7 +153,10 @@ const PaymentAdmin = () => {
         ? mergedData
         : mergedData.filter((t) => t.status === selectedStatus);
 
-    const groupedData = groupByUnit(filteredData.filter((t) => t.status !== 'Unpaid'));
+        const groupedData = groupByUnit(filteredData.filter((t) =>
+            selectedStatus === 'All' ? t.status !== 'Unpaid' : t.status === selectedStatus
+        ));
+        
     const years = getYearsFromData(mergedData);
 
     return (
