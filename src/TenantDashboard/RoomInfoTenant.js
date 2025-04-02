@@ -2,18 +2,18 @@ import React from 'react';
 import './RoomInfo.css';
 
 const RoomCard = () => {
-  const sampleDormImage = 'public/Dorm.jpg';
-  const unitIcon = 'public/unit.svg';
-  const capacityIcon = 'public/capacity.svg';
-  const rentIcon = 'public/rent.svg';
-  const dueDateIcon = 'public/due-date.svg';
+  const sampleDormImage = 'https://seagold-laravel-production.up.railway.app/public/Dorm.jpg';
+  const unitIcon = 'https://seagold-laravel-production.up.railway.app/public/unit.svg';
+  const capacityIcon = 'https://seagold-laravel-production.up.railway.app/public/capacity.svg';
+  const rentIcon = 'https://seagold-laravel-production.up.railway.app/public/rent.svg';
+  const dueDateIcon = 'https://seagold-laravel-production.up.railway.app/public/due-date.svg';
 
   // Amenity icons
-  const airconIcon = '/aircon.svg';
-  const bathIcon = '/bath.svg';
-  const wifiIcon = '/wifi.svg';
-  const studyIcon = '/study.svg';
-  const wardrobeIcon = '/wardrobe.svg';
+  const airconIcon = 'https://seagold-laravel-production.up.railway.app/public/aircon.svg';
+  const bathIcon = 'https://seagold-laravel-production.up.railway.app/public/bath.svg';
+  const wifiIcon = 'https://seagold-laravel-production.up.railway.app/public/wifi.svg';
+  const studyIcon = 'https://seagold-laravel-production.up.railway.app/public/study.svg';
+  const wardrobeIcon = 'https://seagold-laravel-production.up.railway.app/public/wardrobe.svg';
 
   return (
     <div className="roomCard-wrapper">
@@ -50,7 +50,7 @@ const RoomCard = () => {
               <div className="infoValue">8 occupants</div>
             </div>
 
-            {/* 3) MONTHLY RENT (Now with ₱ sign) */}
+            {/* 3) MONTHLY RENT */}
             <div className="infoBlock">
               <div className="infoLabel">
                 <img src={rentIcon} alt="Rent icon" className="infoIcon" />
