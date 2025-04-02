@@ -66,10 +66,9 @@ const ManageTenants = () => {
         
                 const data = await response.json();
                 const formattedData = data.map((tenant) => ({
-                    id: tenant.id,
                     name: tenant.full_name,
                     email: tenant.email,
-                    address: tenant.address,  // Corrected field
+                    address: tenant.address,
                     contact_number: tenant.contact_number || 'N/A',
                     check_in_date: tenant.check_in_date,
                     duration: tenant.duration || 'N/A',
