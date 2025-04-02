@@ -35,7 +35,6 @@ const PaymentAdmin = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const allPayments = await res.json();
-            console.log('🔍 Tenant Row:', tenant);
 
             console.log("🔍 All Payments:", allPayments);
             console.log("🗓️ Unpaid Month:", unpaidMonth);
@@ -331,21 +330,32 @@ const filteredData = selectedStatus === 'All'
                         <tbody>
                         {mergedData
                             .filter((t) => t.status === 'Unpaid')
-                            .map((tenant) => (
+                            .map((tenant) => {
+                                console.log('🔍 Tenant Row:', tenant); // ✅ move this here
+                                const firstDayOfMonth = tenant.due_date.slice(0, 7) + '-01';
+
+                                return (
                                 <tr key={tenant.user_id}>
-                                ...
-                                <td>
+                                    <td>{tenant.name}</td>
+                                    <td>{tenant.unit_code}</td>
+                                    <td>{tenant.due_date}</td>
+                                    <td>{tenant.total_due}</td>
+                                    <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
+                                    <td>{tenant.last_payment ? new Date(tenant.last_payment).toLocaleDateString('en-PH') : 'N/A'}</td>
+                                    <td>{tenant.unpaid_months || '1'}</td>
+                                    <td>
                                     <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
                                     <button onClick={() => {
-                                    const firstDayOfMonth = tenant.due_date.slice(0, 7) + '-01';
-                                    console.log('⚠️ Calling fetchTenantPayments with:', tenant.user_id, firstDayOfMonth); // <== Add this
-                                    fetchTenantPayments(tenant.user_id, firstDayOfMonth);
-                                    setSelectedTenantName(tenant.name);
+                                        console.log('⚠️ Calling fetchTenantPayments with:', tenant.user_id, firstDayOfMonth);
+                                        fetchTenantPayments(tenant.user_id, firstDayOfMonth);
+                                        setSelectedTenantName(tenant.name);
                                     }}>View</button>
                                     <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
-                                </td>
+                                    </td>
                                 </tr>
-                            ))}
+                                );
+                            })}
+
                         </tbody>
                     </table>
                 </div>
