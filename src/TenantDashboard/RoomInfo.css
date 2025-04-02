@@ -22,9 +22,9 @@
   and #f1c40f text
 */
 .roomCard-header {
-  background-color: #34495e;
+  background-color: #64a9ee;
   color: #f1c40f;
-  width: 95%;
+  width: 80%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
@@ -95,7 +95,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #f1c40f;
+  color: #000000;
 }
 
 .infoIcon {
@@ -141,8 +141,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #0a457c;
-  color: #f1c40f;
+  background-color: #1f3a5f	;
+  color: #ffffff;
   border: 1px solid #f1c40f;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
