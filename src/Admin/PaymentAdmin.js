@@ -45,15 +45,14 @@ const PaymentAdmin = () => {
                 );
             };
             
-            console.log('👉 Comparing:', p.payment_period, unpaidMonth, isSameMonth(p.payment_period, unpaidMonth));
-            console.log("All payment periods:", allPayments.map(p => p.payment_period));
-
             const filtered = allPayments.filter(p =>
                 p.user_id === tenantId &&
                 p.status !== 'Rejected' &&
                 isSameMonth(p.payment_period, unpaidMonth)
             );            
-    
+            console.log('👉 Comparing:', p.payment_period, unpaidMonth, isSameMonth(p.payment_period, unpaidMonth));
+            console.log("All payment periods:", allPayments.map(p => p.payment_period));
+
             console.log("✅ Filtered Payments for Modal:", filtered);
     
             setSelectedTenantPayments(filtered);
