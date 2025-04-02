@@ -331,7 +331,7 @@ const filteredData = selectedStatus === 'All'
             )}
             {showModal && (
                 <div className="modal-overlay">
-                    <div className="modal-content">
+                    <div className="custom-modal-content">
                         <h3>Payment History for {selectedTenantName}</h3>
                         <button className="close-modal" onClick={() => setShowModal(false)}>✖</button>
                         {selectedTenantPayments.length > 0 ? (
