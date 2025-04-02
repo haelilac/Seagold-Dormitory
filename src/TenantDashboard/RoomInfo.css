@@ -222,7 +222,9 @@
   .roomCard-container {
     width: 100%;
     padding: 2rem 1rem;
+    margin: 0;
     border-radius: 0;
+    box-shadow: none;
   }
 
   .roomContent {
@@ -275,13 +277,17 @@
 
 /* Small screens (Phones) */
 @media screen and (max-width: 480px) {
+  .roomCard-container {
+    width: 100%;
+    padding: 1rem 0.5rem;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
   .roomCard-header {
     font-size: 1.2rem;
     padding: 0.5rem;
-  }
-
-  .roomCard-container {
-    padding: 1rem 0.5rem;
   }
 
   .roomDetails {
