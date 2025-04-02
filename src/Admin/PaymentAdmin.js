@@ -115,10 +115,13 @@ const PaymentAdmin = () => {
                 })),
                 ...unpaid.map((u) => ({
                     ...u,
+                    user_id: u.user_id, // ✅ Add this line
+                    name: u.tenant_name, // Also normalize in case it's not present
                     total_due: `₱${parseFloat(u.total_due).toFixed(2)}`,
                     balance: `₱${parseFloat(u.balance).toFixed(2)}`,
                     status: 'Unpaid',
                 })),
+                
             ];
             setMergedData(merged);
         } catch (err) {
@@ -347,6 +350,7 @@ const filteredData = selectedStatus === 'All'
                                     <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
                                     <button onClick={() => {
                                         console.log('⚠️ Calling fetchTenantPayments with:', tenant.user_id, firstDayOfMonth);
+                                        if (!tenant.user_id) console.warn("⚠️ Missing user_id for tenant:", tenant);
                                         fetchTenantPayments(tenant.user_id, firstDayOfMonth);
                                         setSelectedTenantName(tenant.name);
                                     }}>View</button>
