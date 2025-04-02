@@ -2,18 +2,19 @@ import React from 'react';
 import './RoomInfo.css';
 
 const RoomCard = () => {
-  const sampleDormImage = 'https://seagold-laravel-production.up.railway.app/public/Dorm.jpg';
-  const unitIcon = 'https://seagold-laravel-production.up.railway.app/public/unit.svg';
-  const capacityIcon = 'https://seagold-laravel-production.up.railway.app/public/capacity.svg';
-  const rentIcon = 'https://seagold-laravel-production.up.railway.app/public/rent.svg';
-  const dueDateIcon = 'https://seagold-laravel-production.up.railway.app/public/due-date.svg';
+  const sampleDormImage = 'https://seagold-laravel-production.up.railway.app/Dorm.jpg';
+  const unitIcon = 'https://seagold-laravel-production.up.railway.app/unit.svg';
+  const capacityIcon = 'https://seagold-laravel-production.up.railway.app/capacity.svg';
+  const rentIcon = 'https://seagold-laravel-production.up.railway.app/rent.svg';
+  const dueDateIcon = 'https://seagold-laravel-production.up.railway.app/due-date.svg';
 
-  // Amenity icons
-  const airconIcon = 'https://seagold-laravel-production.up.railway.app/public/aircon.svg';
-  const bathIcon = 'https://seagold-laravel-production.up.railway.app/public/bath.svg';
-  const wifiIcon = 'https://seagold-laravel-production.up.railway.app/public/wifi.svg';
-  const studyIcon = 'https://seagold-laravel-production.up.railway.app/public/study.svg';
-  const wardrobeIcon = 'https://seagold-laravel-production.up.railway.app/public/wardrobe.svg';
+// Amenity icons
+  const airconIcon = 'https://seagold-laravel-production.up.railway.app/aircon.svg';
+  const bathIcon = 'https://seagold-laravel-production.up.railway.app/bath.svg';
+  const wifiIcon = 'https://seagold-laravel-production.up.railway.app/wifi.svg';
+  const studyIcon = 'https://seagold-laravel-production.up.railway.app/study.svg';
+  const wardrobeIcon = 'https://seagold-laravel-production.up.railway.app/wardrobe.svg';
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   return (
     <div className="roomCard-wrapper">
