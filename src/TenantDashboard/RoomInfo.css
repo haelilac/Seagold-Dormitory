@@ -6,19 +6,17 @@
 /*************************************
  * Overall Wrapper & Header
  *************************************/
-.roomCard-wrapper {
+ .roomCard-wrapper {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh; /* allows it to grow with content */
   margin: 0;
-  background-color: #f0f0f0; /* Outer page background */
-  overflow: hidden;
-
-  /* Apply Roboto globally */
+  background-color: #f0f0f0;
+  overflow-x: hidden;
   font-family: 'Roboto', sans-serif;
-
   display: flex;
   flex-direction: column;
 }
+
 
 /*
   Header with #34495e background 
@@ -39,19 +37,12 @@
 /*************************************
  * Main Container (Card)
  *************************************/
-.roomCard-container {
+ .roomCard-container {
   flex: 1;
-  width: 95%;
+  width: 100%;         /* ✅ Make it full-width */
   max-width: 1200px;
   margin: 0 auto;
-
-  /* Spacing inside the container */
   padding: 3rem 1rem 1rem 1rem;
-
-  /* 
-    Dark background (#34495e) 
-    for the container
-  */
   background-color: #244e75;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
