@@ -9,7 +9,7 @@
     }
     
     .header-bar {
-      background-color: #005691; /* Dark gray/black */
+      background-color: #00bf63; /* Dark gray/black */
       color: #fff;
       padding: 1rem;
       text-align: center;
@@ -30,7 +30,7 @@
     
     /* Left Column: Form Card */
     .form-card {
-      background-color: #fff;
+      background-color: #f2ede3;
       border-radius: 8px;
       padding: 1.5rem;
       width: 350px; /* Adjust as you like */
@@ -106,7 +106,7 @@
     
     /* Search Container (left side) */
     .search-container {
-      background-color: #fff;
+      background-color: #f2ede3;
       border-radius: 8px;
       padding: 1rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
@@ -130,7 +130,7 @@
     
     /* Filter wrapper (right side) */
     .filter-wrapper {
-      background-color: #fff;
+      background-color: #f2ede3;
       border-radius: 8px;
       padding: 1rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
@@ -188,7 +188,7 @@
     
     /* Ongoing Events Container */
     .ongoing-events-container {
-      background-color: #fff;
+      background-color: #f2ede3;
       border-radius: 8px;
       padding: 1rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
@@ -204,7 +204,7 @@
     /* Upcoming & Past Events Containers */
     .upcoming-events-container,
     .past-events-container {
-      background-color: #fff;
+      background-color: #f2ede3;
       border-radius: 8px;
       padding: 1rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.15);
