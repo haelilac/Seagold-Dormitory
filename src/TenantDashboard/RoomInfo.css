@@ -33,22 +33,6 @@
   font-weight: 700;
 }
 
-/*************************************
- * Main Container (Card)
- *************************************/
-.roomCard-container {
-  flex: 1;
-  width: 100%;
-  max-width: 1200px;
-  height: 100vh; /* 🔥 Full height of the screen */
-  overflow-y: auto; /* 🔥 Enable vertical scrolling */
-
-  margin: 0 auto;
-  padding: 3rem 1rem 1rem 1rem;
-  background-color: #a4b3c1;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
 
 /*************************************
  * Main Content Layout
