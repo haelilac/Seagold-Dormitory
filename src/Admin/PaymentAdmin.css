@@ -155,3 +155,10 @@ textarea {
     flex-wrap: wrap;
     margin-bottom: 1.5rem;
 }
+
+.status-buttons button.active {
+    background-color: #28319a;
+    color: white;
+    font-weight: bold;
+  }
+  

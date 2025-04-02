@@ -150,13 +150,15 @@ const PaymentAdmin = () => {
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
 
     const filteredData = selectedStatus === 'All'
-        ? mergedData
+    ? mergedData.filter((t) => t.status !== 'Unpaid')
+    : selectedStatus === 'Unpaid'
+        ? mergedData.filter((t) => t.status === 'Unpaid')
         : mergedData.filter((t) => t.status === selectedStatus);
 
-        const groupedData = groupByUnit(filteredData.filter((t) =>
-            selectedStatus === 'All' ? t.status !== 'Unpaid' : t.status === selectedStatus
-        ));
-        
+    const groupedData = selectedStatus !== 'Unpaid'
+        ? groupByUnit(filteredData)
+        : {};
+
     const years = getYearsFromData(mergedData);
 
     return (
@@ -189,12 +191,17 @@ const PaymentAdmin = () => {
             </div>
 
             <div className="status-buttons">
-                <button onClick={() => setSelectedStatus('All')}>All</button>
-                <button onClick={() => setSelectedStatus('Confirmed')}>Paid</button>
-                <button onClick={() => setSelectedStatus('Pending')}>Pending</button>
-                <button onClick={() => setSelectedStatus('Rejected')}>Rejected</button>
-                <button onClick={() => setSelectedStatus('Unpaid')}>Unpaid</button>
-            </div>
+                {['All', 'Confirmed', 'Pending', 'Rejected', 'Unpaid'].map((status) => (
+                    <button
+                    key={status}
+                    className={selectedStatus === status ? 'active' : ''}
+                    onClick={() => setSelectedStatus(status)}
+                    >
+                    {status === 'Confirmed' ? 'Paid' : status}
+                    </button>
+                ))}
+                </div>
+
 
             {Object.keys(groupedData).map((unit) => (
                 <div key={unit} className="unit-section">
