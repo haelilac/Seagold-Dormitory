@@ -42,6 +42,7 @@
   max-width: 1200px;
   height: 100vh; /* 🔥 Full height of the screen */
   overflow-y: auto; /* 🔥 Enable vertical scrolling */
+  height: -10px;
 
   margin: 0 auto;
   padding: 3rem 1rem 1rem 1rem;
