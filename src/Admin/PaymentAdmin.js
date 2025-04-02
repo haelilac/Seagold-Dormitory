@@ -149,12 +149,12 @@ const PaymentAdmin = () => {
     const viewProfile = (id) => window.location.href = `/tenant/profile/${id}`;
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
 
-    const filteredData = selectedStatus === 'All'
-    ? mergedData.filter((t) => t.status !== 'Unpaid')
-    : selectedStatus === 'Unpaid'
-        ? mergedData.filter((t) => t.status === 'Unpaid')
-        : mergedData.filter((t) => t.status === selectedStatus);
+    const normalizedStatus = selectedStatus.toLowerCase();
 
+    const filteredData = selectedStatus === 'All'
+        ? mergedData.filter((t) => t.status?.toLowerCase() !== 'unpaid')
+        : mergedData.filter((t) => t.status?.toLowerCase() === normalizedStatus);
+    
     const groupedData = selectedStatus !== 'Unpaid'
         ? groupByUnit(filteredData)
         : {};
