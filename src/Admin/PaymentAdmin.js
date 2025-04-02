@@ -96,8 +96,9 @@ const PaymentAdmin = () => {
     const handleStatusUpdate = async (paymentId, status) => {
         const token = localStorage.getItem('token');
         const endpoint = status === 'Confirmed'
-        ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
-        : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`; // ✅ This will now work!    
+            ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
+            : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
+
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -149,80 +150,12 @@ const PaymentAdmin = () => {
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
 
     const filteredData = selectedStatus === 'All'
-    ? mergedData
-    : mergedData.filter((t) => t.status === selectedStatus);
+        ? mergedData
+        : mergedData.filter((t) => t.status === selectedStatus);
 
     const groupedData = groupByUnit(filteredData.filter((t) => t.status !== 'Unpaid'));
-
     const years = getYearsFromData(mergedData);
-    const renderTableByStatus = (status) => {
-        const filtered = mergedData.filter(t => t.status === status);
-        if (!filtered.length) return <p>No records found.</p>;
-    
-        return (
-            <table className="payment-table">
-                <thead>
-                    <tr>
-                        <th>Tenant</th>
-                        <th>Unit</th>
-                        <th>Amount</th>
-                        <th>Payment Period</th>
-                        <th>Date & Time</th>
-                        <th>Reference</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filtered.map((tenant, index) => (
-                        <tr key={index}>
-                            <td>{tenant.name}</td>
-                            <td>{tenant.unit_code}</td>
-                            <td>{tenant.total_due}</td>
-                            <td>{tenant.payment_period}</td>
-                            <td>{formatDate(tenant.payment_date)}</td>
-                            <td>{tenant.reference_number}</td>
-                            <td>{tenant.status}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        );
-    };
-    
-    const renderUnpaidTable = () => {
-        const unpaid = mergedData.filter(t => t.status === 'Unpaid');
-        if (!unpaid.length) return <p>No unpaid tenants.</p>;
-    
-        return (
-            <table className="payment-table">
-                <thead>
-                    <tr>
-                        <th>Tenant</th>
-                        <th>Unit</th>
-                        <th>Due For (Month)</th>
-                        <th>Expected Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {unpaid.map((tenant) => (
-                        <tr key={tenant.user_id}>
-                            <td>{tenant.name}</td>
-                            <td>{tenant.unit_code}</td>
-                            <td>{tenant.due_date}</td>
-                            <td>{tenant.total_due}</td>
-                            <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
-                            <td>
-                                <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        );
-    };
-    
+
     return (
         <div className="admin-payment-container">
             <h2>Admin Payment Dashboard</h2>
@@ -260,27 +193,6 @@ const PaymentAdmin = () => {
                 <button onClick={() => setSelectedStatus('Unpaid')}>Unpaid</button>
             </div>
 
-            {selectedStatus === 'All' && (
-                <div className="summary-sections">
-                <div className="summary-section">
-                    <h3 className="badge confirmed">Confirmed: {paymentSummary.Confirmed}</h3>
-                    {renderTableByStatus('Confirmed')}
-                </div>
-                <div className="summary-section">
-                    <h3 className="badge pending">Pending: {paymentSummary.Pending}</h3>
-                    {renderTableByStatus('Pending')}
-                </div>
-                <div className="summary-section">
-                    <h3 className="badge rejected">Rejected: {paymentSummary.Rejected}</h3>
-                    {renderTableByStatus('Rejected')}
-                </div>
-                <div className="summary-section">
-                    <h3 className="badge unpaid">Unpaid: {paymentSummary.Unpaid}</h3>
-                    {renderUnpaidTable()}
-                </div>
-            </div>
-)}
-            {/* Table */}
             {Object.keys(groupedData).map((unit) => (
                 <div key={unit} className="unit-section">
                     <h3>Unit {unit}</h3>
@@ -304,22 +216,13 @@ const PaymentAdmin = () => {
                                         <td>{tenant.total_due}</td>
                                         <td>{tenant.balance}</td>
                                         <td>{tenant.payment_period}</td>
-                                        <td>
-                                        {tenant.payment_date
-                                            ? new Date(tenant.payment_date).toLocaleString('en-PH', {
-                                                dateStyle: 'medium',
-                                                timeStyle: 'short',
-                                            })
-                                            : 'N/A'}
-                                        </td>
+                                        <td>{formatDate(tenant.payment_date)}</td>
                                         <td>{tenant.status}</td>
                                         <td>
                                             {tenant.status?.toLowerCase() === 'pending' && (
-                                                <button
-                                                    onClick={() =>
-                                                        setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
-                                                    }
-                                                >
+                                                <button onClick={() =>
+                                                    setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
+                                                }>
                                                     {expandedRow === tenant.id ? 'Close' : 'Actions'}
                                                 </button>
                                             )}
@@ -328,52 +231,36 @@ const PaymentAdmin = () => {
                                     {expandedRow === tenant.id && tenant.id && (
                                         <tr>
                                             <td colSpan="7">
-                                            <div className="expanded-details">
-                                                <p>Amount Given: ₱{Number(tenant.total_paid).toFixed(2)}</p>
-                                                <p>Remaining Balance: ₱{Number(tenant.remaining_balance).toFixed(2)}</p>
-                                                <p>Payment Type: {tenant.payment_type}</p>
-                                                <p>Payment Method: {tenant.payment_method}</p>
-                                                <p>
-                                                Payment Date:{' '}
-                                                {tenant.payment_date
-                                                    ? new Date(tenant.payment_date).toLocaleString('en-PH', {
-                                                        dateStyle: 'medium',
-                                                        timeStyle: 'short',
-                                                    })
-                                                    : 'N/A'}
-                                                </p>
-                                                <p>Reference Number: {tenant.reference_number}</p>
-
-                                                {tenant.receipt_path && (
-                                                <img
-                                                    src={tenant.receipt_path}
-                                                    alt="Receipt"
-                                                    className="receipt-preview"
-                                                />
-                                                )}
-
-                                                {tenant.status?.toLowerCase() === 'pending' && (
-                                                <>
-                                                    <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>
-                                                    Confirm
-                                                    </button>
-                                                    <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>
-                                                    Reject
-                                                    </button>
-                                                </>
-                                                )}
-                                            </div>
+                                                <div className="expanded-details">
+                                                    <p>Amount Given: ₱{Number(tenant.total_paid).toFixed(2)}</p>
+                                                    <p>Remaining Balance: ₱{Number(tenant.remaining_balance).toFixed(2)}</p>
+                                                    <p>Payment Type: {tenant.payment_type}</p>
+                                                    <p>Payment Method: {tenant.payment_method}</p>
+                                                    <p>Payment Date: {formatDate(tenant.payment_date)}</p>
+                                                    <p>Reference Number: {tenant.reference_number}</p>
+                                                    {tenant.receipt_path && (
+                                                        <img src={tenant.receipt_path} alt="Receipt" className="receipt-preview" />
+                                                    )}
+                                                    {tenant.status?.toLowerCase() === 'pending' && (
+                                                        <>
+                                                            <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>Confirm</button>
+                                                            <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>Reject</button>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
-                                        )}
+                                    )}
                                 </React.Fragment>
                             ))}
                         </tbody>
                     </table>
-            {/* === ✅ Unpaid Tenants Table*/}
+                </div>
+            ))}
+
             {selectedStatus === 'Unpaid' && (
                 <div className="unpaid-section">
-                  <h3>Unpaid Tenants</h3>
+                    <h3>Unpaid Tenants</h3>
                     <table className="payment-table unpaid-table">
                         <thead>
                             <tr>
@@ -409,11 +296,7 @@ const PaymentAdmin = () => {
                         </tbody>
                     </table>
                 </div>
-)}
-                </div>
-                
-            ))}
-
+            )}
         </div>
     );
 };
