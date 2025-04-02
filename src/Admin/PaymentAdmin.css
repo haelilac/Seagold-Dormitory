@@ -168,7 +168,6 @@ textarea {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Darker background */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -176,7 +175,7 @@ textarea {
 }
 
 .modal-content {
-    background-color: white; /* Solid white background */
+    background-color: 0;
     padding: 2rem;
     border-radius: 10px;
     width: 600px;
