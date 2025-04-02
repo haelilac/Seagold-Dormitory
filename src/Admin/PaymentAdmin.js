@@ -187,7 +187,17 @@ const PaymentAdmin = () => {
 
     const viewProfile = (id) => window.location.href = `/tenant/profile/${id}`;
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
+    const normalizeMonth = (d) => new Date(d.slice(0, 7) + '-01');
 
+    const isSameMonth = (a, b) => {
+        const da = normalizeMonth(a);
+        const db = normalizeMonth(b);
+        return (
+            da.getUTCFullYear() === db.getUTCFullYear() &&
+            da.getUTCMonth() === db.getUTCMonth()
+        );
+    };
+    
 const normalizedStatus = selectedStatus.toLowerCase();
 
 const filteredData = selectedStatus === 'All'
@@ -332,9 +342,10 @@ const filteredData = selectedStatus === 'All'
                                         <td>
                                             <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
                                             <button onClick={() => {
-                                                fetchTenantPayments(tenant.user_id, tenant.due_date);
-                                                setSelectedTenantName(tenant.name);
-                                            }}>View</button>
+                                                    const firstDayOfMonth = tenant.due_date.slice(0, 7) + '-01';
+                                                    fetchTenantPayments(tenant.user_id, firstDayOfMonth);
+                                                    setSelectedTenantName(tenant.name);
+                                                }}>View</button>
                                             <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
                                         </td>
                                     </tr>
