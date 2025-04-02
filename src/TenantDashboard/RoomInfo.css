@@ -37,7 +37,7 @@
  * Main Container (Card)
  *************************************/
 .roomCard-container {
-  background-color: #244e75;
+  background-color: #ffffff; /* ✅ White background */
   border-radius: 8px;
   box-shadow: 0 2px 5px #0000001a;
   flex: 1 1;
