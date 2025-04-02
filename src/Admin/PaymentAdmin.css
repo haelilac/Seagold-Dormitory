@@ -162,3 +162,69 @@ textarea {
     font-weight: bold;
   }
   
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: #fff; /* Solid white background */
+    color: #000;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Adds depth */
+    position: relative;
+    z-index: 10000;
+    animation: modalFadeIn 0.3s ease-in-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: #f44336;
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    z-index: 10001;
+}
+
+.modal-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.modal-table th, .modal-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+
