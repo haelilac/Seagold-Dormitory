@@ -102,8 +102,9 @@
   width: 30px;
   height: auto;
   object-fit: contain;
-  filter: invert(85%) sepia(10%) saturate(700%) hue-rotate(180deg) brightness(110%) contrast(90%);
+  fill: #f1c40f; /* ✅ exact gold color for inline SVGs */
 }
+
 
 .infoValue {
   font-size: 1.1rem;
