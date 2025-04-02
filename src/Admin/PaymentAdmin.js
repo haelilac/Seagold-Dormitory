@@ -115,12 +115,13 @@ const PaymentAdmin = () => {
                 })),
                 ...unpaid.map((u) => ({
                     ...u,
-                    user_id: u.user_id, // ✅ Add this line
-                    name: u.tenant_name, // Also normalize in case it's not present
+                    user_id: u.user_id || u.id,  // ✅ Fallback to `id` if `user_id` is not present
+                    name: u.tenant_name || u.name,  // ✅ Normalize tenant name
                     total_due: `₱${parseFloat(u.total_due).toFixed(2)}`,
                     balance: `₱${parseFloat(u.balance).toFixed(2)}`,
                     status: 'Unpaid',
                 })),
+                
                 
             ];
             setMergedData(merged);
