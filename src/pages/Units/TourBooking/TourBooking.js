@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./TourBooking.css";
-import LoginModal from "../LoginModal/LoginModal";
+import LoginModal from "../../LoginModal/LoginModal";
 
 const TourBooking = () => {
   const [calendarDates, setCalendarDates] = useState([]); // Calendar for the selected month
