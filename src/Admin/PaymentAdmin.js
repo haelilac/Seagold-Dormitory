@@ -35,8 +35,15 @@ const PaymentAdmin = () => {
             console.log("🔍 All Payments:", allPayments);
             console.log("🗓️ Unpaid Month:", unpaidMonth);
     
-            const isSameMonth = (a, b) => a.slice(0, 7) === b.slice(0, 7);
-
+            const isSameMonth = (a, b) => {
+                const dateA = new Date(a);
+                const dateB = new Date(b);
+                return (
+                    dateA.getFullYear() === dateB.getFullYear() &&
+                    dateA.getMonth() === dateB.getMonth()
+                );
+            };
+            
     
             const filtered = allPayments.filter(p =>
                 p.user_id === tenantId &&
