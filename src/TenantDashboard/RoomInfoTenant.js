@@ -2,6 +2,7 @@ import React from 'react';
 import './RoomInfo.css';
 
 const RoomCard = () => {
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   // Main room image
   const sampleDormImage = 'https://seagold-laravel-production.up.railway.app/Dorm.jpg';
 
