@@ -402,11 +402,19 @@ const filteredData = selectedStatus === 'All'
                                 </tbody>
                             </table>
                         ) : (
-                            <p>
-                            No payments made for this month.
-                            {selectedTenantName && <> Send a reminder to notify <strong>{selectedTenantName}</strong>.</>}
-                            </p>
-                        
+                        <p>
+                        No payments made for this month.
+                        {selectedTenantName && (
+                            <>
+                            {' '}Send a reminder to notify <strong>{selectedTenantName}</strong>.
+                            <br />
+                            <button onClick={() => sendReminder(selectedTenantPayments[0]?.user_id)}>
+                                Send Reminder
+                            </button>
+                            </>
+                        )}
+                        </p>
+
                         )}
                     </div>
                 </div>
