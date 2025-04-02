@@ -2,12 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './PaymentAdmin.css';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const initSummary = () => ({
-    Confirmed: 0,
-    Pending: 0,
-    Rejected: 0,
-    Unpaid: 0,
-});
 
 const formatDate = (date) =>
     date ? new Date(date).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
