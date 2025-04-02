@@ -33,6 +33,22 @@
   font-weight: 700;
 }
 
+/*************************************
+ * Main Container (Card)
+ *************************************/
+.roomCard-container {
+  background-color: #ffffff; /* ✅ White background */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px #0000001a;
+  flex: 1 1;
+  margin: 0 auto;
+  max-width: 982px;
+  padding: 3rem 1rem 1rem;
+  width: 100%;
+  height: 100vh; /* 🔥 Full screen height */
+  overflow-y: auto; /* 🔥 Scrollable content */
+  -webkit-overflow-scrolling: touch;
+}
 
 /*************************************
  * Main Content Layout
