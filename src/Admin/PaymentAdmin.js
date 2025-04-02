@@ -36,9 +36,13 @@ const PaymentAdmin = () => {
             console.log("🗓️ Unpaid Month:", unpaidMonth);
     
             const isSameMonth = (a, b) => {
+                console.log('👉 Comparing:', p.payment_period, unpaidMonth, isSameMonth(p.payment_period, unpaidMonth));
+                console.log("All payment periods:", allPayments.map(p => p.payment_period));
+
                 const dateA = new Date(a);
                 const dateB = new Date(b);
                 return (
+                    !isNaN(dateA) && !isNaN(dateB) &&
                     dateA.getFullYear() === dateB.getFullYear() &&
                     dateA.getMonth() === dateB.getMonth()
                 );
