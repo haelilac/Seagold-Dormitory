@@ -149,11 +149,11 @@ const PaymentAdmin = () => {
     const viewProfile = (id) => window.location.href = `/tenant/profile/${id}`;
     const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
 
-    const filteredData = selectedStatus === 'All'
-    ? mergedData.filter((t) => t.status !== 'Unpaid')
-    : selectedStatus === 'Unpaid'
-        ? mergedData.filter((t) => t.status === 'Unpaid')
-        : mergedData.filter((t) => t.status === selectedStatus);
+const normalizedStatus = selectedStatus.toLowerCase();
+
+const filteredData = selectedStatus === 'All'
+    ? mergedData.filter((t) => t.status?.toLowerCase() !== 'unpaid')
+    : mergedData.filter((t) => t.status?.toLowerCase() === normalizedStatus);
 
     const groupedData = selectedStatus !== 'Unpaid'
         ? groupByUnit(filteredData)
@@ -180,12 +180,6 @@ const PaymentAdmin = () => {
                     {years.map((year) => (
                         <option key={year} value={year}>{year}</option>
                     ))}
-                </select>
-                <select name="status" value={filters.status} onChange={handleFilterChange}>
-                    <option value="">All Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Unpaid">Unpaid</option>
                 </select>
                 <button onClick={exportToCSV}>Export CSV</button>
             </div>
