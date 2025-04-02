@@ -379,6 +379,7 @@ const filteredData = selectedStatus === 'All'
                                         <th>Payment Method</th>
                                         <th>Reference</th>
                                         <th>Date</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -387,7 +388,8 @@ const filteredData = selectedStatus === 'All'
                                             <td>₱{parseFloat(payment.amount).toFixed(2)}</td>
                                             <td>{payment.payment_method}</td>
                                             <td>{payment.reference_number}</td>
-                                            <td>{formatDate(payment.submitted_at)}</td>
+                                            <td>{formatDate(payment.payment_date)}</td>
+                                            <td>{payment.status}</td>
                                         </tr>
                                     ))}
                                 </tbody>
