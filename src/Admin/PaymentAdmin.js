@@ -48,6 +48,7 @@ const PaymentAdmin = () => {
             const filtered = allPayments.filter(p => {
                 const sameMonth = isSameMonth(p.payment_period, unpaidMonth);
                 console.log('👉 Comparing:', p.payment_period, unpaidMonth, sameMonth);
+                console.log('🔍 Comparing IDs:', p.user_id, tenantId, String(p.user_id) === String(tenantId));
                 return (
                     p.user_id === tenantId &&
                     p.status !== 'Rejected' &&
