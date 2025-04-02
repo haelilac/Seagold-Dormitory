@@ -176,7 +176,7 @@ textarea {
 }
 
 .modal-content {
-    color: #000;
+    background-color: white; /* Solid white background */
     padding: 2rem;
     border-radius: 10px;
     width: 600px;
