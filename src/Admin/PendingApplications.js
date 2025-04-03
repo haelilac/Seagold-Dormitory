@@ -164,7 +164,7 @@ const PendingApplications = () => {
                             <p><strong>Contact Number:</strong> {selectedApplication.contact_number}</p>
                             <p><strong>Duration:</strong> {selectedApplication.duration} months</p>
                             <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
-                            <p><strong>Rent Price:</strong> ₱{selectedApplication.set_price || 'Not set'}</p>
+                            <p><strong>Rent Price:</strong> ₱{selectedApplication.set_price ? parseFloat(selectedApplication.set_price).toFixed(2) : 'Not set'}</p>
 
 
                             {/* Display Valid ID if available */}
