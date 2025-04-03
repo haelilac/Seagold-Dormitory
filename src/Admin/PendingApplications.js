@@ -164,6 +164,9 @@ const PendingApplications = () => {
                             <p><strong>Contact Number:</strong> {selectedApplication.contact_number}</p>
                             <p><strong>Duration:</strong> {selectedApplication.duration} months</p>
                             <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
+                            <p><strong>Default Rent Price:</strong> ₱
+                                {units.find((u) => u.unit_code === formData.reservation_details)?.price?.toLocaleString() || '0.00'}
+                            </p>
 
                             {/* Display Valid ID if available */}
                             {selectedApplication.valid_id && (
@@ -189,12 +192,17 @@ const PendingApplications = () => {
                             <input type="number" name="duration" value={formData.duration} onChange={handleInputChange} />
                             
                             <label>Unit:</label>
+                            
                             <select name="reservation_details" value={formData.reservation_details} onChange={handleInputChange}>
                                 {units.map((unit) => (
                                     <option key={unit.id} value={unit.unit_code}>{unit.name}</option>
                                 ))}
                             </select>
-                            
+
+                            <p><strong>Default Rent Price:</strong> ₱
+                                {units.find((u) => u.unit_code === formData.reservation_details)?.price?.toLocaleString() || '0.00'}
+                            </p>
+
                             <label>Set Price:</label>
                             <input type="number" name="set_price" value={formData.set_price} onChange={handleInputChange} />
 
