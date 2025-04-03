@@ -211,7 +211,8 @@ const ContactUs = () => {
         
             const data = await response.json();
 
-            setUploadedValidIdPath(`https://seagold-laravel-production.up.railway.app/storage/${data.file_path.replace(/^.*storage\//, '')}`);
+            setUploadedValidIdPath(`https://seagold-laravel-production.up.railway.app/storage/${data.file_path}`);
+
 
 
             if (data.error) {
