@@ -209,7 +209,9 @@ const ContactUs = () => {
             }
         
             const data = await response.json();
-        
+
+            setUploadedValidIdPath(`https://seagold-laravel-production.up.railway.app/storage/${data.file_path}`);
+
             if (data.error) {
                 alert(`❌ ID Processing Error: ${data.error}`);
                 setIsIdVerified(false);
@@ -685,10 +687,20 @@ const ContactUs = () => {
                         <div className="form-group">
                             <label>Upload {formData.id_type}</label>
                             <input type="file" name="valid_id" onChange={handleFileChange} required />
+                            
+                            {uploadedValidIdPath && (
+                            <div>
+                                <label>Preview of Uploaded Valid ID</label>
+                                <img 
+                                src={uploadedValidIdPath} 
+                                alt="Uploaded Valid ID" 
+                                style={{ width: '300px', height: 'auto', marginTop: '10px', border: '1px solid #ccc', padding: '5px' }}
+                                />
+                            </div>
+                            )}
                         </div>
-                    </div>
-                )}
-
+                        </div>
+)}
                 {/* Privacy Checkbox */}
                 <div className="form-row">
                     <div className="form-group">

@@ -9,6 +9,7 @@ const PendingApplications = () => {
     const [error, setError] = useState(null);
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [editMode, setEditMode] = useState(false);
+    const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
     const [formData, setFormData] = useState({
         duration: '',
         reservation_details: '',
