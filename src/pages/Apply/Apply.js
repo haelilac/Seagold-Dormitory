@@ -33,6 +33,7 @@ const ContactUs = () => {
     const [isIdVerified, setIsIdVerified] = useState(false); // ID Verification
     const [units, setUnits] = useState([]);
     const [showTermsModal, setShowTermsModal] = useState(false);
+    const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
 
     // Address Data
     const [provinces, setProvinces] = useState([]);
