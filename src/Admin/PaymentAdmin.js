@@ -77,6 +77,15 @@ const PaymentAdmin = () => {
               
               setSelectedMonthData(monthData || null);
               
+            const confirmedOnly = filtered.filter(p => p.status === 'confirmed');
+            const totalPaid = confirmedOnly.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+            const unitPrice = parseFloat(selectedMonthData?.total_due?.replace('₱', '') || 0);
+            const remaining = unitPrice - totalPaid;
+
+            setSelectedMonthData(prev => ({
+                ...prev,
+                balance: `₱${remaining.toFixed(2)}`
+            }));
         } catch (error) {
             console.error("Error fetching tenant payments:", error);
         }
