@@ -10,8 +10,6 @@ const PendingApplications = () => {
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({
-        duration: '',
-        reservation_details: '',
         set_price: ''
     });
 
@@ -59,21 +57,28 @@ const PendingApplications = () => {
 
     const handleUpdateApplication = async (applicationId) => {
         try {
+            const payload = {
+                price_option: formData.set_price ? 'custom' : 'unit',
+                set_price: formData.set_price || null,
+            };
+    
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             });
-
+    
             if (!response.ok) throw new Error('Failed to update application.');
-            
+    
             alert('Application updated successfully.');
             handleCloseDetails();
             window.location.reload();
         } catch (error) {
             alert('An error occurred while updating the application.');
+            console.error(error);
         }
     };
+    
 
     const handleAccept = async (applicationId, tenantName, tenantEmail, unitCode) => {
         if (!window.confirm('Accept this application and create a tenant account?')) return;
