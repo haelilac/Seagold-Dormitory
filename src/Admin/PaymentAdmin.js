@@ -30,16 +30,13 @@ const PaymentAdmin = () => {
         if (!tenantId) {
             console.warn('❗ tenantId is undefined in fetchTenantPayments');
             return;
-          }
+        }
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/payments`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const allPayments = await res.json();
-
-            console.log("🔍 All Payments:", allPayments);
-            console.log("🗓️ Unpaid Month:", unpaidMonth);
     
             const isSameMonth = (a, b) => {
                 const dateA = new Date(a);
@@ -50,42 +47,35 @@ const PaymentAdmin = () => {
                     dateA.getMonth() === dateB.getMonth()
                 );
             };
-            
-            const filtered = allPayments.filter(p => {
-                const sameMonth = isSameMonth(p.payment_period, unpaidMonth);
-                console.log('👉 Comparing:', p.payment_period, unpaidMonth, sameMonth);
-                console.log('🔍 Comparing IDs:', p.user_id, tenantId, String(p.user_id) === String(tenantId));
-                return (
-                    p.user_id === tenantId &&
-                    p.status !== 'Rejected' &&
-                    sameMonth
-                );
-            });           
-            console.log("All payment periods:", allPayments.map(p => p.payment_period));
-            console.log("✅ Filtered Payments for Modal:", filtered);
+    
+            const filtered = allPayments.filter(p =>
+                p.user_id === tenantId &&
+                p.status !== 'Rejected' &&
+                isSameMonth(p.payment_period, unpaidMonth)
+            );
     
             setSelectedTenantPayments(filtered);
-            setSelectedTenantName(tenantName); // Already set in your View button
-            setSelectedTenantId(tenantId); // ⬅️ Add this
+            setSelectedTenantName(tenantName);
+            setSelectedTenantId(tenantId);
             setShowModal(true);
-
+    
             const monthData = mergedData.find(
                 (entry) =>
-                  String(entry.id) === String(tenantId) &&
-                  isSameMonth(entry.payment_period || entry.due_date, unpaidMonth)
-              );
-              
-              setSelectedMonthData(monthData || null);
-              
-            const confirmedOnly = filtered.filter(p => p.status === 'confirmed');
+                    String(entry.id) === String(tenantId) &&
+                    isSameMonth(entry.payment_period || entry.due_date, unpaidMonth)
+            );
+    
+            // ✅ Calculate balance BEFORE setting state
+            const confirmedOnly = filtered.filter(p => p.status.toLowerCase() === 'confirmed');
             const totalPaid = confirmedOnly.reduce((sum, p) => sum + parseFloat(p.amount), 0);
-            const unitPrice = parseFloat(selectedMonthData?.total_due?.replace('₱', '') || 0);
+            const unitPrice = parseFloat(monthData?.total_due?.replace('₱', '') || 0);
             const remaining = unitPrice - totalPaid;
-
-            setSelectedMonthData(prev => ({
-                ...prev,
+    
+            // ✅ Now set the full object
+            setSelectedMonthData({
+                ...monthData,
                 balance: `₱${remaining.toFixed(2)}`
-            }));
+            });
         } catch (error) {
             console.error("Error fetching tenant payments:", error);
         }
