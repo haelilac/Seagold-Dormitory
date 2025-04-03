@@ -210,12 +210,14 @@ const ContactUs = () => {
             }
         
             const data = await response.json();
+            console.log("Returned file path from backend:", data.file_path);
 
             const parts = data.file_path.split('/');
             const folder = parts[1];     // "valid_ids"
             const filename = parts[2];   // "uploaded_id.jpg"
             const url = `https://seagold-laravel-production.up.railway.app/api/view-file/${folder}/${filename}`;
             setUploadedValidIdPath(url);
+            console.log("Image Preview URL", uploadedValidIdPath);
 
 
             if (data.error) {
