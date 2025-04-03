@@ -337,11 +337,6 @@ const filteredData = selectedStatus === 'All'
                     </table>
                 </div>
             ))}
-            {selectedMonthData && (
-            <div className="modal-balance-info">
-                <p><strong>Remaining Balance:</strong> {selectedMonthData.balance}</p>
-            </div>
-            )}
             {selectedStatus === 'Unpaid' && (
                 <div className="unpaid-section">
                     <h3>Unpaid Tenants</h3>
@@ -429,6 +424,11 @@ const filteredData = selectedStatus === 'All'
                                             <td>{payment.status}</td>
                                         </tr>
                                     ))}
+                                    {selectedMonthData && (
+                                        <div className="modal-balance-info">
+                                            <p><strong>Remaining Balance:</strong> {selectedMonthData.balance}</p>
+                                        </div>
+                                    )}
                                 </tbody>
                             </table>
                         ) : (
