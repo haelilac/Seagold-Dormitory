@@ -164,9 +164,8 @@ const PendingApplications = () => {
                             <p><strong>Contact Number:</strong> {selectedApplication.contact_number}</p>
                             <p><strong>Duration:</strong> {selectedApplication.duration} months</p>
                             <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
-                            <p><strong>Default Rent Price:</strong> ₱
-                                {units.find((u) => u.unit_code === formData.reservation_details)?.price?.toLocaleString() || '0.00'}
-                            </p>
+                            <p><strong>Rent Price:</strong> ₱{selectedApplication.set_price || 'Not set'}</p>
+
 
                             {/* Display Valid ID if available */}
                             {selectedApplication.valid_id && (
