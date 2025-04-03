@@ -216,7 +216,7 @@ const ContactUs = () => {
             if (data.error) {
                 alert(`❌ ID Processing Error: ${data.error}`);
                 setIsIdVerified(false);
-            } else if (data.id_type_matched) {
+            } else if (data.id_verified) {
                 alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.ocr_text}`);
                 setIsIdVerified(true);
             } else {
