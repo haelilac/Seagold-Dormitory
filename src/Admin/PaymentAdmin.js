@@ -24,6 +24,7 @@ const PaymentAdmin = () => {
     const [selectedTenantPayments, setSelectedTenantPayments] = useState([]);
     const [selectedTenantName, setSelectedTenantName] = useState('');
     const [selectedTenantId, setSelectedTenantId] = useState(null);
+    const [selectedMonthData, setSelectedMonthData] = useState(null);
 
     const fetchTenantPayments = async (tenantId, unpaidMonth, tenantName) => {
         if (!tenantId) {
@@ -68,6 +69,14 @@ const PaymentAdmin = () => {
             setSelectedTenantId(tenantId); // ⬅️ Add this
             setShowModal(true);
 
+            const monthData = mergedData.find(
+                (entry) =>
+                  String(entry.id) === String(tenantId) &&
+                  isSameMonth(entry.payment_period || entry.due_date, unpaidMonth)
+              );
+              
+              setSelectedMonthData(monthData || null);
+              
         } catch (error) {
             console.error("Error fetching tenant payments:", error);
         }
@@ -328,7 +337,11 @@ const filteredData = selectedStatus === 'All'
                     </table>
                 </div>
             ))}
-
+            {selectedMonthData && (
+            <div className="modal-balance-info">
+                <p><strong>Remaining Balance:</strong> {selectedMonthData.balance}</p>
+            </div>
+            )}
             {selectedStatus === 'Unpaid' && (
                 <div className="unpaid-section">
                     <h3>Unpaid Tenants</h3>
@@ -363,17 +376,21 @@ const filteredData = selectedStatus === 'All'
                                     <td>{tenant.unpaid_months || '1'}</td>
                                     <td>
                                     <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
-                                    <button onClick={() => {
-                                        fetchTenantPayments(tenant.id, firstDayOfMonth, tenant.name); // ✅ pass tenant.name here
+                                    <button
+                                    onClick={() => {
+                                        const firstDayOfMonth = tenant.due_date.slice(0, 7) + '-01';
+                                        fetchTenantPayments(tenant.id, firstDayOfMonth, tenant.name);
                                         setSelectedTenantId(tenant.id);
-                                    }}>
-                                    View</button>
+                                        setSelectedMonthData(tenant); // ✅ save balance info
+                                    }}
+                                    >
+                                    View
+                                    </button>
                                     <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
                                     </td>
                                 </tr>
                                 );
                             })}
-
                         </tbody>
                     </table>
                 </div>
