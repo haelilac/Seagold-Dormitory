@@ -211,16 +211,16 @@ const ContactUs = () => {
         
             const data = await response.json();
 
-            setUploadedValidIdPath(`https://seagold-laravel-production.up.railway.app/storage/${data.file_path}`);
+            setUploadedValidIdPath(data.file_path);
 
             if (data.error) {
                 alert(`❌ ID Processing Error: ${data.error}`);
                 setIsIdVerified(false);
             } else if (data.id_type_matched) {
-                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
+                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.ocr_text}`);
                 setIsIdVerified(true);
             } else {
-                alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
+                alert(`❌ ID Mismatch!\nExtracted Text: ${data.ocr_text}`);
                 setIsIdVerified(false);
             }
         } catch (error) {
