@@ -286,15 +286,19 @@ const ContactUs = () => {
 
             // Append other form data
             Object.keys(formData).forEach((key) => {
-                if (key !== "address") {
-                    if (key === 'check_in_date') {
-                        requestData.append(key, formatDateTime(formData[key]));
-                    } else {
-                        requestData.append(key, formData[key]);
-                    }
+                if (key === 'check_in_date') {
+                    requestData.append(key, formatDateTime(formData[key]));
+                } else if (key === 'valid_id') {
+                    // Skip appending the file itself, will use Cloudinary URL instead
+                    return;
+                } else {
+                    requestData.append(key, formData[key]);
                 }
             });
-    
+            
+            // Add the Cloudinary URL separately
+            requestData.append("valid_id_url", uploadedValidIdPath); // this is the actual file path from Cloudinary
+            
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
