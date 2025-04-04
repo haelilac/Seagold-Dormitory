@@ -9,6 +9,7 @@ const AdminGallery = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [editMode, setEditMode] = useState(null); // Holds the ID of the image being edited
+  const [activeCategory, setActiveCategory] = useState('ALL');
 
   useEffect(() => {
     fetchImages();
@@ -130,6 +131,23 @@ const handleImageEdit = async (id) => {
   return (
     <div className="admin-gallery">
       <h2>Manage Gallery</h2>
+      <div className="category-filter">
+        <button
+          onClick={() => setActiveCategory('ALL')}
+          className={activeCategory === 'ALL' ? 'active-category' : ''}
+        >
+          All
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={activeCategory === cat ? 'active-category' : ''}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
 
       {/* Image Upload Form */}
       <form
@@ -186,7 +204,10 @@ const handleImageEdit = async (id) => {
 
       {/* Image Gallery */}
       <div className="gallery-grid">
-        {images.map((img) => (
+      {images
+        .filter((img) => activeCategory === 'ALL' || img.category === activeCategory)
+        .map((img) => (
+
           <div key={img.id} className="gallery-card">
             <img src={img.image_url} alt={img.title} />
             <div className="gallery-info">
