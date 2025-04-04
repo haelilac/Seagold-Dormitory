@@ -189,8 +189,7 @@ const ContactUs = () => {
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        setFormData((prev) => ({ ...prev, valid_id: data.file_path }));
-    
+
         const formDataUpload = new FormData();
         formDataUpload.append("file", file);
         formDataUpload.append("id_type", formData.id_type);  // ✅ Append 'id_type' to FormData
@@ -211,11 +210,13 @@ const ContactUs = () => {
         
             const data = await response.json();
             console.log("Returned file path from backend:", data.file_path);
-
+        
+            // ✅ Set formData.valid_id here, now that data is available
+            setFormData((prev) => ({ ...prev, valid_id: data.file_path }));
+        
             setUploadedValidIdPath(data.file_path);
             console.log("Image Preview URL", data.file_path);
-
-
+        
             if (data.error) {
                 alert(`❌ ID Processing Error: ${data.error}`);
                 setIsIdVerified(false);
