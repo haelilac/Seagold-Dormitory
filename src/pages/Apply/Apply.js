@@ -189,7 +189,7 @@ const ContactUs = () => {
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        setFormData({ ...formData, valid_id: file });
+        setFormData((prev) => ({ ...prev, valid_id: data.file_path }));
     
         const formDataUpload = new FormData();
         formDataUpload.append("file", file);
@@ -694,6 +694,14 @@ const ContactUs = () => {
                         </div>
                         </div>
 )}
+                {uploadedValidIdPath && (
+                <img 
+                    src={uploadedValidIdPath} 
+                    alt="Uploaded Valid ID" 
+                    style={{ width: '250px', marginTop: '10px', border: '1px solid #ccc' }} 
+                />
+                )}
+
                 {/* Privacy Checkbox */}
                 <div className="form-row">
                     <div className="form-group">

@@ -175,7 +175,7 @@ const PendingApplications = () => {
                                     <p><strong>Valid ID:</strong></p>
                                     {console.log("Cloudinary URL for valid_id:", selectedApplication.valid_id)}
                                     <img 
-                                        src={`https://res.cloudinary.com/dxhthya7z/image/upload/${selectedApplication.valid_id}`} 
+                                    src={selectedApplication.valid_id}
                                         alt="Valid ID" 
                                         style={{
                                             width: '300px',
