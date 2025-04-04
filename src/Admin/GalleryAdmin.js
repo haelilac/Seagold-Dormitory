@@ -15,6 +15,16 @@ const AdminGallery = () => {
     fetchCategories();
   }, []);
 
+  const fetchCategories = () => {
+    const predefinedCategories = [
+      'ROOMS',
+      'HALLWAY',
+      'CANTEEN',
+      "MEN'S BATHROOM",
+      "WOMEN'S BATHROOM",
+    ];
+    setCategories(predefinedCategories);
+  };
   const fetchImages = async () => {
     try {
       const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery', {
@@ -76,37 +86,38 @@ const AdminGallery = () => {
     }
   };
   
-  const handleImageEdit = async (id) => {
-    if (!category) {
-      alert('Please select a category.');
-      return;
+const handleImageEdit = async (id) => {
+  if (!category) {
+    alert('Please select a category.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('description', description);
+  formData.append('category', category);
+
+  try {
+    const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
+      method: 'POST', // Change to 'PUT' if Laravel route is defined as PUT
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    if (response.ok) {
+      alert('Image updated successfully!');
+      fetchImages();
+      setEditMode(null);
+      resetForm();
+    } else {
+      alert('Failed to update image.');
     }
-  
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('category', category);
-  
-    try {
-      const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
-        method: 'POST', // Or 'PUT' depending on your backend
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (response.ok) {
-        alert('Image updated successfully!');
-        fetchImages();
-        setEditMode(null);
-        resetForm();
-      } else {
-        alert('Failed to update image.');
-      }
-    } catch (error) {
-      console.error('Error updating image:', error);
-    }
-  };
+  } catch (error) {
+    console.error('Error updating image:', error);
+  }
+};
+
   
   const resetForm = () => {
     setNewImage(null);
