@@ -175,7 +175,7 @@ const PendingApplications = () => {
                                     <p><strong>Valid ID:</strong></p>
                                     {console.log("Cloudinary URL for valid_id:", selectedApplication.valid_id)}
                                     <img 
-                                        src={selectedApplication.valid_id} // ✅ Use full Cloudinary URL directly
+                                        src={`https://res.cloudinary.com/dxhthya7z/image/upload/${selectedApplication.valid_id}`} 
                                         alt="Valid ID" 
                                         style={{
                                             width: '300px',
@@ -184,10 +184,9 @@ const PendingApplications = () => {
                                             border: '1px solid #ccc',
                                             padding: '5px'
                                         }}
-                                        
-                                    />
-                                </div>
-                            )}
+                                        />
+                                    </div>
+                                    )}
 
                             
                             <button onClick={() => setEditMode(true)}>Edit</button>
