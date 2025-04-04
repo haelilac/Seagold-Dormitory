@@ -691,17 +691,6 @@ const ContactUs = () => {
                         <div className="form-group">
                             <label>Upload {formData.id_type}</label>
                             <input type="file" name="valid_id" onChange={handleFileChange} required />
-                            
-                            {uploadedValidIdPath && (
-                            <div>
-                                <label>Preview of Uploaded Valid ID</label>
-                                <img 
-                                src={uploadedValidIdPath} 
-                                alt="Uploaded Valid ID" 
-                                style={{ width: '300px', height: 'auto', marginTop: '10px', border: '1px solid #ccc', padding: '5px' }}
-                                />
-                            </div>
-                            )}
                         </div>
                         </div>
 )}

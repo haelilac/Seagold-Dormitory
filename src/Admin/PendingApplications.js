@@ -173,7 +173,7 @@ const PendingApplications = () => {
                                 <div>
                                     <p><strong>Valid ID:</strong></p>
                                     <img 
-                                        src={`https://seagold-laravel-production.up.railway.app/storage/${selectedApplication.valid_id}`} 
+                                        src={`https://seagold-laravel-production.up.railway.app/view-file/valid_ids/${selectedApplication.valid_id?.split('/').pop()}`} 
                                         alt="Valid ID" 
                                         style={{ width: '300px', height: 'auto', marginTop: '10px', border: '1px solid #ccc', padding: '5px' }}
                                     />
