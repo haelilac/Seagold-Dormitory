@@ -131,23 +131,6 @@ const handleImageEdit = async (id) => {
   return (
     <div className="admin-gallery">
       <h2>Manage Gallery</h2>
-      <div className="category-filter">
-        <button
-          onClick={() => setActiveCategory('ALL')}
-          className={activeCategory === 'ALL' ? 'active-category' : ''}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={activeCategory === cat ? 'active-category' : ''}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
 
       {/* Image Upload Form */}
       <form
@@ -232,6 +215,24 @@ const handleImageEdit = async (id) => {
 
       <button className= "upload-action"type="submit">{editMode ? 'Update Image' : 'Upload Image'}</button>
       </form>
+      <div className="category-filter">
+        <button
+          onClick={() => setActiveCategory('ALL')}
+          className={activeCategory === 'ALL' ? 'active-category' : ''}
+        >
+          All
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={activeCategory === cat ? 'active-category' : ''}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+      
     </div>
   );
 };
