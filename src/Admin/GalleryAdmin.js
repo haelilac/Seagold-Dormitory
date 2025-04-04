@@ -26,20 +26,8 @@ const AdminGallery = () => {
       console.error('Error fetching images:', error);
     }
   };
-
-  const fetchCategories = async () => {
-    // Populate categories for dropdown (hardcoded or fetched dynamically)
-    const predefinedCategories = [
-      'ROOMS',
-      'HALLWAY',
-      'CANTEEN',
-      "MEN'S BATHROOM",
-      "WOMEN'S BATHROOM",
-    ];
-    setCategories(predefinedCategories);
-  };
-
-  const handleImageUpload = async (e) => {
+  
+  const handleImageUpload = async () => {
     const formData = new FormData();
     formData.append('image', newImage);
     formData.append('title', title);
@@ -50,11 +38,14 @@ const AdminGallery = () => {
       const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery/upload', {
         method: 'POST',
         body: formData,
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       if (response.ok) {
         alert('Image uploaded successfully!');
         fetchImages();
+        resetForm();
       } else {
         alert('Failed to upload image.');
       }
@@ -85,22 +76,24 @@ const AdminGallery = () => {
     }
   };
   
-
   const handleImageEdit = async (id) => {
     if (!category) {
       alert('Please select a category.');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
     formData.append('category', category);
-
+  
     try {
       const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
-        method: 'PUT',
+        method: 'POST', // Or 'PUT' depending on your backend
         body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       if (response.ok) {
         alert('Image updated successfully!');
@@ -114,7 +107,7 @@ const AdminGallery = () => {
       console.error('Error updating image:', error);
     }
   };
-
+  
   const resetForm = () => {
     setNewImage(null);
     setTitle('');
@@ -184,7 +177,7 @@ const AdminGallery = () => {
       <div className="gallery-grid">
         {images.map((img) => (
           <div key={img.id} className="gallery-card">
-            <img src={`https://seagold-laravel-production.up.railway.app/storage/${img.image_path}`} alt={img.title} />
+            <img src={img.image_url} alt={img.title} />
             <div className="gallery-info">
               <h4>{img.title}</h4>
               <p>{img.description}</p>
