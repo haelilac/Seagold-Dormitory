@@ -169,13 +169,22 @@ const PendingApplications = () => {
 
 
                             {/* Display Valid ID if available */}
+                            
                             {selectedApplication.valid_id && (
                                 <div>
                                     <p><strong>Valid ID:</strong></p>
+                                    {console.log("Cloudinary URL for valid_id:", selectedApplication.valid_id)}
                                     <img 
-                                        src={`https://seagold-laravel-production.up.railway.app/view-file/valid_ids/${selectedApplication.valid_id?.split('/').pop()}`} 
+                                        src={selectedApplication.valid_id} // ✅ Use full Cloudinary URL directly
                                         alt="Valid ID" 
-                                        style={{ width: '300px', height: 'auto', marginTop: '10px', border: '1px solid #ccc', padding: '5px' }}
+                                        style={{
+                                            width: '300px',
+                                            height: 'auto',
+                                            marginTop: '10px',
+                                            border: '1px solid #ccc',
+                                            padding: '5px'
+                                        }}
+                                        
                                     />
                                 </div>
                             )}

@@ -213,7 +213,7 @@ const ContactUs = () => {
             console.log("Returned file path from backend:", data.file_path);
 
             setUploadedValidIdPath(data.file_path);
-            console.log("Image Preview URL", uploadedValidIdPath);
+            console.log("Image Preview URL", data.file_path);
 
 
             if (data.error) {
