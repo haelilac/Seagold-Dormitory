@@ -212,7 +212,11 @@ const ContactUs = () => {
             console.log("Returned file path from backend:", data.file_path);
         
             // ✅ Set formData.valid_id here, now that data is available
-            setFormData((prev) => ({ ...prev, valid_id: data.file_path }));
+            setFormData((prev) => ({
+                ...prev,
+                valid_id: data.file_path,             // (optional: keep if you want to preview)
+                valid_id_url: data.file_path          // ✅ this makes it part of formData!
+              }));
         
             setUploadedValidIdPath(data.file_path);
             console.log("Image Preview URL", data.file_path);
@@ -295,9 +299,6 @@ const ContactUs = () => {
                     requestData.append(key, formData[key]);
                 }
             });
-            
-            // Add the Cloudinary URL separately
-            requestData.append("valid_id_url", uploadedValidIdPath); // this is the actual file path from Cloudinary
             
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
