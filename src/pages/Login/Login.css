@@ -146,8 +146,8 @@ html, body {
 
 .mobile-logo {
   display: none;
-  height: 100px;
-  width: 100px;
+  height: 130px;
+  width: 130px;
   margin: 0 auto 20px;
   object-fit: cover;
   border-radius: 50%;
@@ -200,7 +200,7 @@ html, body {
     .mobile-logo {
       display: block;
       position: absolute;
-      top: 30px;
+      top: 70px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
