@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Login.css';
 import CreateAccountModal from '../CreateAccount/CreateAccount';
@@ -12,6 +12,13 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setRememberMe(true);
+    }
+  }, []);
+  
   // Helper function for fetch-based API calls
   const fetchWithAuth = async (url, method, body = null) => {
     try {
@@ -55,14 +62,7 @@ const Login = () => {
             setErrorMessage(data.error);
             return;
         }
-        
-        useEffect(() => {
-          const storedToken = localStorage.getItem("token");
-          if (storedToken) {
-            setRememberMe(true);
-          }
-        }, []);
-        
+
       // Store tokens in storage
       if (rememberMe) {
         // Persist even after browser is closed
@@ -78,7 +78,8 @@ const Login = () => {
       }
 
       // Set Authorization for axios
-      axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;rs['Authorization'] = `Bearer ${data.access_token}`;
+      axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
+
 
         if (data.role === "admin") {
             window.location.href = "/admin/dashboard";
