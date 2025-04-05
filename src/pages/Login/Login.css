@@ -10,7 +10,7 @@ body, html {
 .login-page {
   height: 100vh;
   width: 100%;
-  background: url('https://seagold-laravel-production.up.railway.app/storage/Loginbg.png') no-repeat center center;
+  background: url('https://seagold-laravel-production.up.railway.app/Loginbg.png') no-repeat center center;
   background-size: cover;
   display: flex;
   align-items: center;
