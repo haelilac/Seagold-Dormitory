@@ -128,8 +128,28 @@ html, body {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .login-container {
+    margin-right: 600px;
+  }
+}
+
+@media (max-width: 992px) {
+  .login-container {
+    margin-right: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-page {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .login-container {
+    margin-right: 0; /* 🔄 center on mobile */
+    margin-left: 0;
+    max-width: 100%;
     padding: 30px 25px;
   }
 
@@ -160,8 +180,4 @@ html, body {
     font-size: 1.5rem;
   }
 
-  .social-icons {
-    gap: 10px;
-    font-size: 0.9rem;
-  }
 }
