@@ -20,12 +20,15 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     const role = localStorage.getItem("role") || sessionStorage.getItem("role");
   
-    if (role === "admin") {
-      window.location.href = "/admin/dashboard";
-    } else if (role === "tenant") {
-      window.location.href = "/tenant/dashboard/home";
+    if (token && role) {
+      if (role === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else if (role === "tenant") {
+        window.location.href = "/tenant/dashboard/home";
+      }
     }
   }, []);
 
