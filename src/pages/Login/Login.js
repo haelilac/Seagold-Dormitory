@@ -123,8 +123,13 @@ const scheduleTokenRefresh = (token) => {
 
 
 return (
-
   <div className="login-page">
+      style={{
+    backgroundImage: `url(${require("../../assets/Loginbg.png")})`,
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+  }}
     {/* Logo (mobile only) */}
         <img
         src={require("../../assets/seagoldlogo.jpg")}

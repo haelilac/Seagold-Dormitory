@@ -14,8 +14,6 @@ html, body {
   height: 100vh;
   width: 100%;
   overflow: hidden;
-  background: url('https://seagold-laravel-production.up.railway.app/Loginbg.png') no-repeat center center;
-  background-size: cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,7 +29,6 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.2); /* Optional dark overlay */
   z-index: 1;
 }
 
@@ -256,7 +253,7 @@ html, body {
 
   .remember-me {
     font-size: 0.95rem;
-    bottom: 108px;
+    bottom: 113px;
     position: absolute;
   }
 
@@ -297,7 +294,7 @@ html, body {
 
   .remember-me {
     font-size: .9rem;
-    bottom: 108px;
+    bottom: 113px;
     position: absolute;
   }
 
