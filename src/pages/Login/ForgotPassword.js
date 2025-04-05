@@ -23,7 +23,12 @@ const ForgotPassword = () => {
   return (
     <div
       className="forgot-password-page"
-      style={{ backgroundImage: `url(${ForgotPassBg})` }}
+      style={{
+        backgroundImage: `url(${ForgotPassBg})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
     >
       <div className="forgot-password-form">
         <h2>Forgot Password</h2>

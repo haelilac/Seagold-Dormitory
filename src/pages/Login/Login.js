@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Login.css';
 import CreateAccountModal from '../CreateAccount/CreateAccount';
 import axiosInstance from './axiosInstance';
+import LoginBg from '../../assets/Loginbg.png';
 
 const Login = () => {
   // State to manage modal, inputs, and errors
@@ -124,8 +125,8 @@ const scheduleTokenRefresh = (token) => {
 
 return (
   <div className="login-page">
-      style={{
-    backgroundImage: `url(${require("../../assets/Loginbg.png")})`,
+  style={{
+    backgroundImage: `url(${LoginBg})`,
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
