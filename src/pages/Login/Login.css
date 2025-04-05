@@ -138,7 +138,7 @@ html, body {
   border-right: 3px solid #366e39;
   white-space: nowrap;
   overflow: hidden;
-  animation: typing 2.5s steps(15, end) 2s forwards, blink 0.75s step-end infinite;
+  animation: typing 2s steps(25, end) 2s forwards, blink 0.75s step-end infinite;
   /*                        ⬆ delay here */
   font-size: 2rem;
   font-weight: bold;
