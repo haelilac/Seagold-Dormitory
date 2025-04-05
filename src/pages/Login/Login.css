@@ -288,6 +288,14 @@ html, body {
   .typing-text {
     font-size: 1.3rem;
   }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    position: relative;
+  }
+  
   .remember-me input[type="checkbox"] {
     width: 14px;
     height: 14px;
@@ -295,15 +303,18 @@ html, body {
 
   .remember-me {
     font-size: .9rem;
-    bottom: -5px;
-    position: absolute;
+    position: relative;
+    bottom: auto;
+    left: auto;
   }
 
   .forgot-password-link {
     font-size: .9rem;
-    bottom: -5px;
-    position: absolute;
-    left: 270px;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 4px;
+    text-align: left;
   }
 
 }
