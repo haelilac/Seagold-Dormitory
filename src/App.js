@@ -38,8 +38,12 @@ import ResetPassword from './pages/Login/ResetPassword';
 const clientId = "758551378674-8t930isecldottudrarf724h6jlgdcji.apps.googleusercontent.com";
 
 const App = () => {
-  const [role, setRole] = useState(localStorage.getItem('role') || null);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [role, setRole] = useState(
+    sessionStorage.getItem('role') || localStorage.getItem('role') || null
+  );
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!sessionStorage.getItem('token') || !!localStorage.getItem('token')
+  );
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   // Function to handle adding a new unit
