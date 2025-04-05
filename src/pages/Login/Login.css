@@ -218,20 +218,20 @@ html, body {
   }
 
   .login-container {
-    margin-right: 0; /* 🔄 center on mobile */
+    margin-right: 0;
     margin-left: 0;
     max-width: 100%;
     padding: 30px 25px;
   }
 
-    .mobile-logo {
-      display: block;
-      position: absolute;
-      top: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-    }
+  .mobile-logo {
+    display: block;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
 
   .welcome-text {
     font-size: 1.6rem;
@@ -249,21 +249,22 @@ html, body {
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
+    position: relative;
   }
 
   .remember-me {
     font-size: 0.95rem;
-    bottom: 113px;
     position: absolute;
+    bottom: 113px;
+    left: 0;
   }
 
   .forgot-password-link {
     font-size: 0.95rem;
-    bottom: 120px;
     position: absolute;
-    left: 270px;
+    bottom: 120px;
+    left: 240px;
   }
-
 }
 
 @media (max-width: 480px) {
