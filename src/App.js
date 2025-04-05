@@ -32,6 +32,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import './App.css';
 import LoginModal from "./pages/LoginModal/LoginModal";
 import Feedback from 'react-bootstrap/esm/Feedback';
+import ForgotPassword from './Login/ForgotPassword';
+import ResetPassword from './Login/ResetPassword';
 
 const clientId = "758551378674-8t930isecldottudrarf724h6jlgdcji.apps.googleusercontent.com";
 
@@ -139,7 +141,9 @@ const App = () => {
             <Route path="/apply" element={<Apply />} />
             <Route path="/login" element={<Login setRole={handleLoginSuccess} />} />
             <Route path="/create-account" element={<CreateAccount />} />
-
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            
             {/* Admin-only routes */}
             <Route
               path="/admin/dashboard/*"
