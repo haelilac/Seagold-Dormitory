@@ -554,7 +554,6 @@ const ContactUs = () => {
                             required
                         >
                             <option value="">Select Stay Type</option>
-                            <option value="day">Day Basis</option>
                             <option value="short-term">Short-Term Stay</option>
                             <option value="long-term">Long-Term Stay</option>
                         </select>
@@ -574,13 +573,6 @@ const ContactUs = () => {
                         >
                             <option value="">Select Duration</option>
 
-                            {/* Day Basis (1-30 days) */}
-                            {formData.stay_type === "day" &&
-                                [...Array(30).keys()].map((day) => (
-                                    <option key={day + 1} value={day + 1}>
-                                        {day + 1} {day + 1 === 1 ? "Day" : "Days"}
-                                    </option>
-                                ))}
 
                             {/* Short-Term Stay (1-6 months) */}
                             {formData.stay_type === "short-term" &&
@@ -612,24 +604,6 @@ const ContactUs = () => {
                         disabled={!formData.stay_type || !formData.duration} // Disable if stay type & duration are not selected
                     >
                         <option value="">Select a Unit</option>
-
-                        {/* Day Basis (Now Shows Short-Term Stay Units) */}
-                        {formData.stay_type === "day" && (
-                            <optgroup label="Day Basis (Short-Term Units)">
-                                {units
-                                    .filter(
-                                        (unit) =>
-                                            unit.status === "available" &&
-                                            unit.users_count < unit.capacity &&
-                                            unit.capacity <= 6 // Show only short-term units
-                                    )
-                                    .map((unit) => (
-                                        <option key={unit.id} value={unit.unit_code}>
-                                            {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
-                                        </option>
-                                    ))}
-                            </optgroup>
-                        )}
 
                         {/* Short-Term Stay Units */}
                         {formData.stay_type === "short-term" && (
