@@ -6,7 +6,6 @@ import axiosInstance from './axiosInstance';
 import LoginBg from '../../assets/Loginbg.png';
 
 const Login = () => {
-  // State to manage modal, inputs, and errors
   const [isCreateAccountOpen, setCreateAccountOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,123 +13,90 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
     if (storedToken) {
       setRememberMe(true);
     }
   }, []);
-  
-  // Helper function for fetch-based API calls
-  const fetchWithAuth = async (url, method, body = null) => {
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        credentials: 'include',
-        body: body ? JSON.stringify(body) : null,
-      });
-  
-      const text = await response.text(); // Log raw response
-      console.log('Raw API Response:', text);
-  
-      return JSON.parse(text); // Parse JSON response
-    } catch (error) {
-      console.error('Error Parsing JSON:', error.message);
-      throw error;
-    }
-  };
-  
+
   const handleLogin = async (event) => {
     event.preventDefault();
     setErrorMessage('');
 
     try {
-        // Get the CSRF token
-        await axiosInstance.get('/sanctum/csrf-cookie'); // This line is important for CSRF protection
+      await axiosInstance.get('/sanctum/csrf-cookie');
+      const response = await axiosInstance.post('/api/login-admin-tenant', {
+        email,
+        password,
+      });
 
-        // Perform login
-        const response = await axiosInstance.post('/api/login-admin-tenant', {
-            email,
-            password,
-        });
+      const data = response.data;
 
-        const data = response.data;
+      if (data.error) {
+        setErrorMessage(data.error);
+        return;
+      }
 
-        if (data.error) {
-            setErrorMessage(data.error);
-            return;
-        }
-
-      // Store tokens in storage
       if (rememberMe) {
-        // Persist even after browser is closed
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("user_id", data.user_id);
       } else {
-        // Clear localStorage and store temporarily in session
-        localStorage.clear();
         sessionStorage.setItem("token", data.access_token);
         sessionStorage.setItem("role", data.role);
         sessionStorage.setItem("user_id", data.user_id);
       }
 
-      // Set Authorization for axios
       axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
 
-
-        if (data.role === "admin") {
-            window.location.href = "/admin/dashboard";
-        } else if (data.role === "tenant") {
-            if (data.status === 'terminated') {
-                setErrorMessage("Your account has been terminated. Please contact the administrator.");
-            } else {
-                window.location.href = "/tenant/dashboard/home";
-            }
+      if (data.role === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else if (data.role === "tenant") {
+        if (data.status === 'terminated') {
+          setErrorMessage("Your account has been terminated. Please contact the administrator.");
+        } else {
+          window.location.href = "/tenant/dashboard/home";
         }
-    } catch (error) {
-        console.error("Login error:", error);
-        setErrorMessage(error.response?.data?.error || "Invalid credentials or CSRF issue");
-    }
-};
-
-
-
-// Helper function to refresh token periodically
-const scheduleTokenRefresh = (token) => {
-  setTimeout(async () => {
-    try {
-      const response = await axiosInstance.post('/api/auth/refresh-token', null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }        
-    });
-
-      const newToken = response.data.access_token;
-      if (newToken) {
-        localStorage.setItem('token', newToken);
-        scheduleTokenRefresh(newToken); // Schedule the next refresh
       }
     } catch (error) {
-      console.error('Token refresh failed:', error);
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      console.error("Login error:", error);
+      setErrorMessage(error.response?.data?.error || "Invalid credentials or CSRF issue");
     }
-  }, 1000 * 60 * 50); // Refresh token every 50 minutes
-};
+  };
 
+  const scheduleTokenRefresh = (token) => {
+    setTimeout(async () => {
+      try {
+        const response = await axiosInstance.post('/api/auth/refresh-token', null, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        const newToken = response.data.access_token;
+        if (newToken) {
+          localStorage.setItem('token', newToken);
+          scheduleTokenRefresh(newToken);
+        }
+      } catch (error) {
+        console.error('Token refresh failed:', error);
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+    }, 1000 * 60 * 50);
+  };
 
 return (
   <div
     className="login-page"
     style={{
       backgroundImage: `url(${LoginBg})`,
-      backgroundSize: "cover",
+      backgroundSize: "contain",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
+      backgroundAttachment: "fixed",
+      minHeight: "100vh",
     }}
   >
     {/* Logo (mobile only) */}

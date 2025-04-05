@@ -11,7 +11,7 @@ import {
 } from "@react-google-maps/api";
 
 const libraries = ["places"];
-const containerStyle = { width: "100%", height: "600px" };
+const containerStyle = { width: "100%", height: "720px" };
 
 // 📍 Dormitory Location
 const dormPosition = { lat: 14.6036, lng: 120.9889 };
@@ -35,6 +35,14 @@ const GoogleMapComponent = () => {
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("school");
   const mapRef = useRef(null);
+  const [isLocating, setIsLocating] = useState(false);
+
+  const options = [
+    { value: "school", label: "Schools", icon: "/assets/school.svg" },
+    { value: "laundry", label: "Laundry Shops", icon: "/assets/laundry.svg" },
+    { value: "restaurant", label: "Carinderias", icon: "/assets/carinderia.svg" },
+    { value: "gas_station", label: "Gas Stations", icon: "/assets/gasstation.svg" },
+  ];
 
   const  isGoogleMapsLoaded = () => {
     return typeof window.google !== "undefined" && window.google.maps;
@@ -42,23 +50,45 @@ const GoogleMapComponent = () => {
 
   // 📍 Get User Location
   const handleGetUserLocation = () => {
+    setIsLocating(true); // Start loading
+  
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const newUserLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+          const newUserLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
           setUserLocation(newUserLocation);
-
+  
           if (mapRef.current) {
             mapRef.current.panTo(newUserLocation);
             mapRef.current.setZoom(15);
+  
+            new window.google.maps.Marker({
+              position: newUserLocation,
+              map: mapRef.current,
+              icon: {
+                url: "/assets/startingpoint.svg",
+                scaledSize: new window.google.maps.Size(50, 50),
+              },
+              title: "Your Current Location",
+            });
           }
+  
+          setIsLocating(false); // Done
         },
-        () => alert("⚠️ Location access denied or unavailable.")
+        () => {
+          alert("⚠️ Location access denied or unavailable.");
+          setIsLocating(false); // Stop loading on error
+        }
       );
     } else {
       alert("⚠️ Geolocation is not supported by this browser.");
+      setIsLocating(false); // Stop loading on fallback
     }
   };
+  
 
   // 🏢 Fetch Nearby Locations
   const handleFindNearbyPlaces = (category) => {
@@ -131,37 +161,98 @@ const GoogleMapComponent = () => {
   };
 
   return (
-    <LoadScriptNext googleMapsApiKey="AIzaSyBoAmNMyi-pULIdPSAjDMbRsrHMWeXLLrE" libraries={libraries}>
+    <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
+      <div className="map-destination">
+      <div className="search-bar-container">
+  <Autocomplete 
+    onLoad={(auto) => setAutocomplete(auto)}
+  >
+    <input type="text" className="search-box" placeholder="Enter destination..." />
+  </Autocomplete>
+  <button className="search-btn" onClick={() => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      
+      if (place && place.geometry) {
+        const location = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        };
+        
+        setUserLocation(location);  // Save the searched location as userLocation
+
+        if (mapRef.current) {
+          mapRef.current.panTo(location);
+          mapRef.current.setZoom(15);
+        }
+
+        // Render Marker for the searched location
+        mapRef.current && new window.google.maps.Marker({
+          position: location,
+          map: mapRef.current,
+          icon: {
+            url: "/assets/endpoint.svg",
+            scaledSize: new window.google.maps.Size(50, 50)
+          },
+          title: "Searched Location"
+        });
+
+      } else {
+        alert("No details available for the searched location.");
+      }
+    } else {
+      alert("Please enter a valid location.");
+    }
+  }}>Search</button>
+
+</div>
+
+</div>
       <div className="map-ui">
         <div className="map-sidebar">
-          <h2>📍 Get Directions</h2>
-          <Autocomplete onLoad={setAutocomplete} onPlaceChanged={() => {
-            const place = autocomplete.getPlace();
-            setUserLocation({ lat: place.geometry.location.lat(), lng: place.geometry.location.lng() });
-          }}>
-            <input type="text" className="search-box" placeholder="Enter destination..." />
-          </Autocomplete>
-          <button onClick={handleGetUserLocation} className="map-btn">📍 Get My Location</button>
-          <button onClick={() => handleGetRoute()} className="map-btn">🛣️ Get Route</button>
+          <h2> <img src="/assets/getdirection.svg" alt="Search" width="20" style={{ marginRight: "5px" }} />  Get Directions</h2>
+          <button onClick={() => {
+     handleGetUserLocation();
+
+        if (userLocation && mapRef.current) {
+      // Render Marker for the user location
+      new window.google.maps.Marker({
+        position: userLocation,
+        map: mapRef.current,
+        icon: { url: "/assets/startingpoint.svg", scaledSize: new window.google.maps.Size(50, 50)
+        },
+        title: "Your Current Location"
+      });
+    }
+  }} className="map-btn"> 
+  <img src="/assets/getmylocation.svg" alt="Search" width="20" style={{ marginRight: "5px" }} /> 
+  Get My Location
+</button>
+
           <select onChange={(e) => setTravelMode(e.target.value)} value={travelMode} className="travel-mode-selector">
             <option value="DRIVING">Driving</option>
             <option value="WALKING">Walking</option>
             <option value="BICYCLING">Biking</option>
           </select>
-          <button onClick={() => handleGetRoute()} className="map-btn">🛣️ Get Route</button>
+          <button onClick={() => handleGetRoute()} className="map-btn"><img src="/assets/getroute.svg" alt="Search" width="20" style={{ marginRight: "5px" }} />Get Route</button>
           <div className="route-info">
             {distance && <p>Distance: {distance}</p>}
             {duration && <p>Duration: {duration}</p>}
           </div>
-          <h3>🔍 Find Nearby:</h3>
+
+          <h3> Find Nearby:</h3>
+          <div className="route-select">
           <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
             <option value="school">🏫 Schools</option>
             <option value="laundry">🧺 Laundry Shops</option>
             <option value="restaurant">🍛 Carinderias</option>
             <option value="gas_station">⛽ Gas Stations</option>
           </select>
-          <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">🔍 Search</button>
-
+          <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
+          <img src="/assets/search.svg" alt="Search" width="20" style={{ marginRight: "5px" }} />
+             Search
+          </button>
+          </div>
           <ul className="nearby-list">
             {nearbyPlaces.map(place => (
               <li key={place.place_id} onClick={() => handleGetRoute({
@@ -172,10 +263,6 @@ const GoogleMapComponent = () => {
               </li>
             ))}
           </ul>
-          <div className="route-info">
-            {distance && <p>Distance: {distance}</p>}
-            {duration && <p>Duration: {duration}</p>}
-          </div>
         </div>
 
         {/* Map Display */}
@@ -188,7 +275,36 @@ const GoogleMapComponent = () => {
             {userLocation && (
               <Marker position={userLocation} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} title="Your Location" />
             )}
-            {selectedRoute && <DirectionsRenderer directions={selectedRoute} />}
+            {/* Directions */}
+            {selectedRoute && (
+  <>
+    <DirectionsRenderer
+      directions={selectedRoute}
+      options={{ suppressMarkers: true }}
+    />
+
+    {/* Custom Start Point (A) */}
+    <Marker
+      position={selectedRoute.routes[0].legs[0].start_location}
+      icon={{
+        url: "/assets/startingpoint.svg",  // Access the file from the public folder
+        scaledSize: new window.google.maps.Size(60, 60)
+      }}
+      title="Start Point (A)"
+    />
+
+    {/* Custom End Point (B) */}
+    <Marker
+      position={selectedRoute.routes[0].legs[0].end_location}
+      icon={{
+        url: "/assets/endpoint.svg",
+        scaledSize: new window.google.maps.Size(40, 40)
+      }}
+      title="End Point (B)"
+    />
+  </>
+)}
+
             {walkingPath && <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeOpacity: 1, strokeWeight: 2 }} />}
             {trafficLayerVisible && <TrafficLayer />}
           </GoogleMap>

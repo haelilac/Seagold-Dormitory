@@ -1,46 +1,118 @@
-.map-ui {
-  display: flex;
-  flex-direction: row;
+body, html, #root {
+  margin: 0;
+  padding: 0;
   height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.map-ui {
+  position: relative;
+  height: 100vh;
+  width: 143vw;
+  position: absolute;
+  left: 0;
+  top: 70px;
 }
 
 .map-sidebar {
-  width: 350px;
+  position: absolute;
+  top: 95px;
+  left: 20px;
+  width: 300px;
   padding: 15px;
   background: white;
-  border-right: 1px solid #ddd;
-  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  height: 75%;
 }
 
+.map-sidebar h2{
+font-size: 22px;
+text-align: center;
+
+}
+
+.map-sidebar h3{
+  font-size: 22px;
+  text-align: center;
+  margin-top: 10%;
+  
+  }
+
 .map-container {
-  flex: 1;
   height: 100vh;
+  width: 100vw;
+}
+
+/* Centered Search Bar */
+.search-bar-container {
+  position: absolute;
+  top: 15px; /* Adjust this value to align properly with the Map/Satellite buttons */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 15;
 }
 
 .search-box {
-  width: 100%;
+  width: 400px; /* Adjust the width as needed */
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-bottom: 10px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-box:focus {
+  border-color: #01a451;
+}
+
+.search-btn {
+  background-color: transparent; /* Remove background color */
+  color: #4285F4; /* Text color */
+  border: 1px solid #4285F4; /* Outline instead of background */
+  padding: 8px 12px;
+  margin-left: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.search-btn:hover {
+  background-color: #4285F4; /* Background on hover */
+  color: white; /* Text becomes white on hover */
+}
+
+.map-destination{
+  position: absolute;
+  top: 70px;
+  left: 750px;
 }
 
 .map-btn {
-  width: 100%;
-  background-color: #4285F4;
-  color: white;
+  background-color: transparent; /* Remove background color */
+  color: #0b0c0c; /* Text color */
   padding: 10px;
-  border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
+  transition: background-color 0.3s, color 0.3s;
+  text-align:center;
 }
 
 .map-btn:hover {
-  background-color: #357ae8;
+  background-color: #fcfdfe;
 }
 
-.travel-mode select {
+.travel-mode-selector,
+.nearby-list select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -48,27 +120,97 @@
   margin-top: 10px;
 }
 
-.travel-details {
-  margin-top: 15px;
-  padding: 10px;
-  background: #f9f9f9;
-  border-radius: 5px;
-  font-size: 14px;
+.nearby-list {
+  list-style: none;
+  padding: 0;
+  max-height: 150px; /* Limits the height of the list */
+  overflow-y: auto; /* Enables scrolling */
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-.traffic-toggle {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.traffic-toggle input {
-  margin-right: 10px;
+/* Styling individual list items */
+.nearby-list li {
+  padding: 8px;
   cursor: pointer;
+  background-color: #f1f1f1;
+  margin: 2px;
+  border-radius: 4px;
 }
 
-.polyline-dotted {
-  stroke-dasharray: 5, 5;
-  stroke-width: 2;
-  stroke: #34A853; /* Green for walking */
+.nearby-list li:hover {
+  background-color: #ddd;
+}
+
+.search-box-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+  height: 20px;
+}
+
+.route-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Creates a two-column grid */
+  gap: 5px; /* Space between columns */
+  margin-top: 2px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.route-info p {
+  padding: 2px;
+  border-radius: 5px;
+  background-color: white;
+  border: 1px solid #ddd;
+
+}
+.map-sidebar h2,
+.map-sidebar h3{
+font-size: 22px;
+  
+}
+
+.select-wrapper {
+  margin-top: 10px;
+}
+
+.travel-mode-selector {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.travel-mode-selector option {
+  padding-left: 30px; /* Ensures text doesn't overlap with the image */
+  background-repeat: no-repeat;
+  background-size: 20px;
+  background-position: 5px center;
+}
+
+.route-info select option{
+width: 5%;
+
+}
+
+.route-select {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Creates a two-column grid */
+  gap: 5px; /* Space between columns */
+  margin-top: 8px;
+  border-radius: 8px;
+  height: 50px;
+}
+
+.route-select select{
+  width: 105%;
+  height: 50%;
+}
+
+.route-select button{
+  position: relative;
+  top: -25px;
+  left: 5px;
 }
