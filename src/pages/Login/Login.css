@@ -135,7 +135,7 @@ html, body {
   border-right: 2px solid #366e39;
   white-space: nowrap;
   overflow: hidden;
-  animation: typing 2.5s steps(20, end) 2s forwards, blink 0.75s step-end infinite;
+  animation: typing 2.5s steps(20, end) 1s forwards, blink 0.75s step-end infinite;
   font-size: 2rem;
   font-weight: bold;
   color: #366e39;
