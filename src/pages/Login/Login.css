@@ -19,7 +19,6 @@ html, body {
   justify-content: center;
   position: relative;
   padding: 20px;
-  background-color: #f8f8f8;
 }
 
 /* Optional dark overlay */
@@ -261,14 +260,14 @@ html, body {
   }
 
 
-  .forgot-password-link {
-    font-size: 0.95rem;
-    position: relative;
-    bottom: auto;
-    left: auto;
-    margin-top: 4px;
-    text-align: left;
-  }
+.forgot-password-link {
+  font-size: 0.95rem;
+  position: relative;
+  bottom: auto;
+  left: auto;
+  margin-top: 4px;
+  text-align: left;
+}
 }
 
 @media (max-width: 480px) {
