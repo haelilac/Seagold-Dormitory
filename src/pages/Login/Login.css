@@ -255,11 +255,17 @@ html, body {
   }
 
   .remember-me {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
+    bottom: 120px;
+    position: absolute;
+    left: 270px;
   }
 
   .forgot-password-link {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
+    bottom: 120px;
+    position: absolute;
+    left: 270px;
   }
 
 }
@@ -291,11 +297,16 @@ html, body {
   }
 
   .remember-me {
-    font-size: 0.8rem;
+    font-size: .9rem;
+    bottom: 120px;
+    position: absolute;
   }
 
   .forgot-password-link {
-    font-size: 0.8rem;
+    font-size: .9rem;
+    bottom: 120px;
+    position: absolute;
+    left: 270px;
   }
 
 }
