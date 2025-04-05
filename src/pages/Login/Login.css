@@ -146,11 +146,9 @@ html, body {
 
 .mobile-logo {
   display: none;
-  position: relative;
   height: 100px;
   width: 100px;
   margin: 0 auto 20px;
-  bottom: 332px;
   object-fit: cover;
   border-radius: 50%;
   border: 4px solid white; /* 🔲 White border */
@@ -199,11 +197,14 @@ html, body {
     padding: 30px 25px;
   }
 
-  .mobile-logo {
-    display: block;
-    bottom: unset;
-    margin-top: 30px;
-  }
+    .mobile-logo {
+      display: block;
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
 
   .welcome-text {
     font-size: 1.6rem;
