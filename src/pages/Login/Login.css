@@ -119,6 +119,12 @@ html, body {
   background-color: #283593;
 }
 
+.create-account-link {
+  color: #366e39;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 /* Error Message */
 .error-message {
   color: #d32f2f;
