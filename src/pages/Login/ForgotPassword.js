@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './ForgotPass.css';
+import './ForgotPassword.css';
+import ForgotPassBg from '../../assets/ForgotPass.png';
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -19,13 +21,24 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgot-password-page">
-      <h2>Forgot Password</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Enter your email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-        <button type="submit">Send Reset Link</button>
-      </form>
-      <p>{message}</p>
+    <div
+      className="forgot-password-page"
+      style={{ backgroundImage: `url(${ForgotPassBg})` }}
+    >
+      <div className="forgot-password-form">
+        <h2>Forgot Password</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <button type="submit">Send Reset Link</button>
+        </form>
+        <p>{message}</p>
+      </div>
     </div>
   );
 };
