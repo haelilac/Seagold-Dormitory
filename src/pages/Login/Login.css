@@ -146,11 +146,16 @@ html, body {
 
 .mobile-logo {
   display: none;
-  width: 100px;
+  position: relative;
   height: 100px;
+  width: 100px;
+  margin: 0 auto 20px;
+  bottom: 332px;
   object-fit: cover;
   border-radius: 50%;
-  margin: 0 auto 20px auto;
+  border: 4px solid white; /* 🔲 White border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Optional soft shadow */
+  z-index: 10;
 }
 
 @keyframes typing {
@@ -196,6 +201,8 @@ html, body {
 
   .mobile-logo {
     display: block;
+    bottom: unset;
+    margin-top: 30px;
   }
 
   .welcome-text {
