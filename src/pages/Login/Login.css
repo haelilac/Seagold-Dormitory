@@ -3,61 +3,51 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Arial, sans-serif;
+  height: 100%;
   box-sizing: border-box;
 }
 
 .login-page {
-  display: flex;
   height: 100vh;
-  overflow: hidden;
-}
-
-/* LEFT SIDE (Image/Graphics with Wave) */
-.login-left {
-  flex: 1.2;
-  background: linear-gradient(135deg, #3f51b5, #1a237e); /* Deep blue/purple blend */
-  color: white;
-  position: relative;
+  width: 100%;
+  background: url('https://seagold-laravel-production.up.railway.app/storage/Loginbg.png') no-repeat center center;
+  background-size: cover;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 20px;
+  position: relative;
 }
 
-.login-left::after {
+/* Optional dark overlay */
+.login-page::before {
   content: "";
   position: absolute;
   top: 0;
-  right: -50px;
-  width: 100px;
+  left: 0;
+  width: 100%;
   height: 100%;
-  background-color: white;
-  clip-path: ellipse(60% 100% at 0% 50%);
-  z-index: 2;
-}
-
-/* OPTIONAL: Add vector/graphic or image */
-.login-left img {
-  max-width: 80%;
+  background-color: rgba(0, 0, 0, 0.4); /* semi-transparent overlay */
   z-index: 1;
 }
 
-/* RIGHT SIDE (Login Form) */
-.login-right {
-  flex: 1;
-  background-color: white;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 40px;
+/* Login Form Container */
+.login-container {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 420px;
+  z-index: 2;
   position: relative;
 }
 
 .welcome-text {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #3f51b5;
+  text-align: center;
   margin-bottom: 20px;
 }
 
@@ -121,6 +111,7 @@ body, html {
 .create-account {
   margin-top: 20px;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .create-account-link {
@@ -135,10 +126,12 @@ body, html {
 
 .social-links {
   margin-top: 30px;
+  text-align: center;
 }
 
 .social-icons {
   display: flex;
+  justify-content: center;
   gap: 15px;
   margin-top: 10px;
 }
@@ -157,27 +150,12 @@ body, html {
   color: #d32f2f;
   font-size: 0.9rem;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .login-page {
-    flex-direction: column;
-  }
-
-  .login-left::after {
-    display: none;
-  }
-
-  .login-left {
-    flex: none;
-    height: 200px;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .login-right {
-    flex: none;
+@media (max-width: 500px) {
+  .login-container {
     padding: 30px 20px;
   }
 }
