@@ -108,87 +108,86 @@ const scheduleTokenRefresh = (token) => {
 };
 
 
-  return (
-    <div className="login-page">
-      <div className="login-left">
-        <h1 className="welcome-text">Hello, welcome!</h1>
+return (
+  <div className="login-page">
+    {/* Form Box */}
+    <div className="login-container">
+      <h1 className="welcome-text">Hello, welcome!</h1>
 
-        {/* Error Message Display */}
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
+      {/* Error Message Display */}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-        {/* Login Form */}
-        <form className="login-form" onSubmit={handleLogin}>
-          <div className="input-group">
-            <label htmlFor="email">Email address</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="name@mail.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="********"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="form-options">
-            <label className="remember-me">
-              <input type="checkbox" /> Remember me
-            </label>
-            <Link to="/forgot-password" className="forgot-password-link">
-              Forgot password?
-            </Link>
-          </div>
-          <div className="button-group">
-            <button type="submit" className="login-button">
-              Login
-            </button>
-          </div>
-        </form>
+      {/* Login Form */}
+      <form className="login-form" onSubmit={handleLogin}>
+        <div className="input-group">
+          <label htmlFor="email">Email address</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="name@mail.com"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="********"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="form-options">
+          <label className="remember-me">
+            <input type="checkbox" /> Remember me
+          </label>
+          <Link to="/forgot-password" className="forgot-password-link">
+            Forgot password?
+          </Link>
+        </div>
+        <div className="button-group">
+          <button type="submit" className="login-button">
+            Login
+          </button>
+        </div>
+      </form>
 
-        {/* Modal for Account Creation */}
-        <div className="create-account">
-          <span>
-            You don't have an account?{' '}
-            <span className="create-account-link" onClick={openCreateAccountModal}>
-              Create now
-            </span>
+      {/* Modal for Account Creation */}
+      <div className="create-account">
+        <span>
+          You don't have an account?{' '}
+          <span className="create-account-link" onClick={openCreateAccountModal}>
+            Create now
           </span>
-        </div>
-
-        {/* Social Links */}
-        <div className="social-links">
-          <span>FOLLOW</span>
-          <div className="social-icons">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-              Facebook
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-              Twitter
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-              Instagram
-            </a>
-          </div>
-        </div>
+        </span>
       </div>
 
-      {/* Background Section */}
-      <div className="login-right"></div>
-
-      {/* Create Account Modal */}
-      <CreateAccountModal isOpen={isCreateAccountOpen} onClose={closeCreateAccountModal} />
+      {/* Social Links */}
+      <div className="social-links">
+        <span>FOLLOW</span>
+        <div className="social-icons">
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+            Facebook
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+            Twitter
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            Instagram
+          </a>
+        </div>
+      </div>
     </div>
-  );
+
+    {/* Create Account Modal */}
+    <CreateAccountModal isOpen={isCreateAccountOpen} onClose={closeCreateAccountModal} />
+  </div>
+);
+
 };
 
 export default Login;
