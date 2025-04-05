@@ -19,6 +19,7 @@ html, body {
   justify-content: center;
   position: relative;
   padding: 20px;
+  background-color: #f8f8f8;
 }
 
 /* Optional dark overlay */
