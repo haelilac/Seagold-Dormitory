@@ -62,6 +62,7 @@ useEffect(() => {
 
       axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
 
+
       if (data.role === "admin") {
         window.location.href = "/admin/dashboard";
       } else if (data.role === "tenant") {
