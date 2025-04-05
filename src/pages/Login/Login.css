@@ -45,7 +45,7 @@ html, body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 520px;
-  margin-right: 930px;
+  margin-right: 850px;
   z-index: 2;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -116,7 +116,7 @@ html, body {
 }
 
 .login-button:hover {
-  background-color: #283593;
+  background-color: #f1c40f;
 }
 
 .create-account-link {
@@ -197,13 +197,13 @@ html, body {
 }
 .typing-text {
   display: inline-block;
-  border-right: 3px solid #3f51b5;
+  border-right: 3px solid #366e39;
   white-space: nowrap;
   overflow: hidden;
   animation: typing 2.5s steps(20, end), blink 0.75s step-end infinite;
   font-size: 2rem;
   font-weight: bold;
-  color: #3f51b5;
+  color: #366e39;
   max-width: 100%;
 }
 
@@ -221,6 +221,6 @@ html, body {
     border-color: transparent;
   }
   50% {
-    border-color: #3f51b5;
+    border-color: #366e39;
   }
 }
