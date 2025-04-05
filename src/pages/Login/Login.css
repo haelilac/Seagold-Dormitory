@@ -1,10 +1,14 @@
 /* Reset & Font */
-body, html {
+* {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  height: 100%;
   box-sizing: border-box;
+}
+
+html, body {
+  height: 100vh;
+  overflow: hidden; /* 🚫 prevent scroll */
+  font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 .login-page {
@@ -15,7 +19,6 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
   position: relative;
 }
 
@@ -32,15 +35,19 @@ body, html {
 
 /* Login Form Container */
 .login-container {
-  background: white;
+  background: rgba(255, 255, 255, 0.2); /* semi-transparent */
+  backdrop-filter: blur(12px);          /* glass effect */
+  -webkit-backdrop-filter: blur(12px);  /* Safari support */
   padding: 40px 30px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); /* floating effect */
   width: 100%;
   max-width: 420px;
   z-index: 2;
   position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* subtle edge */
 }
+
 
 .welcome-text {
   font-size: 2rem;
