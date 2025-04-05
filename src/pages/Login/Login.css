@@ -37,7 +37,7 @@ html, body {
 
 /* Login Form Container */
 .login-container {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.349);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 55px 30px;
@@ -91,7 +91,7 @@ html, body {
 }
 
 .forgot-password-link {
-  color: #3f51b5;
+  color: #366e39;
   font-size: 0.9rem;
   text-decoration: none;
 }
@@ -105,7 +105,7 @@ html, body {
 }
 
 .login-button {
-  background-color: #3f51b5;
+  background-color: #366e39;
   color: white;
   padding: 10px;
   font-size: 1rem;
