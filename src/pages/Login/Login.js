@@ -10,10 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  // Open/Close Modal
-  const openCreateAccountModal = () => setCreateAccountOpen(true);
-  const closeCreateAccountModal = () => setCreateAccountOpen(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   // Helper function for fetch-based API calls
   const fetchWithAuth = async (url, method, body = null) => {
@@ -58,14 +55,30 @@ const Login = () => {
             setErrorMessage(data.error);
             return;
         }
-
-        // Store tokens in localStorage
+        
+        useEffect(() => {
+          const storedToken = localStorage.getItem("token");
+          if (storedToken) {
+            setRememberMe(true);
+          }
+        }, []);
+        
+      // Store tokens in storage
+      if (rememberMe) {
+        // Persist even after browser is closed
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("user_id", data.user_id);
+      } else {
+        // Clear localStorage and store temporarily in session
+        localStorage.clear();
+        sessionStorage.setItem("token", data.access_token);
+        sessionStorage.setItem("role", data.role);
+        sessionStorage.setItem("user_id", data.user_id);
+      }
 
-        // Set Authorization header for future requests
-        axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
+      // Set Authorization for axios
+      axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;rs['Authorization'] = `Bearer ${data.access_token}`;
 
         if (data.role === "admin") {
             window.location.href = "/admin/dashboard";
@@ -144,7 +157,12 @@ return (
         </div>
         <div className="form-options">
           <label className="remember-me">
-            <input type="checkbox" /> Remember me
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          /> Remember me
+
           </label>
           <Link to="/forgot-password" className="forgot-password-link">
             Forgot password?
