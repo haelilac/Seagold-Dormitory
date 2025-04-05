@@ -38,7 +38,7 @@ const TenantDashboard = () => {
                 setNotifications(notifRes.data);
             } catch (error) {
                 if (error.response?.status === 401) {
-                    localStorage.removeItem('token');
+                    sessionStorage.clear();
                     navigate('/login');
                 }
             }
@@ -49,9 +49,7 @@ const TenantDashboard = () => {
     
         return () => clearInterval(interval); // cleanup
     }, [navigate]);
-    
 
-    // Filter notifications based on user role
     useEffect(() => {
         const filterNotifications = () => {
             if (userData) {
@@ -59,9 +57,9 @@ const TenantDashboard = () => {
                 const currentUserId = userData.id;
                 const filtered = notifications.filter((notification) => {
                     if (role === 'admin') {
-                        return notification.user_id === null; // Global admin notifications
+                        return notification.user_id === null;
                     }
-                    return notification.user_id === currentUserId; // Tenant-specific notifications
+                    return notification.user_id === currentUserId;
                 });
                 setFilteredNotifications(filtered);
             }
@@ -92,7 +90,7 @@ const TenantDashboard = () => {
         setDarkMode((prev) => {
             const newMode = !prev;
             document.documentElement.setAttribute('data-theme', newMode ? 'dark' : 'light');
-            localStorage.setItem('theme', newMode ? 'dark' : 'light');
+            sessionStorage.setItem('theme', newMode ? 'dark' : 'light');
             return newMode;
         });
     };
@@ -102,7 +100,7 @@ const TenantDashboard = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
+        sessionStorage.clear();
         window.location.href = '/';
     };
 
