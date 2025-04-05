@@ -123,15 +123,16 @@ const scheduleTokenRefresh = (token) => {
 
 
 return (
+
   <div className="login-page">
-    {/* Form Box */}
-    <div className="login-container">
     {/* Logo (mobile only) */}
-      <img
+        <img
         src={require("../../assets/seagoldlogo.jpg")}
         alt="Logo"
         className="mobile-logo"
       />
+    {/* Form Box */}
+    <div className="login-container">
       <h1 className="welcome-text"><span className="typing-text">Hello, welcome!</span></h1>
 
 
