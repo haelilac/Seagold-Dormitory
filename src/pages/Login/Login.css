@@ -37,7 +37,7 @@ html, body {
 
 /* Login Form Container */
 .login-container {
-  background: rgba(255, 255, 255, 0.349);
+  background: rgba(129, 129, 129, 0.123);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 55px 30px;
@@ -45,7 +45,7 @@ html, body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 520px;
-  margin-right: 970px;
+  margin-right: 930px;
   z-index: 2;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -54,7 +54,7 @@ html, body {
 .welcome-text {
   font-size: 2rem;
   font-weight: bold;
-  color: #3f51b5;
+  color: #366e39;
   text-align: center;
   margin-bottom: 20px;
 }
