@@ -1,4 +1,4 @@
-/* General styles */
+/* Reset & Font */
 body, html {
   margin: 0;
   padding: 0;
@@ -9,30 +9,56 @@ body, html {
 .login-page {
   display: flex;
   height: 100vh;
-  padding: 0 20px; /* Add padding to both sides */
+  overflow: hidden;
 }
 
-/* Left section (Form) */
+/* LEFT SIDE (Image/Graphics with Wave) */
 .login-left {
+  flex: 1.2;
+  background: linear-gradient(135deg, #3f51b5, #1a237e); /* Deep blue/purple blend */
+  color: white;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.login-left::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -50px;
+  width: 100px;
+  height: 100%;
+  background-color: white;
+  clip-path: ellipse(60% 100% at 0% 50%);
+  z-index: 2;
+}
+
+/* OPTIONAL: Add vector/graphic or image */
+.login-left img {
+  max-width: 80%;
+  z-index: 1;
+}
+
+/* RIGHT SIDE (Login Form) */
+.login-right {
   flex: 1;
-  padding: 15px;
-  background-color: #fff;
+  background-color: white;
+  z-index: 3;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align the form at the top */
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
+  justify-content: center;
+  padding: 40px;
+  position: relative;
 }
 
 .welcome-text {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2d50ef; /* Blue color for the welcome text */
-  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #3f51b5;
+  margin-bottom: 20px;
 }
 
 .login-form {
@@ -48,7 +74,7 @@ body, html {
 
 .input-group label {
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 5px;
 }
 
 .input-group input {
@@ -62,17 +88,12 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-}
-
-.remember-me input {
-  margin-right: 0.5rem;
 }
 
 .forgot-password-link {
-  color: #2d50ef;
-  text-decoration: none;
+  color: #3f51b5;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 
 .forgot-password-link:hover {
@@ -80,78 +101,83 @@ body, html {
 }
 
 .button-group {
-  display: flex;
-  gap: 1rem;
+  margin-top: 10px;
 }
 
-.login-button, 
-.signup-button {
-  padding: 10px 20px;
+.login-button {
+  background-color: #3f51b5;
+  color: white;
+  padding: 10px;
   font-size: 1rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.login-button {
-  color: white;
+.login-button:hover {
+  background-color: #283593;
 }
 
-.signup-button {
-  background-color: transparent;
-  border: 2px solid #2d50ef;
-  color: #2d50ef;
-}
-
-.signup-button:hover {
-  background-color: #2d50ef;
-  color: white;
-}
-
-/* Social icons */
-.social-links {
-  margin-top: 2rem;
-}
-
-.social-links span {
+.create-account {
+  margin-top: 20px;
   font-size: 0.9rem;
+}
+
+.create-account-link {
+  color: #3f51b5;
   font-weight: bold;
+  cursor: pointer;
+}
+
+.create-account-link:hover {
+  text-decoration: underline;
+}
+
+.social-links {
+  margin-top: 30px;
 }
 
 .social-icons {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 15px;
+  margin-top: 10px;
 }
 
 .social-icons a {
-  color: #000;
+  color: #3f51b5;
   text-decoration: none;
-  font-size: 1.2rem;
 }
 
 .social-icons a:hover {
-  color: #2d50ef;
+  text-decoration: underline;
 }
 
-/* Right section (Background) */
-.login-right {
-  flex: 1; /* Ensure this section takes up one portion of the available space */
-  background: url('/public/bgroom.jpg') no-repeat center center;
-  background-size: cover; /* Ensure the image covers the entire area */
-  height: 100vh; /* Make the right side take up the full viewport height */
-
-
+/* Error Message */
+.error-message {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
   .login-page {
     flex-direction: column;
   }
 
-  .login-left, .login-right {
+  .login-left::after {
+    display: none;
+  }
+
+  .login-left {
     flex: none;
-    width: 100%;
+    height: 200px;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .login-right {
+    flex: none;
+    padding: 30px 20px;
   }
 }
