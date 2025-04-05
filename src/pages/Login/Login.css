@@ -135,15 +135,28 @@ html, body {
 
 .typing-text {
   display: inline-block;
-  border-right: 3px solid #366e39;
+  border-right: 2px solid #366e39;
   white-space: nowrap;
   overflow: hidden;
-  animation: typing 2s steps(25, end) 2s forwards, blink 0.75s step-end infinite;
-  /*                        ⬆ delay here */
+  animation: typing 2.5s steps(20, end) 2s forwards, blink 0.75s step-end infinite;
   font-size: 2rem;
   font-weight: bold;
   color: #366e39;
-  max-width: 100%;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 14ch;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: #366e39;
+  }
 }
 
 /* Responsive */
@@ -209,20 +222,4 @@ html, body {
 
 }
 
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-}
 
-@keyframes blink {
-  from, to {
-    border-color: transparent;
-  }
-  50% {
-    border-color: #366e39;
-  }
-}
