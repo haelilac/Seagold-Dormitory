@@ -7,13 +7,13 @@
 
 html, body {
   height: 100vh;
-  overflow: hidden;
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 .login-page {
   height: 100vh;
   width: 100%;
+  overflow: hidden;
   background: url('https://seagold-laravel-production.up.railway.app/Loginbg.png') no-repeat center center;
   background-size: cover;
   display: flex;
