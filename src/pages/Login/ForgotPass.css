@@ -1,0 +1,110 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100vh;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  
+  /* Page Background */
+  .forgot-password-page {
+    height: 100vh;
+    width: 100%;
+    background: url('../../assets/ForgotPass.png') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+  }
+  
+  /* Optional dark overlay */
+  .forgot-password-page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+  
+  /* Form Container */
+  .forgot-password-form {
+    background: rgba(129, 129, 129, 0.123);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    z-index: 2;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+  }
+  
+  .forgot-password-form h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #366e39;
+    margin-bottom: 20px;
+  }
+  
+  .forgot-password-form input[type="email"] {
+    padding: 12px;
+    width: 100%;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .forgot-password-form button {
+    background-color: #366e39;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s;
+  }
+  
+  .forgot-password-form button:hover {
+    background-color: #f1c40f;
+  }
+  
+  .forgot-password-form p {
+    margin-top: 15px;
+    color: #d32f2f;
+    font-size: 0.95rem;
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    .forgot-password-form {
+      padding: 30px 20px;
+    }
+  
+    .forgot-password-form h2 {
+      font-size: 1.6rem;
+    }
+  
+    .forgot-password-form input[type="email"] {
+      font-size: 0.95rem;
+    }
+  
+    .forgot-password-form button {
+      font-size: 0.95rem;
+    }
+  }
+  
