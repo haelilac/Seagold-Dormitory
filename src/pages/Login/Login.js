@@ -128,10 +128,12 @@ return (
     className="login-page"
     style={{
       backgroundImage: `url(${LoginBg})`,
-      backgroundSize: "contain",
+      backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-      backgroundAttachment: "fixed",
+      backgroundPosition: "center center",
+      height: "100vh",
+      width: "100vw",
+      overflow: "hidden",
     }}
   >
     {/* Logo (mobile only) */}
