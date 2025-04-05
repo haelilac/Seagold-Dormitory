@@ -133,6 +133,19 @@ html, body {
   text-align: center;
 }
 
+.typing-text {
+  display: inline-block;
+  border-right: 3px solid #3f51b5;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 2.5s steps(20, end) 2s forwards, blink 0.75s step-end infinite;
+  /*                        ⬆ delay here */
+  font-size: 2rem;
+  font-weight: bold;
+  color: #366e39;
+  max-width: 100%;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .login-container {
@@ -194,17 +207,6 @@ html, body {
     font-size: 1.3rem;
   }
 
-}
-.typing-text {
-  display: inline-block;
-  border-right: 3px solid #366e39;
-  white-space: nowrap;
-  overflow: hidden;
-  animation: typing 2.5s steps(20, end), blink 0.75s step-end infinite;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #366e39;
-  max-width: 100%;
 }
 
 @keyframes typing {
