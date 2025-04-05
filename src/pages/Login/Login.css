@@ -171,6 +171,36 @@ html, body {
   }
 }
 
+/* Checkbox Styling */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+  accent-color: #366e39;
+  width: 16px;
+  height: 16px;
+}
+
+/* Forgot Password Link Styling */
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: #366e39;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+  color: #f1c40f;
+}
+
+
 /* Responsive */
 @media (max-width: 1200px) {
   .login-container {
@@ -217,6 +247,21 @@ html, body {
   .login-button {
     font-size: 0.95rem;
   }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .remember-me {
+    font-size: 0.85rem;
+  }
+
+  .forgot-password-link {
+    font-size: 0.85rem;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -239,6 +284,18 @@ html, body {
 
   .typing-text {
     font-size: 1.3rem;
+  }
+  .remember-me input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+
+  .remember-me {
+    font-size: 0.8rem;
+  }
+
+  .forgot-password-link {
+    font-size: 0.8rem;
   }
 
 }
