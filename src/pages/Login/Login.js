@@ -19,6 +19,16 @@ const Login = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const role = localStorage.getItem("role") || sessionStorage.getItem("role");
+  
+    if (role === "admin") {
+      window.location.href = "/admin/dashboard";
+    } else if (role === "tenant") {
+      window.location.href = "/tenant/dashboard/home";
+    }
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
     setErrorMessage('');
