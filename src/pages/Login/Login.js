@@ -158,34 +158,15 @@ return (
 
       {/* Modal for Account Creation */}
       <div className="create-account">
-        <span>
-          You don't have an account?{' '}
-          <span className="create-account-link" onClick={openCreateAccountModal}>
-            Create now
+          <span>
+            You don't have an account?{' '}
+            <Link to="/apply" className="create-account-link">
+              Apply Now
+            </Link>
           </span>
-        </span>
-      </div>
-
-      {/* Social Links */}
-      <div className="social-links">
-        <span>FOLLOW</span>
-        <div className="social-icons">
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-            Facebook
-          </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-            Twitter
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-            Instagram
-          </a>
         </div>
       </div>
     </div>
-
-    {/* Create Account Modal */}
-    <CreateAccountModal isOpen={isCreateAccountOpen} onClose={closeCreateAccountModal} />
-  </div>
 );
 
 };

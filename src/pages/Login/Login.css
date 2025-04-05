@@ -118,44 +118,6 @@ html, body {
   background-color: #283593;
 }
 
-.create-account {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.create-account-link {
-  color: #3f51b5;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.create-account-link:hover {
-  text-decoration: underline;
-}
-
-.social-links {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-
-.social-icons a {
-  color: #3f51b5;
-  text-decoration: none;
-}
-
-.social-icons a:hover {
-  text-decoration: underline;
-}
-
 /* Error Message */
 .error-message {
   color: #d32f2f;
