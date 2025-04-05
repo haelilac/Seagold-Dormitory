@@ -130,10 +130,7 @@ return (
       backgroundImage: `url(${LoginBg})`,
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
-      backgroundPosition: "center center",
-      height: "100vh",
-      width: "100vw",
-      overflow: "hidden",
+      backgroundPosition: "center",
     }}
   >
     {/* Logo (mobile only) */}
