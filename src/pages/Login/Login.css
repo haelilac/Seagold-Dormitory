@@ -12,6 +12,7 @@ html, body {
 
 .login-page {
   height: 100vh;
+  max-height: 100vh;
   width: 100%;
   overflow: hidden;
   background: url('https://seagold-laravel-production.up.railway.app/Loginbg.png') no-repeat center center;
@@ -45,7 +46,8 @@ html, body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 520px;
-  margin-right: 995px;
+  position: absolute;
+  left: 5%;
   z-index: 2;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.3);
