@@ -112,7 +112,8 @@ return (
   <div className="login-page">
     {/* Form Box */}
     <div className="login-container">
-      <h1 className="welcome-text">Hello, welcome!</h1>
+    <h1 className="welcome-text"><span className="typing-text">Hello, welcome!</span></h1>
+
 
       {/* Error Message Display */}
       {errorMessage && <p className="error-message">{errorMessage}</p>}
