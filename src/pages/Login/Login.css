@@ -254,16 +254,19 @@ html, body {
 
   .remember-me {
     font-size: 0.95rem;
-    position: absolute;
-    bottom: 113px;
-    left: 0;
+    position: relative;
+    bottom: auto;
+    left: auto;
   }
+
 
   .forgot-password-link {
     font-size: 0.95rem;
-    position: absolute;
-    bottom: 120px;
-    left: 240px;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 4px;
+    text-align: left;
   }
 }
 
@@ -295,7 +298,7 @@ html, body {
     gap: 5px;
     position: relative;
   }
-  
+
   .remember-me input[type="checkbox"] {
     width: 14px;
     height: 14px;
