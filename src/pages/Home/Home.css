@@ -1,226 +1,419 @@
-/* Global Variables */
-:root {
-  --primary: #28527A; /* Deep sea blue */
-  --secondary: #8AC4D0; /* Calm teal */
-  --accent: #FFC857; /* Bright gold */
-  --neutral: #F9F9F9; /* Soft white */
-  --dark: #1E2022; /* Dark slate */
-  --light-gray: #F1F5F9; /* Soft light gray for backgrounds */
-  --transition-speed: 0.3s; /* Consistent transition duration */
-}
-
-/* Reset Body */
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Montserrat', Arial, sans-serif;
-  background: var(--neutral);
-  color: var(--dark);
-  scroll-behavior: smooth;
-}
-
-/* Links */
+/* 🔗 Links */
 a {
   text-decoration: none;
-  color: var(--primary);
-  transition: color var(--transition-speed) ease-in-out;
+  color: #28527A;
+  transition: color 0.3s ease-in-out;
 }
+/* Apply Background Only to Main Page */
+.home-page {
+  background: linear-gradient(135deg, #28527A, #8AC4D0);
+  min-height: 100vh;
+  width: 100%;
+}
+
 
 a:hover {
-  color: var(--accent);
+  color: #FFC857;
 }
 
-/* Navbar */
-.navbar {
-  background: var(--primary);
-  color: var(--neutral);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  border-bottom: 3px solid var(--accent);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
-}
 
-.navbar a {
-  margin: 0 1rem;
-  color: var(--neutral);
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.navbar a:hover {
-  color: var(--accent);
-}
-
-/* Buttons */
-button, .btn-primary {
-  border: none;
-  border-radius: 5px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  background: var(--accent);
-  color: var(--dark);
-  transition: all var(--transition-speed) ease;
-}
-
-.btn-primary:hover {
-  background: var(--dark);
-  color: var(--accent);
-}
-
-/* Hero Section */
+/* 🎭 Hero Section - Enhanced Version */
 .hero-section {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  height: 100vh;
+  position: relative; /* NEW: Needed for overlay positioning */
+  height: 100vh; /* CHANGED: From 80vh to full viewport height */
+  min-height: 600px; /* NEW: Prevent content squishing on small screens */
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  color: var(--neutral);
-  text-align: center;
-  padding: 2rem;
+  justify-content: start;
+  padding: 0 10%;
+  text-align: left;
+  background: url('/public/images/samplebg.jpeg') no-repeat center center/cover; /* NEW: Background image */
+  overflow: hidden; /* NEW: Hide any overflow from animations */
+}
+
+/* NEW: Gradient overlay for better text readability */
+.hero-overlay {
+  position: relative; /* Changed from default to allow z-index */
+  max-width: 600px;
+  z-index: 2; /* NEW: Ensure content stays above overlay */
+  animation: fadeInUp 1s ease-out; /* NEW: Entrance animation */
+}
+
+/* NEW: Pseudo-element for the overlay effect */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.7) 0%, /* Stronger on left for left-aligned text */
+    rgba(0, 0, 0, 0.3) 100% /* Lighter gradient toward right */
+  );
+  z-index: 1; /* NEW: Places between background and content */
 }
 
 .hero-section h1 {
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: var(--accent);
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
-  animation: zoomIn 1.5s ease-in-out;
+  font-size: 4rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+  line-height: 1.2;
+  margin-bottom: 1rem; /* NEW: Added spacing */
+}
+
+/* NEW: Animation for smooth entrance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* NEW: Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    height: 80vh; /* Revert to original height on mobile */
+    min-height: 500px; /* Smaller minimum for mobile */
+    padding: 0 5%; /* Reduced side padding */
+    justify-content: center; /* Center content on mobile */
+    text-align: center; /* Center text on mobile */
+  }
+
+  .hero-overlay {
+    max-width: 100%; /* Full width on mobile */
+    padding: 0 20px; /* Add some side padding */
+  }
+
+  .hero-section h1 {
+    font-size: 2.5rem; /* Smaller heading on mobile */
+  }
+
+  /* NEW: Adjust gradient for mobile centering */
+  .hero-section::before {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
+  }
 }
 
 .hero-section p {
   font-size: 1.5rem;
-  margin-top: 1rem;
+  font-weight: 700;
+  opacity: 0.9;
+  margin-top: 10px;
+  color: goldenrod;
 }
 
-.hero-section .button-group {
-  margin-top: 1.5rem;
+/* 🔘 Button Group */
+.button-group {
   display: flex;
   gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* 🟡 Primary Button */
+.btn-primary,
+.btn-outline-light {
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.btn-primary {
+  background: #FFC857;
+  color: #1E2022;
+}
+
+.btn-primary:hover {
+  background: #FFD977;
+}
+
+.btn-outline-light {
+  border: 2px solid white;
+  color: white;
+}
+
+.btn-outline-light:hover {
+  background: white;
+  color: #1E2022;
+}
+
+/* ⭐ Facilities Section - Enhanced */
+.facilities-section {
+  padding: 4rem 10%;
+  color: white;
+}
+
+.facilities-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.facility-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
   justify-content: center;
 }
 
-/* Why Choose Us Section */
-.facilities-section {
-  padding: 3rem 0;
-  background: var(--light-gray);
-  text-align: center;
-}
-
-.facilities-section h2 {
-  color: var(--accent);
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-}
-
 .feature-card {
-  background: var(--neutral);
-  color: var(--dark);
-  padding: 1.5rem;
-  border-radius: 10px;
-  transition: all var(--transition-speed) ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.feature-card img {
-  border-radius: 10px;
-  max-width: 100%;
-  margin-bottom: 1rem;
+  flex: 1;
+  min-width: 280px;
+  max-width: 360px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
-/* Testimonials Section */
-.testimonials-section {
-  padding: 3rem 0;
-  background: var(--primary);
-  color: var(--neutral);
+.image-container {
+  height: 200px;
+  overflow: hidden;
 }
 
-.testimonials-section h2 {
-  font-size: 2.5rem;
-  color: var(--accent);
-  margin-bottom: 2rem;
+.feature-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
 }
 
-blockquote {
-  background: var(--neutral);
-  color: var(--dark);
-  border-left: 4px solid var(--accent);
+.feature-card:hover .feature-image {
+  transform: scale(1.05);
+}
+
+.card-content {
   padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin: 1rem 0;
-}
-
-/* Gallery Section */
-.gallery-section {
-  padding: 3rem 0;
   text-align: center;
-  background: var(--neutral);
 }
 
-.gallery-section h2 {
-  color: var(--accent);
-  font-size: 2.5rem;
+.card-content h3 {
+  color: #2c3e50;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.card-content p {
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+.text-why {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+  line-height: 1.2;
   margin-bottom: 2rem;
 }
 
-.gallery-section img {
-  border-radius: 10px;
-  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-  max-width: 100%;
-  margin: 1rem;
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .feature-card {
+    max-width: 45%;
+  }
 }
 
-.gallery-section img:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+@media (max-width: 768px) {
+  .facilities-section {
+    padding: 3rem 5%;
+  }
+  
+  .feature-card {
+    max-width: 100%;
+  }
+  
+  .text-why {
+    font-size: 2.5rem;
+  }
 }
 
-/* Frequently Asked Questions Section */
-.faq-section {
-  padding: 3rem 2rem;
-  background: var(--light-gray);
+/* 📍 Seagold Essentials Section - Enhanced */
+.seagold-essentials {
+  padding: 6rem 10%;
+  position: relative;
+  overflow: hidden;
 }
 
-.faq-section h2 {
-  color: var(--accent);
-  font-size: 2.5rem;
+.seagold-essentials::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.seagold-essentials-title {
   text-align: center;
-  margin-bottom: 2rem;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
 }
 
-.faq-item {
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
-  background: var(--neutral);
+.seagold-essentials-subtext {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Essentials List */
+.seagold-essentials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Essentials Item */
+.seagold-essentials-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.seagold-essentials-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Reverse Layout */
+.seagold-essentials-reverse {
+  flex-direction: row-reverse;
+}
+
+/* Text Section */
+.seagold-essentials-text {
+  flex: 1;
+  padding: 1rem;
+}
+
+.seagold-essentials-text h3 {
+  color: white;
+  font-size: 2.6rem;
+  margin-bottom: 0rem;
+  font-weight: bolder;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.seagold-essentials-text p {
+  color: black;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* Image Section */
+.seagold-essentials-image {
+  flex: 1;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-/* Feedback Form */
+.seagold-essentials-item:hover .seagold-essentials-image {
+  transform: scale(1.02);
+}
 
+.seagold-essentials-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.seagold-essentials-item:hover .seagold-essentials-image img {
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .seagold-essentials-item,
+  .seagold-essentials-reverse {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .seagold-essentials-text,
+  .seagold-essentials-image {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .seagold-essentials {
+    padding: 4rem 5%;
+  }
+  
+  .seagold-essentials-title {
+    font-size: 2.2rem;
+  }
+  
+  .seagold-essentials-subtext {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .seagold-essentials-item {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .seagold-essentials-title {
+    font-size: 2rem;
+  }
+  
+  .seagold-essentials-text h3 {
+    font-size: 1.4rem;
+  }
+}
+
+/* 📝 Feedback Form */
 .feedback-form {
-  background-color: #f9f9f9;
+  padding: 3rem;
+  text-align: center;
+  background: #F9F9F9;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-}
-
-.feedback-form h2 {
-  color: #333;
-  font-weight: bold;
 }
 
 .emoji-container {
@@ -230,30 +423,21 @@ blockquote {
 }
 
 .emoji {
-  width: 80px;
-  height: 80px;
+  width: 60px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 90%; /* Add rounded corners for a polished look */
+  transition: transform 0.3s ease;
 }
 
 .emoji:hover {
   transform: scale(1.2);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
-
-.emoji.selected {
-  transform: scale(1.3);
-  border: 1px solid #3498db;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-}
-
 
 textarea.form-control {
   resize: none;
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 10px;
+  width: 80%;
 }
 
 textarea.form-control:focus {
@@ -264,7 +448,6 @@ textarea.form-control:focus {
 
 button.btn-primary {
   background-color: #3498db;
-  border: none;
   padding: 10px 20px;
   font-size: 1rem;
   font-weight: bold;
@@ -277,27 +460,191 @@ button.btn-primary:hover {
   transform: scale(1.05);
 }
 
-
-
-/* Footer */
+/* 📌 Footer */
+/* Footer Styles */
 .footer {
-  background: var(--dark);
-  color: var(--neutral);
-  padding: 1.5rem;
+  background-color:black;
+  color: #ecf0f1;
+  padding: 3rem 0 1rem;
+  font-size: 0.9rem;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-section h4 {
+  color: #f8f9fa;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.footer-section address {
+  font-style: normal;
+  line-height: 1.6;
+}
+
+.footer-section a {
+  color: #bdc3c7;
+  transition: color 0.3s;
+}
+
+.footer-section a:hover {
+  color: #f8f9fa;
+  text-decoration: none;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-links a {
+  color: #ecf0f1;
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+}
+
+.social-links a:hover {
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  border-top: 1px solid #34495e;
+  padding-top: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.powered-by {
+  color: #bdc3c7;
+  font-size: 0.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-section {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* 📍 Seagold Universities Section */
+.seagold-universities {
+  padding: 5rem 10%;
   text-align: center;
 }
 
-.footer a {
-  color: var(--accent);
-  transition: color var(--transition-speed);
+/* 🔹 Container for Section */
+.seagold-container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.footer a:hover {
-  color: var(--neutral);
-  text-decoration: underline;
+/* 🔸 Title & Subtext */
+.seagold-title {
+  text-align: center !important;
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+  line-height: 1.2;
 }
 
-/* Animations */
+.seagold-subtext {
+  color: white;
+  font-size: 1.3rem;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-bottom: 2rem;
+}
+
+/* 🔹 Grid Layout for Universities */
+.seagold-university-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* 🔸 Individual University Row */
+.seagold-university-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+}
+
+/* 🔹 Reverse the layout for alternating items */
+.seagold-university-item.seagold-reverse {
+  flex-direction: row-reverse;
+}
+
+/* 🔸 Text Styling */
+.seagold-university-text {
+  flex: 1;
+  text-align: left;
+  color: white;
+  max-width: 50%;
+}
+
+.seagold-university-text h3 {
+  font-weight: 800;
+  color: white;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+  font-size: 1.8rem;
+}
+
+.seagold-university-text p {
+  font-size: 1.2rem;
+}
+
+/* 🔹 Image Styling */
+.seagold-university-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.seagold-university-image img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  border: 5px solid white;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+  .seagold-university-item,
+  .seagold-university-item.seagold-reverse {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .seagold-university-text {
+    text-align: center;
+    max-width: 100%;
+  }
+}
+
+/* ✨ Animations */
 @keyframes zoomIn {
   0% {
     transform: scale(0.8);
@@ -309,17 +656,24 @@ button.btn-primary:hover {
   }
 }
 
-/* Responsive Design */
+/* 📱 Responsive Design */
 @media (max-width: 768px) {
+  .hero-section {
+    justify-content: center;
+    text-align: center;
+    padding: 5%;
+  }
+
   .hero-section h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
   }
 
   .button-group {
     flex-direction: column;
+    align-items: center;
   }
 
-  .facilities-section h2, .gallery-section h2 {
+  .facilities-section h2 {
     font-size: 2rem;
   }
 
