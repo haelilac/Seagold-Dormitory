@@ -144,6 +144,15 @@ html, body {
   color: #366e39;
 }
 
+.mobile-logo {
+  display: none;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+}
+
 @keyframes typing {
   from {
     width: 0;
@@ -183,6 +192,10 @@ html, body {
     margin-left: 0;
     max-width: 100%;
     padding: 30px 25px;
+  }
+
+  .mobile-logo {
+    display: block;
   }
 
   .welcome-text {
