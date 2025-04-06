@@ -30,36 +30,31 @@ const GoogleMapComponent = () => {
   const [autocomplete, setAutocomplete] = useState(null);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("school");
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [isLocating, setIsLocating] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const mapRef = useRef(null);
-  const [trafficLayerVisible, setTrafficLayerVisible] = useState(false);
+  const [showTraffic, setShowTraffic] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = "auto";
-      document.documentElement.style.overflow = "auto";
     };
   }, []);
 
   const handleGetUserLocation = () => {
-    setIsLocating(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const newUserLocation = {
+          const location = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          setUserLocation(newUserLocation);
+          setUserLocation(location);
           if (mapRef.current) {
-            mapRef.current.panTo(newUserLocation);
+            mapRef.current.panTo(location);
             mapRef.current.setZoom(15);
             new window.google.maps.Marker({
-              position: newUserLocation,
+              position: location,
               map: mapRef.current,
               icon: {
                 url: "/assets/startingpoint.svg",
@@ -68,16 +63,11 @@ const GoogleMapComponent = () => {
               title: "Your Current Location",
             });
           }
-          setIsLocating(false);
         },
-        () => {
-          alert("⚠️ Location access denied or unavailable.");
-          setIsLocating(false);
-        }
+        () => alert("⚠️ Location access denied.")
       );
     } else {
-      alert("⚠️ Geolocation not supported by this browser.");
-      setIsLocating(false);
+      alert("⚠️ Geolocation not supported.");
     }
   };
 
@@ -144,34 +134,35 @@ const GoogleMapComponent = () => {
 
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
-      <div className="map-wrapper">
-        <button className="toggle-sidebar-btn" onClick={() => setSidebarOpen(!isSidebarOpen)}>
-          {isSidebarOpen ? "⮜ Hide" : "⮞ Show"}
+      <div className="map-ui">
+        <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+          {isSidebarOpen ? "< Hide" : "Show >"}
         </button>
 
-        <div className={`map-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
+        <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
           <h2>📍 Get Directions</h2>
-          <button onClick={handleGetUserLocation} className="map-btn sticky-btn">
-            📌 Get My Location
-          </button>
 
-          <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
+          <button onClick={handleGetUserLocation} className="map-btn">📌 Get My Location</button>
+
+          <select
+            value={travelMode}
+            onChange={(e) => setTravelMode(e.target.value)}
+            className="travel-mode-selector"
+          >
             <option value="DRIVING">🚗 Driving</option>
             <option value="WALKING">🚶 Walking</option>
             <option value="BICYCLING">🚴 Biking</option>
           </select>
-          
-          <button onClick={() => setTrafficLayerVisible(!trafficLayerVisible)} className="map-btn">
-            {trafficLayerVisible ? "🚧 Hide Traffic" : "🚧 Show Traffic"}
+
+          <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
+            🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
           </button>
 
-          <button onClick={() => handleGetRoute()} className="map-btn">
-            🧭 Get Route
-          </button>
+          <button onClick={() => handleGetRoute()} className="map-btn">🧭 Get Route</button>
 
           <div className="route-info">
-            {distance && <p>Distance: {distance}</p>}
-            {duration && <p>Duration: {duration}</p>}
+            {distance && <p>📏 {distance}</p>}
+            {duration && <p>⏱️ {duration}</p>}
           </div>
 
           <h3>🔍 Find Nearby:</h3>
@@ -179,7 +170,7 @@ const GoogleMapComponent = () => {
             <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
               <option value="school">🏫 Schools</option>
               <option value="laundry">🧺 Laundry</option>
-              <option value="restaurant">🍽️ Carinderia</option>
+              <option value="restaurant">🍛 Carinderias</option>
               <option value="gas_station">⛽ Gas Stations</option>
             </select>
             <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
@@ -245,7 +236,7 @@ const GoogleMapComponent = () => {
               </>
             )}
             {walkingPath && <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />}
-            {trafficLayerVisible && <TrafficLayer />}
+            {showTraffic && <TrafficLayer />}
           </GoogleMap>
         </div>
       </div>
