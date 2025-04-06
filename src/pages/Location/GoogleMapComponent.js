@@ -136,11 +136,10 @@ const GoogleMapComponent = () => {
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
         <div className="map-ui">
+        <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
           <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             {isSidebarOpen ? "<" : ">"}
           </button>
-
-          <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
             <h2>📍 Get Directions</h2>
             <button onClick={handleGetUserLocation} className="map-btn">📌 Get My Location</button>
             <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
