@@ -10,6 +10,7 @@ import {
   TrafficLayer,
 } from "@react-google-maps/api";
 import userPinGif from "../../assets/pin-your-location.gif";
+import seagoldPinGif from "../../assets/seagoldpinicon.gif";
 
 const libraries = ["places"];
 const containerStyle = { width: "100%", height: "100vh" };
@@ -36,6 +37,8 @@ const GoogleMapComponent = () => {
   const [showTraffic, setShowTraffic] = useState(false);
   const [isStreetView, setIsStreetView] = useState(false);
   const [userMarkerIcon, setUserMarkerIcon] = useState(null);
+  const [dormMarkerIcon, setDormMarkerIcon] = useState(null);
+
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -137,9 +140,13 @@ const onLoadMap = (map) => {
   // Build icon only when google is available
   setUserMarkerIcon({
     url: userPinGif,
-    scaledSize: new window.google.maps.Size(100, 70),
+    scaledSize: new window.google.maps.Size(130, 70),
   });
 
+  setDormMarkerIcon({
+    url: seagoldPinGif,
+    scaledSize: new window.google.maps.Size(100, 70), // adjust size if needed
+  });
   const streetView = map.getStreetView();
   streetView.addListener("visible_changed", () => {
     setIsStreetView(streetView.getVisible());
@@ -240,10 +247,10 @@ const onLoadMap = (map) => {
             </div>
 
       <GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
-        <Marker 
-          position={dormPosition} 
-          icon={{ url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }} 
-        />
+        {dormMarkerIcon && (
+          <Marker position={dormPosition} icon={dormMarkerIcon} />
+        )}
+
         
         {universities.map((u) => (
           <Marker key={u.id} position={u.position} />
