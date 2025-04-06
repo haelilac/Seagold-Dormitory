@@ -265,9 +265,9 @@ const GoogleMapComponent = () => {
               onLoad={onLoadMap}
               options={{
                 gestureHandling: "greedy",
-                fullscreenControl: false,
-                streetViewControl: false,
-                mapTypeControl: false
+                fullscreenControl: true,
+                streetViewControl: true,
+                mapTypeControl: true
               }}
             >
         {dormMarkerIcon && (
