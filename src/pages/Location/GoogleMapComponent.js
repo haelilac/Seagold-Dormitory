@@ -185,15 +185,8 @@ const GoogleMapComponent = () => {
         >
           {isSidebarOpen ? "<" : ">"}
         </button>
-        <div className="map-ui">
 
-        {isStreetView && (
-            <button className="exit-street-view-btn" onClick={() => mapRef.current.getStreetView().setVisible(false)}>
-              🔙 Back to Map
-            </button>
-          )}
-
-          <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
+        <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
             <h2>📍 Get Directions</h2>
 
             <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
@@ -230,6 +223,14 @@ const GoogleMapComponent = () => {
                 🔎
               </button>
           </div>
+          
+        <div className="map-ui">
+
+        {isStreetView && (
+            <button className="exit-street-view-btn" onClick={() => mapRef.current.getStreetView().setVisible(false)}>
+              🔙 Back to Map
+            </button>
+          )}
 
           <div className="map-container">
             <div className="search-bar-container">
