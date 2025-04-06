@@ -37,9 +37,17 @@ import ResetPassword from './pages/Login/ResetPassword';
 
 const clientId = "758551378674-8t930isecldottudrarf724h6jlgdcji.apps.googleusercontent.com";
 
+const getStorageItem = (key) => {
+  return localStorage.getItem(key) || sessionStorage.getItem(key);
+};
+
 const App = () => {
-  const [role, setRole] = useState(sessionStorage.getItem('role') || null);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!sessionStorage.getItem('token'));
+  const getStorageItem = (key) => {
+    return localStorage.getItem(key) || sessionStorage.getItem(key);
+  };
+  
+  const [role, setRole] = useState(getStorageItem('role') || null);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!getStorageItem('token'));
   
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -68,8 +76,9 @@ const App = () => {
 
   // Authentication check function
   const checkAuth = async () => {
-    const token = sessionStorage.getItem("token");
+    const token = getStorageItem("token");
     if (!token) {
+      localStorage.clear();
       sessionStorage.clear();
       setRole(null);
       setIsLoggedIn(false);
@@ -101,6 +110,7 @@ const App = () => {
     } catch (error) {
       console.error("Token validation failed:", error.message);
       localStorage.clear();
+      sessionStorage.clear();
       setRole(null);
       setIsLoggedIn(false);
     }
@@ -109,6 +119,7 @@ const App = () => {
   // Handle logout function
   const handleLogout = () => {
     localStorage.clear(); // Clear all local storage data
+    sessionStorage.clear();
     setRole(null);
     setIsLoggedIn(false);
   };

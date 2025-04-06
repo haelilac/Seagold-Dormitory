@@ -50,15 +50,11 @@ useEffect(() => {
         return;
       }
 
-      if (rememberMe) {
-        localStorage.setItem("token", data.access_token);
-        localStorage.setItem("role", data.role);
-        localStorage.setItem("user_id", data.user_id);
-      } else {
-        sessionStorage.setItem("token", data.access_token);
-        sessionStorage.setItem("role", data.role);
-        sessionStorage.setItem("user_id", data.user_id);
-      }
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem("token", data.access_token);
+      storage.setItem("role", data.role);
+      storage.setItem("user_id", data.user_id);
+      
 
       axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
 

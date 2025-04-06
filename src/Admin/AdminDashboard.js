@@ -48,7 +48,7 @@ const AdminDashboard = () => {
         const fetchAdminData = async () => {
             try {
                 const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
-                    headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 const user = await response.json();
                 setAdmin({
@@ -87,7 +87,7 @@ const AdminDashboard = () => {
         const fetchNotifications = async () => {
             try {
                 const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
-                    headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 });
                 const data = await response.json();
                 setNotifications(data || []);
@@ -176,8 +176,9 @@ const AdminDashboard = () => {
 
     const handleLogout = (e) => {
         e.stopPropagation();
+        localStorage.clear();
         sessionStorage.clear();
-        window.location.href = "/login";
+        window.location.href = '/login';
     };
 
     const handleSoundChange = (e) => {

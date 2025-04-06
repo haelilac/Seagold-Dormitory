@@ -19,7 +19,7 @@ const TenantDashboard = () => {
     const bellRef = useRef(null);
 
     useEffect(() => {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         if (!token) {
             navigate('/login');
             return;
@@ -38,6 +38,7 @@ const TenantDashboard = () => {
                 setNotifications(notifRes.data);
             } catch (error) {
                 if (error.response?.status === 401) {
+                    localStorage.clear();
                     sessionStorage.clear();
                     navigate('/login');
                 }
@@ -90,7 +91,7 @@ const TenantDashboard = () => {
         setDarkMode((prev) => {
             const newMode = !prev;
             document.documentElement.setAttribute('data-theme', newMode ? 'dark' : 'light');
-            sessionStorage.setItem('theme', newMode ? 'dark' : 'light');
+            localStorage.setItem('theme', newMode ? 'dark' : 'light');
             return newMode;
         });
     };
@@ -100,6 +101,7 @@ const TenantDashboard = () => {
     };
 
     const handleLogout = () => {
+        localStorage.clear();
         sessionStorage.clear();
         window.location.href = '/';
     };
