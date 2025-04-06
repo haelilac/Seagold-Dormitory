@@ -134,110 +134,104 @@ const GoogleMapComponent = () => {
 
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
-      <div className="map-ui">
-        <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-          {isSidebarOpen ? "< Hide" : "Show >"}
-        </button>
-
-        <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
-          <h2>📍 Get Directions</h2>
-
-          <button onClick={handleGetUserLocation} className="map-btn">📌 Get My Location</button>
-
-          <select
-            value={travelMode}
-            onChange={(e) => setTravelMode(e.target.value)}
-            className="travel-mode-selector"
-          >
-            <option value="DRIVING">🚗 Driving</option>
-            <option value="WALKING">🚶 Walking</option>
-            <option value="BICYCLING">🚴 Biking</option>
-          </select>
-
-          <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
-            🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
+      <div className="location-page">
+        <div className="map-ui">
+          <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            {isSidebarOpen ? "< Hide" : "Show >"}
           </button>
 
-          <button onClick={() => handleGetRoute()} className="map-btn">🧭 Get Route</button>
-
-          <div className="route-info">
-            {distance && <p>📏 {distance}</p>}
-            {duration && <p>⏱️ {duration}</p>}
-          </div>
-
-          <h3>🔍 Find Nearby:</h3>
-          <div className="route-select">
-            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-              <option value="school">🏫 Schools</option>
-              <option value="laundry">🧺 Laundry</option>
-              <option value="restaurant">🍛 Carinderias</option>
-              <option value="gas_station">⛽ Gas Stations</option>
+          <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
+            <h2>📍 Get Directions</h2>
+            <button onClick={handleGetUserLocation} className="map-btn">📌 Get My Location</button>
+            <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
+              <option value="DRIVING">🚗 Driving</option>
+              <option value="WALKING">🚶 Walking</option>
+              <option value="BICYCLING">🚴 Biking</option>
             </select>
-            <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
-              🔎 Search
+            <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
+              🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
             </button>
+            <button onClick={() => handleGetRoute()} className="map-btn">🧭 Get Route</button>
+
+            <div className="route-info">
+              {distance && <p>📏 {distance}</p>}
+              {duration && <p>⏱️ {duration}</p>}
+            </div>
+
+            <h3>🔍 Find Nearby:</h3>
+            <div className="route-select">
+              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                <option value="school">🏫 Schools</option>
+                <option value="laundry">🧺 Laundry</option>
+                <option value="restaurant">🍛 Carinderias</option>
+                <option value="gas_station">⛽ Gas Stations</option>
+              </select>
+              <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
+                🔎 Search
+              </button>
+            </div>
+
+            <ul className="nearby-list">
+              {nearbyPlaces.map((place) => (
+                <li
+                  key={place.place_id}
+                  onClick={() =>
+                    handleGetRoute({
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng(),
+                    })
+                  }
+                >
+                  {place.name}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <ul className="nearby-list">
-            {nearbyPlaces.map((place) => (
-              <li
-                key={place.place_id}
-                onClick={() =>
-                  handleGetRoute({
-                    lat: place.geometry.location.lat(),
-                    lng: place.geometry.location.lng(),
-                  })
-                }
+          <div className="map-container">
+            <div className="search-bar-container">
+              <Autocomplete onLoad={(auto) => setAutocomplete(auto)}>
+                <input className="search-box" placeholder="Search destination..." />
+              </Autocomplete>
+              <button
+                className="search-btn"
+                onClick={() => {
+                  if (!autocomplete) return alert("Enter a location");
+                  const place = autocomplete.getPlace();
+                  if (place?.geometry) {
+                    const loc = {
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng(),
+                    };
+                    setUserLocation(loc);
+                    mapRef.current?.panTo(loc);
+                    mapRef.current?.setZoom(15);
+                  } else {
+                    alert("No place found.");
+                  }
+                }}
               >
-                {place.name}
-              </li>
-            ))}
-          </ul>
-        </div>
+                Search
+              </button>
+            </div>
 
-        <div className="map-container">
-          <div className="search-bar-container">
-            <Autocomplete onLoad={(auto) => setAutocomplete(auto)}>
-              <input className="search-box" placeholder="Search destination..." />
-            </Autocomplete>
-            <button
-              className="search-btn"
-              onClick={() => {
-                if (!autocomplete) return alert("Enter a location");
-                const place = autocomplete.getPlace();
-                if (place?.geometry) {
-                  const loc = {
-                    lat: place.geometry.location.lat(),
-                    lng: place.geometry.location.lng(),
-                  };
-                  setUserLocation(loc);
-                  mapRef.current?.panTo(loc);
-                  mapRef.current?.setZoom(15);
-                } else {
-                  alert("No place found.");
-                }
-              }}
-            >
-              Search
-            </button>
+            <GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
+              <Marker position={dormPosition} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }} />
+              {universities.map((u) => (
+                <Marker key={u.id} position={u.position} />
+              ))}
+              {userLocation && <Marker position={userLocation} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} />}
+              {selectedRoute && (
+                <>
+                  <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
+                  <Marker position={selectedRoute.routes[0].legs[0].start_location} icon={{ url: "/assets/startingpoint.svg", scaledSize: new window.google.maps.Size(60, 60) }} />
+                  <Marker position={selectedRoute.routes[0].legs[0].end_location} icon={{ url: "/assets/endpoint.svg", scaledSize: new window.google.maps.Size(40, 40) }} />
+                </>
+              )}
+              {walkingPath && <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />}
+              {showTraffic && <TrafficLayer />}
+            </GoogleMap>
           </div>
-
-          <GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
-            <Marker position={dormPosition} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }} />
-            {universities.map((u) => (
-              <Marker key={u.id} position={u.position} />
-            ))}
-            {userLocation && <Marker position={userLocation} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} />}
-            {selectedRoute && (
-              <>
-                <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
-                <Marker position={selectedRoute.routes[0].legs[0].start_location} icon={{ url: "/assets/startingpoint.svg", scaledSize: new window.google.maps.Size(60, 60) }} />
-                <Marker position={selectedRoute.routes[0].legs[0].end_location} icon={{ url: "/assets/endpoint.svg", scaledSize: new window.google.maps.Size(40, 40) }} />
-              </>
-            )}
-            {walkingPath && <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />}
-            {showTraffic && <TrafficLayer />}
-          </GoogleMap>
         </div>
       </div>
     </LoadScriptNext>
