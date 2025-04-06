@@ -5,7 +5,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import RoutingControl from './RoutingControl.js';
 import customMarkerIcon from '../assets/seagoldlogo.jpg'; // Dorm icon
-import './MapTenant.css';
 
 // Dormitory Icon
 const dormIcon = new L.Icon({
