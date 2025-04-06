@@ -7,16 +7,13 @@ import {
   DirectionsRenderer,
   Autocomplete,
   Polyline,
-  TrafficLayer
+  TrafficLayer,
 } from "@react-google-maps/api";
 
 const libraries = ["places"];
-const containerStyle = { width: "100%", height: "720px" };
-
-// 📍 Dormitory Location
+const containerStyle = { width: "100%", height: "100vh" };
 const dormPosition = { lat: 14.6036, lng: 120.9889 };
 
-// 🏫 Universities
 const universities = [
   { id: 1, name: "TUP Manila", position: { lat: 14.5872, lng: 120.9842 } },
   { id: 2, name: "UST", position: { lat: 14.6096, lng: 120.9893 } },
@@ -24,45 +21,31 @@ const universities = [
 ];
 
 const GoogleMapComponent = () => {
-  const [userLocation, setUserLocation] = useState(dormPosition); // Default to dorm position if geolocation is not enabled
+  const [userLocation, setUserLocation] = useState(dormPosition);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [walkingPath, setWalkingPath] = useState(null);
   const [travelMode, setTravelMode] = useState("DRIVING");
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [autocomplete, setAutocomplete] = useState(null);
-  const [trafficLayerVisible, setTrafficLayerVisible] = useState(false);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("school");
-  const mapRef = useRef(null);
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
+  const mapRef = useRef(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
-  
+
     return () => {
       document.body.style.overflow = "auto";
       document.documentElement.style.overflow = "auto";
     };
   }, []);
-  
 
-  const options = [
-    { value: "school", label: "Schools", icon: "/assets/school.svg" },
-    { value: "laundry", label: "Laundry Shops", icon: "/assets/laundry.svg" },
-    { value: "restaurant", label: "Carinderias", icon: "/assets/carinderia.svg" },
-    { value: "gas_station", label: "Gas Stations", icon: "/assets/gasstation.svg" },
-  ];
-
-  const  isGoogleMapsLoaded = () => {
-    return typeof window.google !== "undefined" && window.google.maps;
-  };
-
-  // 📍 Get User Location
   const handleGetUserLocation = () => {
-    setIsLocating(true); // Start loading
-  
+    setIsLocating(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -71,11 +54,9 @@ const GoogleMapComponent = () => {
             lng: position.coords.longitude,
           };
           setUserLocation(newUserLocation);
-  
           if (mapRef.current) {
             mapRef.current.panTo(newUserLocation);
             mapRef.current.setZoom(15);
-  
             new window.google.maps.Marker({
               position: newUserLocation,
               map: mapRef.current,
@@ -86,237 +67,179 @@ const GoogleMapComponent = () => {
               title: "Your Current Location",
             });
           }
-  
-          setIsLocating(false); // Done
+          setIsLocating(false);
         },
         () => {
           alert("⚠️ Location access denied or unavailable.");
-          setIsLocating(false); // Stop loading on error
+          setIsLocating(false);
         }
       );
     } else {
-      alert("⚠️ Geolocation is not supported by this browser.");
-      setIsLocating(false); // Stop loading on fallback
+      alert("⚠️ Geolocation not supported by this browser.");
+      setIsLocating(false);
     }
   };
-  
 
-  // 🏢 Fetch Nearby Locations
   const handleFindNearbyPlaces = (category) => {
-    if (!isGoogleMapsLoaded() || !mapRef.current) return;
-
-    const placesService = new window.google.maps.places.PlacesService(mapRef.current);
-    const request = {
-      location: dormPosition,
-      radius: 1500, // 1.5km radius
-      type: category,
-    };
-
-    placesService.nearbySearch(request, (results, status) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-        setNearbyPlaces(results);
-      } else {
-        setNearbyPlaces([]);
-        alert("No places found in this category.");
+    if (!mapRef.current) return;
+    const service = new window.google.maps.places.PlacesService(mapRef.current);
+    service.nearbySearch(
+      {
+        location: dormPosition,
+        radius: 1500,
+        type: category,
+      },
+      (results, status) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+          setNearbyPlaces(results);
+        } else {
+          setNearbyPlaces([]);
+          alert("No nearby places found.");
+        }
       }
-    });
+    );
   };
 
   const handleGetRoute = (destination) => {
-    if (!userLocation || !destination) {  // Ensure both userLocation and destination are defined
-        alert("Missing origin or destination.");
-        return;
-    }
-
-    if (!isGoogleMapsLoaded()) {
-        alert("Google Maps API is not loaded yet.");
-        return;
-    }
-
+    if (!userLocation || !destination) return;
     const travelModes = {
-        DRIVING: window.google.maps.TravelMode.DRIVING,
-        WALKING: window.google.maps.TravelMode.WALKING,
-        BICYCLING: window.google.maps.TravelMode.BICYCLING,
+      DRIVING: window.google.maps.TravelMode.DRIVING,
+      WALKING: window.google.maps.TravelMode.WALKING,
+      BICYCLING: window.google.maps.TravelMode.BICYCLING,
     };
 
-    // Use the existing state `travelMode` instead of non-existent `mode`
-    const selectedMode = travelModes[travelMode] || window.google.maps.TravelMode.DRIVING;
-
-    const directionsService = new window.google.maps.DirectionsService();
-    directionsService.route({
+    const service = new window.google.maps.DirectionsService();
+    service.route(
+      {
         origin: dormPosition,
-        destination: destination,
-        travelMode: selectedMode,
-    }, (result, status) => {
+        destination,
+        travelMode: travelModes[travelMode],
+      },
+      (result, status) => {
         if (status === "OK") {
-            setSelectedRoute(result);
-            setDistance(result.routes[0].legs[0].distance.text);
-            setDuration(result.routes[0].legs[0].duration.text);
-            if (travelMode === "WALKING") {
-                const path = result.routes[0].overview_path;
-                if (path) {
-                    setWalkingPath(path.map(p => ({ lat: p.lat(), lng: p.lng() })));
-                }
-            } else {
-                setWalkingPath(null);
-            }
+          setSelectedRoute(result);
+          setDistance(result.routes[0].legs[0].distance.text);
+          setDuration(result.routes[0].legs[0].duration.text);
+          if (travelMode === "WALKING") {
+            setWalkingPath(
+              result.routes[0].overview_path.map((p) => ({
+                lat: p.lat(),
+                lng: p.lng(),
+              }))
+            );
+          } else {
+            setWalkingPath(null);
+          }
         } else {
-            alert("Failed to retrieve directions.");
+          alert("Route request failed.");
         }
-    });
-};
+      }
+    );
+  };
 
-  // ✅ Move dormitory marker inside the onLoad function
   const onLoadMap = (map) => {
     mapRef.current = map;
   };
 
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
-      <div className="map-destination">
-      <div className="search-bar-container">
-  <Autocomplete 
-    onLoad={(auto) => setAutocomplete(auto)}
-  >
-    <input type="text" className="search-box" placeholder="Enter destination..." />
-  </Autocomplete>
-  <button className="search-btn" onClick={() => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      
-      if (place && place.geometry) {
-        const location = {
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng()
-        };
-        
-        setUserLocation(location);  // Save the searched location as userLocation
+      <div className="map-wrapper">
+        <button className="toggle-sidebar-btn" onClick={() => setSidebarOpen(!isSidebarOpen)}>
+          {isSidebarOpen ? "⮜ Hide" : "⮞ Show"}
+        </button>
 
-        if (mapRef.current) {
-          mapRef.current.panTo(location);
-          mapRef.current.setZoom(15);
-        }
+        <div className={`map-sidebar ${isSidebarOpen ? "open" : "closed"}`}>
+          <h2>📍 Get Directions</h2>
+          <button onClick={handleGetUserLocation} className="map-btn sticky-btn">
+            📌 Get My Location
+          </button>
 
-        // Render Marker for the searched location
-        mapRef.current && new window.google.maps.Marker({
-          position: location,
-          map: mapRef.current,
-          icon: {
-            url: "/assets/endpoint.svg",
-            scaledSize: new window.google.maps.Size(50, 50)
-          },
-          title: "Searched Location"
-        });
-
-      } else {
-        alert("No details available for the searched location.");
-      }
-    } else {
-      alert("Please enter a valid location.");
-    }
-  }}>Search</button>
-
-</div>
-
-</div>
-      <div className="map-ui">
-        <div className="map-sidebar">
-          <h2> <img src="/assets/getdirection.svg" alt="Search" width="20" style={{ marginRight: "5px" }} />  Get Directions</h2>
-          <button onClick={() => {
-     handleGetUserLocation();
-
-        if (userLocation && mapRef.current) {
-      // Render Marker for the user location
-      new window.google.maps.Marker({
-        position: userLocation,
-        map: mapRef.current,
-        icon: { url: "/assets/startingpoint.svg", scaledSize: new window.google.maps.Size(50, 50)
-        },
-        title: "Your Current Location"
-      });
-    }
-  }} className="map-btn"> 
-  <img src="/assets/getmylocation.svg" alt="Search" width="20" style={{ marginRight: "5px" }} /> 
-  Get My Location
-</button>
-
-          <select onChange={(e) => setTravelMode(e.target.value)} value={travelMode} className="travel-mode-selector">
-            <option value="DRIVING">Driving</option>
-            <option value="WALKING">Walking</option>
-            <option value="BICYCLING">Biking</option>
+          <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
+            <option value="DRIVING">🚗 Driving</option>
+            <option value="WALKING">🚶 Walking</option>
+            <option value="BICYCLING">🚴 Biking</option>
           </select>
-          <button onClick={() => handleGetRoute()} className="map-btn"><img src="/assets/getroute.svg" alt="Search" width="20" style={{ marginRight: "5px" }} />Get Route</button>
+
+          <button onClick={() => handleGetRoute()} className="map-btn">
+            🧭 Get Route
+          </button>
+
           <div className="route-info">
             {distance && <p>Distance: {distance}</p>}
             {duration && <p>Duration: {duration}</p>}
           </div>
 
-          <h3> Find Nearby:</h3>
+          <h3>🔍 Find Nearby:</h3>
           <div className="route-select">
-          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-            <option value="school">🏫 Schools</option>
-            <option value="laundry">🧺 Laundry Shops</option>
-            <option value="restaurant">🍛 Carinderias</option>
-            <option value="gas_station">⛽ Gas Stations</option>
-          </select>
-          <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
-          <img src="/assets/search.svg" alt="Search" width="20" style={{ marginRight: "5px" }} />
-             Search
-          </button>
+            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+              <option value="school">🏫 Schools</option>
+              <option value="laundry">🧺 Laundry</option>
+              <option value="restaurant">🍽️ Carinderia</option>
+              <option value="gas_station">⛽ Gas Stations</option>
+            </select>
+            <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
+              🔎 Search
+            </button>
           </div>
+
           <ul className="nearby-list">
-            {nearbyPlaces.map(place => (
-              <li key={place.place_id} onClick={() => handleGetRoute({
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng()
-              })}>
+            {nearbyPlaces.map((place) => (
+              <li
+                key={place.place_id}
+                onClick={() =>
+                  handleGetRoute({
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng(),
+                  })
+                }
+              >
                 {place.name}
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Map Display */}
         <div className="map-container">
+          <div className="search-bar-container">
+            <Autocomplete onLoad={(auto) => setAutocomplete(auto)}>
+              <input className="search-box" placeholder="Search destination..." />
+            </Autocomplete>
+            <button
+              className="search-btn"
+              onClick={() => {
+                if (!autocomplete) return alert("Enter a location");
+                const place = autocomplete.getPlace();
+                if (place?.geometry) {
+                  const loc = {
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng(),
+                  };
+                  setUserLocation(loc);
+                  mapRef.current?.panTo(loc);
+                  mapRef.current?.setZoom(15);
+                } else {
+                  alert("No place found.");
+                }
+              }}
+            >
+              Search
+            </button>
+          </div>
+
           <GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
-            <Marker position={dormPosition} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }} title="Dormitory" />
-            {universities.map((uni) => (
-              <Marker key={uni.id} position={uni.position} />
+            <Marker position={dormPosition} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }} />
+            {universities.map((u) => (
+              <Marker key={u.id} position={u.position} />
             ))}
-            {userLocation && (
-              <Marker position={userLocation} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} title="Your Location" />
-            )}
-            {/* Directions */}
+            {userLocation && <Marker position={userLocation} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} />}
             {selectedRoute && (
-  <>
-    <DirectionsRenderer
-      directions={selectedRoute}
-      options={{ suppressMarkers: true }}
-    />
-
-    {/* Custom Start Point (A) */}
-    <Marker
-      position={selectedRoute.routes[0].legs[0].start_location}
-      icon={{
-        url: "/assets/startingpoint.svg",  // Access the file from the public folder
-        scaledSize: new window.google.maps.Size(60, 60)
-      }}
-      title="Start Point (A)"
-    />
-
-    {/* Custom End Point (B) */}
-    <Marker
-      position={selectedRoute.routes[0].legs[0].end_location}
-      icon={{
-        url: "/assets/endpoint.svg",
-        scaledSize: new window.google.maps.Size(40, 40)
-      }}
-      title="End Point (B)"
-    />
-  </>
-)}
-
-            {walkingPath && <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeOpacity: 1, strokeWeight: 2 }} />}
+              <>
+                <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
+                <Marker position={selectedRoute.routes[0].legs[0].start_location} icon={{ url: "/assets/startingpoint.svg", scaledSize: new window.google.maps.Size(60, 60) }} />
+                <Marker position={selectedRoute.routes[0].legs[0].end_location} icon={{ url: "/assets/endpoint.svg", scaledSize: new window.google.maps.Size(40, 40) }} />
+              </>
+            )}
+            {walkingPath && <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />}
             {trafficLayerVisible && <TrafficLayer />}
           </GoogleMap>
         </div>
