@@ -33,6 +33,7 @@ const GoogleMapComponent = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const mapRef = useRef(null);
   const [showTraffic, setShowTraffic] = useState(false);
+  const [isStreetView, setIsStreetView] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -128,14 +129,27 @@ const GoogleMapComponent = () => {
     );
   };
 
-  const onLoadMap = (map) => {
-    mapRef.current = map;
-  };
+const onLoadMap = (map) => {
+  mapRef.current = map;
+
+  // Listen to street view changes
+  const streetView = map.getStreetView();
+  streetView.addListener("visible_changed", () => {
+    setIsStreetView(streetView.getVisible());
+  });
+};
 
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
         <div className="map-ui">
+          
+        {isStreetView && (
+            <button className="exit-street-view-btn" onClick={() => mapRef.current.getStreetView().setVisible(false)}>
+              🔙 Back to Map
+            </button>
+          )}
+
         <button
           className={`toggle-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
