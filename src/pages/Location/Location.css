@@ -25,7 +25,7 @@ body, html {
 
 /* Sidebar */
 .map-sidebar {
-  background: #fff;
+  background: #366e39;
   position: relative;
   border-radius: 10px;
   box-shadow: 0 0 10px #0003;
@@ -94,7 +94,7 @@ body, html {
 }
 
 .search-btn:hover {
-  background-color: #4285F4;
+  background-color: #366e39;
   color: white;
 }
 
@@ -104,7 +104,7 @@ body, html {
   top: 15px;
   left: 310px;
   z-index: 20;
-  background-color: #01a451;
+  background-color: #366e39;
   color: white;
   border: none;
   border-radius: 0 4px 4px 0;
@@ -119,7 +119,7 @@ body, html {
 
 /* Buttons */
 .map-btn {
-  background: #f1f1f1;
+  background: #366e39;
   padding: 10px;
   border: none;
   border-radius: 5px;
@@ -149,7 +149,7 @@ body, html {
 
 .nearby-list li {
   padding: 8px;
-  background-color: #f9f9f9;
+  background-color: #366e39;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
@@ -232,7 +232,7 @@ body, html {
     bottom: 10px;
     z-index: 30;
     width: 100%;
-    background-color: #fff;
+    background-color: #366e39;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     margin-bottom: 5px;
   }
