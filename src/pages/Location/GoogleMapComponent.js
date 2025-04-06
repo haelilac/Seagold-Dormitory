@@ -33,6 +33,7 @@ const GoogleMapComponent = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
   const mapRef = useRef(null);
+  const [trafficLayerVisible, setTrafficLayerVisible] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -159,6 +160,10 @@ const GoogleMapComponent = () => {
             <option value="WALKING">🚶 Walking</option>
             <option value="BICYCLING">🚴 Biking</option>
           </select>
+          
+          <button onClick={() => setTrafficLayerVisible(!trafficLayerVisible)} className="map-btn">
+            {trafficLayerVisible ? "🚧 Hide Traffic" : "🚧 Show Traffic"}
+          </button>
 
           <button onClick={() => handleGetRoute()} className="map-btn">
             🧭 Get Route
