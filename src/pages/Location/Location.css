@@ -119,12 +119,13 @@ body, html {
 }
 
 .toggle-sidebar.collapsed {
-  left: 10px; /* slide back when sidebar is hidden */
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.map-sidebar.collapsed{
-  left: 0px;
-}
 
 /* Buttons */
 .map-btn {
