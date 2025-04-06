@@ -25,7 +25,7 @@ body, html {
 
 /* Sidebar */
 .map-sidebar {
-  background: #366e39;
+  background: #ffffff;
   position: relative;
   border-radius: 10px;
   box-shadow: 0 0 10px #0003;
@@ -99,7 +99,7 @@ body, html {
 
 .search-btn:hover {
   background-color: #366e39;
-  color: white;
+  color: #FFC857;
 }
 
 /* Sidebar Button */
@@ -165,13 +165,13 @@ body, html {
 
 .nearby-list li {
   padding: 8px;
-  background-color: #366e39;
+  background-color: #ffffff;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
 
 .nearby-list li:hover {
-  background-color: #e5e5e5;
+  background-color: #FFC857;
 }
 
 .route-info {
