@@ -320,16 +320,20 @@ body, html {
 }
 
 @media (max-width: 768px) {
-  .label-text {
-    display: none;
-  }
-
   .map-sidebar {
-    width: 200px !important;
-    height: 400px;
-    min-width: 200px !important;
-    text-align: center;
-  }
+      width: 200px;
+      min-width: 200px;
+      height: 400px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .map-sidebar.collapsed {
+      width: 0;
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
 
   .map-sidebar h2,
   .map-sidebar h3 {
@@ -345,7 +349,7 @@ body, html {
 }
 
 .toggle-sidebar.collapsed {
-  left: -470px;
+  left: -370px;
 }
 
   .travel-mode-selector,
