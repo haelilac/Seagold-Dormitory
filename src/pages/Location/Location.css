@@ -279,7 +279,7 @@ body, html {
   z-index: 100 !important;
 }
 
-.gm-control-active .gm-fullscreen-control{
+.gm-fullscreen-control{
   background: none rgb(255, 255, 255);
   border: 0px;
   margin: 10px;
@@ -316,4 +316,161 @@ body, html {
 
 .exit-street-view-btn:hover {
   background-color: #2c5d30;
+}
+@media (max-width: 768px) {
+  .map-sidebar {
+    max-width: 90%;
+    min-width: unset;
+    width: 90%;
+    left: 5%;
+    top: 80px;
+    height: auto;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .map-sidebar h2,
+  .map-sidebar h3 {
+    font-size: 16px;
+  }
+
+  .search-bar-container {
+    top: 60px;
+    width: 90%;
+    flex-direction: column;
+    padding: 8px;
+  }
+
+  .search-box {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .search-btn {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .toggle-sidebar {
+    top: auto;
+    bottom: 20px;
+    left: 10px;
+    padding: 12px 6px;
+  }
+
+  .toggle-sidebar.collapsed {
+    left: -100%;
+  }
+}
+
+/* 📱 iPhone SE (≤375px) */
+@media (max-width: 375px) {
+  .map-sidebar {
+    width: 95%;
+    left: 2.5%;
+    padding: 10px;
+    top: 70px;
+  }
+
+  .search-bar-container {
+    width: 95%;
+    top: 60px;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .search-box, .search-btn {
+    width: 100%;
+    font-size: 14px;
+  }
+}
+
+/* 📱 iPhone XR / 12 / 14 Pro Max (376px–430px) */
+@media (min-width: 376px) and (max-width: 430px) {
+  .map-sidebar {
+    width: 92%;
+    left: 4%;
+    padding: 12px;
+  }
+
+  .search-bar-container {
+    width: 90%;
+    top: 65px;
+    flex-direction: column;
+  }
+}
+
+/* 📱 Surface Duo (431px–600px) */
+@media (min-width: 431px) and (max-width: 600px) {
+  .map-sidebar {
+    width: 90%;
+    left: 5%;
+    padding: 12px;
+    top: 80px;
+  }
+
+  .search-bar-container {
+    width: 90%;
+    top: 70px;
+  }
+}
+
+/* 📱 iPad Mini & Air (601px–820px) */
+@media (min-width: 601px) and (max-width: 820px) {
+  .map-sidebar {
+    width: 80%;
+    left: 10%;
+    padding: 14px;
+    top: 90px;
+  }
+
+  .search-bar-container {
+    width: 85%;
+    top: 75px;
+  }
+}
+
+/* 💻 iPad Pro & Small Laptops (821px–1024px) */
+@media (min-width: 821px) and (max-width: 1024px) {
+  .map-sidebar {
+    width: 75%;
+    left: 12.5%;
+    padding: 16px;
+    top: 100px;
+  }
+
+  .search-bar-container {
+    width: 80%;
+    top: 85px;
+  }
+}
+
+/* 💻 Medium Screens (1025px–1366px) */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .map-sidebar {
+    width: 320px;
+    left: 14px;
+    padding: 16px;
+  }
+
+  .search-bar-container {
+    width: 60%;
+    top: 85px;
+  }
+}
+
+/* 🖥️ Large Desktops (≥1367px) */
+@media (min-width: 1367px) {
+  .map-sidebar {
+    width: 300px;
+    left: 14px;
+    padding: 15px;
+  }
+
+  .search-bar-container {
+    width: 50%;
+    top: 85px;
+  }
 }
