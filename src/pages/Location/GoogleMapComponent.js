@@ -139,6 +139,16 @@ const onLoadMap = (map) => {
   });
 };
 
+const userMarkerIcon = useMemo(() => {
+  if (window.google?.maps) {
+    return {
+      url: "../../assets/pin-your-location.gif",
+      scaledSize: new window.google.maps.Size(60, 60),
+    };
+  }
+  return null;
+}, [window.google]);
+
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
@@ -242,15 +252,9 @@ const onLoadMap = (map) => {
     <Marker key={u.id} position={u.position} />
   ))}
 
-  {userLocation && (
-    <Marker
-      position={userLocation}
-      icon={{
-        url: "/assets/pin-your-location.gif", // 👈 Your animated pin GIF path
-        scaledSize: new window.google.maps.Size(60, 60) // Optional: adjust size
-      }}
-    />
-  )}
+{userLocation && userMarkerIcon && (
+  <Marker position={userLocation} icon={userMarkerIcon} />
+)}
 
   {selectedRoute && (
     <>
