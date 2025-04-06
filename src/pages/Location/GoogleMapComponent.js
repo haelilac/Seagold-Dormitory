@@ -56,7 +56,6 @@ const GoogleMapComponent = () => {
             lng: position.coords.longitude,
           };
           setUserLocation(location);
-          setShowUserPin(true); // if you're using a show/hide flag for pin
   
           if (mapRef.current) {
             mapRef.current.panTo(location);
