@@ -6,6 +6,16 @@ body, html {
   overflow: hidden;
 }
 
+.location-page {
+  background: none;
+  font-family: Roboto, sans-serif;
+  margin: 0 auto;
+  bottom: 25px;
+  position: relative;
+  padding: 20px;
+  transition: margin-left .3s ease;
+}
+
 .map-ui {
   display: flex;
   height: 100vh;
