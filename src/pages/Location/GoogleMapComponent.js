@@ -38,7 +38,7 @@ const GoogleMapComponent = () => {
   const [isStreetView, setIsStreetView] = useState(false);
   const [userMarkerIcon, setUserMarkerIcon] = useState(null);
   const [dormMarkerIcon, setDormMarkerIcon] = useState(null);
-
+  const [hasClickedLocation, setHasClickedLocation] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -56,14 +56,14 @@ const GoogleMapComponent = () => {
             lng: position.coords.longitude,
           };
           setUserLocation(location);
+          setHasClickedLocation(true); // 👈 mark as clicked
   
           if (mapRef.current) {
             mapRef.current.panTo(location);
             mapRef.current.setZoom(15);
           }
   
-          // ✅ Use the location directly here
-          handleGetRoute(location);
+          handleGetRoute(location); // draw the route
         },
         () => alert("⚠️ Location access denied.")
       );
@@ -71,6 +71,7 @@ const GoogleMapComponent = () => {
       alert("⚠️ Geolocation not supported.");
     }
   };
+  
   
   
 
@@ -170,16 +171,19 @@ const onLoadMap = (map) => {
 
           <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
             <h2>📍 Get Directions</h2>
-            <button onClick={handleGetUserLocation} className="map-btn">📌 Get My Location</button>
+            <button onClick={handleGetUserLocation} className="map-btn">
+              {hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
+            </button>
+
             <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
               <option value="DRIVING">🚗 Driving</option>
               <option value="WALKING">🚶 Walking</option>
               <option value="BICYCLING">🚴 Biking</option>
             </select>
+
             <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
               🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
             </button>
-            <button onClick={() => handleGetRoute()} className="map-btn">🧭 Get Route</button>
 
             <div className="route-info">
               {distance && <p>📏 {distance}</p>}
