@@ -62,7 +62,7 @@ const GoogleMapComponent = () => {
             mapRef.current.setZoom(15);
           }
   
-          // 🔥 Automatically draw route from dorm to current location
+          // ✅ Use the location directly here
           handleGetRoute(location);
         },
         () => alert("⚠️ Location access denied.")
@@ -71,6 +71,7 @@ const GoogleMapComponent = () => {
       alert("⚠️ Geolocation not supported.");
     }
   };
+  
   
 
   const handleFindNearbyPlaces = (category) => {
