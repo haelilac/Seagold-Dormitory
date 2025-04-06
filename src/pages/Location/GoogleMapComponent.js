@@ -137,7 +137,7 @@ const onLoadMap = (map) => {
   // Build icon only when google is available
   setUserMarkerIcon({
     url: userPinGif,
-    scaledSize: new window.google.maps.Size(60, 60),
+    scaledSize: new window.google.maps.Size(100, 70),
   });
 
   const streetView = map.getStreetView();
