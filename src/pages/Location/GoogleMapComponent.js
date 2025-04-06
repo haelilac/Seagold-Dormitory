@@ -11,7 +11,7 @@ import {
 } from "@react-google-maps/api";
 import userPinGif from "../../assets/pin-your-location.gif";
 import seagoldPinGif from "../../assets/seagoldpinicon.gif";
-import amenityPinGif from "../../assets/amenities.gif";
+import amenityPinGif from "../../assets/get-directions.gif";
 
 const libraries = ["places"];
 const containerStyle = { width: "100%", height: "100vh" };
@@ -42,6 +42,7 @@ const GoogleMapComponent = () => {
   const [amenityMarkerIcon, setAmenityMarkerIcon] = useState(null);
   const [hasClickedLocation, setHasClickedLocation] = useState(false);
   const [selectedNearbyPlace, setSelectedNearbyPlace] = useState(null);
+  const [isRouteShown, setIsRouteShown] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -51,6 +52,15 @@ const GoogleMapComponent = () => {
   }, []);
 
   const handleGetUserLocation = () => {
+    if (isRouteShown) {
+      setSelectedRoute(null);
+      setWalkingPath(null);
+      setDistance("");
+      setDuration("");
+      setIsRouteShown(false);
+      return;
+    }
+  
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -59,14 +69,15 @@ const GoogleMapComponent = () => {
             lng: position.coords.longitude,
           };
           setUserLocation(location);
-          setHasClickedLocation(true); // 👈 mark as clicked
+          setHasClickedLocation(true);
+          setIsRouteShown(true);
   
           if (mapRef.current) {
             mapRef.current.panTo(location);
             mapRef.current.setZoom(15);
           }
   
-          handleGetRoute(location); // draw the route
+          handleGetRoute(location);
         },
         () => alert("⚠️ Location access denied.")
       );
@@ -74,6 +85,7 @@ const GoogleMapComponent = () => {
       alert("⚠️ Geolocation not supported.");
     }
   };
+  
   
   const handleFindNearbyPlaces = (category) => {
     if (!mapRef.current) return;
@@ -199,11 +211,11 @@ const GoogleMapComponent = () => {
             </div>
 
             <button onClick={handleGetUserLocation} className="map-btn">
-              {hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
+              {isRouteShown ? "❌ Exit Route" : hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
             </button>
 
             <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
-              🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
+             {showTraffic ? "🚦" : "🚦"}
             </button>
 
             <h3>🔍 Find Nearby:</h3>
@@ -214,11 +226,10 @@ const GoogleMapComponent = () => {
                 <option value="restaurant">🍛 Carinderias</option>
                 <option value="gas_station">⛽ Gas Stations</option>
               </select>
-
-              <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
+            </div>
+            <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
                 🔎
               </button>
-            </div>
           </div>
 
           <div className="map-container">
