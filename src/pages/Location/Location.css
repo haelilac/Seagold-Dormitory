@@ -119,7 +119,7 @@ body, html {
 }
 
 .map-sidebar.collapsed + .toggle-sidebar {
-  left: 10px;
+  left: 0px;
 }
 
 /* Buttons */
