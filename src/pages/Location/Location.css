@@ -380,3 +380,158 @@ body, html {
     z-index: 999;
   }
 }
+
+/* 🌐 XS Phones: <480px */
+@media (max-width: 480px) {
+  
+  .responsive-icon {
+    font-size: 1rem;
+  }
+  
+  .map-ui {
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .map-sidebar {
+    width: 100%;
+    max-height: 55vh;
+    padding: 10px;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .search-bar-container,
+  .search-box,
+  .search-btn,
+  .map-btn,
+  .traffic-btn,
+  .nearby-btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .toggle-sidebar {
+    bottom: 70px;
+    left: 10px;
+    top: unset;
+    transform: none;
+    padding: 10px;
+  }
+
+  .route-select {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+/* 📱 Phones: 481px–767px */
+@media (min-width: 481px) and (max-width: 767px) {
+  .map-ui {
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .map-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    padding: 12px;
+  }
+
+  .map-container {
+    height: 100%;
+  }
+
+  .search-bar-container {
+    flex-direction: column;
+    width: 95%;
+  }
+
+  .map-btn,
+  .traffic-btn,
+  .nearby-btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .route-select {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+/* 📱 Tablets: 768px–1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .map-ui {
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .map-sidebar {
+    width: 100%;
+    max-height: 50vh;
+    padding: 15px;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .map-container {
+    height: 50vh;
+  }
+
+  .search-bar-container {
+    flex-direction: row;
+    justify-content: center;
+    width: 90%;
+  }
+
+  .map-btn,
+  .traffic-btn,
+  .nearby-btn {
+    width: 100%;
+  }
+}
+
+/* 💻 Small Desktops/Laptops: 1025px–1366px */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .map-ui {
+    flex-direction: row;
+    width: 100%;
+    height: 90vh;
+  }
+
+  .map-sidebar {
+    max-width: 320px;
+    height: 100%;
+  }
+
+  .map-container {
+    flex: 1;
+    height: 100%;
+  }
+
+  .search-bar-container {
+    width: 60%;
+  }
+}
+
+/* 🖥️ Large Desktops: >1366px */
+@media (min-width: 1367px) {
+  .map-ui {
+    height: 100vh;
+    flex-direction: row;
+  }
+
+  .map-sidebar {
+    max-width: 350px;
+    height: 100%;
+  }
+
+  .search-bar-container {
+    width: 55%;
+  }
+
+  .map-btn {
+    font-size: 15px;
+  }
+}
