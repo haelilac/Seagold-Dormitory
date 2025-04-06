@@ -121,7 +121,7 @@ body, html {
 .toggle-sidebar.collapsed {
   position: absolute;
   top: 550px;
-  left: -165px;
+  left: -370px;
   transform: translateY(-50%);
   z-index: 20;
   background-color: #366e39;
