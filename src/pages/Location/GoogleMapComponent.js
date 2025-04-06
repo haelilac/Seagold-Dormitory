@@ -143,7 +143,7 @@ const onLoadMap = (map) => {
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
         <div className="map-ui">
-          
+
         {isStreetView && (
             <button className="exit-street-view-btn" onClick={() => mapRef.current.getStreetView().setVisible(false)}>
               🔙 Back to Map
@@ -232,22 +232,52 @@ const onLoadMap = (map) => {
               </button>
             </div>
 
-            <GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
-              <Marker position={dormPosition} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }} />
-              {universities.map((u) => (
-                <Marker key={u.id} position={u.position} />
-              ))}
-              {userLocation && <Marker position={userLocation} icon={{ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" }} />}
-              {selectedRoute && (
-                <>
-                  <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
-                  <Marker position={selectedRoute.routes[0].legs[0].start_location} icon={{ url: "/assets/startingpoint.svg", scaledSize: new window.google.maps.Size(60, 60) }} />
-                  <Marker position={selectedRoute.routes[0].legs[0].end_location} icon={{ url: "/assets/endpoint.svg", scaledSize: new window.google.maps.Size(40, 40) }} />
-                </>
-              )}
-              {walkingPath && <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />}
-              {showTraffic && <TrafficLayer />}
-            </GoogleMap>
+<GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
+  <Marker 
+    position={dormPosition} 
+    icon={{ url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }} 
+  />
+  
+  {universities.map((u) => (
+    <Marker key={u.id} position={u.position} />
+  ))}
+
+  {userLocation && (
+    <Marker
+      position={userLocation}
+      icon={{
+        url: "/assets/pin-your-location.gif", // 👈 Your animated pin GIF path
+        scaledSize: new window.google.maps.Size(60, 60) // Optional: adjust size
+      }}
+    />
+  )}
+
+  {selectedRoute && (
+    <>
+      <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
+      <Marker
+        position={selectedRoute.routes[0].legs[0].start_location}
+        icon={{
+          url: "/assets/startingpoint.svg",
+          scaledSize: new window.google.maps.Size(60, 60),
+        }}
+      />
+      <Marker
+        position={selectedRoute.routes[0].legs[0].end_location}
+        icon={{
+          url: "/assets/endpoint.svg",
+          scaledSize: new window.google.maps.Size(40, 40),
+        }}
+      />
+    </>
+  )}
+
+  {walkingPath && (
+    <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />
+  )}
+
+  {showTraffic && <TrafficLayer />}
+</GoogleMap>
           </div>
         </div>
       </div>
