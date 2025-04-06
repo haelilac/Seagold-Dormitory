@@ -119,13 +119,19 @@ body, html {
 }
 
 .toggle-sidebar.collapsed {
-  width: 0;
-  min-width: 0;
-  padding: 0;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  position: absolute;
+  top: 550px;
+  left: -165px;
+  transform: translateY(-50%);
+  z-index: 20;
+  background-color: #366e39;
+  color: white;
+  border: none;
+  border-radius: 0 30px 30px 0;
+  padding: 20px 3px;
+  cursor: pointer;
+  transition: left 0.3s ease;
 }
-
 
 /* Buttons */
 .map-btn {
@@ -204,8 +210,8 @@ body, html {
   margin: 10px !important;
   user-select: none !important;
   position: absolute !important;
-  bottom: 233px !important;
-  right: 309px !important;
+  bottom: 178px !important;
+  right: 219px !important;
   z-index: 100 !important;
 }
 
