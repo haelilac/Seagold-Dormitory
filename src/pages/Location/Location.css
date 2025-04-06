@@ -103,8 +103,8 @@ body, html {
 /* Sidebar Button */
 .toggle-sidebar {
   position: absolute;
-  top: 288px;
-  left: -55px;
+  top: 685px;
+  left: 315px;
   transform: translateY(-50%);
   z-index: 20;
   background-color: #366e39;
@@ -118,8 +118,8 @@ body, html {
 
 .toggle-sidebar.collapsed {
   position: absolute;
-  top: 550px;
-  left: -370px;
+  top: 685px;
+  left: 0px;
   transform: translateY(-50%);
   z-index: 20;
   background-color: #366e39;
