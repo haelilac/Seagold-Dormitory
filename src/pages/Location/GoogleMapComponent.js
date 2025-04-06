@@ -99,17 +99,18 @@ const GoogleMapComponent = () => {
   };
 
   const handleGetRoute = (destination) => {
-    if (!userLocation || !destination) return;
+    if (!destination) return;
+  
     const travelModes = {
       DRIVING: window.google.maps.TravelMode.DRIVING,
       WALKING: window.google.maps.TravelMode.WALKING,
       BICYCLING: window.google.maps.TravelMode.BICYCLING,
     };
-
+  
     const service = new window.google.maps.DirectionsService();
     service.route(
       {
-        origin: dormPosition,
+        origin: dormPosition, // 🔥 always start from the dorm
         destination,
         travelMode: travelModes[travelMode],
       },
@@ -134,6 +135,7 @@ const GoogleMapComponent = () => {
       }
     );
   };
+  
 
   const onLoadMap = (map) => {
     mapRef.current = map;
