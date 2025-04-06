@@ -12,8 +12,9 @@ html, body {
 }
 
 .login-page {
-  height: 100vh;
-  width: 100%;
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
   display: flex;
   align-items: center;
   justify-content: center;
