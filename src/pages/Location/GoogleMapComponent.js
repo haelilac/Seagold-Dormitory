@@ -187,12 +187,12 @@ const GoogleMapComponent = () => {
         </button>
 
         <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
-        <h2><span className="label-text">📍 Get Directions</span></h2>
+            <h2>📍 Get Directions</h2>
 
             <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
-            <option value="DRIVING">🚗 <span className="label-text">Driving</span></option>
-            <option value="WALKING">🚶 <span className="label-text">Walking</span></option>
-            <option value="BICYCLING">🚴 <span className="label-text">Biking</span></option>
+              <option value="DRIVING">🚗 Driving</option>
+              <option value="WALKING">🚶 Walking</option>
+              <option value="BICYCLING">🚴 Biking</option>
             </select>
 
             <div className="route-info">
@@ -204,27 +204,25 @@ const GoogleMapComponent = () => {
 
             <button onClick={handleGetUserLocation} className="map-btn">
               {isRouteShown ? "❌ Exit Route" : hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
-              <span className="label-text">📌 Get My Location</span>
             </button>
 
             <button onClick={() => setShowTraffic(!showTraffic)} className="traffic-btn">
              {showTraffic ? "🚦" : "🚦"}
             </button>
 
-            <h3><span className="label-text">🔍 Find Nearby:</span></h3>
+            <h3>🔍 Find Nearby:</h3>
             <div className="route-select">
               <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-              <option value="school">🏫 <span className="label-text">Schools</span></option>
-              <option value="laundry">🧺 <span className="label-text">Laundry</span></option>
-              <option value="restaurant">🍛 <span className="label-text">Carinderias</span></option>
-              <option value="gas_station">⛽ <span className="label-text">Gas Stations</span></option>
+                <option value="school">🏫 Schools</option>
+                <option value="laundry">🧺 Laundry</option>
+                <option value="restaurant">🍛 Carinderias</option>
+                <option value="gas_station">⛽ Gas Stations</option>
               </select>
             </div>
             <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="nearby-btn">
                 🔎
               </button>
           </div>
-
         <div className="map-ui">
 
         {isStreetView && (

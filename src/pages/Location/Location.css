@@ -324,9 +324,8 @@ body, html {
   }
 
   .map-sidebar {
-    width: 60px !important;
-    min-width: 60px !important;
-    padding: 8px 5px;
+    width: 200px !important;
+    min-width: 200px !important;
     text-align: center;
   }
 
@@ -339,7 +338,7 @@ body, html {
 
   .travel-mode-selector,
   .route-select select {
-    font-size: 0; /* hide text */
+    width: 50px
   }
 
   .travel-mode-selector option::before {
