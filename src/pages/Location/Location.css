@@ -119,10 +119,10 @@ body, html {
 }
 
 .toggle-sidebar.collapsed {
-  left: 0; /* slide back when sidebar is hidden */
+  left: 10px; /* slide back when sidebar is hidden */
 }
 
-.map-sidebar.collapsed + .toggle-sidebar {
+.map-sidebar.collapsed{
   left: 0px;
 }
 
