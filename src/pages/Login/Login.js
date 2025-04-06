@@ -19,18 +19,20 @@ const Login = () => {
     }
   }, []);
 
-useEffect(() => {
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-  const role = localStorage.getItem("role") || sessionStorage.getItem("role");
-
-  if (token && role) {
-    if (role === "admin") {
-      window.location.href = "/admin/dashboard";
-    } else if (role === "tenant") {
-      window.location.href = "/tenant/dashboard/home";
+  useEffect(() => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const role = localStorage.getItem("role") || sessionStorage.getItem("role");
+  
+    if (token && role) {
+      setTimeout(() => {
+        if (role === "admin") {
+          window.location.href = "/admin/dashboard";
+        } else if (role === "tenant") {
+          window.location.href = "/tenant/dashboard/home";
+        }
+      }, 100); // delay by 100ms
     }
-  }
-}, []);
+  }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();
