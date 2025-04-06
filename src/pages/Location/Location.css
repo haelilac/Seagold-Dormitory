@@ -319,31 +319,24 @@ body, html {
 }
 @media (max-width: 768px) {
   .map-sidebar {
-    max-width: 90%;
-    min-width: unset;
-    width: 90%;
-    left: 5%;
-    top: 80px;
-    height: auto;
-    padding: 10px;
-    border-radius: 8px;
+    background: #ffffff;
+    position: fixed;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0003;
+    height: 50%;
+    top: 100px;
+    left: 14px;
+    max-width: 200px;
+    min-width: 200px;
+    padding: 15px;
+    transition: all .3s ease;
+    width: 200px;
+    z-index: 10;
   }
 
   .map-sidebar h2,
   .map-sidebar h3 {
-    font-size: 16px;
-  }
-
-  .search-bar-container {
-    top: 60px;
-    width: 90%;
-    flex-direction: column;
-    padding: 8px;
-  }
-
-  .search-box {
-    width: 100%;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .search-btn {
