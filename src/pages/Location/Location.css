@@ -140,6 +140,12 @@ body, html {
   margin-top: 10px;
 }
 
+.traffic-btn {
+  font-size: 20px;
+  text-align: center;
+  margin-top: 10px;
+}
+
 .travel-mode-selector,
 .route-select select,
 .nearby-list {

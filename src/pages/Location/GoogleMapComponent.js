@@ -167,7 +167,7 @@ const GoogleMapComponent = () => {
   
     setAmenityMarkerIcon({
       url: amenityPinGif,
-      scaledSize: new window.google.maps.Size(150, 70),
+      scaledSize: new window.google.maps.Size(80, 70),
     });
   
     const streetView = map.getStreetView();
@@ -214,7 +214,7 @@ const GoogleMapComponent = () => {
               {isRouteShown ? "❌ Exit Route" : hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
             </button>
 
-            <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
+            <button onClick={() => setShowTraffic(!showTraffic)} className="traffic-btn">
              {showTraffic ? "🚦" : "🚦"}
             </button>
 
@@ -227,7 +227,7 @@ const GoogleMapComponent = () => {
                 <option value="gas_station">⛽ Gas Stations</option>
               </select>
             </div>
-            <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
+            <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="nearby-btn">
                 🔎
               </button>
           </div>
