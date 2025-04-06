@@ -371,7 +371,7 @@ body, html {
 
   .traffic-btn {
     position: relative;
-    top: -185px;
+    top: -162px;
     left: 60px;
     text-align: center;
     width: 28%;
@@ -412,9 +412,10 @@ body, html {
   }
 
   .route-info-inner p {
-    display: none;
-  }
-
+    font-size: 10px;
+    position: relative;
+    top: -11px;
+}
   .route-select select {
     padding: 6px;
   }
