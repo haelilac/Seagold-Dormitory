@@ -9,6 +9,7 @@ import {
   Polyline,
   TrafficLayer,
 } from "@react-google-maps/api";
+import userPinGif from "../../assets/pin-your-location.gif";
 
 const libraries = ["places"];
 const containerStyle = { width: "100%", height: "100vh" };
@@ -139,16 +140,6 @@ const onLoadMap = (map) => {
   });
 };
 
-const userMarkerIcon = useMemo(() => {
-  if (window.google?.maps) {
-    return {
-      url: "../../assets/pin-your-location.gif",
-      scaledSize: new window.google.maps.Size(60, 60),
-    };
-  }
-  return null;
-}, [window.google]);
-
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
@@ -252,8 +243,14 @@ const userMarkerIcon = useMemo(() => {
     <Marker key={u.id} position={u.position} />
   ))}
 
-{userLocation && userMarkerIcon && (
-  <Marker position={userLocation} icon={userMarkerIcon} />
+{userLocation && (
+  <Marker
+    position={userLocation}
+    icon={{
+      url: userPinGif,
+      scaledSize: new window.google.maps.Size(60, 60),
+    }}
+  />
 )}
 
   {selectedRoute && (
