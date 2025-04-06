@@ -357,43 +357,6 @@ body, html {
     left: -100%;
   }
 
-  .map-btn,
-  .traffic-btn,
-  .nearby-btn {
-    width: 100%;
-    font-size: 13px;
-    padding: 8px 10px;
-    margin-top: 8px;
-    display: block;
-    text-align: center;
-  }
-
-  .travel-mode-selector,
-  .route-select select {
-    font-size: 13px;
-    padding: 6px;
-  }
-
-  .route-select {
-    width: 100%;
-  }
-
-  .route-info-inner {
-    font-size: 12px;
-    padding: 10px;
-  }
-
-  .search-box {
-    width: 100%;
-    font-size: 14px;
-  }
-
-  .search-bar-container {
-    flex-direction: column;
-    align-items: stretch;
-    width: 90%;
-    padding: 8px;
-    gap: 6px;
-  }
+  
 }
 
