@@ -179,6 +179,12 @@ const GoogleMapComponent = () => {
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
+      <button
+          className={`toggle-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          {isSidebarOpen ? "<" : ">"}
+        </button>
         <div className="map-ui">
 
         {isStreetView && (
@@ -186,13 +192,6 @@ const GoogleMapComponent = () => {
               🔙 Back to Map
             </button>
           )}
-
-        <button
-          className={`toggle-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
-          {isSidebarOpen ? "<" : ">"}
-        </button>
 
           <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
             <h2>📍 Get Directions</h2>
