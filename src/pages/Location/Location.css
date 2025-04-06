@@ -135,17 +135,9 @@ body, html {
 
 /* Buttons */
 .map-btn {
-  background: #366e39;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
+  font-size: 20px;
+  text-align: center;
   margin-top: 10px;
-  width: 100%;
-  cursor: pointer;
-}
-
-.map-btn:hover {
-  background-color: #e0e0e0;
 }
 
 .travel-mode-selector,
@@ -231,9 +223,17 @@ body, html {
 }
 
 .route-select {
-  display: flex;
-  gap: 5px;
-  align-items: center;
+  background: #366e39;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.route-select:hover {
+  background-color: #e0e0e0;
 }
 
 .route-select select {

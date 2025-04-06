@@ -184,9 +184,6 @@ const GoogleMapComponent = () => {
 
           <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
             <h2>📍 Get Directions</h2>
-            <button onClick={handleGetUserLocation} className="map-btn">
-              {hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
-            </button>
 
             <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
               <option value="DRIVING">🚗 Driving</option>
@@ -194,16 +191,20 @@ const GoogleMapComponent = () => {
               <option value="BICYCLING">🚴 Biking</option>
             </select>
 
-            <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
-              🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
-            </button>
-
             <div className="route-info">
               <div className="route-info-inner">
                 {distance && <p>📏 {distance}</p>}
                 {duration && <p>⏱️ {duration}</p>}
               </div>
             </div>
+
+            <button onClick={handleGetUserLocation} className="map-btn">
+              {hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
+            </button>
+
+            <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
+              🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
+            </button>
 
             <h3>🔍 Find Nearby:</h3>
             <div className="route-select">
@@ -213,16 +214,11 @@ const GoogleMapComponent = () => {
                 <option value="restaurant">🍛 Carinderias</option>
                 <option value="gas_station">⛽ Gas Stations</option>
               </select>
+
               <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
-                🔎 Search
+                🔎
               </button>
             </div>
-
-            <ul className="nearby-list">
-              {nearbyPlaces.map((place) => (
-                <li key={place.place_id}>{place.name}</li>
-              ))}
-            </ul>
           </div>
 
           <div className="map-container">
