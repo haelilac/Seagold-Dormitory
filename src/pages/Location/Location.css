@@ -346,15 +346,40 @@ body, html {
     font-size: 18px;
   }
 
-  .map-btn,
-  .traffic-btn,
-  .nearby-btn {
-    font-size: 20px;
-    padding: 8px;
-    width: 100%;
-    margin: 5px 0;
-    text-align: center;
+  .map-btn {
+  border-radius: 12px;
+  font-size: 15px;
+  margin: 5px 0;
+  padding: 8px;
+  position: relative;
+  top: 70px;
+  left: -40px;
+  text-align: center;
+  width: 55%;
+  }
+
+  .traffic-btn {
     border-radius: 12px;
+    font-size: 15px;
+    margin: 5px 0;
+    padding: 8px;
+    position: relative;
+    top: 70px;
+    left: 56px;
+    text-align: center;
+    width: 30%;
+  }
+
+  .nearby-btn {
+    border-radius: 12px;
+    font-size: 15px;
+    margin: 5px 0;
+    padding: 8px;
+    position: relative;
+    top: 70px;
+    left: -40px;
+    text-align: center;
+    width: 55%;
   }
 
   .route-info,
