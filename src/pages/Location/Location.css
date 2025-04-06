@@ -326,6 +326,7 @@ body, html {
 
   .map-sidebar {
     width: 200px !important;
+    height: 400px;
     min-width: 200px !important;
     text-align: center;
   }
@@ -337,6 +338,15 @@ body, html {
     margin-top: 10px;
     top: -93px;
   }
+
+  .toggle-sidebar {
+    top: 370px;
+    left: -155px;
+}
+
+.toggle-sidebar.collapsed {
+  left: -470px;
+}
 
   .travel-mode-selector,
   .route-select select {
@@ -353,7 +363,7 @@ body, html {
   .map-btn {
   font-size: 13px;
   position: relative;
-  top: -15px;
+  top: 10px;
   text-align: center;
   width: 100%;
   }
@@ -361,7 +371,7 @@ body, html {
 
   .traffic-btn {
     position: relative;
-    top: -175px;
+    top: -185px;
     left: 60px;
     text-align: center;
     width: 28%;
@@ -398,7 +408,7 @@ body, html {
     font-size: 0;
     padding: 4px;
     width: 100%;
-    height: 45%;
+    height: 100%;
   }
 
   .route-info-inner p {
