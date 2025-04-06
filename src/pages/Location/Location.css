@@ -317,46 +317,60 @@ body, html {
 .exit-street-view-btn:hover {
   background-color: #2c5d30;
 }
+
 @media (max-width: 768px) {
+  .label-text {
+    display: none;
+  }
+
   .map-sidebar {
-    background: #ffffff;
-    position: fixed;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #0003;
-    height: 50%;
-    top: 100px;
-    left: 14px;
-    max-width: 200px;
-    min-width: 200px;
-    padding: 15px;
-    transition: all .3s ease;
-    width: 200px;
-    z-index: 10;
+    width: 60px !important;
+    min-width: 60px !important;
+    padding: 8px 5px;
+    text-align: center;
   }
 
-  .map-sidebar h2,
-  .map-sidebar h3 {
-    font-size: 13px;
+  .map-sidebar select,
+  .map-sidebar .route-select select,
+  .map-sidebar input,
+  .map-sidebar .route-info {
+    display: none;
   }
 
-  .search-btn {
+  .travel-mode-selector,
+  .route-select select {
+    font-size: 0; /* hide text */
+  }
+
+  .travel-mode-selector option::before {
+    content: attr(data-icon);
+    font-size: 18px;
+  }
+
+  .map-btn,
+  .traffic-btn,
+  .nearby-btn {
+    font-size: 20px;
+    padding: 8px;
     width: 100%;
-    margin-left: 0;
-    margin-top: 8px;
-    font-size: 14px;
+    margin: 5px 0;
+    text-align: center;
+    border-radius: 12px;
   }
 
-  .toggle-sidebar {
-    top: auto;
-    bottom: 20px;
-    left: 10px;
-    padding: 12px 6px;
+  .route-info,
+  .route-info-inner {
+    padding: 4px;
+    font-size: 0;
   }
 
-  .toggle-sidebar.collapsed {
-    left: -100%;
+  .route-info-inner p {
+    display: none;
   }
 
-  
+  .route-select select {
+    padding: 6px;
+  }
 }
+
 
