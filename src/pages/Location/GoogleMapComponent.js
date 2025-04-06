@@ -41,6 +41,7 @@ const GoogleMapComponent = () => {
   const [dormMarkerIcon, setDormMarkerIcon] = useState(null);
   const [amenityMarkerIcon, setAmenityMarkerIcon] = useState(null);
   const [hasClickedLocation, setHasClickedLocation] = useState(false);
+  const [selectedNearbyPlace, setSelectedNearbyPlace] = useState(null);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -214,12 +215,14 @@ const GoogleMapComponent = () => {
               {nearbyPlaces.map((place) => (
                 <li
                   key={place.place_id}
-                  onClick={() =>
-                    handleGetRoute({
+                  onClick={() => {
+                    const destination = {
                       lat: place.geometry.location.lat(),
                       lng: place.geometry.location.lng(),
-                    })
-                  }
+                    };
+                    setSelectedNearbyPlace(destination); // 👈 store selected
+                    handleGetRoute(destination);
+                  }}
                 >
                   {place.name}
                 </li>
@@ -263,17 +266,9 @@ const GoogleMapComponent = () => {
           <Marker position={userLocation} icon={userMarkerIcon} />
         )}
 
-        {amenityMarkerIcon &&
-          nearbyPlaces.map((place) => (
-            <Marker
-              key={place.place_id}
-              position={{
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng(),
-              }}
-              icon={amenityMarkerIcon}
-            />
-          ))}
+        {selectedNearbyPlace && amenityMarkerIcon && (
+          <Marker position={selectedNearbyPlace} icon={amenityMarkerIcon} />
+        )}
 
         {selectedRoute && (
           <>
