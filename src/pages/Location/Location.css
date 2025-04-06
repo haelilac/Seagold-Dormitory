@@ -106,13 +106,13 @@ body, html {
 .toggle-sidebar {
   position: absolute;
   top: 550px;
-  left: 310px;
+  left: -65px;
   z-index: 20;
   background-color: #366e39;
   color: white;
   border: none;
-  border-radius: 0 4px 4px 0;
-  padding: 8px 12px;
+  border-radius: 0 30px 30px 0;
+  padding: 20px 3px;
   cursor: pointer;
   transition: left 0.3s ease;
 }

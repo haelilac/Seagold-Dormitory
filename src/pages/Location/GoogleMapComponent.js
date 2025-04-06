@@ -137,7 +137,7 @@ const GoogleMapComponent = () => {
       <div className="location-page">
         <div className="map-ui">
           <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            {isSidebarOpen ? "< Hide" : "Show >"}
+            {isSidebarOpen ? "<" : ">"}
           </button>
 
           <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
