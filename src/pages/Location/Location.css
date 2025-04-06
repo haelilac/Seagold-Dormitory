@@ -29,9 +29,9 @@ body, html {
   position: relative;
   border-radius: 10px;
   box-shadow: 0 0 10px #0003;
-  height: 100%;
+  height: 40%;
   top: 85px;
-  right: 365px;
+  right: 355px;
   max-width: 300px;
   min-width: 300px;
   overflow-y: auto;
@@ -105,8 +105,8 @@ body, html {
 /* Sidebar Button */
 .toggle-sidebar {
   position: absolute;
-  top: 550px;
-  left: -65px;
+  top: 288px;
+  left: -55px;
   transform: translateY(-50%);
   z-index: 20;
   background-color: #366e39;
