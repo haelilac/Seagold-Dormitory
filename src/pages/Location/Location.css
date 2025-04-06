@@ -18,8 +18,10 @@ body, html {
 
 .map-ui {
   display: flex;
-  height: 80vh;
-  width: 120vw;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 100vh;
+  width: 100%;
   position: relative;
 }
 
@@ -29,25 +31,23 @@ body, html {
   position: relative;
   border-radius: 10px;
   box-shadow: 0 0 10px #0003;
-  height: 40%;
-  top: 85px;
-  right: 355px;
-  max-width: 300px;
-  min-width: 300px;
+  height: auto;
+  max-height: 85vh;
+  top: 0;
+  right: 0;
+  max-width: 100%;
+  min-width: 100%;
   overflow-y: auto;
   padding: 15px;
-  transition: all .3s ease;
-  width: 300px;
+  transition: all 0.3s ease;
   z-index: 10;
 }
 
+
 .map-sidebar.collapsed {
-  width: 0;
-  min-width: 0;
-  padding: 0;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  display: none;
 }
+
 
 .map-sidebar h2,
 .map-sidebar h3 {
@@ -59,10 +59,10 @@ body, html {
 /* Map */
 .map-container {
   flex: 1;
-  width: 100%;
   height: 100vh;
+  width: 100%;
   position: relative;
-  right: 670px;
+  right: 0; /* Remove the hardcoded 670px */
   overflow: hidden;
 }
 
@@ -81,10 +81,10 @@ body, html {
 }
 
 .search-box {
-  width: 250px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  width: 100%;
+  max-width: 250px;
+  padding: 10px;
+  font-size: 1rem;
 }
 
 .search-btn {
@@ -133,28 +133,6 @@ body, html {
   transition: left 0.3s ease;
 }
 
-/* Buttons */
-.map-btn {
-  font-size: 15px;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.traffic-btn {
-  font-size: 15px;
-  text-align: center;
-  left: 192px;
-  margin-top: 10px;
-}
-
-.nearby-btn {
-  font-size: 15px;
-  text-align: center;
-  left: 192px;
-  margin-top: 10px;
-  bottom: 60px;
-
-}
 
 .travel-mode-selector,
 .route-select select,
@@ -239,24 +217,22 @@ body, html {
 }
 
 .route-select {
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  margin-top: 10px;
-  width: 68%;
-  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .route-select:hover {
   background-color: #e0e0e0;
 }
 
-.route-select select {
-  flex: 1;
-}
-
+.route-select select,
 .route-select button {
-  padding: 8px 10px;
+  flex: 1;
+  min-width: 100px;
 }
 
 .gm-style-mtc-bbw {
@@ -378,7 +354,9 @@ body, html {
   .nearby-btn {
     width: 100%;
     font-size: 1rem;
-    margin-top: 8px;
+    margin-top: 10px;
+    padding: 12px;
+    box-sizing: border-box;
   }
 
   .route-info-inner {
