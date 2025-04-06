@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './PendingApplications.css'; // Add custom styles here
+
 
 const PendingApplications = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
