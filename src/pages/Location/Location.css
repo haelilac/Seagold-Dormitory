@@ -132,6 +132,7 @@ body, html {
 
 /* Buttons */
 .map-btn {
+  border-radius: 8px;
   font-size: 15px;
   text-align: center;
   margin-top: 10px;
@@ -140,7 +141,7 @@ body, html {
 .traffic-btn {
   position: relative;
   font-size: 15px;
-  border-radius: 20px;
+  border-radius: 8px;
   text-align: center;
   left: 40px;
   top: 3px;
@@ -150,7 +151,7 @@ body, html {
 .nearby-btn {
   position: relative;
   font-size: 15px;
-  border-radius: 20px;
+  border-radius: 8px;
   text-align: center;
   left: 192px;
   margin-top: 10px;
@@ -339,7 +340,9 @@ body, html {
 
   .travel-mode-selector,
   .route-select select {
-    width: 50px
+    position: relative;
+    width: 115px;
+    right: 28px;
   }
 
   .travel-mode-selector option::before {
@@ -348,28 +351,28 @@ body, html {
   }
 
   .map-btn {
+  font-size: 13px;
   position: relative;
   top: -15px;
-  left: -14px;
   text-align: center;
-  width: 60%;
+  width: 100%;
   }
 
 
   .traffic-btn {
     position: relative;
-    top: -15px;
-    left: 11px;
+    top: -153px;
+    left: 26px;
     text-align: center;
-    width: 30%;
+    width: 28%;
   }
 
   .nearby-btn {
     position: relative;
-    top: -192px;
-    left: 65px;
+    top: -76px;
+    left: 60px;
     text-align: center;
-    width: 30%;
+    width: 28%;
   }
 
   .route-select {
@@ -378,13 +381,23 @@ body, html {
     cursor: pointer;
     margin-top: 10px;
     padding: 10px;
+    top: -20px;
+    left: 20px;
     width: 50%;
-}
+  }
 
-  .route-info,
-  .route-info-inner {
-    padding: 4px;
+  .route-info {
     font-size: 0;
+    padding: 4px;
+    width: 100%;
+    height: 15%;
+  }
+
+  .route-info-inner {
+    font-size: 0;
+    padding: 4px;
+    width: 100%;
+    height: 15%;
   }
 
   .route-info-inner p {
