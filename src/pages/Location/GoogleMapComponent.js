@@ -75,12 +75,11 @@ const GoogleMapComponent = () => {
     }
   };
   
-  
-  
-
   const handleFindNearbyPlaces = (category) => {
     if (!mapRef.current) return;
+    setSelectedNearbyPlace(null); // clear old selection
     const service = new window.google.maps.places.PlacesService(mapRef.current);
+  
     service.nearbySearch(
       {
         location: dormPosition,
@@ -90,6 +89,9 @@ const GoogleMapComponent = () => {
       (results, status) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK) {
           setNearbyPlaces(results);
+          // Zoom and center to dorm after placing markers
+          mapRef.current.panTo(dormPosition);
+          mapRef.current.setZoom(15);
         } else {
           setNearbyPlaces([]);
           alert("No nearby places found.");
@@ -97,6 +99,7 @@ const GoogleMapComponent = () => {
       }
     );
   };
+  
 
   const handleGetRoute = (destination) => {
     if (!destination) return;
@@ -196,8 +199,10 @@ const GoogleMapComponent = () => {
             </button>
 
             <div className="route-info">
-              {distance && <p>📏 {distance}</p>}
-              {duration && <p>⏱️ {duration}</p>}
+              <div className="route-info-inner">
+                {distance && <p>📏 {distance}</p>}
+                {duration && <p>⏱️ {duration}</p>}
+              </div>
             </div>
 
             <h3>🔍 Find Nearby:</h3>
@@ -215,19 +220,7 @@ const GoogleMapComponent = () => {
 
             <ul className="nearby-list">
               {nearbyPlaces.map((place) => (
-                <li
-                  key={place.place_id}
-                  onClick={() => {
-                    const destination = {
-                      lat: place.geometry.location.lat(),
-                      lng: place.geometry.location.lng(),
-                    };
-                    setSelectedNearbyPlace(destination); // 👈 store selected
-                    handleGetRoute(destination);
-                  }}
-                >
-                  {place.name}
-                </li>
+                <li key={place.place_id}>{place.name}</li>
               ))}
             </ul>
           </div>
@@ -268,9 +261,17 @@ const GoogleMapComponent = () => {
           <Marker position={userLocation} icon={userMarkerIcon} />
         )}
 
-        {selectedNearbyPlace && amenityMarkerIcon && (
-          <Marker position={selectedNearbyPlace} icon={amenityMarkerIcon} />
-        )}
+        {amenityMarkerIcon &&
+          nearbyPlaces.map((place) => (
+            <Marker
+              key={place.place_id}
+              position={{
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+              }}
+              icon={amenityMarkerIcon}
+            />
+        ))}
 
         {selectedRoute && (
           <>
