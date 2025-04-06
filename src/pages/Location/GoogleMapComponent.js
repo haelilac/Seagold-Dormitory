@@ -37,6 +37,15 @@ const GoogleMapComponent = () => {
   const mapRef = useRef(null);
   const [isLocating, setIsLocating] = useState(false);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+  
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+  
+
   const options = [
     { value: "school", label: "Schools", icon: "/assets/school.svg" },
     { value: "laundry", label: "Laundry Shops", icon: "/assets/laundry.svg" },
