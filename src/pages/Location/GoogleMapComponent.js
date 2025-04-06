@@ -258,7 +258,18 @@ const GoogleMapComponent = () => {
               </button>
             </div>
 
-      <GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
+          <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={dormPosition}
+              zoom={15}
+              onLoad={onLoadMap}
+              options={{
+                gestureHandling: "greedy",
+                fullscreenControl: false,
+                streetViewControl: false,
+                mapTypeControl: false
+              }}
+            >
         {dormMarkerIcon && (
           <Marker position={dormPosition} icon={dormMarkerIcon} />
         )}

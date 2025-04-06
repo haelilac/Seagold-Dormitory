@@ -348,9 +348,10 @@ body, html {
     left: -155px;
 }
 
-.toggle-sidebar.collapsed {
-  left: -370px;
-}
+  .toggle-sidebar.collapsed {
+    top: 370px;
+    left: -370px;
+  }
 
   .travel-mode-selector,
   .route-select select {
