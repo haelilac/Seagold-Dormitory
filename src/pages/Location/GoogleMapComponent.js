@@ -23,7 +23,7 @@ const universities = [
 ];
 
 const GoogleMapComponent = () => {
-  const [userLocation, setUserLocation] = useState(dormPosition);
+  const [userLocation, setUserLocation] = useState(null);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [walkingPath, setWalkingPath] = useState(null);
   const [travelMode, setTravelMode] = useState("DRIVING");
@@ -56,19 +56,15 @@ const GoogleMapComponent = () => {
             lng: position.coords.longitude,
           };
           setUserLocation(location);
+          setShowUserPin(true); // if you're using a show/hide flag for pin
+  
           if (mapRef.current) {
             mapRef.current.panTo(location);
             mapRef.current.setZoom(15);
-            new window.google.maps.Marker({
-              position: location,
-              map: mapRef.current,
-              icon: {
-                url: "/assets/startingpoint.svg",
-                scaledSize: new window.google.maps.Size(50, 50),
-              },
-              title: "Your Current Location",
-            });
           }
+  
+          // 🔥 Automatically draw route from dorm to current location
+          handleGetRoute(location);
         },
         () => alert("⚠️ Location access denied.")
       );
@@ -76,6 +72,7 @@ const GoogleMapComponent = () => {
       alert("⚠️ Geolocation not supported.");
     }
   };
+  
 
   const handleFindNearbyPlaces = (category) => {
     if (!mapRef.current) return;
@@ -251,10 +248,6 @@ const onLoadMap = (map) => {
           <Marker position={dormPosition} icon={dormMarkerIcon} />
         )}
 
-        
-        {universities.map((u) => (
-          <Marker key={u.id} position={u.position} />
-        ))}
 
         {userLocation && userMarkerIcon && (
           <Marker position={userLocation} icon={userMarkerIcon} />
