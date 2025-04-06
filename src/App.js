@@ -151,10 +151,6 @@ const App = () => {
             <Route path="/units" element={<Units />} />
             <Route path="/book-tour" element={<TourBooking />} />
             <Route path="/apply" element={<Apply />} />
-            <Route path="/login" element={<Login setRole={handleLoginSuccess} />} />
-            <Route path="/create-account" element={<CreateAccount />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Admin-only routes */}
             <Route
