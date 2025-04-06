@@ -18,18 +18,17 @@ body, html {
 
 .map-ui {
   right: 370px;
-  bottom: 390px;
   position: relative;
 }
 
 /* Sidebar */
 .map-sidebar {
   background: #ffffff;
-  position: relative;
+  position: fixed;
   border-radius: 10px;
   box-shadow: 0 0 10px #0003;
   height: 70%;
-  top: 500px;
+  top: 100px;
   left: 14px;
   max-width: 300px;
   min-width: 300px;
@@ -103,8 +102,8 @@ body, html {
 /* Sidebar Button */
 .toggle-sidebar {
   position: absolute;
-  top: 685px;
-  left: 315px;
+  top: 300px;
+  left: -55px;
   transform: translateY(-50%);
   z-index: 20;
   background-color: #366e39;
