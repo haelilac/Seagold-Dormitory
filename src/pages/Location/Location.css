@@ -10,15 +10,15 @@ body, html {
   background: none;
   font-family: Roboto, sans-serif;
   margin: 0 auto;
-  bottom: 27px;
+  left: 185px;
+  bottom: 40px;
   position: relative;
-  padding: 20px;
   transition: margin-left .3s ease;
 }
 
 .map-ui {
   display: flex;
-  height: 100vh;
+  height: 80vh;
   width: 100vw;
   position: relative;
 }
@@ -30,7 +30,8 @@ body, html {
   border-radius: 10px;
   box-shadow: 0 0 10px #0003;
   height: 100%;
-  right: 18px;
+  top: 85px;
+  right: 365px;
   max-width: 300px;
   min-width: 300px;
   overflow-y: auto;
@@ -61,7 +62,7 @@ body, html {
   width: 100%;
   height: 100vh;
   position: relative;
-  right: 370px;
+  right: 670px;
   overflow: hidden;
 }
 
@@ -104,7 +105,7 @@ body, html {
 /* Sidebar Button */
 .toggle-sidebar {
   position: absolute;
-  top: 15px;
+  top: 550px;
   left: 310px;
   z-index: 20;
   background-color: #366e39;
