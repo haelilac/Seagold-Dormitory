@@ -118,6 +118,10 @@ body, html {
   transition: left 0.3s ease;
 }
 
+.toggle-sidebar.collapsed {
+  left: 0; /* slide back when sidebar is hidden */
+}
+
 .map-sidebar.collapsed + .toggle-sidebar {
   left: 0px;
 }
