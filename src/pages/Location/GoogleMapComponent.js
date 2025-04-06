@@ -136,9 +136,12 @@ const GoogleMapComponent = () => {
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
         <div className="map-ui">
-          <button className="toggle-sidebar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            {isSidebarOpen ? "<" : ">"}
-          </button>
+        <button
+          className={`toggle-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          {isSidebarOpen ? "<" : ">"}
+        </button>
 
           <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
             <h2>📍 Get Directions</h2>
