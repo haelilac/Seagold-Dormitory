@@ -17,9 +17,8 @@ body, html {
 }
 
 .map-ui {
-  display: flex;
-  height: 80vh;
-  width: 120vw;
+  right: 370px;
+  bottom: 390px;
   position: relative;
 }
 
@@ -30,11 +29,10 @@ body, html {
   border-radius: 10px;
   box-shadow: 0 0 10px #0003;
   height: 70%;
-  top: 85px;
-  right: 355px;
+  top: 500px;
+  left: 14px;
   max-width: 300px;
   min-width: 300px;
-  overflow-y: auto;
   padding: 15px;
   transition: all .3s ease;
   width: 300px;
@@ -62,7 +60,6 @@ body, html {
   width: 100%;
   height: 100vh;
   position: relative;
-  right: clamp(0px, 8vw, 670px); /* ✅ This auto adjusts from 0px up to 670px */
   transition: right 0.3s ease-in-out;
   overflow: hidden;
 }
@@ -142,14 +139,18 @@ body, html {
 }
 
 .traffic-btn {
+  position: relative;
   font-size: 15px;
+  border-radius: 20px;
   text-align: center;
   left: 192px;
   margin-top: 10px;
 }
 
 .nearby-btn {
+  position: relative;
   font-size: 15px;
+  border-radius: 20px;
   text-align: center;
   left: 192px;
   margin-top: 10px;
@@ -265,7 +266,7 @@ body, html {
   z-index: 0 !important;
   position: absolute !important;
   cursor: pointer !important;
-  left: 1700px !important;
+  left: 1650px !important;
   top: 80px !important;
 }
 
@@ -274,8 +275,27 @@ body, html {
   user-select: none !important;
   position: absolute !important;
   bottom: 178px !important;
-  right: 219px !important;
+  right: 75px !important;
   z-index: 100 !important;
+}
+
+.gm-control-active .gm-fullscreen-control{
+  background: none rgb(255, 255, 255);
+  border: 0px;
+  margin: 10px;
+  padding: 0px;
+  text-transform: none;
+  appearance: none;
+  position: absolute;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 2px;
+  height: 40px;
+  width: 40px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  overflow: hidden;
+  top: 80px;
+  right: 12px;
 }
 
 .exit-street-view-btn {
