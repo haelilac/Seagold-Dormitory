@@ -135,15 +135,24 @@ body, html {
 
 /* Buttons */
 .map-btn {
-  font-size: 20px;
+  font-size: 15px;
   text-align: center;
   margin-top: 10px;
 }
 
 .traffic-btn {
-  font-size: 20px;
+  font-size: 15px;
   text-align: center;
+  left: 30px;
   margin-top: 10px;
+}
+
+.nearby-btn {
+  font-size: 15px;
+  text-align: center;
+  left: 30px;
+  margin-top: 10px;
+
 }
 
 .travel-mode-selector,
@@ -229,12 +238,11 @@ body, html {
 }
 
 .route-select {
-  background: #366e39;
   padding: 10px;
   border: none;
   border-radius: 5px;
   margin-top: 10px;
-  width: 100%;
+  width: 68%;
   cursor: pointer;
 }
 
