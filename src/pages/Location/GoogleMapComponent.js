@@ -11,6 +11,7 @@ import {
 } from "@react-google-maps/api";
 import userPinGif from "../../assets/pin-your-location.gif";
 import seagoldPinGif from "../../assets/seagoldpinicon.gif";
+import amenityPinGif from "../../assets/amenities.gif";
 
 const libraries = ["places"];
 const containerStyle = { width: "100%", height: "100vh" };
@@ -38,6 +39,7 @@ const GoogleMapComponent = () => {
   const [isStreetView, setIsStreetView] = useState(false);
   const [userMarkerIcon, setUserMarkerIcon] = useState(null);
   const [dormMarkerIcon, setDormMarkerIcon] = useState(null);
+  const [amenityMarkerIcon, setAmenityMarkerIcon] = useState(null);
   const [hasClickedLocation, setHasClickedLocation] = useState(false);
 
   useEffect(() => {
@@ -132,24 +134,29 @@ const GoogleMapComponent = () => {
     );
   };
 
-const onLoadMap = (map) => {
-  mapRef.current = map;
-
-  // Build icon only when google is available
-  setUserMarkerIcon({
-    url: userPinGif,
-    scaledSize: new window.google.maps.Size(130, 70),
-  });
-
-  setDormMarkerIcon({
-    url: seagoldPinGif,
-    scaledSize: new window.google.maps.Size(100, 70), // adjust size if needed
-  });
-  const streetView = map.getStreetView();
-  streetView.addListener("visible_changed", () => {
-    setIsStreetView(streetView.getVisible());
-  });
-};
+  const onLoadMap = (map) => {
+    mapRef.current = map;
+  
+    setUserMarkerIcon({
+      url: userPinGif,
+      scaledSize: new window.google.maps.Size(130, 70),
+    });
+  
+    setDormMarkerIcon({
+      url: seagoldPinGif,
+      scaledSize: new window.google.maps.Size(120, 70),
+    });
+  
+    setAmenityMarkerIcon({
+      url: amenityPinGif,
+      scaledSize: new window.google.maps.Size(150, 70),
+    });
+  
+    const streetView = map.getStreetView();
+    streetView.addListener("visible_changed", () => {
+      setIsStreetView(streetView.getVisible());
+    });
+  };
 
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
@@ -252,10 +259,21 @@ const onLoadMap = (map) => {
           <Marker position={dormPosition} icon={dormMarkerIcon} />
         )}
 
-
         {userLocation && userMarkerIcon && (
           <Marker position={userLocation} icon={userMarkerIcon} />
         )}
+
+        {amenityMarkerIcon &&
+          nearbyPlaces.map((place) => (
+            <Marker
+              key={place.place_id}
+              position={{
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+              }}
+              icon={amenityMarkerIcon}
+            />
+          ))}
 
         {selectedRoute && (
           <>
