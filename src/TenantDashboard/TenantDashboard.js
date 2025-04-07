@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link, Outlet } from 'react-router-dom';
 import styles from './TenantDashboard.module.css';
 import { FaBell, FaBars, FaTimes, FaEllipsisV, FaMoon, FaSun } from 'react-icons/fa';
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const TenantDashboard = () => {
     const [userData, setUserData] = useState(null);

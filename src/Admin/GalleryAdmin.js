@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './GalleryAdmin.css';
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const AdminGallery = () => {
   const [images, setImages] = useState([]);

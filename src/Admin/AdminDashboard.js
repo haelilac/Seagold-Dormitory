@@ -22,7 +22,7 @@ import {
     FaCog
 } from "react-icons/fa";
 import Pusher from "pusher-js";
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const AdminDashboard = () => {
     const navigate = useNavigate();

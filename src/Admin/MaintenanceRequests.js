@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import './MaintenanceRequests.css';
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 const MaintenanceRequests = () => {
     const [maintenanceRequests, setMaintenanceRequests] = useState([]);
     const [loading, setLoading] = useState(true);

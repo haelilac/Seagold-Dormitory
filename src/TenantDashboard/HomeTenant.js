@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar'; // Import the calendar
 import 'react-calendar/dist/Calendar.css'; // Import default calendar styles
 import './HomeTenant.css'; // Your custom styles
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const Home = ({ userName, darkMode }) => {
     const [date, setDate] = useState(new Date()); // State for selected date

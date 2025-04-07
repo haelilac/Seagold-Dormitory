@@ -34,7 +34,7 @@ import LoginModal from "./pages/LoginModal/LoginModal";
 import Feedback from 'react-bootstrap/esm/Feedback';
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "./utils/auth";
 
 const clientId = "758551378674-8t930isecldottudrarf724h6jlgdcji.apps.googleusercontent.com";
 

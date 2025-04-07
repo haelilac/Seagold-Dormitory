@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './PaymentAdmin.css';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const initSummary = () => ({
     Confirmed: 0,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import Modal from 'react-modal';
 import './MaintenanceTenant.css';
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const MaintenanceTenant = () => {
     const { sidebarOpen } = useOutletContext();

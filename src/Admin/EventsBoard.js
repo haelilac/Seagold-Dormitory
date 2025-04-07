@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./EventsBoard.css";
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 

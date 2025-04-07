@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./FeedbackAdmin.css";
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const FeedbackAdmin = () => {
     const [feedbacks, setFeedbacks] = useState([]);

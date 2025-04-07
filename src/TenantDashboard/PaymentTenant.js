@@ -3,7 +3,7 @@ import './PaymentTenant.css';
 import { useResizeDetector } from 'react-resize-detector';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import { getAuthToken } from "../../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 // Initialize Pusher
 window.Pusher = Pusher;
