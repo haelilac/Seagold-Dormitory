@@ -8,7 +8,6 @@ import Gallery from './pages/Gallery/Gallery';
 import Units from './pages/Units/Units';
 import TourBooking from './pages/TourBooking/TourBooking';
 import Login from './pages/Login/Login';
-import CreateAccount from './pages/CreateAccount/CreateAccount';
 import AdminDashboard from './Admin/AdminDashboard';
 import PendingApplications from './Admin/PendingApplications';
 import UnitManagement from './Admin/UnitManagement';
@@ -153,7 +152,6 @@ const App = () => {
             <Route path="/book-tour" element={<TourBooking />} />
             <Route path="/apply" element={<Apply />} />
             <Route path="/login" element={<Login setRole={handleLoginSuccess} />} />
-            <Route path="/create-account" element={<CreateAccount />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
