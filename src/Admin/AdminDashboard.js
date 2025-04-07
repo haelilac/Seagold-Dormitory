@@ -48,21 +48,24 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
-                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                });
-                const user = await response.json();
-                setAdmin({
-                    name: user.name,
-                    email: user.email,
-                    profilePicture: user.profile_picture
-                        ? `https://seagold-laravel-production.up.railway.app/storage/profile/${user.profile_picture}`
-                        : "https://seagold-laravel-production.up.railway.app/storage/profile/default-profile.png",
-                });
+              const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
+                headers: {
+                  Authorization: `Bearer ${getAuthToken()}`,
+                  Accept: "application/json",
+                },
+              });
+              const user = await response.json();
+              setAdmin({
+                name: user.name,
+                email: user.email,
+                profilePicture: user.profile_picture
+                  ? `https://seagold-laravel-production.up.railway.app/storage/profile/${user.profile_picture}`
+                  : "https://seagold-laravel-production.up.railway.app/storage/profile/default-profile.png",
+              });
             } catch (error) {
-                console.error("Error fetching admin data:", error);
+              console.error("Error fetching admin data:", error);
             }
-        };
+          };
         fetchAdminData();
     }, []);
 
@@ -87,15 +90,18 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                });
-                const data = await response.json();
-                setNotifications(data || []);
+              const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
+                headers: {
+                  Authorization: `Bearer ${getAuthToken()}`,
+                  Accept: "application/json",
+                },
+              });
+              const data = await response.json();
+              setNotifications(data || []);
             } catch (error) {
-                console.error("Error fetching notifications:", error);
+              console.error("Error fetching notifications:", error);
             }
-        };
+          };
         fetchNotifications();
     }, []);
 

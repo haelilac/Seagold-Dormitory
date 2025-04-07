@@ -29,13 +29,19 @@ const TenantDashboard = () => {
         const fetchData = async () => {
             try {
                 const userRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                });
+                    headers: {
+                      Authorization: `Bearer ${getAuthToken()}`,
+                      Accept: "application/json",
+                    },
+                  });
                 setUserData(userRes.data);
     
                 const notifRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/notifications', {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                });
+                    headers: {
+                      Authorization: `Bearer ${getAuthToken()}`,
+                      Accept: "application/json",
+                    },
+                  });
                 setNotifications(notifRes.data);
             } catch (error) {
                 if (error.response?.status === 401) {
