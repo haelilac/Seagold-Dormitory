@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Login.css';
 import axiosInstance from './axiosInstance';
 import LoginBg from '../../assets/Loginbg.png';
-import { getAuthToken } from "../utils/auth";
+import { getAuthToken } from "../../utils/auth";
 
 
 const Login = () => {
