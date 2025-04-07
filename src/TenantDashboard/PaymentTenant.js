@@ -3,6 +3,7 @@ import './PaymentTenant.css';
 import { useResizeDetector } from 'react-resize-detector';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { getAuthToken } from "../../utils/auth";
 
 // Initialize Pusher
 window.Pusher = Pusher;
@@ -60,7 +61,7 @@ const PaymentTenant = () => {
         const fetchUserData = async () => {
             try {
                 const userResponse = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                    Authorization: `Bearer ${getAuthToken()}`,
                 });
                 const user = await userResponse.json();
 
@@ -158,7 +159,7 @@ const PaymentTenant = () => {
     const fetchPaymentData = async (id) => {
         try {
             const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                headers: { Authorization: `Bearer ${getAuthToken()}`            },
             });
 
             if (!res.ok) throw new Error('Failed to fetch payment data.');
@@ -355,7 +356,7 @@ const PaymentTenant = () => {
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                Authorization: `Bearer ${getAuthToken()}`,
                 body: requestData,
             });
     

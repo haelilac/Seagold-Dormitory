@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar'; // Import the calendar
 import 'react-calendar/dist/Calendar.css'; // Import default calendar styles
 import './HomeTenant.css'; // Your custom styles
+import { getAuthToken } from "../../utils/auth";
 
 const Home = ({ userName, darkMode }) => {
     const [date, setDate] = useState(new Date()); // State for selected date
@@ -18,7 +19,7 @@ const Home = ({ userName, darkMode }) => {
         const fetchEvents = async () => {
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/events', {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                    Authorization: `Bearer ${getAuthToken()}`,
                 });
                 const data = await response.json();
 

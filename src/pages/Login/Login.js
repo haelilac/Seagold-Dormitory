@@ -81,7 +81,7 @@ const Login = () => {
       try {
         const response = await axiosInstance.post('/api/auth/refresh-token', null, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${getAuthToken()}`
           }
         });
 

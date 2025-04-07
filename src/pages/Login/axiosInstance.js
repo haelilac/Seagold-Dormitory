@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getAuthToken } from "../../utils/auth";
 
 const axiosInstance = axios.create({
   baseURL: 'https://seagold-laravel-production.up.railway.app/',
@@ -10,14 +11,13 @@ const axiosInstance = axios.create({
 });
 
 // ✅ Attach token to each request
+
 axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  const token = getAuthToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-}, (error) => {
-  return Promise.reject(error);
 });
 
 // 🔁 Handle expired session or CSRF token

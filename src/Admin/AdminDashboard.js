@@ -22,6 +22,7 @@ import {
     FaCog
 } from "react-icons/fa";
 import Pusher from "pusher-js";
+import { getAuthToken } from "../../utils/auth";
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ const AdminDashboard = () => {
         const fetchAdminData = async () => {
             try {
                 const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    Authorization: `Bearer ${getAuthToken()}`,
                 });
                 const user = await response.json();
                 setAdmin({
@@ -87,7 +88,7 @@ const AdminDashboard = () => {
         const fetchNotifications = async () => {
             try {
                 const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    Authorization: `Bearer ${getAuthToken()}`,
                 });
                 const data = await response.json();
                 setNotifications(data || []);

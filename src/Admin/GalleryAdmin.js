@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './GalleryAdmin.css';
+import { getAuthToken } from "../../utils/auth";
 
 const AdminGallery = () => {
   const [images, setImages] = useState([]);
@@ -29,7 +30,7 @@ const AdminGallery = () => {
   const fetchImages = async () => {
     try {
       const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       const data = await response.json();
       setImages(data.images || []);
@@ -50,7 +51,7 @@ const AdminGallery = () => {
         method: 'POST',
         body: formData,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getAuthToken()}`,
         },
       });
       if (response.ok) {
@@ -72,7 +73,7 @@ const AdminGallery = () => {
       const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getAuthToken()}`,
         },
       });
       if (response.ok) {
@@ -103,7 +104,7 @@ const handleImageEdit = async (id) => {
       method: 'POST', // Change to 'PUT' if Laravel route is defined as PUT
       body: formData,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
     if (response.ok) {

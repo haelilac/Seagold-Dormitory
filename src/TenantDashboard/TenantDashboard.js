@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link, Outlet } from 'react-router-dom';
 import styles from './TenantDashboard.module.css';
 import { FaBell, FaBars, FaTimes, FaEllipsisV, FaMoon, FaSun } from 'react-icons/fa';
+import { getAuthToken } from "../../utils/auth";
 
 const TenantDashboard = () => {
     const [userData, setUserData] = useState(null);
@@ -28,12 +29,12 @@ const TenantDashboard = () => {
         const fetchData = async () => {
             try {
                 const userRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
-                    headers: { Authorization: `Bearer ${token}` },
+                    Authorization: `Bearer ${getAuthToken()}`,
                 });
                 setUserData(userRes.data);
     
                 const notifRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/notifications', {
-                    headers: { Authorization: `Bearer ${token}` },
+                    Authorization: `Bearer ${getAuthToken()}`,
                 });
                 setNotifications(notifRes.data);
             } catch (error) {

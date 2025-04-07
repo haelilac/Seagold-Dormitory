@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./FeedbackAdmin.css";
+import { getAuthToken } from "../../utils/auth";
 
 const FeedbackAdmin = () => {
     const [feedbacks, setFeedbacks] = useState([]);
@@ -11,7 +12,7 @@ const FeedbackAdmin = () => {
                 const response = await fetch("https://seagold-laravel-production.up.railway.app/api/feedback", {
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        Authorization: `Bearer ${getAuthToken()}`,
                     },
                 });
 

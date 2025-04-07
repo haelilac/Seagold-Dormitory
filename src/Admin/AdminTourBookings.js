@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './AdminTourBookings.css';
+import { getAuthToken } from "../../utils/auth";
 
 const AdminTourBookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -35,7 +36,7 @@ const AdminTourBookings = () => {
     const fetchBookings = async () => {
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const data = await response.json();
     
@@ -55,7 +56,7 @@ const AdminTourBookings = () => {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/confirm/${id}`, {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Authorization: `Bearer ${getAuthToken()}`,
                 },
             });
     
@@ -75,7 +76,7 @@ const AdminTourBookings = () => {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/cancel/${id}`, {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Authorization: `Bearer ${getAuthToken()}`,
                 },
             });
     

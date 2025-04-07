@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './PaymentAdmin.css';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { getAuthToken } from "../../utils/auth";
 
 const initSummary = () => ({
     Confirmed: 0,
@@ -34,7 +35,7 @@ const PaymentAdmin = () => {
         const token = localStorage.getItem('token');
         try {
             const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/payments`, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const allPayments = await res.json();
     
@@ -111,8 +112,8 @@ const PaymentAdmin = () => {
         try {
             setLoading(true);
             const [paymentsRes, unpaidRes] = await Promise.all([
-                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${token}` } }),
-                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
             ]);
             const payments = await paymentsRes.json();
             const unpaid = await unpaidRes.json();
@@ -167,7 +168,7 @@ const PaymentAdmin = () => {
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                headers: { Authorization: `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
             });
             if (!response.ok) throw new Error(`Failed to ${status.toLowerCase()} payment`);
             alert(`Payment ${status} successfully!`);
@@ -205,7 +206,7 @@ const PaymentAdmin = () => {
           const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${getAuthToken()}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({}),

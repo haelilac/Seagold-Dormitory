@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import './MaintenanceRequests.css';
-
+import { getAuthToken } from "../../utils/auth";
 const MaintenanceRequests = () => {
     const [maintenanceRequests, setMaintenanceRequests] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ const MaintenanceRequests = () => {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Authorization: `Bearer ${getAuthToken()}`,
                     },
                 });
 
@@ -56,7 +56,7 @@ const MaintenanceRequests = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Authorization: `Bearer ${getAuthToken()}`,
                 },
                 body: JSON.stringify({ status }),
             });
@@ -109,7 +109,7 @@ const MaintenanceRequests = () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        Authorization: `Bearer ${getAuthToken()}`,
                     },
                     body: JSON.stringify({ schedule: formattedSchedule }),
                 }

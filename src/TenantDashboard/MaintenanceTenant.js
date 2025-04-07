@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import Modal from 'react-modal';
 import './MaintenanceTenant.css';
+import { getAuthToken } from "../../utils/auth";
 
 const MaintenanceTenant = () => {
     const { sidebarOpen } = useOutletContext();
@@ -27,7 +28,7 @@ const MaintenanceTenant = () => {
         const fetchRequests = async () => {
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests', {
-                    headers: { Authorization: `Bearer ${token}` },
+                    Authorization: `Bearer ${getAuthToken()}`,
                 });
                 if (!response.ok) throw new Error('Failed to fetch maintenance requests.');
                 const data = await response.json();
@@ -117,7 +118,7 @@ const MaintenanceTenant = () => {
         try {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/cancel`, {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${token}` },
+                Authorization: `Bearer ${getAuthToken()}`,
             });
             if (!response.ok) throw new Error('Failed to cancel request.');
             setSubmittedRequests((prev) => prev.filter((req) => req.id !== id));
