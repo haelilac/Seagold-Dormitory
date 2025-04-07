@@ -300,9 +300,7 @@ const ContactUs = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        requestData.append("set_price", unitPrice || 0);
-
+    
         if (!isVerified) {
             alert('Please verify your email using Google Sign-In before submitting.');
             return;
@@ -315,19 +313,21 @@ const ContactUs = () => {
     
         try {
             const requestData = new FormData();
-
-            // Append other form data
+    
+            // Append all form fields
             Object.keys(formData).forEach((key) => {
                 if (key === 'check_in_date') {
                     requestData.append(key, formatDateTime(formData[key]));
                 } else if (key === 'valid_id') {
-                    // Skip appending the file itself, will use Cloudinary URL instead
-                    return;
+                    return; // Skip raw file field
                 } else {
                     requestData.append(key, formData[key]);
                 }
             });
-            
+    
+            // ✅ Add unit price after FormData is created
+            requestData.append("set_price", unitPrice || 0);
+    
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
@@ -366,7 +366,7 @@ const ContactUs = () => {
             console.error('Error submitting application:', error.message);
             alert(`An error occurred: ${error.message}`);
         }
-    };
+    };    
     
     
     const duration = Number(formData.duration);
