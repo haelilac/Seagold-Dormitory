@@ -4,6 +4,8 @@ import './Login.css';
 import CreateAccountModal from '../CreateAccount/CreateAccount';
 import axiosInstance from './axiosInstance';
 import LoginBg from '../../assets/Loginbg.png';
+import { getAuthToken } from "../utils/auth";
+import { getAuthToken } from "../utils/auth";
 
 const Login = () => {
   const [isCreateAccountOpen, setCreateAccountOpen] = useState(false);
