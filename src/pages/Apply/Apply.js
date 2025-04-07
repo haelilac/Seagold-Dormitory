@@ -34,6 +34,7 @@ const ContactUs = () => {
     const [units, setUnits] = useState([]);
     const [showTermsModal, setShowTermsModal] = useState(false);
     const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
+    const [unitPrice, setUnitPrice] = useState(null);
 
     // Address Data
     const [provinces, setProvinces] = useState([]);
@@ -152,7 +153,32 @@ const ContactUs = () => {
         }));
     };
     
-    
+    useEffect(() => {
+    const fetchRoomPrice = async () => {
+        if (!formData.reservation_details || !formData.stay_type) return;
+
+        try {
+            const response = await axios.get(`https://seagold-laravel-production.up.railway.app/api/room-pricing`, {
+                params: {
+                    unit_code: formData.reservation_details,
+                    stay_type: formData.stay_type
+                }
+            });
+
+            // Find pricing for unit capacity
+            const unit = units.find(u => u.unit_code === formData.reservation_details);
+            if (!unit) return;
+
+            const matchedPrice = response.data.find(p => p.capacity == unit.capacity);
+            setUnitPrice(matchedPrice?.price || null);
+        } catch (error) {
+            console.error("Error fetching dynamic room pricing:", error);
+        }
+    };
+
+    fetchRoomPrice();
+}, [formData.reservation_details, formData.stay_type]);
+
     // Fetch units
     useEffect(() => {
         const fetchUnits = async () => {
@@ -274,7 +300,9 @@ const ContactUs = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+        
+        requestData.append("set_price", unitPrice || 0);
+
         if (!isVerified) {
             alert('Please verify your email using Google Sign-In before submitting.');
             return;
@@ -593,6 +621,11 @@ const ContactUs = () => {
                     </div>
                 </div>
 
+                {unitPrice && (
+                    <p style={{ fontWeight: 'bold', marginTop: '10px' }}>
+                        Estimated Price: ₱{parseFloat(unitPrice).toLocaleString()}
+                    </p>
+                )}
                 {/* Reservation */}
                 <div className="form-group">
                     <label>Reservation</label>
