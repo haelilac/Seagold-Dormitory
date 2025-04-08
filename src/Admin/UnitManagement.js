@@ -139,7 +139,7 @@ const UnitManagement = ({ onAddUnit }) => {
                         </thead>
                         <tbody>
                             {units.filter(unit => unit.capacity <= 6).map(unit => (
-                                <tr key={unit.id}>
+                                <tr key={unit.id} onClick={() => handleViewDetails(unit.unit_code)} className="clickable-row">
                                     <td>{unit?.unit_code ?? 'N/A'}</td>
                                     <td>{unit.name}</td>
                                     <td>{unit.capacity}</td>
@@ -204,10 +204,8 @@ const UnitManagement = ({ onAddUnit }) => {
                             </tr>
                         </thead>
                         <tbody>
-                        <button onClick={() => handleViewDetails(unit.unit_code)}>View</button>
-
                             {units.filter(unit => unit.capacity > 6).map(unit => (
-                                <tr key={unit.id}>
+                                <tr key={unit.id} onClick={() => handleViewDetails(unit.unit_code)} className="clickable-row">
                                     <td>{unit?.unit_code ?? 'N/A'}</td>
                                     <td>{unit.name}</td>
                                     <td>{unit.capacity}</td>
@@ -220,9 +218,13 @@ const UnitManagement = ({ onAddUnit }) => {
                                             className={unit.status === 'available' ? 'toggle-button make-unavailable' : 'toggle-button make-available'}>
                                             {unit.status === 'available' ? 'Make Unavailable' : 'Make Available'}
                                         </button>
+                                        <button onClick={() => handleViewDetails(unit.unit_code)} className="view-details-btn">
+                                            View
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
+
                         </tbody>
                     </table>
                 </div>
