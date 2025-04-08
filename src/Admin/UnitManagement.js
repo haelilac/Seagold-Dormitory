@@ -6,6 +6,9 @@ const UnitManagement = ({ onAddUnit }) => {
     const [units, setUnits] = useState([]);
     const [availableUnits, setAvailableUnits] = useState(0);
     const [unavailableUnits, setUnavailableUnits] = useState(0);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedUnit, setSelectedUnit] = useState(null);
+    const [pricingDetails, setPricingDetails] = useState([]);
 
     // Fetch Units on Component Load
     useEffect(() => {
@@ -24,6 +27,18 @@ const UnitManagement = ({ onAddUnit }) => {
             setUnavailableUnits(data.filter(unit => unit.status === 'unavailable').length);
         } catch (error) {
             console.error('Error fetching units:', error.message);
+        }
+    };
+
+    const handleViewDetails = async (unitCode) => {
+        try {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/room-pricing/${encodeURIComponent(unitCode)}`);
+            const data = await response.json();
+            setPricingDetails(data);
+            setSelectedUnit(unitCode);
+            setShowModal(true);
+        } catch (error) {
+            console.error("Error fetching room pricing:", error.message);
         }
     };
 
@@ -144,7 +159,34 @@ const UnitManagement = ({ onAddUnit }) => {
                     </table>
                 </div>
             </div>
-
+                        {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h2>Pricing Details for {selectedUnit}</h2>
+                        <button onClick={() => setShowModal(false)} className="close-button">X</button>
+                        <table className="pricing-table">
+                            <thead>
+                                <tr>
+                                    <th>Stay Type</th>
+                                    <th>Capacity</th>
+                                    <th>Max Capacity</th>
+                                    <th>Price (₱)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pricingDetails.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{item.stay_type}</td>
+                                        <td>{item.capacity}</td>
+                                        <td>{item.max_capacity}</td>
+                                        <td>{parseFloat(item.price).toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
             {/* Long-Term Stay Units */}
             <div className="unit-section">
                 <h3>Long-Term Stay Units</h3>
@@ -162,6 +204,8 @@ const UnitManagement = ({ onAddUnit }) => {
                             </tr>
                         </thead>
                         <tbody>
+                        <button onClick={() => handleViewDetails(unit.unit_code)}>View</button>
+
                             {units.filter(unit => unit.capacity > 6).map(unit => (
                                 <tr key={unit.id}>
                                     <td>{unit?.unit_code ?? 'N/A'}</td>
