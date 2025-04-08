@@ -368,8 +368,6 @@ const ContactUs = () => {
         }
     };
     
-    
-    
     const duration = Number(formData.duration);
 
     return (
