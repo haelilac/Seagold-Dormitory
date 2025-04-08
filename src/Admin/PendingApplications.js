@@ -167,7 +167,6 @@ const PendingApplications = () => {
                             <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
                             <p><strong>Auto Price:</strong> ₱{selectedApplication.set_price}</p>
                             <p><strong>Rent Price:</strong> ₱{selectedApplication.set_price ? parseFloat(selectedApplication.set_price).toFixed(2) : 'Not set'}</p>
-                            <p><strong>Auto Price:</strong> ₱{selectedApplication.set_price}</p>
 
                             {/* Display Valid ID if available */}
                             

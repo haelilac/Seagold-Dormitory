@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './UnitManagement.css';
+use Illuminate\Support\Facades\DB;
 
 const UnitManagement = ({ onAddUnit }) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
