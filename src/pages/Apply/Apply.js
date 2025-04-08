@@ -366,7 +366,8 @@ const ContactUs = () => {
             console.error('Error submitting application:', error.message);
             alert(`An error occurred: ${error.message}`);
         }
-    };    
+    };
+    
     
     
     const duration = Number(formData.duration);
