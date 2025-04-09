@@ -19,7 +19,6 @@
     border-collapse: collapse;
     background-color: #ffffff;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -96,7 +95,6 @@
     max-width: 1050px; /* Ensure the box is contained within this size */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Smooth shadow */
     animation: fadeIn 0.3s ease-in-out;
-    overflow: hidden; /* Prevent content overflow */
 }
 
 /* Modal Header */

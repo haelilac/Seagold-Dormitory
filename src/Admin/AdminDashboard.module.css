@@ -23,7 +23,6 @@
     position: fixed;
     top: 0;
     left: 0;
-    overflow: hidden;
     height: 100vh;
     z-index: 1100;
     display: flex;
@@ -81,9 +80,6 @@
     padding: 0;
     list-style: none;
     margin-top: 20px;
-}
-body {
-    overflow-x: hidden;
 }
 /* 🔹 Fix Sidebar Icon Hover Effect */
 .sidebar nav ul li {
@@ -399,7 +395,6 @@ body {
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
     animation: fadeIn 0.3s ease-in-out;
     z-index: 1000;
 }

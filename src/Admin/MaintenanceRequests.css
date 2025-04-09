@@ -61,7 +61,6 @@
     position: relative;
     outline: none;
     overflow-y: auto; /* Adds vertical scroll when content overflows */
-    overflow-x: hidden; /* Prevents horizontal scroll */
 }
 
 /* Center the text inside the modal */
