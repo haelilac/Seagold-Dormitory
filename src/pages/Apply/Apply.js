@@ -606,39 +606,18 @@ const ContactUs = () => {
                     >
                         <option value="">Select a Unit</option>
 
-                        {/* Short-Term Stay Units */}
-                        {formData.stay_type === "short-term" && (
-                            <optgroup label="Short-Term Stay">
-                                {units
-                                    .filter(
-                                        (unit) =>
-                                            unit.status === "available" &&
-                                            unit.users_count < unit.capacity &&
-                                            unit.capacity <= 6
-                                    )
-                                    .map((unit) => (
-                                        <option key={unit.id} value={unit.unit_code}>
-                                            {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
-                                        </option>
-                                    ))}
+                        <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
+                            {units
+                                .filter(unit =>
+                                unit.status === "available" &&
+                                unit.users_count < unit.capacity
+                                )
+                                .map(unit => (
+                                <option key={unit.id} value={unit.unit_code}>
+                                    {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
+                                </option>
+                            ))}
                             </optgroup>
-                        )}
-
-                        {/* Long-Term Stay Units */}
-                        {formData.stay_type === "long-term" && (
-                            <optgroup label="Long-Term Stay">
-                                {units
-                                    .filter((unit) =>
-                                        unit.status === "available" &&
-                                        unit.users_count < unit.capacity
-                                    )
-                                    .map((unit) => (
-                                        <option key={unit.id} value={unit.unit_code}>
-                                            {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
-                                        </option>
-                                ))}
-                            </optgroup>
-                        )}
                     </select>
                 </div>
 
