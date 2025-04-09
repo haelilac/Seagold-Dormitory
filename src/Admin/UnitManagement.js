@@ -9,9 +9,6 @@ const UnitManagement = ({ onAddUnit }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
     const [pricingDetails, setPricingDetails] = useState([]);
-    const totalUsers = pricingDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
-    const fallbackBase = monthlyDetails.length > 0 ? Math.min(...monthlyDetails.map(d => parseFloat(d.price))) : null;
-    const basePrice = matched?.price || fallbackBase;
     // Fetch Units on Component Load
     useEffect(() => {
         fetchUnits();
@@ -149,55 +146,56 @@ const UnitManagement = ({ onAddUnit }) => {
                     </div>
                 </div>
 
-                {/* Pricing Details Modal */}
                 {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                    <h2>Details for {selectedUnit}</h2>
-                    <button onClick={() => setShowModal(false)} className="close-button">X</button>
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h2>Details for {selectedUnit}</h2>
+                            <button onClick={() => setShowModal(false)} className="close-button">X</button>
 
-                    {/* 🧠 Calculate base price & monthly user count */}
-                    {(() => {
-                        const monthlyDetails = pricingDetails.filter(item => item.stay_type === 'monthly');
-                        const monthlyUsers = monthlyDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
+                            {/* 🧠 Calculate base price & monthly user count */}
+                            {(() => {
+                                const monthlyDetails = pricingDetails.filter(item => item.stay_type === 'monthly');
+                                const monthlyUsers = monthlyDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
+                                const totalUsers = pricingDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
 
-                        // Match capacity to users to get base price
-                        const matched = monthlyDetails.find(d => d.capacity === monthlyUsers);
-                        const basePrice = matched?.price || null;
+                                // Match capacity to users to get base price
+                                const matched = monthlyDetails.find(d => d.capacity === monthlyUsers);
+                                const fallbackBase = monthlyDetails.length > 0 ? Math.min(...monthlyDetails.map(d => parseFloat(d.price))) : null;
+                                const basePrice = matched?.price || fallbackBase;
 
-                        return (
-                            <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
-                                🧑 Total Occupants (all types): {totalUsers} <br />
-                                🧑‍💼 Monthly Occupants: {monthlyUsers} <br />
-                                📌 Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'}
-                            </div>
-                        );
-                    })()}
+                                return (
+                                    <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
+                                        🧑 Total Occupants (all types): {totalUsers} <br />
+                                        🧑‍💼 Monthly Occupants: {monthlyUsers} <br />
+                                        📌 Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'}
+                                    </div>
+                                );
+                            })()}
 
-                    <table className="pricing-table">
-                        <thead>
-                        <tr>
-                            <th>Stay Type</th>
-                            <th>Capacity</th>
-                            <th>Price (₱)</th>
-                            <th>Status</th>
-                            <th>Occupied</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {pricingDetails.map((item, index) => (
-                            <tr key={index}>
-                            <td>{item.stay_type}</td>
-                            <td>{item.capacity}</td>
-                            <td>{parseFloat(item.price).toLocaleString()}</td>
-                            <td>{item.status}</td>
-                            <td>{item.users_count || 0}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                            <table className="pricing-table">
+                                <thead>
+                                    <tr>
+                                        <th>Stay Type</th>
+                                        <th>Capacity</th>
+                                        <th>Price (₱)</th>
+                                        <th>Status</th>
+                                        <th>Occupied</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {pricingDetails.map((item, index) => (
+                                        <tr key={index}>
+                                            <td>{item.stay_type}</td>
+                                            <td>{item.capacity}</td>
+                                            <td>{parseFloat(item.price).toLocaleString()}</td>
+                                            <td>{item.status}</td>
+                                            <td>{item.users_count || 0}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
                 )}
 
         </section>
