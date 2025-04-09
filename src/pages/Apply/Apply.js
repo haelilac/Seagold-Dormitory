@@ -702,9 +702,9 @@ const ContactUs = () => {
                                     return acc;
                                     }, {})
                                 ).map(([unitCode, unit]) => (
-                                <option key={unitCode} value={unit.unit_code}>
-                                    {unit.name} - ({unit.max_capacity - unit.total_users_count} slots available)
-                                </option>
+                                    <option key={unitCode} value={unit.unit_code}>
+                                    {unit.unit_code} - ({unit.max_capacity - unit.total_users_count} slots available)
+                                    </option>
                                 ))}
 
                             </optgroup>
