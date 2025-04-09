@@ -9,7 +9,9 @@ const UnitManagement = ({ onAddUnit }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
     const [pricingDetails, setPricingDetails] = useState([]);
-
+    const totalUsers = pricingDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
+    const fallbackBase = monthlyDetails.length > 0 ? Math.min(...monthlyDetails.map(d => parseFloat(d.price))) : null;
+    const basePrice = matched?.price || fallbackBase;
     // Fetch Units on Component Load
     useEffect(() => {
         fetchUnits();
@@ -129,10 +131,8 @@ const UnitManagement = ({ onAddUnit }) => {
                         {units.map((unit) => (
                         <div key={unit.id} className={`unit-card ${unit.status}`}>
                             <h4>{unit.unit_code}</h4>
-                            <p><strong>Occupied:</strong> {unit.users_count || 0}</p>
-                            <p><strong>Status:</strong> {
-                                unit.statuses?.includes('available') ? 'available' : 'unavailable'
-                                }</p>
+                            <p><strong>Occupied:</strong> {unit.monthly_users_count || 0} / {unit.max_capacity}</p>
+                            <p><strong>Status:</strong> {unit.overall_status}</p>
                             <div className="unit-card-actions">
                             <button
                                 onClick={() => handleToggleStatus(unit.id, unit.status)}
@@ -166,10 +166,11 @@ const UnitManagement = ({ onAddUnit }) => {
                         const basePrice = matched?.price || null;
 
                         return (
-                        <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
-                            📌 Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'} <br />
-                            🧑‍💼 Monthly Occupants: {monthlyUsers}
-                        </div>
+                            <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
+                                🧑 Total Occupants (all types): {totalUsers} <br />
+                                🧑‍💼 Monthly Occupants: {monthlyUsers} <br />
+                                📌 Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'}
+                            </div>
                         );
                     })()}
 
