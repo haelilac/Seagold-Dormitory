@@ -132,11 +132,12 @@ const UnitManagement = ({ onAddUnit }) => {
                             <p><strong>Status:</strong> {unit.overall_status}</p>
                             <div className="unit-card-actions">
                             <button
-                                onClick={() => handleToggleStatus(unit.id, unit.status)}
-                                className={unit.status === 'available' ? 'make-unavailable' : 'make-available'}
-                            >
-                                {unit.status === 'available' ? 'Make Unavailable' : 'Make Available'}
-                            </button>
+                                onClick={() => handleToggleStatus(unit.id, unit.overall_status)}
+                                className={unit.overall_status === 'available' ? 'make-unavailable' : 'make-available'}
+                                >
+                                {unit.overall_status === 'available' ? 'Make Unavailable' : 'Make Available'}
+                                </button>
+
                             <button onClick={() => handleViewDetails(unit.unit_code)} className="view-details-btn">
                                 View
                             </button>
@@ -179,7 +180,6 @@ const UnitManagement = ({ onAddUnit }) => {
                                         <th>Capacity</th>
                                         <th>Price (₱)</th>
                                         <th>Status</th>
-                                        <th>Occupied</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -189,7 +189,6 @@ const UnitManagement = ({ onAddUnit }) => {
                                             <td>{item.capacity}</td>
                                             <td>{parseFloat(item.price).toLocaleString()}</td>
                                             <td>{item.status}</td>
-                                            <td>{item.users_count || 0}</td>
                                         </tr>
                                     ))}
                                 </tbody>
