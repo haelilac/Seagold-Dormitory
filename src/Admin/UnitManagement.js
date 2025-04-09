@@ -126,8 +126,6 @@ const UnitManagement = ({ onAddUnit }) => {
                         <div key={unit.id} className={`unit-card ${unit.status}`}>
                             <h4>{unit.unit_code}</h4>
                             <p><strong>Name:</strong> {unit.name}</p>
-                            <p><strong>Capacity:</strong> {unit.capacity}</p>
-                            <p><strong>Price:</strong> ₱{parseFloat(unit.price).toLocaleString()}</p>
                             <p><strong>Occupied:</strong> {unit.users_count || 0}</p>
                             <p><strong>Status:</strong> {unit.status}</p>
                             <div className="unit-card-actions">
@@ -147,35 +145,39 @@ const UnitManagement = ({ onAddUnit }) => {
                 </div>
 
     
-            {/* Pricing Details Modal */}
-            {showModal && (
+                {/* Pricing Details Modal */}
+                {showModal && (
                 <div className="modal-overlay">
                     <div className="modal">
-                        <h2>Pricing Details for {selectedUnit}</h2>
-                        <button onClick={() => setShowModal(false)} className="close-button">X</button>
-                        <table className="pricing-table">
-                            <thead>
-                                <tr>
-                                    <th>Stay Type</th>
-                                    <th>Capacity</th>
-                                    <th>Max Capacity</th>
-                                    <th>Price (₱)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {pricingDetails.map((item, index) => (
-                                    <tr key={index}>
-                                        <td>{item.stay_type}</td>
-                                        <td>{item.capacity}</td>
-                                        <td>{item.max_capacity}</td>
-                                        <td>{parseFloat(item.price).toLocaleString()}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                    <h2>Details for {selectedUnit}</h2>
+                    <button onClick={() => setShowModal(false)} className="close-button">X</button>
+
+                    <table className="pricing-table">
+                        <thead>
+                        <tr>
+                            <th>Stay Type</th>
+                            <th>Capacity</th>
+                            <th>Price (₱)</th>
+                            <th>Status</th>
+                            <th>Occupied</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {pricingDetails.map((item, index) => (
+                            <tr key={index}>
+                            <td>{item.stay_type}</td>
+                            <td>{item.capacity}</td>
+                            <td>{parseFloat(item.price).toLocaleString()}</td>
+                            <td>{item.status}</td>
+                            <td>{item.users_count || 0}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                     </div>
                 </div>
-            )}
+                )}
+
         </section>
     );
     
