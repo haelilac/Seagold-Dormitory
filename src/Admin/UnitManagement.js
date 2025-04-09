@@ -67,6 +67,7 @@ const UnitManagement = ({ onAddUnit }) => {
             name: formData.get("name"),
             capacity: formData.get("capacity"),
             price: formData.get("price"),
+            stay_type: "long-term" 
         };
 
         try {
