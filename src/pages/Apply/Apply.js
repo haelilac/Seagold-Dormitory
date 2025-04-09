@@ -169,7 +169,10 @@ const ContactUs = () => {
             const unit = units.find(u => u.unit_code === formData.reservation_details);
             if (!unit) return;
 
-            const matchedPrice = response.data.find(p => p.capacity == unit.capacity);
+            const matchedPrice = response.data.find(p =>
+                p.unit_code === formData.reservation_details &&
+                p.capacity >= (unit.users_count + 1)
+              );
             setUnitPrice(matchedPrice?.price || null);
         } catch (error) {
             console.error("Error fetching dynamic room pricing:", error);
@@ -606,18 +609,18 @@ const ContactUs = () => {
                     >
                         <option value="">Select a Unit</option>
 
-                        <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
-                            {units
-                                .filter(unit =>
-                                unit.status === "available" &&
-                                unit.users_count < unit.capacity
-                                )
+                        {formData.stay_type && (
+                            <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
+                                {units
+                                .filter(unit => unit.total_users_count < unit.max_capacity)
                                 .map(unit => (
-                                <option key={unit.id} value={unit.unit_code}>
-                                    {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
-                                </option>
-                            ))}
+                                    <option key={unit.unit_code} value={unit.unit_code}>
+                                    {unit.name} - ({unit.max_capacity - unit.total_users_count} slots available)
+                                    </option>
+                                ))}
+
                             </optgroup>
+                            )}
                     </select>
                 </div>
 
