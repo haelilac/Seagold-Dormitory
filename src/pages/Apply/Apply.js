@@ -633,9 +633,9 @@ const ContactUs = () => {
                     <div className="form-group">
                         <label>Duration</label>
                         <input
-                            type="number"
+                            type="text"
                             name="duration"
-                            value={15}
+                            value="15 days"
                             readOnly
                         />
                     </div>
@@ -647,7 +647,7 @@ const ContactUs = () => {
                         <input
                             type="number"
                             name="duration"
-                            value={7}
+                             value="7 days"
                             readOnly
                         />
                     </div>
