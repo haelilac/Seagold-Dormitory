@@ -31,16 +31,12 @@ const UnitManagement = ({ onAddUnit }) => {
     };
 
     const handleViewDetails = async (unitCode) => {
-        try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/room-pricing/${encodeURIComponent(unitCode)}`);
-            const data = await response.json();
-            setPricingDetails(data);
-            setSelectedUnit(unitCode);
-            setShowModal(true);
-        } catch (error) {
-            console.error("Error fetching room pricing:", error.message);
-        }
-    };
+        const filtered = units.filter(u => u.unit_code === unitCode);
+        setPricingDetails(filtered);
+        setSelectedUnit(unitCode);
+        setShowModal(true);
+      };
+      
 
     // Toggle Unit Availability Status
     const handleToggleStatus = async (unitId, currentStatus) => {
