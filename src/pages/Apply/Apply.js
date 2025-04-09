@@ -202,18 +202,30 @@ const ContactUs = () => {
         const { name, value } = e.target;
     
         if (name === "contact_number") {
-            let numericValue = value.replace(/\D/g, ""); // Remove non-numeric characters
-    
-            if (!numericValue.startsWith("9")) return; // Ensure it starts with '9'
-    
-            if (numericValue.length > 10) return; // Limit to 10 digits
-    
+            let numericValue = value.replace(/\D/g, "");
+            if (!numericValue.startsWith("9")) return;
+            if (numericValue.length > 10) return;
             setFormData({ ...formData, [name]: numericValue });
+            return;
+        }
+    
+        if (name === "stay_type") {
+            let autoDuration = "";
+            if (value === "half-month") autoDuration = 15;
+            else if (value === "weekly") autoDuration = 7;
+            else if (value === "daily" || value === "monthly") autoDuration = ""; // to be selected manually
+    
+            setFormData(prev => ({
+                ...prev,
+                [name]: value,
+                duration: autoDuration
+            }));
             return;
         }
     
         setFormData({ ...formData, [name]: value });
     };
+    
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
