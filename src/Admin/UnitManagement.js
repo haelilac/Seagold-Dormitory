@@ -118,47 +118,34 @@ const UnitManagement = ({ onAddUnit }) => {
                 </div>
             </div>
     
-            {/* Unified Unit Table */}
-            <div className="unit-section">
-                <h3>All Units</h3>
-                <div className="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Unit Code</th>
-                                <th>Name</th>
-                                <th>Capacity</th>
-                                <th>Price</th>
-                                <th>Occupied</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {units.map(unit => (
-                                <tr key={unit.id} onClick={() => handleViewDetails(unit.unit_code)} className="clickable-row">
-                                    <td>{unit?.unit_code ?? 'N/A'}</td>
-                                    <td>{unit.name}</td>
-                                    <td>{unit.capacity}</td>
-                                    <td>{unit.price}</td>
-                                    <td>{unit.users_count || 0}</td>
-                                    <td>{unit.status}</td>
-                                    <td>
-                                        <button 
-                                            onClick={() => handleToggleStatus(unit.id, unit.status)}
-                                            className={unit.status === 'available' ? 'toggle-button make-unavailable' : 'toggle-button make-available'}>
-                                            {unit.status === 'available' ? 'Make Unavailable' : 'Make Available'}
-                                        </button>
-                                        <button onClick={() => handleViewDetails(unit.unit_code)} className="view-details-btn">
-                                            View
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {/* Box/Card Layout */}
+                    <div className="unit-section">
+                    <h3>All Units</h3>
+                    <div className="unit-card-grid">
+                        {units.map((unit) => (
+                        <div key={unit.id} className={`unit-card ${unit.status}`}>
+                            <h4>{unit.unit_code}</h4>
+                            <p><strong>Name:</strong> {unit.name}</p>
+                            <p><strong>Capacity:</strong> {unit.capacity}</p>
+                            <p><strong>Price:</strong> ₱{parseFloat(unit.price).toLocaleString()}</p>
+                            <p><strong>Occupied:</strong> {unit.users_count || 0}</p>
+                            <p><strong>Status:</strong> {unit.status}</p>
+                            <div className="unit-card-actions">
+                            <button
+                                onClick={() => handleToggleStatus(unit.id, unit.status)}
+                                className={unit.status === 'available' ? 'make-unavailable' : 'make-available'}
+                            >
+                                {unit.status === 'available' ? 'Make Unavailable' : 'Make Available'}
+                            </button>
+                            <button onClick={() => handleViewDetails(unit.unit_code)} className="view-details-btn">
+                                View
+                            </button>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
                 </div>
-            </div>
+
     
             {/* Pricing Details Modal */}
             {showModal && (

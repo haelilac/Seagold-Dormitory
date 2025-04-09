@@ -258,6 +258,53 @@ body {
     background-color: #20af00 !important;
 }
 
+.unit-card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .unit-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    font-size: 14px;
+  }
+  
+  .unit-card h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #28319a;
+  }
+  
+  .unit-card p {
+    margin: 4px 0;
+  }
+  
+  .unit-card-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .unit-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .unit-card.available {
+    border-left: 6px solid #20af00;
+  }
+  
+  .unit-card.unavailable {
+    border-left: 6px solid #cc0000;
+  }
+  
+
+
 /*************************************
  * RESPONSIVE MEDIA QUERIES
  *************************************/
