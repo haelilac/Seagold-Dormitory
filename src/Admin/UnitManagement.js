@@ -175,6 +175,9 @@ const UnitManagement = ({ onAddUnit }) => {
                             <td>{parseFloat(item.price).toLocaleString()}</td>
                             <td>{item.status}</td>
                             <td>{item.users_count || 0}</td>
+                            <td>₱{parseFloat(unit.base_price || 0).toLocaleString()}</td>
+                            <td>{unit.monthly_users_count} monthly tenant(s)</td>
+
                             </tr>
                         ))}
                         </tbody>
