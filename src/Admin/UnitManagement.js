@@ -31,12 +31,16 @@ const UnitManagement = ({ onAddUnit }) => {
     };
 
     const handleViewDetails = async (unitCode) => {
-        const filtered = units.filter(u => u.unit_code === unitCode);
-        setPricingDetails(filtered);
-        setSelectedUnit(unitCode);
-        setShowModal(true);
+        try {
+          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
+          const data = await response.json();
+          setPricingDetails(data); // ✅ Correct raw data with stay_type, price, etc.
+          setSelectedUnit(unitCode);
+          setShowModal(true);
+        } catch (error) {
+          console.error('Error fetching unit details:', error.message);
+        }
       };
-      
 
     // Toggle Unit Availability Status
     const handleToggleStatus = async (unitId, currentStatus) => {
@@ -125,9 +129,10 @@ const UnitManagement = ({ onAddUnit }) => {
                         {units.map((unit) => (
                         <div key={unit.id} className={`unit-card ${unit.status}`}>
                             <h4>{unit.unit_code}</h4>
-                            <p><strong>Name:</strong> {unit.name}</p>
                             <p><strong>Occupied:</strong> {unit.users_count || 0}</p>
-                            <p><strong>Status:</strong> {unit.status}</p>
+                            <p><strong>Status:</strong> {
+                                unit.statuses?.includes('available') ? 'available' : 'unavailable'
+                                }</p>
                             <div className="unit-card-actions">
                             <button
                                 onClick={() => handleToggleStatus(unit.id, unit.status)}
