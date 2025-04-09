@@ -187,10 +187,9 @@ const ContactUs = () => {
         const fetchUnits = async () => {
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch units');
-                }
+                if (!response.ok) throw new Error('Failed to fetch units');
                 const data = await response.json();
+                console.log('✅ Units fetched:', data); // ✅ Debug here
                 setUnits(data);
             } catch (err) {
                 console.error('Error fetching units:', err);
@@ -198,7 +197,7 @@ const ContactUs = () => {
         };
         fetchUnits();
     }, []);
-
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
     
@@ -597,6 +596,71 @@ const ContactUs = () => {
                         Estimated Price: ₱{parseFloat(unitPrice).toLocaleString()}
                     </p>
                 )}
+
+                {/* Duration based on Stay Type */}
+                {formData.stay_type === "monthly" && (
+                    <div className="form-group">
+                        <label>Duration (Months)</label>
+                        <select
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option value="">Select Duration</option>
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {i + 1} month{ i > 0 && 's' }
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
+                {formData.stay_type === "half-month" && (
+                    <div className="form-group">
+                        <label>Duration</label>
+                        <input
+                            type="number"
+                            name="duration"
+                            value={15}
+                            readOnly
+                        />
+                    </div>
+                )}
+
+                {formData.stay_type === "weekly" && (
+                    <div className="form-group">
+                        <label>Duration</label>
+                        <input
+                            type="number"
+                            name="duration"
+                            value={7}
+                            readOnly
+                        />
+                    </div>
+                )}
+
+                {formData.stay_type === "daily" && (
+                    <div className="form-group">
+                        <label>Duration (Days)</label>
+                        <select
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option value="">Select Duration</option>
+                            {Array.from({ length: 30 }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {i + 1} day{ i > 0 && 's' }
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
+
                 {/* Reservation */}
                 <div className="form-group">
                     <label>Reservation</label>
