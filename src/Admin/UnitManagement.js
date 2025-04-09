@@ -85,14 +85,14 @@ const UnitManagement = ({ onAddUnit }) => {
 
     return (
         <section id="unit-management" className="dashboard-section">
-            
+    
             {/* Unit Management Section */}
             <div className="unit-section">
-            <header class="header-bar">
-               My Unit Management Dashboard
+                <header className="header-bar">
+                    My Unit Management Dashboard
                 </header> 
                 <div className="unit-layout">
-                    
+    
                     {/* Add Unit Form */}
                     <form onSubmit={handleSubmit} className="unit-form">
                         <h3>Add New Unit</h3>
@@ -110,7 +110,7 @@ const UnitManagement = ({ onAddUnit }) => {
                         </label>
                         <button type="submit">Add Unit</button>
                     </form>
-
+    
                     {/* Unit Statistics */}
                     <div className="unit-management-container">
                         <div className="unit-statistics">
@@ -121,10 +121,10 @@ const UnitManagement = ({ onAddUnit }) => {
                     </div>
                 </div>
             </div>
-
-            {/* Short-Term Stay Units */}
+    
+            {/* Unified Unit Table */}
             <div className="unit-section">
-                <h3>Short-Term Stay Units</h3>
+                <h3>All Units</h3>
                 <div className="table-container">
                     <table>
                         <thead>
@@ -139,7 +139,7 @@ const UnitManagement = ({ onAddUnit }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {units.filter(unit => unit.capacity <= 6).map(unit => (
+                            {units.map(unit => (
                                 <tr key={unit.id} onClick={() => handleViewDetails(unit.unit_code)} className="clickable-row">
                                     <td>{unit?.unit_code ?? 'N/A'}</td>
                                     <td>{unit.name}</td>
@@ -153,6 +153,9 @@ const UnitManagement = ({ onAddUnit }) => {
                                             className={unit.status === 'available' ? 'toggle-button make-unavailable' : 'toggle-button make-available'}>
                                             {unit.status === 'available' ? 'Make Unavailable' : 'Make Available'}
                                         </button>
+                                        <button onClick={() => handleViewDetails(unit.unit_code)} className="view-details-btn">
+                                            View
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -160,7 +163,9 @@ const UnitManagement = ({ onAddUnit }) => {
                     </table>
                 </div>
             </div>
-                        {showModal && (
+    
+            {/* Pricing Details Modal */}
+            {showModal && (
                 <div className="modal-overlay">
                     <div className="modal">
                         <h2>Pricing Details for {selectedUnit}</h2>
@@ -188,51 +193,9 @@ const UnitManagement = ({ onAddUnit }) => {
                     </div>
                 </div>
             )}
-            {/* Long-Term Stay Units */}
-            <div className="unit-section">
-                <h3>Long-Term Stay Units</h3>
-                <div className="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Unit Code</th>
-                                <th>Name</th>
-                                <th>Capacity</th>
-                                <th>Price</th>
-                                <th>Occupied</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {units.filter(unit => unit.capacity > 6).map(unit => (
-                                <tr key={unit.id} onClick={() => handleViewDetails(unit.unit_code)} className="clickable-row">
-                                    <td>{unit?.unit_code ?? 'N/A'}</td>
-                                    <td>{unit.name}</td>
-                                    <td>{unit.capacity}</td>
-                                    <td>{unit.price}</td>
-                                    <td>{unit.users_count || 0}</td>
-                                    <td>{unit.status}</td>
-                                    <td>
-                                        <button 
-                                            onClick={() => handleToggleStatus(unit.id, unit.status)}
-                                            className={unit.status === 'available' ? 'toggle-button make-unavailable' : 'toggle-button make-available'}>
-                                            {unit.status === 'available' ? 'Make Unavailable' : 'Make Available'}
-                                        </button>
-                                        <button onClick={() => handleViewDetails(unit.unit_code)} className="view-details-btn">
-                                            View
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </section>
     );
+    
 };
 
 export default UnitManagement;

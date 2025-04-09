@@ -581,41 +581,10 @@ const ContactUs = () => {
                             required
                         >
                             <option value="">Select Stay Type</option>
-                            <option value="short-term">Short-Term Stay</option>
-                            <option value="long-term">Long-Term Stay</option>
-                        </select>
-                    </div>
-                </div>
-
-                {/* Duration Selection (Updated) */}
-                <div className="form-row">
-                    <div className="form-group">
-                        <label>Duration</label>
-                        <select
-                            name="duration"
-                            value={formData.duration}
-                            onChange={handleInputChange}
-                            required
-                            disabled={!formData.stay_type} // Disable if stay type is not selected
-                        >
-                            <option value="">Select Duration</option>
-
-
-                            {/* Short-Term Stay (1-6 months) */}
-                            {formData.stay_type === "short-term" &&
-                                [...Array(6).keys()].map((month) => (
-                                    <option key={month + 1} value={month + 1}>
-                                        {month + 1} {month + 1 === 1 ? "Month" : "Months"}
-                                    </option>
-                                ))}
-
-                            {/* Long-Term Stay (7-12 months) */}
-                            {formData.stay_type === "long-term" &&
-                                [...Array(6).keys()].map((month) => (
-                                    <option key={month + 7} value={month + 7}>
-                                        {month + 7} Months
-                                    </option>
-                                ))}
+                            <option value="monthly">Monthly</option>
+                            <option value="half-month">Half-Month</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="daily">Daily</option>
                         </select>
                     </div>
                 </div>
@@ -659,17 +628,15 @@ const ContactUs = () => {
                         {formData.stay_type === "long-term" && (
                             <optgroup label="Long-Term Stay">
                                 {units
-                                    .filter(
-                                        (unit) =>
-                                            unit.status === "available" &&
-                                            unit.users_count < unit.capacity &&
-                                            unit.capacity > 6
+                                    .filter((unit) =>
+                                        unit.status === "available" &&
+                                        unit.users_count < unit.capacity
                                     )
                                     .map((unit) => (
                                         <option key={unit.id} value={unit.unit_code}>
                                             {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
                                         </option>
-                                    ))}
+                                ))}
                             </optgroup>
                         )}
                     </select>
