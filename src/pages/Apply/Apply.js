@@ -611,12 +611,24 @@ const ContactUs = () => {
 
                         {formData.stay_type && (
                             <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
-                                {units
-                                .filter(unit => unit.total_users_count < unit.max_capacity)
-                                .map(unit => (
-                                    <option key={unit.unit_code} value={unit.unit_code}>
+                                {Object.entries(
+                                units
+                                    .filter(unit => unit.total_users_count < unit.max_capacity)
+                                    .reduce((acc, unit) => {
+                                    if (!acc[unit.unit_code]) {
+                                        acc[unit.unit_code] = unit;
+                                    } else if (
+                                        (unit.max_capacity - unit.total_users_count) >
+                                        (acc[unit.unit_code].max_capacity - acc[unit.unit_code].total_users_count)
+                                    ) {
+                                        acc[unit.unit_code] = unit;
+                                    }
+                                    return acc;
+                                    }, {})
+                                ).map(([unitCode, unit]) => (
+                                <option key={unitCode} value={unit.unit_code}>
                                     {unit.name} - ({unit.max_capacity - unit.total_users_count} slots available)
-                                    </option>
+                                </option>
                                 ))}
 
                             </optgroup>
