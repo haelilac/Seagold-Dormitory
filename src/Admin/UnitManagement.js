@@ -149,13 +149,29 @@ const UnitManagement = ({ onAddUnit }) => {
                     </div>
                 </div>
 
-    
                 {/* Pricing Details Modal */}
                 {showModal && (
                 <div className="modal-overlay">
                     <div className="modal">
                     <h2>Details for {selectedUnit}</h2>
                     <button onClick={() => setShowModal(false)} className="close-button">X</button>
+
+                    {/* 🧠 Calculate base price & monthly user count */}
+                    {(() => {
+                        const monthlyDetails = pricingDetails.filter(item => item.stay_type === 'monthly');
+                        const monthlyUsers = monthlyDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
+
+                        // Match capacity to users to get base price
+                        const matched = monthlyDetails.find(d => d.capacity === monthlyUsers);
+                        const basePrice = matched?.price || null;
+
+                        return (
+                        <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
+                            📌 Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'} <br />
+                            🧑‍💼 Monthly Occupants: {monthlyUsers}
+                        </div>
+                        );
+                    })()}
 
                     <table className="pricing-table">
                         <thead>
@@ -175,9 +191,6 @@ const UnitManagement = ({ onAddUnit }) => {
                             <td>{parseFloat(item.price).toLocaleString()}</td>
                             <td>{item.status}</td>
                             <td>{item.users_count || 0}</td>
-                            <td>₱{parseFloat(unit.base_price || 0).toLocaleString()}</td>
-                            <td>{unit.monthly_users_count} monthly tenant(s)</td>
-
                             </tr>
                         ))}
                         </tbody>
