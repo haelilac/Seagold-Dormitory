@@ -102,10 +102,9 @@ const Units = () => {
     return () => clearTimeout(timer);
   }, [filters]);
 
-  const handleCarousel = (unitId, direction) => {
+  const handleCarousel = (unitId, direction, totalImages) => {
     setCarouselIndices((prev) => {
       const currentIndex = prev[unitId] || 0;
-      const totalImages = unit.images?.length || 1;
       const newIndex =
         direction === "next"
           ? (currentIndex + 1) % totalImages
@@ -113,6 +112,7 @@ const Units = () => {
       return { ...prev, [unitId]: newIndex };
     });
   };
+  
 
   const openFullscreen = (images, index) => {
     setFullscreenImages(images);
@@ -208,48 +208,52 @@ const Units = () => {
       </div>
 
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
-        {filteredUnits.length > 0 ? (
-          filteredUnits.map((unit) => (
-            <div key={unit.id} className="rental-card">
-              <div className="rental-header">
-                <span className="verified-badge">{unit.unit_code}</span>
-                <div className="carousel-container">
-                  <button
-                    className="carousel-btn prev"
-                    onClick={() => handleCarousel(unit.id, "prev")}
-                  >
-                    &#8592;
-                  </button>
-
-                  <div className="carousel-images" style={{
-                      transform: `translateX(-${(carouselIndices[unit.id] || 0) * 100}%)`
-                    }}>
-                      {(unit.images && unit.images.length > 0 ? unit.images : [
-                        { image_path: "/images/default-room1.jpg" },
-                        { image_path: "/images/default-room2.jpg" },
-                        { image_path: "/images/default-room3.jpg" },
-                      ]).map((img, i) => (
+  {filteredUnits.length > 0 ? (
+    filteredUnits.map((unit) => (
+      <div key={unit.id} className="rental-card">
+        <div className="rental-header">
+          <span className="verified-badge">{unit.unit_code}</span>
+          {unit.images.length > 0 && (
+            <div className="carousel-container">
+              <button
+                className="carousel-btn prev"
+                onClick={() =>
+                  handleCarousel(unit.id, "prev", unit.images.length)
+                }
+              >
+                &#8592;
+              </button>
+              <div
+                      className="carousel-images"
+                      style={{
+                        transform: `translateX(-${
+                          (carouselIndices[unit.id] || 0) * 100
+                        }%)`,
+                      }}
+                    >
+                      {unit.images.map((img, i) => (
                         <img
                           key={i}
                           src={img.image_path}
                           alt={`Room ${unit.unit_code}`}
                           className="rental-image"
-                          onClick={() => openFullscreen(
-                            (unit.images || []).map(i => i.image_path),
-                            i
-                          )}
+                          onClick={() =>
+                            openFullscreen(unit.images.map((i) => i.image_path), i)
+                          }
                         />
                       ))}
                     </div>
-
-                  <button
-                    className="carousel-btn next"
-                    onClick={() => handleCarousel(unit.id, "next")}
-                  >
-                    &#8594;
-                  </button>
-                </div>
-              </div>
+                    <button
+                      className="carousel-btn next"
+                      onClick={() =>
+                        handleCarousel(unit.id, "next", unit.images.length)
+                      }
+                    >
+                      &#8594;
+                    </button>
+                  </div>
+                )}
+              </div> {/* ✅ This was missing before */}
 
               <div className="rental-content">
                 <h3 className="rental-title">{unit.name}</h3>
@@ -269,8 +273,7 @@ const Units = () => {
             style={{ textAlign: "center", marginTop: "20px" }}
           >
             <p>
-              Oops! It looks like no rooms are available for your selected
-              filters.
+              Oops! It looks like no rooms are available for your selected filters.
             </p>
             <img
               src="sad.svg"
