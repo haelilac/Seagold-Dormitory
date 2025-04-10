@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import './UnitManagement.css';
 
-const UnitManagement = ({ onAddUnit }) => {
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+const UnitManagement = () => {
     const [units, setUnits] = useState([]);
     const [availableUnits, setAvailableUnits] = useState(0);
     const [unavailableUnits, setUnavailableUnits] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
     const [pricingDetails, setPricingDetails] = useState([]);
-    // Fetch Units on Component Load
+    const [unitImages, setUnitImages] = useState([]);
+    const [unitImageFiles, setUnitImageFiles] = useState([]);
+
     useEffect(() => {
         fetchUnits();
     }, []);
 
-    // Fetch Units from API
+    useEffect(() => {
+        if (showModal && selectedUnit) fetchUnitImages();
+    }, [showModal, selectedUnit]);
+
     const fetchUnits = async () => {
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
-            if (!response.ok) throw new Error('Failed to fetch units');
-
             const data = await response.json();
             setUnits(data);
             setAvailableUnits(data.filter(unit => unit.status === 'available').length);
@@ -31,20 +33,28 @@ const UnitManagement = ({ onAddUnit }) => {
 
     const handleViewDetails = async (unitCode) => {
         try {
-          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
-          const data = await response.json();
-          setPricingDetails(data); // ✅ Correct raw data with stay_type, price, etc.
-          setSelectedUnit(unitCode);
-          setShowModal(true);
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
+            const data = await response.json();
+            setPricingDetails(data);
+            setSelectedUnit(unitCode);
+            setShowModal(true);
         } catch (error) {
-          console.error('Error fetching unit details:', error.message);
+            console.error('Error fetching unit details:', error.message);
         }
-      };
+    };
 
-    // Toggle Unit Availability Status
+    const fetchUnitImages = async () => {
+        try {
+            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${selectedUnit}`);
+            const data = await res.json();
+            setUnitImages(data);
+        } catch (err) {
+            console.error('Failed to load unit images:', err);
+        }
+    };
+
     const handleToggleStatus = async (unitId, currentStatus) => {
         const newStatus = currentStatus === 'unavailable' ? 'available' : 'unavailable';
-
         try {
             await fetch(`https://seagold-laravel-production.up.railway.app/api/units/${unitId}/status`, {
                 method: 'PUT',
@@ -57,7 +67,6 @@ const UnitManagement = ({ onAddUnit }) => {
         }
     };
 
-    // Handle Adding a New Unit
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -66,7 +75,7 @@ const UnitManagement = ({ onAddUnit }) => {
             name: formData.get("name"),
             capacity: formData.get("capacity"),
             price: formData.get("price"),
-            stay_type: "long-term" 
+            stay_type: "monthly"
         };
 
         try {
@@ -75,104 +84,150 @@ const UnitManagement = ({ onAddUnit }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newUnit),
             });
+
+            // Bulk upload
+            if (unitImageFiles.length > 0) {
+                for (let file of unitImageFiles) {
+                    const imageForm = new FormData();
+                    imageForm.append('image', file);
+                    imageForm.append('unit_code', newUnit.unit_code);
+
+                    await fetch('https://seagold-laravel-production.up.railway.app/api/units/upload-room-image', {
+                        method: 'POST',
+                        body: imageForm,
+                    });
+                }
+            }
+
             fetchUnits();
         } catch (error) {
             console.error('Error adding unit:', error.message);
         }
+
         e.target.reset();
+        setUnitImageFiles([]);
     };
 
-    return (
-        <section id="unit-management" className="dashboard-section">
-    
-            {/* Unit Management Section */}
-            <div className="unit-section">
-                <header className="header-bar">
-                    My Unit Management Dashboard
-                </header> 
-                <div className="unit-layout">
-    
-                    {/* Add Unit Form */}
-                    <form onSubmit={handleSubmit} className="unit-form">
-                        <h3>Add New Unit</h3>
-                        <label>Unit Code:
-                            <input type="text" name="unit_code" required placeholder="Unit Code (e.g., CF-1)" />
-                        </label>
-                        <label>Name:
-                            <input type="text" name="name" required placeholder="Unit Name" />
-                        </label>
-                        <label>Capacity:
-                            <input type="number" name="capacity" required placeholder="Capacity" />
-                        </label>
-                        <label>Price:
-                            <input type="number" name="price" required placeholder="Price" />
-                        </label>
-                        <button type="submit">Add Unit</button>
-                    </form>
-    
-                    {/* Unit Statistics */}
-                    <div className="unit-management-container">
-                        <div className="unit-statistics">
-                            <div className="unit-box total">Total Unit: <span>{units.length}</span></div>
-                            <div className="unit-box available">Available Unit: <span>{availableUnits}</span></div>
-                            <div className="unit-box unavailable">Unavailable Unit: <span>{unavailableUnits}</span></div>
+
+        return (
+            <section id="unit-management" className="dashboard-section">
+                <div className="unit-section">
+                    <header className="header-bar">My Unit Management Dashboard</header>
+                    <div className="unit-layout">
+                        <form onSubmit={handleSubmit} className="unit-form">
+                            <h3>Add New Unit</h3>
+                            <label>Unit Code:<input type="text" name="unit_code" required /></label>
+                            <label>Name:<input type="text" name="name" required /></label>
+                            <label>Capacity:<input type="number" name="capacity" required /></label>
+                            <label>Price:<input type="number" name="price" required /></label>
+                            <label>Upload Room Images:
+                                <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
+                            </label>
+                            <button type="submit">Add Unit</button>
+                        </form>
+        
+                        {/* Unit Statistics */}
+                        <div className="unit-management-container">
+                            <div className="unit-statistics">
+                                <div className="unit-box total">Total Unit: <span>{units.length}</span></div>
+                                <div className="unit-box available">Available Unit: <span>{availableUnits}</span></div>
+                                <div className="unit-box unavailable">Unavailable Unit: <span>{unavailableUnits}</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-    
-                    {/* Box/Card Layout */}
-                    <div className="unit-section">
+        
+                {/* Box/Card Layout */}
+                <div className="unit-section">
                     <h3>All Units</h3>
                     <div className="unit-card-grid">
                         {units.map((unit) => (
-                        <div key={unit.id} className={`unit-card ${unit.status}`}>
-                            <h4>{unit.unit_code}</h4>
-                            <p><strong>Occupied:</strong> {unit.monthly_users_count || 0} / {unit.max_capacity}</p>
-                            <p><strong>Status:</strong> {unit.overall_status}</p>
-                            <div className="unit-card-actions">
-                            <button
-                                onClick={() => handleToggleStatus(unit.id, unit.overall_status)}
-                                className={unit.overall_status === 'available' ? 'make-unavailable' : 'make-available'}
-                                >
-                                {unit.overall_status === 'available' ? 'Make Unavailable' : 'Make Available'}
-                                </button>
-
-                            <button onClick={() => handleViewDetails(unit.unit_code)} className="view-details-btn">
-                                View
-                            </button>
+                            <div key={unit.id} className={`unit-card ${unit.status}`}>
+                                <h4>{unit.unit_code}</h4>
+                                <p><strong>Occupied:</strong> {unit.monthly_users_count || 0} / {unit.max_capacity}</p>
+                                <p><strong>Status:</strong> {unit.overall_status}</p>
+                                <div className="unit-card-actions">
+                                    <button onClick={() => handleToggleStatus(unit.id, unit.overall_status)}>
+                                        {unit.overall_status === 'available' ? 'Make Unavailable' : 'Make Available'}
+                                    </button>
+                                    <button onClick={() => handleViewDetails(unit.unit_code)}>View</button>
+                                </div>
                             </div>
-                        </div>
                         ))}
                     </div>
                 </div>
-
+        
+                {/* Modal Section */}
                 {showModal && (
                     <div className="modal-overlay">
                         <div className="modal">
                             <h2>Details for {selectedUnit}</h2>
+        
+                            {/* Image Upload Section */}
+                            <div className="image-upload-section">
+                                <form onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    if (!unitImageFiles || unitImageFiles.length === 0) return;
+                                    for (let file of unitImageFiles) {
+                                        const formData = new FormData();
+                                        formData.append('image', file);
+                                        formData.append('unit_code', selectedUnit);
+        
+                                        await fetch('https://seagold-laravel-production.up.railway.app/api/units/upload-room-image', {
+                                            method: 'POST',
+                                            body: formData,
+                                        });
+                                    }
+                                    alert('Images uploaded!');
+                                    setUnitImageFiles([]);
+                                    fetchUnitImages();
+                                }}>
+                                    <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
+                                    <button type="submit">Upload</button>
+                                </form>
+        
+                                {/* Previews */}
+                                <div className="image-preview-grid">
+                                    {unitImages.map((img) => (
+                                        <div key={img.id} className="image-preview-wrapper">
+                                            <img src={img.image_path} alt="Room" className="room-image-preview" />
+                                            <button
+                                                onClick={async () => {
+                                                    if (!window.confirm('Delete this image?')) return;
+                                                    await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${img.id}`, {
+                                                        method: 'DELETE',
+                                                    });
+                                                    fetchUnitImages();
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+        
+                            {/* Close Modal */}
                             <button onClick={() => setShowModal(false)} className="close-button">X</button>
-
-                            {/* 🧠 Calculate base price & monthly user count */}
-                            {(() => {
-                                const monthlyDetails = pricingDetails.filter(item => item.stay_type === 'monthly');
-                                const monthlyUsers = monthlyDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
-                                const totalUsers = pricingDetails.reduce((acc, curr) => acc + (curr.users_count || 0), 0);
-
-                                // Match capacity to users to get base price
-                                const matched = monthlyDetails.find(d => d.capacity === monthlyUsers);
-                                const fallbackBase = monthlyDetails.length > 0 ? Math.min(...monthlyDetails.map(d => parseFloat(d.price))) : null;
-                                const basePrice = matched?.price || fallbackBase;
-
-                                return (
-                                    <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
+        
+                            {/* Pricing Summary */}
+                            <div style={{ fontWeight: 'bold', marginTop: '20px' }}>
+                                {(() => {
+                                    const monthly = pricingDetails.filter(p => p.stay_type === 'monthly');
+                                    const monthlyUsers = monthly.reduce((acc, item) => acc + (item.users_count || 0), 0);
+                                    const totalUsers = pricingDetails.reduce((acc, item) => acc + (item.users_count || 0), 0);
+                                    const matched = monthly.find(d => d.capacity === monthlyUsers);
+                                    const fallback = monthly.length > 0 ? Math.min(...monthly.map(d => parseFloat(d.price))) : null;
+                                    const basePrice = matched?.price || fallback;
+                                    return <>
                                         🧑 Total Occupants (all types): {totalUsers} <br />
                                         🧑‍💼 Monthly Occupants: {monthlyUsers} <br />
                                         📌 Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'}
-                                    </div>
-                                );
-                            })()}
-
+                                    </>;
+                                })()}
+                            </div>
+        
+                            {/* Pricing Table */}
                             <table className="pricing-table">
                                 <thead>
                                     <tr>
@@ -196,10 +251,9 @@ const UnitManagement = ({ onAddUnit }) => {
                         </div>
                     </div>
                 )}
-
-        </section>
-    );
+            </section>
+        );
     
-};
+                        };
 
-export default UnitManagement;
+                export default UnitManagement;

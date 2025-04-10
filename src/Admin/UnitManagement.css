@@ -337,6 +337,48 @@ body {
     padding: 10px;
     text-align: left;
   }
+
+  .image-upload-section {
+    margin-top: 1rem;
+  }
+  
+  .image-preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .room-image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .image-preview-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .room-image-preview {
+    width: 100px;
+    margin: 5px;
+    border-radius: 4px;
+  }
+  
+  .delete-image-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+  
   
 /*************************************
  * RESPONSIVE MEDIA QUERIES
