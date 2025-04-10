@@ -42,22 +42,6 @@ const Units = () => {
     fetchUnitsWithImages();
   }, []);
   
-  // Fetch units from backend
-  useEffect(() => {
-    const fetchUnits = async () => {
-      try {
-        const response = await fetch(
-          "https://seagold-laravel-production.up.railway.app/api/units"
-        );
-        if (!response.ok) throw new Error("Failed to fetch units");
-        const data = await response.json();
-        setUnits(data);
-      } catch (err) {
-        console.error("Error fetching units:", err.message);
-      }
-    };
-    fetchUnits();
-  }, []);
 
   // Filtering logic
   const handleFilterClick = (type, value) => {
@@ -213,7 +197,7 @@ const Units = () => {
       <div key={unit.id} className="rental-card">
         <div className="rental-header">
           <span className="verified-badge">{unit.unit_code}</span>
-          {unit.images.length > 0 && (
+          {Array.isArray(unit.images) && unit.images.length > 0 && (
             <div className="carousel-container">
               <button
                 className="carousel-btn prev"
