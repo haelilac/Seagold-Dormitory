@@ -117,7 +117,6 @@ const UnitManagement = () => {
                         <form onSubmit={handleSubmit} className="unit-form">
                             <h3>Add New Unit</h3>
                             <label>Unit Code:<input type="text" name="unit_code" required /></label>
-                            <label>Name:<input type="text" name="name" required /></label>
                             <label>Capacity:<input type="number" name="capacity" required /></label>
                             <label>Price:<input type="number" name="price" required /></label>
                             <label>Upload Room Images:
