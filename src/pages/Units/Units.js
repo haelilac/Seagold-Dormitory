@@ -11,6 +11,18 @@ const Units = () => {
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [animateContainer, setAnimateContainer] = useState(false);
   const [filters, setFilters] = useState({ availability: "" });
+  const [showPriceModal, setShowPriceModal] = useState(false);
+  const [modalUnit, setModalUnit] = useState(null);
+
+  const openPriceModal = (unit) => {
+    setModalUnit(unit);
+    setShowPriceModal(true);
+  };
+  
+  const closePriceModal = () => {
+    setShowPriceModal(false);
+    setModalUnit(null);
+  };
 
   useEffect(() => {
     const fetchUnits = async () => {
@@ -178,16 +190,30 @@ const Units = () => {
                     </button>
                   </div>
                 )}
-              </div> {/* ✅ This was missing before */}
+              </div>
 
+              {showPriceModal && modalUnit && (
+                <div className="price-modal-overlay" onClick={closePriceModal}>
+                  <div className="price-modal" onClick={(e) => e.stopPropagation()}>
+                    <h2>Price Information for {modalUnit.unit_code}</h2>
+                    <p>
+                      <strong>Base Price:</strong> ₱
+                      {modalUnit.base_price
+                        ? parseFloat(modalUnit.base_price).toLocaleString()
+                        : "Not available"}
+                    </p>
+                    <button onClick={closePriceModal} className="close-modal-btn">Close</button>
+                  </div>
+                </div>
+              )}
               <div className="rental-content">
                 <h3 className="rental-title">{unit.name}</h3>
-                <p className="rental-price">
-                  Price: <strong>₱{parseFloat(unit.price).toLocaleString()}</strong>
-                </p>
+                <button className="view-price-btn" onClick={() => openPriceModal(unit)}>
+                    View Price
+                  </button>
                 <p className="rental-availability">
-                  Slots Available: {unit.capacity - (unit.users_count || 0)} /{" "}
-                  {unit.capacity}
+                Slots Available: {unit.max_capacity - (unit.monthly_users_count || 0)} / {unit.max_capacity}
+
                 </p>
               </div>
             </div>
