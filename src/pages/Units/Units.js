@@ -10,7 +10,7 @@ const Units = () => {
   const [fullscreenImages, setFullscreenImages] = useState([]);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [animateContainer, setAnimateContainer] = useState(false);
-
+  const [filters, setFilters] = useState({ availability: "" });
 
   useEffect(() => {
     const fetchUnitsWithImages = async () => {
@@ -36,7 +36,12 @@ const Units = () => {
     fetchUnitsWithImages();
   }, []);
   
-
+  const handleFilterClick = (type, value) => {
+    if (type === "availability") {
+      const newFilters = { ...filters, availability: value };
+      setFilters(newFilters);
+    }
+  };
 
   const filteredUnits = units.filter((unit) => {
     const availability = unit.capacity - (unit.users_count || 0);
