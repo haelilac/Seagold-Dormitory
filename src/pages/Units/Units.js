@@ -13,28 +13,18 @@ const Units = () => {
   const [filters, setFilters] = useState({ availability: "" });
 
   useEffect(() => {
-    const fetchUnitsWithImages = async () => {
+    const fetchUnits = async () => {
       try {
-        const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
-        if (!response.ok) throw new Error('Failed to fetch units');
-        const unitsData = await response.json();
-  
-        const unitsWithImages = await Promise.all(
-          unitsData.map(async (unit) => {
-            const imgRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${unit.unit_code}`);
-            const images = await imgRes.json();
-            return { ...unit, images };
-          })
-        );
-  
-        setUnits(unitsWithImages);
+        const res = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
+        const data = await res.json();
+        setUnits(data);
       } catch (err) {
-        console.error("Error fetching units or images:", err.message);
+        console.error("Error fetching units:", err.message);
       }
     };
-  
-    fetchUnitsWithImages();
+    fetchUnits();
   }, []);
+  
   
   const handleFilterClick = (type, value) => {
     if (type === "availability") {
