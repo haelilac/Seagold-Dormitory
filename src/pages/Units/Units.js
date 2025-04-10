@@ -192,25 +192,27 @@ const Units = () => {
                 )}
               </div>
 
-              {showPriceModal && modalUnit && (
-                <div className="price-modal-overlay" onClick={closePriceModal}>
+              {showPriceModal && (
+                <div className="price-modal-overlay" onClick={() => setShowPriceModal(false)}>
                   <div className="price-modal" onClick={(e) => e.stopPropagation()}>
-                    <h2>Price Information for {modalUnit.unit_code}</h2>
-                    <p>
-                      <strong>Base Price:</strong> ₱
-                      {modalUnit.base_price
-                        ? parseFloat(modalUnit.base_price).toLocaleString()
-                        : "Not available"}
-                    </p>
-                    <button onClick={closePriceModal} className="close-modal-btn">Close</button>
+                    <h2>Room Pricing</h2>
+                    <img
+                      src="/images/sample-pricing.jpg"
+                      alt="Pricing Info"
+                      style={{ width: "100%", borderRadius: "8px" }}
+                    />
+                    <button onClick={() => setShowPriceModal(false)} className="close-modal-btn">
+                      Close
+                    </button>
                   </div>
                 </div>
               )}
+
               <div className="rental-content">
                 <h3 className="rental-title">{unit.name}</h3>
-                <button className="view-price-btn" onClick={() => openPriceModal(unit)}>
-                    View Price
-                  </button>
+                <button className="view-price-btn" onClick={() => setShowPriceModal(true)}>
+                  View Price
+                </button>
                 <p className="rental-availability">
                 Slots Available: {unit.max_capacity - (unit.monthly_users_count || 0)} / {unit.max_capacity}
 
