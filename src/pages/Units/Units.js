@@ -17,6 +17,31 @@ const Units = () => {
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [animateContainer, setAnimateContainer] = useState(false);
 
+
+  useEffect(() => {
+    const fetchUnitsWithImages = async () => {
+      try {
+        const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
+        if (!response.ok) throw new Error('Failed to fetch units');
+        const unitsData = await response.json();
+  
+        const unitsWithImages = await Promise.all(
+          unitsData.map(async (unit) => {
+            const imgRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${unit.unit_code}`);
+            const images = await imgRes.json();
+            return { ...unit, images };
+          })
+        );
+  
+        setUnits(unitsWithImages);
+      } catch (err) {
+        console.error("Error fetching units or images:", err.message);
+      }
+    };
+  
+    fetchUnitsWithImages();
+  }, []);
+  
   // Fetch units from backend
   useEffect(() => {
     const fetchUnits = async () => {
@@ -80,7 +105,7 @@ const Units = () => {
   const handleCarousel = (unitId, direction) => {
     setCarouselIndices((prev) => {
       const currentIndex = prev[unitId] || 0;
-      const totalImages = 3;
+      const totalImages = unit.images?.length || 1;
       const newIndex =
         direction === "next"
           ? (currentIndex + 1) % totalImages
@@ -195,29 +220,28 @@ const Units = () => {
                   >
                     &#8592;
                   </button>
-                  <div
-                    className="carousel-images"
-                    style={{
-                      transform: `translateX(-${
-                        (carouselIndices[unit.id] || 0) * 100
-                      }%)`,
-                    }}
-                  >
-                    {[1, 2, 3].map((i) => (
-                      <img
-                        key={i}
-                        src={`/images/default-room${i}.jpg`}
-                        alt={`Room ${unit.unit_code}`}
-                        className="rental-image"
-                        onClick={() =>
-                          openFullscreen(
-                            ["/images/default-room1.jpg", "/images/default-room2.jpg", "/images/default-room3.jpg"],
-                            i - 1
-                          )
-                        }
-                      />
-                    ))}
-                  </div>
+
+                  <div className="carousel-images" style={{
+                      transform: `translateX(-${(carouselIndices[unit.id] || 0) * 100}%)`
+                    }}>
+                      {(unit.images && unit.images.length > 0 ? unit.images : [
+                        { image_path: "/images/default-room1.jpg" },
+                        { image_path: "/images/default-room2.jpg" },
+                        { image_path: "/images/default-room3.jpg" },
+                      ]).map((img, i) => (
+                        <img
+                          key={i}
+                          src={img.image_path}
+                          alt={`Room ${unit.unit_code}`}
+                          className="rental-image"
+                          onClick={() => openFullscreen(
+                            (unit.images || []).map(i => i.image_path),
+                            i
+                          )}
+                        />
+                      ))}
+                    </div>
+
                   <button
                     className="carousel-btn next"
                     onClick={() => handleCarousel(unit.id, "next")}
