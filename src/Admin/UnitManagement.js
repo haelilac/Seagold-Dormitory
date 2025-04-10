@@ -92,7 +92,7 @@ const UnitManagement = () => {
                     imageForm.append('image', file);
                     imageForm.append('unit_code', newUnit.unit_code);
 
-                    await fetch('https://seagold-laravel-production.up.railway.app/api/units/upload-room-image', {
+                    await fetch('https://seagold-laravel-production.up.railway.app/api/unit-images/upload', {
                         method: 'POST',
                         body: imageForm,
                     });
@@ -173,7 +173,7 @@ const UnitManagement = () => {
                                         formData.append('image', file);
                                         formData.append('unit_code', selectedUnit);
         
-                                        await fetch('https://seagold-laravel-production.up.railway.app/api/units/upload-room-image', {
+                                        await fetch('https://seagold-laravel-production.up.railway.app/api/unit-images/upload', {
                                             method: 'POST',
                                             body: formData,
                                         });
