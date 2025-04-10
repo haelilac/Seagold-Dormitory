@@ -3,12 +3,6 @@ import "./Units.css";
 
 const Units = () => {
   const [units, setUnits] = useState([]);
-  const [filters, setFilters] = useState(() => {
-    const saved = localStorage.getItem("unitFilters");
-    return saved
-      ? JSON.parse(saved)
-      : { price: "All", features: [], availability: "" };
-  });
   const [capacityInput, setCapacityInput] = useState("");
   const [carouselIndices, setCarouselIndices] = useState({});
   const [selectedUnit, setSelectedUnit] = useState(null);
@@ -43,43 +37,18 @@ const Units = () => {
   }, []);
   
 
-  // Filtering logic
-  const handleFilterClick = (type, value) => {
-    setFilters((prev) => {
-      const newFilters = { ...prev };
-      if (type === "price") {
-        newFilters.price = prev.price === value ? "All" : value;
-      } else if (type === "availability") {
-        newFilters.availability = value;
-      }
-      localStorage.setItem("unitFilters", JSON.stringify(newFilters));
-      return newFilters;
-    });
-  };
-
-  const clearFilters = () => {
-    const cleared = { price: "All", features: [], availability: "" };
-    setFilters(cleared);
-    localStorage.setItem("unitFilters", JSON.stringify(cleared));
-  };
 
   const filteredUnits = units.filter((unit) => {
-    const price = parseFloat(unit.price);
     const availability = unit.capacity - (unit.users_count || 0);
-
-    const matchesPrice =
-      filters.price === "All" ||
-      (filters.price === "Below ₱5,000" && price < 5000) ||
-      (filters.price === "₱6,000 - ₱8,000" && price >= 6000 && price <= 8000) ||
-      (filters.price === "₱9,000 - ₱11,000" && price >= 9000 && price <= 11000);
-
+  
     const matchesAvailability =
       filters.availability === "" ||
       parseInt(filters.availability) <= availability;
-
-    return matchesPrice && matchesAvailability;
+  
+    return matchesAvailability;
   });
 
+  
   useEffect(() => {
     setAnimateContainer(true);
     const timer = setTimeout(() => setAnimateContainer(false), 600);
@@ -166,29 +135,6 @@ const Units = () => {
           </div>
         </div>
 
-        <div className="filters">
-          <button
-            className={filters.price === "Below ₱5,000" ? "active" : ""}
-            onClick={() => handleFilterClick("price", "Below ₱5,000")}
-          >
-            Below ₱5,000
-          </button>
-          <button
-            className={filters.price === "₱6,000 - ₱8,000" ? "active" : ""}
-            onClick={() => handleFilterClick("price", "₱6,000 - ₱8,000")}
-          >
-            ₱6,000 to ₱8,000
-          </button>
-          <button
-            className={filters.price === "₱9,000 - ₱11,000" ? "active" : ""}
-            onClick={() => handleFilterClick("price", "₱9,000 - ₱11,000")}
-          >
-            ₱9,000 to ₱11,000
-          </button>
-          <button className="clear-button" onClick={clearFilters}>
-            ✕
-          </button>
-        </div>
       </div>
 
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
