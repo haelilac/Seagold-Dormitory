@@ -213,8 +213,8 @@ const ContactUs = () => {
             let autoDuration = "";
             if (value === "half-month") autoDuration = 15;
             else if (value === "weekly") autoDuration = 7;
-            else if (value === "daily" || value === "monthly") autoDuration = ""; // to be selected manually
-    
+            else if (value === "daily" || value === "monthly") autoDuration = "";
+        
             setFormData(prev => ({
                 ...prev,
                 [name]: value,
@@ -689,22 +689,24 @@ const ContactUs = () => {
                             <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
                                 {Object.entries(
                                 units
-                                    .filter(unit => unit.total_users_count < unit.max_capacity)
-                                    .reduce((acc, unit) => {
-                                    if (!acc[unit.unit_code]) {
-                                        acc[unit.unit_code] = unit;
-                                    } else if (
-                                        (unit.max_capacity - unit.total_users_count) >
-                                        (acc[unit.unit_code].max_capacity - acc[unit.unit_code].total_users_count)
-                                    ) {
-                                        acc[unit.unit_code] = unit;
-                                    }
-                                    return acc;
-                                    }, {})
+                                .filter(unit => unit.monthly_users_count < unit.max_capacity) // changed this line
+                                .reduce((acc, unit) => {
+                                if (!acc[unit.unit_code]) {
+                                    acc[unit.unit_code] = unit;
+                                } else if (
+                                    (unit.max_capacity - unit.monthly_users_count) >
+                                    (acc[unit.unit_code].max_capacity - acc[unit.unit_code].monthly_users_count)
+                                ) {
+                                    acc[unit.unit_code] = unit;
+                                }
+                                return acc;
+                                }, {})
+
                                 ).map(([unitCode, unit]) => (
                                     <option key={unitCode} value={unit.unit_code}>
-                                    {unit.unit_code} - ({unit.max_capacity - unit.total_users_count} slots available)
+                                    {unit.unit_code} - ({unit.max_capacity - unit.monthly_users_count} slots available)
                                     </option>
+
                                 ))}
 
                             </optgroup>
