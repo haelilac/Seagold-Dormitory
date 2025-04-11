@@ -203,7 +203,7 @@ const PendingApplications = () => {
                             
                             <select name="reservation_details" value={formData.reservation_details} onChange={handleInputChange}>
                                 {units.map((unit) => (
-                                    <option key={unit.id} value={unit.unit_code}>{unit.name}</option>
+                                    <option key={unit.id} value={unit.unit_code}>{unit.unit_code}</option>
                                 ))}
                             </select>
 
