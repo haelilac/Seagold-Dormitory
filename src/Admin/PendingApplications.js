@@ -107,6 +107,8 @@ const PendingApplications = () => {
     
     const matchingUnit = selectedApplication
     ? (() => {
+        console.log("Trying match for:", selectedApplication?.reservation_details, selectedApplication?.stay_type);
+
         const filteredUnits = units
           .filter(
             (u) =>
@@ -115,30 +117,32 @@ const PendingApplications = () => {
               u.status === 'available'
           )
           .filter((u) => {
-            const sameTypeCount = u.same_staytype_users_count || 0; // only from confirmed tenants
+            const sameTypeCount = u.same_staytype_users_count || 0;
             const totalCount = u.total_users_count || 0;
-  
-            const futureSameType = sameTypeCount + 1; // include this applicant
+        
+            const futureSameType = sameTypeCount + 1;
             const futureTotal = totalCount + 1;
-  
-            return (
+        
+            const isMatch = (
               futureSameType <= u.max_capacity &&
               futureTotal <= u.occupancy
             );
+        
+            console.log('Evaluating unit:', u.unit_code, u.stay_type, {
+              sameTypeCount,
+              totalCount,
+              futureSameType,
+              futureTotal,
+              max_capacity: u.max_capacity,
+              occupancy: u.occupancy,
+              isMatch
+            });
+        
+            return isMatch;
           })
-          .sort((a, b) => a.capacity - b.capacity); // prioritize tighter fit
-  
-        console.log("Trying match for:", selectedApplication?.reservation_details, selectedApplication?.stay_type);
+          .sort((a, b) => a.capacity - b.capacity);
+        
         console.log("Filtered candidates:", filteredUnits);
-        console.log('Evaluating unit:', u.unit_code, u.stay_type, {
-            sameTypeCount,
-            totalCount,
-            futureSameType,
-            futureTotal,
-            max_capacity: u.max_capacity,
-            occupancy: u.occupancy
-          });
-          
         return filteredUnits[0] || null;
       })()
     : null;
