@@ -27,8 +27,8 @@ const formatDate = (date) =>
     date ? new Date(date).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
 
 const PaymentAdmin = () => {
-    const { cache, getCache, updateCache } = useDataCache();
-    const [mergedData, setMergedData] = useState(getCache('payments') || []);
+    const { cache, getCache, updateCache } = useDataCache(); // ✅ Called inside the component
+    const [mergedData, setMergedData] = useState([]);  
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({ status: '', month: '', year: '', search: '' });
@@ -45,8 +45,6 @@ const PaymentAdmin = () => {
         const channel = window.Echo.channel('admin.payments');
       
         channel.listen('.new.payment', (e) => {
-          console.log("📥 Real-time payment:", e.payment);
-      
           const newEntry = {
             ...e.payment,
             name: e.payment.user?.name || 'New Tenant',
@@ -57,7 +55,7 @@ const PaymentAdmin = () => {
             status: e.payment.status,
           };
       
-          const updated = [...getCache('payments'), newEntry];
+          const updated = [...getCache('payments') || [], newEntry];
           updateCache('payments', updated);
           setMergedData(updated);
         });
@@ -223,10 +221,14 @@ const PaymentAdmin = () => {
 
     useEffect(() => { getPaymentStatusCounts(); }, [mergedData]);
     useEffect(() => {
-        if (!getCache('payments')?.length) {
-          fetchMergedData(); // Only fetch if not in cache
+        const cached = getCache('payments');
+        if (cached?.length > 0) {
+          setMergedData(cached);
+          setLoading(false);
+        } else {
+          fetchMergedData(); // only fetch if no cache
         }
-      }, [filters]);
+      }, []);
 
     <button onClick={fetchMergedData}>🔄 Refresh Payments</button>
 
