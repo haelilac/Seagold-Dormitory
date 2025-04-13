@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './PendingApplications.css'; 
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+import { useDataCache } from '../contexts/DataContext';
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: 'fea5d607d4b38ea09320',
+  cluster: 'ap1',
+  forceTLS: true,
+});
 
 const PendingApplications = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,6 +27,22 @@ const PendingApplications = () => {
         reservation_details: '',
         set_price: ''
     });
+
+    useEffect(() => {
+        const channel = window.Echo.channel('admin.applications');
+        channel.listen('.new.application', (e) => {
+
+          console.log("📥 New Application Received:", e.application);
+          setApplications((prev) => [...prev, e.application]);
+          if (e.application.status === 'pending') {
+            updateCache('applications', [...(cachedData.applications || []), e.application]);
+          }
+        });
+      
+        return () => {
+          channel.stopListening('NewApplicationSubmitted');
+        };
+      }, []);
 
     useEffect(() => {
         const fetchData = async () => {

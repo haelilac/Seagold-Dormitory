@@ -2,7 +2,40 @@ import React, { useEffect, useState } from 'react';
 import './PaymentAdmin.css';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getAuthToken } from "../utils/auth";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
+window.Pusher = Pusher;
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: 'fea5d607d4b38ea09320',
+  cluster: 'ap1',
+  forceTLS: true,
+});
+
+useEffect(() => {
+    const channel = window.Echo.channel('admin.payments');
+  
+    channel.listen('.new.payment', (e) => {
+      console.log("📥 New Payment Received:", e.payment);
+  
+      // Optional: Add only if it matches the current month filter
+      setMergedData((prev) => [...prev, {
+        ...e.payment,
+        name: e.payment.user?.name || 'New Tenant',
+        unit_code: e.payment.unit?.unit_code || 'N/A',
+        total_due: `₱${parseFloat(e.payment.amount).toFixed(2)}`,
+        balance: `₱${parseFloat(e.payment.remaining_balance || 0).toFixed(2)}`,
+        payment_date: e.payment.created_at,
+        status: e.payment.status,
+      }]);
+    });
+  
+    return () => {
+      channel.stopListening('.new.payment');
+    };
+  }, []);
+  
 const initSummary = () => ({
     Confirmed: 0,
     Pending: 0,
