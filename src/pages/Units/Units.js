@@ -213,7 +213,7 @@ const Units = () => {
               )}
 
               <div className="rental-content">
-                <h3 className="rental-title">{unit.name}</h3>
+              <h3 className="rental-title">{unit.unit_code}</h3>
                 <button className="view-price-btn" onClick={() => setShowPriceModal(true)}>
                   View Price
                 </button>
