@@ -105,39 +105,31 @@ const PendingApplications = () => {
     
     const matchingUnit = selectedApplication
     ? (() => {
-        const strictlyMatched = units
-          .filter(
-            (u) =>
-              u.unit_code === selectedApplication.reservation_details &&
-              u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase() &&
-              u.status === 'available'
-          )
-          .filter((u) => {
-            const sameTypeCount = u.same_staytype_users_count || 0;
-            const totalCount = u.total_users_count || 0;
-            const futureSameType = sameTypeCount + 1;
-            const futureTotal = totalCount + 1;
-          
-            return (
-              futureSameType <= u.max_capacity && // max slots for this stay type
-              futureTotal <= u.occupancy // total allowed in the room
-            );
-          })
-          .sort((a, b) => a.capacity - b.capacity)[0];
-  
-        // If no strictly matched unit, fallback to any unit with matching unit_code and stay_type
-        if (strictlyMatched) return strictlyMatched;
-  
-        const fallback = units.find(
-          (u) =>
-            u.unit_code === selectedApplication.reservation_details &&
-            u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase()
-        );
-  
-        return fallback || null;
-      })()
+        const filteredUnits = units
+            .filter(
+                (u) =>
+                    u.unit_code === selectedApplication.reservation_details &&
+                    u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase() &&
+                    u.status === 'available'
+            )
+            .filter((u) => {
+                const sameTypeCount = u.same_staytype_users_count || 0;
+                const totalCount = u.total_users_count || 0;
+                const futureSameType = sameTypeCount + 1;
+                const futureTotal = totalCount + 1;
+
+                return (
+                    futureSameType <= u.max_capacity &&
+                    futureTotal <= u.occupancy
+                );
+            })
+            .sort((a, b) => a.capacity - b.capacity);
+            console.log("Filtered candidates:", filteredUnits);
+
+        return filteredUnits[0] || null;
+    })()
     : null;
-  
+
 
     const handleDecline = async (applicationId) => {
         if (!window.confirm('Decline this application?')) return;
