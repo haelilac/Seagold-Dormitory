@@ -115,25 +115,34 @@ const PendingApplications = () => {
               u.status === 'available'
           )
           .filter((u) => {
-            const sameTypeCount = u.same_staytype_users_count || 0;
+            const sameTypeCount = u.same_staytype_users_count || 0; // only from confirmed tenants
             const totalCount = u.total_users_count || 0;
   
-            const futureSameType = sameTypeCount + 1;
+            const futureSameType = sameTypeCount + 1; // include this applicant
             const futureTotal = totalCount + 1;
-
+  
             return (
               futureSameType <= u.max_capacity &&
               futureTotal <= u.occupancy
             );
           })
           .sort((a, b) => a.capacity - b.capacity); // prioritize tighter fit
-          console.log("Trying match for:", selectedApplication?.reservation_details, selectedApplication?.stay_type);
-
-
+  
+        console.log("Trying match for:", selectedApplication?.reservation_details, selectedApplication?.stay_type);
         console.log("Filtered candidates:", filteredUnits);
+        console.log('Evaluating unit:', u.unit_code, u.stay_type, {
+            sameTypeCount,
+            totalCount,
+            futureSameType,
+            futureTotal,
+            max_capacity: u.max_capacity,
+            occupancy: u.occupancy
+          });
+          
         return filteredUnits[0] || null;
       })()
     : null;
+  
 
     const handleDecline = async (applicationId) => {
         if (!window.confirm('Decline this application?')) return;
