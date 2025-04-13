@@ -57,11 +57,16 @@ const PendingApplications = () => {
         }
       
         const fetchApplications = async () => {
-          const response = await fetch('/api/applications');
-          const data = await response.json();
-          setApplications(data.applications);
-          updateCache('applications', data.applications); // ✅ save to cache
-          setLoading(false);
+          try {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications-only');
+            const data = await response.json();
+            setApplications(data.applications);
+            updateCache('applications', data.applications); // ✅ save to cache
+          } catch (error) {
+            console.error('❌ Error fetching applications:', error);
+          } finally {
+            setLoading(false);
+          }
         };
       
         fetchApplications();
