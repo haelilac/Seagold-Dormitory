@@ -26,6 +26,7 @@ const Units = () => {
 
   useEffect(() => {
     const fetchUnits = async () => {
+      console.time('fetchUnits');
       try {
         const res = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
         const data = await res.json();
@@ -33,10 +34,10 @@ const Units = () => {
       } catch (err) {
         console.error("Error fetching units:", err.message);
       }
+      console.timeEnd('fetchUnits');
     };
     fetchUnits();
   }, []);
-  
   
   const handleFilterClick = (type, value) => {
     if (type === "availability") {
@@ -161,24 +162,24 @@ const Units = () => {
                 &#8592;
               </button>
               <div
-                      className="carousel-images"
+                className="carousel-images"
                       style={{
                         transform: `translateX(-${
                           (carouselIndices[unit.id] || 0) * 100
                         }%)`,
                       }}
                     >
-                      {unit.images.map((img, i) => (
-                        <img
-                          key={i}
-                          src={img.image_path}
-                          alt={`Room ${unit.unit_code}`}
-                          className="rental-image"
-                          onClick={() =>
-                            openFullscreen(unit.images.map((i) => i.image_path), i)
-                          }
-                        />
-                      ))}
+                    {unit.images.slice(0, 1).map((img, i) => (
+                      <img
+                        key={i}
+                        loading="lazy"
+                        src={img.image_path}
+                        alt={`Room ${unit.unit_code}`}
+                        className="rental-image"
+                        onClick={() => openFullscreen(unit.images.map(i => i.image_path), i)}
+                      />
+                    ))}
+
                     </div>
                     <button
                       className="carousel-btn next"

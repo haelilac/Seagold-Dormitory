@@ -33,15 +33,29 @@ const UnitManagement = () => {
 
     const handleViewDetails = async (unitCode) => {
         try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
-            const data = await response.json();
-            setPricingDetails(data);
-            setSelectedUnit(unitCode);
-            setShowModal(true);
+          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
+          const data = await response.json();
+          setPricingDetails(data);
+          setSelectedUnit(unitCode);
+          setShowModal(true);
+          
+          // Pre-fill formData with the first matching row
+          if (data.length > 0) {
+            const sample = data[0];
+            setFormData({
+              name: sample.name,
+              capacity: sample.capacity,
+              max_capacity: sample.max_capacity,
+              occupancy: sample.occupancy,
+              price: sample.price,
+            });
+          }
+      
         } catch (error) {
-            console.error('Error fetching unit details:', error.message);
+          console.error('Error fetching unit details:', error.message);
         }
-    };
+      };
+      
 
     const fetchUnitImages = async () => {
         try {
