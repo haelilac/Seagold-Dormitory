@@ -106,30 +106,31 @@ const PendingApplications = () => {
     const matchingUnit = selectedApplication
     ? (() => {
         const filteredUnits = units
-            .filter(
-                (u) =>
-                    u.unit_code === selectedApplication.reservation_details &&
-                    u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase() &&
-                    u.status === 'available'
-            )
-            .filter((u) => {
-                const sameTypeCount = u.same_staytype_users_count || 0;
-                const totalCount = u.total_users_count || 0;
-                const futureSameType = sameTypeCount + 1;
-                const futureTotal = totalCount + 1;
+          .filter(
+            (u) =>
+              u.unit_code === selectedApplication.reservation_details &&
+              u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase() &&
+              u.status === 'available'
+          )
+          .filter((u) => {
+            const sameTypeCount = u.same_staytype_users_count || 0;
+            const totalCount = u.total_users_count || 0;
+  
+            const futureSameType = sameTypeCount + 1;
+            const futureTotal = totalCount + 1;
 
-                return (
-                    futureSameType <= u.max_capacity &&
-                    futureTotal <= u.occupancy
-                );
-            })
-            .sort((a, b) => a.capacity - b.capacity);
-            console.log("Filtered candidates:", filteredUnits);
+            return (
+              futureSameType <= u.max_capacity &&
+              futureTotal <= u.occupancy
+            );
+          })
+          .sort((a, b) => a.capacity - b.capacity); // prioritize tighter fit
+          console.log("Trying match for:", selectedApplication?.reservation_details, selectedApplication?.stay_type);
 
+        console.log("Filtered candidates:", filteredUnits);
         return filteredUnits[0] || null;
-    })()
+      })()
     : null;
-
 
     const handleDecline = async (applicationId) => {
         if (!window.confirm('Decline this application?')) return;
