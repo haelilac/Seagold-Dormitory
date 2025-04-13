@@ -44,9 +44,11 @@ const PendingApplications = () => {
         setFormData({
             duration: application.duration,
             reservation_details: application.reservation_details,
-            set_price: application.set_price || ''
+            set_price: application.set_price || '',
+            stay_type: application.stay_type || '', // ✅ ADD THIS LINE
         });
     };
+    
 
     const handleCloseDetails = () => {
         setSelectedApplication(null);
@@ -126,6 +128,7 @@ const PendingApplications = () => {
           })
           .sort((a, b) => a.capacity - b.capacity); // prioritize tighter fit
           console.log("Trying match for:", selectedApplication?.reservation_details, selectedApplication?.stay_type);
+
 
         console.log("Filtered candidates:", filteredUnits);
         return filteredUnits[0] || null;
