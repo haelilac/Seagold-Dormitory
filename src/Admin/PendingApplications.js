@@ -169,6 +169,8 @@ const PendingApplications = () => {
     const handleAccept = async (applicationId, tenantName, tenantEmail, unitCode) => {
         if (!window.confirm('Accept this application and create a tenant account?')) return;
     
+        console.log("Sending POST to /accept with ID:", applicationId);
+    
         try {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
                 method: 'POST',
@@ -176,19 +178,19 @@ const PendingApplications = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({ 
-                    name: tenantName, 
-                    email: tenantEmail, 
-                    unit_code: unitCode 
+                body: JSON.stringify({
+                    name: tenantName,
+                    email: tenantEmail,
+                    unit_code: unitCode
                 }),
             });
     
             if (!response.ok) throw new Error('Failed to accept the application.');
-    
             alert('Application accepted! Tenant account created.');
             setApplications((prev) => prev.filter((app) => app.id !== applicationId));
             handleCloseDetails();
         } catch (error) {
+            console.error('Error accepting application:', error);
             alert('An error occurred while accepting the application.');
         }
     };
@@ -338,7 +340,19 @@ const PendingApplications = () => {
 
                             
                             <button onClick={() => setEditMode(true)}>Edit</button>
-                            <button onClick={() => handleAccept(selectedApplication.id, selectedApplication.first_name, selectedApplication.email, selectedApplication.reservation_details)}>Accept</button>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    handleAccept(
+                                    selectedApplication.id,
+                                    selectedApplication.first_name,
+                                    selectedApplication.email,
+                                    selectedApplication.reservation_details
+                                    )
+                                }
+                                >
+                                Accept
+                                </button>
                             <button onClick={() => handleDecline(selectedApplication.id)}>Decline</button>
                             <button onClick={handleCloseDetails}>Close</button>
                         </>
