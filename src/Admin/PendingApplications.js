@@ -303,8 +303,15 @@ const PendingApplications = () => {
                             </select>
 
                             <p><strong>Default Rent Price:</strong> ₱
-                                {units.find((u) => u.unit_code === formData.reservation_details)?.price?.toLocaleString() || '0.00'}
-                            </p>
+                                {(
+                                    units.find(
+                                    (u) =>
+                                        u.unit_code === formData.reservation_details &&
+                                        u.stay_type?.toLowerCase() === formData.stay_type?.toLowerCase()
+                                    )?.price?.toLocaleString() || '0.00'
+                                )}
+                                </p>
+
 
                             <label>Set Price:</label>
                             <input type="number" name="set_price" value={formData.set_price} onChange={handleInputChange} />
