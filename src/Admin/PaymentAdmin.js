@@ -14,31 +14,6 @@ window.Echo = new Echo({
   forceTLS: true,
 });
 
-useEffect(() => {
-    const channel = window.Echo.channel('admin.payments');
-  
-    channel.listen('.new.payment', (e) => {
-      console.log("📥 Real-time payment:", e.payment);
-  
-      const newEntry = {
-        ...e.payment,
-        name: e.payment.user?.name || 'New Tenant',
-        unit_code: e.payment.unit?.unit_code || 'N/A',
-        total_due: `₱${parseFloat(e.payment.amount).toFixed(2)}`,
-        balance: `₱${parseFloat(e.payment.remaining_balance || 0).toFixed(2)}`,
-        payment_date: e.payment.created_at,
-        status: e.payment.status,
-      };
-  
-      const updated = [...getCache('payments'), newEntry];
-      updateCache('payments', updated);
-      setMergedData(updated);
-    });
-  
-    return () => {
-      channel.stopListening('.new.payment');
-    };
-  }, []);
   
 
 const initSummary = () => ({
@@ -65,6 +40,32 @@ const PaymentAdmin = () => {
     const [selectedTenantName, setSelectedTenantName] = useState('');
     const [selectedTenantId, setSelectedTenantId] = useState(null);
     const [selectedMonthData, setSelectedMonthData] = useState(null);
+
+    useEffect(() => {
+        const channel = window.Echo.channel('admin.payments');
+      
+        channel.listen('.new.payment', (e) => {
+          console.log("📥 Real-time payment:", e.payment);
+      
+          const newEntry = {
+            ...e.payment,
+            name: e.payment.user?.name || 'New Tenant',
+            unit_code: e.payment.unit?.unit_code || 'N/A',
+            total_due: `₱${parseFloat(e.payment.amount).toFixed(2)}`,
+            balance: `₱${parseFloat(e.payment.remaining_balance || 0).toFixed(2)}`,
+            payment_date: e.payment.created_at,
+            status: e.payment.status,
+          };
+      
+          const updated = [...getCache('payments'), newEntry];
+          updateCache('payments', updated);
+          setMergedData(updated);
+        });
+      
+        return () => {
+          channel.stopListening('.new.payment');
+        };
+      }, []);
 
     const fetchTenantPayments = async (tenantId, unpaidMonth, tenantName) => {
         if (!tenantId) {

@@ -13,26 +13,8 @@ window.Echo = new Echo({
   forceTLS: true,
 });
 
-const { getCachedData, updateCache } = useDataCache();
-const cachedApplications = getCachedData('applications');
 
-useEffect(() => {
-  if (cachedApplications) {
-    setApplications(cachedApplications);
-    setLoading(false);
-    return; // ✅ skip fetch if cached
-  }
 
-  const fetchApplications = async () => {
-    const response = await fetch('/api/applications');
-    const data = await response.json();
-    setApplications(data.applications);
-    updateCache('applications', data.applications); // ✅ save to cache
-    setLoading(false);
-  };
-
-  fetchApplications();
-}, []);
 
 const PendingApplications = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -48,7 +30,9 @@ const PendingApplications = () => {
         reservation_details: '',
         set_price: ''
     });
-
+    const { getCachedData, updateCache } = useDataCache();
+    const cachedApplications = getCachedData('applications');
+    
     useEffect(() => {
         const channel = window.Echo.channel('admin.applications'); // ✅ Make sure this matches your Laravel event
     
@@ -63,6 +47,24 @@ const PendingApplications = () => {
         return () => {
           window.Echo.leave('admin.applications'); // clean up
         };
+      }, []);
+
+      useEffect(() => {
+        if (cachedApplications) {
+          setApplications(cachedApplications);
+          setLoading(false);
+          return; // ✅ skip fetch if cached
+        }
+      
+        const fetchApplications = async () => {
+          const response = await fetch('/api/applications');
+          const data = await response.json();
+          setApplications(data.applications);
+          updateCache('applications', data.applications); // ✅ save to cache
+          setLoading(false);
+        };
+      
+        fetchApplications();
       }, []);
 
     useEffect(() => {
