@@ -16,21 +16,55 @@ const PendingApplications = () => {
         set_price: ''
     });
 
+    useEffect(() => {
+        const fetchData = async () => {
+            console.time("⏱️ Total Fetch Time");
+    
+            try {
+                console.time("📄 Fetch Applications");
+                const appRes = await fetch('https://seagold-laravel-production.up.railway.app/api/applications-only');
+                const appData = await appRes.json();
+                setApplications(appData.applications || []);
+                console.timeEnd("📄 Fetch Applications");
+    
+                console.time("🏘️ Fetch Units");
+                const unitRes = await fetch('https://seagold-laravel-production.up.railway.app/api/units-only');
+                const unitData = await unitRes.json();
+                setUnits(unitData.units || []);
+                console.timeEnd("🏘️ Fetch Units");
+    
+            } catch (err) {
+                console.error("❌ Error fetching data:", err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+                console.timeEnd("⏱️ Total Fetch Time");
+            }
+        };
+    
+        fetchData();
+    }, []);
+    
+
     // Fetch pending applications
     useEffect(() => {
         const fetchApplications = async () => {
+            const start = performance.now(); // Start timer
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications');
                 if (!response.ok) {
                     throw new Error('Failed to fetch applications');
                 }
                 const data = await response.json();
-
-                // Extract applications and units
+    
                 setApplications(data.applications || []);
                 setUnits(data.units || []);
+    
+                const end = performance.now(); // End timer
+                const seconds = ((end - start) / 1000).toFixed(2);
+                console.log(`✅ Pending applications fetched in ${seconds} seconds`);
             } catch (err) {
-                console.error('Error fetching applications:', err);
+                console.error('❌ Error fetching applications:', err);
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -38,6 +72,7 @@ const PendingApplications = () => {
         };
         fetchApplications();
     }, []);
+    
 
     const handleSelectApplication = (application) => {
         setSelectedApplication(application);
