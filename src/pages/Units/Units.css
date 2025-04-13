@@ -375,6 +375,12 @@ body {
   cursor: pointer;
 }
 
+.loading-spinner {
+  text-align: center;
+  margin-top: 50px;
+  color: #4a954e;
+  font-weight: bold;
+}
 
 /* Responsive adjustments for rental-notes */
 @media (max-width: 768px) {

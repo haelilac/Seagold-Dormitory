@@ -13,6 +13,7 @@ const Units = () => {
   const [filters, setFilters] = useState({ availability: "" });
   const [showPriceModal, setShowPriceModal] = useState(false);
   const [modalUnit, setModalUnit] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const openPriceModal = (unit) => {
     setModalUnit(unit);
@@ -24,20 +25,22 @@ const Units = () => {
     setModalUnit(null);
   };
 
-  useEffect(() => {
-    const fetchUnits = async () => {
-      console.time('fetchUnits');
-      try {
-        const res = await fetch('https://seagold-laravel-production.up.railway.app/api/public-units');
-        const data = await res.json();
-        setUnits(data);
-      } catch (err) {
-        console.error("Error fetching units:", err.message);
-      }
-      console.timeEnd('fetchUnits');
-    };
-    fetchUnits();
-  }, []);
+useEffect(() => {
+  const fetchUnits = async () => {
+    console.time("fetchUnits");
+    try {
+      const res = await fetch('https://seagold-laravel-production.up.railway.app/api/public-units');
+      const data = await res.json();
+      setUnits(data);
+    } catch (err) {
+      console.error("Error fetching units:", err.message);
+    } finally {
+      setLoading(false); // ✅ done loading
+    }
+    console.timeEnd("fetchUnits");
+  };
+  fetchUnits();
+}, []);
   
   const handleFilterClick = (type, value) => {
     if (type === "availability") {
@@ -146,8 +149,13 @@ const Units = () => {
       </div>
 
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
-  {filteredUnits.length > 0 ? (
-    filteredUnits.map((unit) => (
+      {loading ? (
+        <div className="loading-spinner">
+          <img src="/images/loading.gif" alt="Loading..." style={{ width: "80px" }} />
+          <p>Loading rooms, please wait...</p>
+        </div>
+      ) : filteredUnits.length > 0 ? (
+        filteredUnits.map((unit) => (
       <div key={unit.id} className="rental-card">
         <div className="rental-header">
           <span className="verified-badge">{unit.unit_code}</span>
@@ -169,19 +177,21 @@ const Units = () => {
                         }%)`,
                       }}
                     >
-                    {unit.images.slice(0, 1).map((img, i) => (
-                      <img
-                        src={img.image_path}
-                        alt={`Room ${unit.unit_code}`}
-                        className="rental-image"
-                        loading="lazy"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/images/fallback.jpg"; // fallback image
-                        }}
-                        onClick={() => openFullscreen(unit.images.map(i => i.image_path), i)}
-                      />
-                    ))}
+                {unit.images.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img.image_path}
+                    alt={`Room ${unit.unit_code}`}
+                    className="rental-image"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/images/fallback.jpg";
+                    }}
+                    onClick={() => openFullscreen(unit.images.map(i => i.image_path), i)}
+                  />
+                ))}
+
 
                     </div>
                     <button
@@ -225,20 +235,11 @@ const Units = () => {
             </div>
           ))
         ) : (
-          <div
-            className="no-availability"
-            style={{ textAlign: "center", marginTop: "20px" }}
-          >
-            <p>
-              Oops! It looks like no rooms are available for your selected filters.
-            </p>
-            <img
-              src="sad.svg"
-              alt="Room Not Available"
-              style={{ maxWidth: "200px", width: "100%" }}
-            />
-          </div>
-        )}
+          <div className="no-availability">
+              <p>Oops! It looks like no rooms are available for your selected filters.</p>
+              <img src="sad.svg" alt="Room Not Available" style={{ maxWidth: "200px", width: "100%" }} />
+            </div>
+          )}
       </div>
 
       {fullscreenImage && (
