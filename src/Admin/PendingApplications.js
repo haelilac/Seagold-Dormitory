@@ -117,11 +117,10 @@ const PendingApplications = () => {
             const totalCount = u.total_users_count || 0;
             const futureSameType = sameTypeCount + 1;
             const futureTotal = totalCount + 1;
-  
+          
             return (
-              futureSameType >= u.capacity &&
-              futureSameType <= u.max_capacity &&
-              futureTotal <= u.occupancy
+              futureSameType <= u.max_capacity && // max slots for this stay type
+              futureTotal <= u.occupancy // total allowed in the room
             );
           })
           .sort((a, b) => a.capacity - b.capacity)[0];
