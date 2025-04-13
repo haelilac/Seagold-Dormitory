@@ -27,7 +27,7 @@ const formatDate = (date) =>
     date ? new Date(date).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
 
 const PaymentAdmin = () => {
-    const { cache, getCache, updateCache } = useDataCache(); // ✅ Called inside the component
+    const { getCachedData: getCache, updateCache } = useDataCache();
     const [mergedData, setMergedData] = useState([]);  
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
