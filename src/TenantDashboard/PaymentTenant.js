@@ -61,8 +61,12 @@ const PaymentTenant = () => {
         const fetchUserData = async () => {
             try {
                 const userResponse = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                });
+                    method: 'GET',
+                    headers: {
+                      'Authorization': `Bearer ${getAuthToken()}`,
+                      'Accept': 'application/json',
+                    },
+                  });
                 const user = await userResponse.json();
 
                 setTenantId(user.id);
