@@ -201,7 +201,11 @@ const PendingApplications = () => {
         }
     };
 
-    if (loading) return <p>Loading applications...</p>;
+    if (loading) {
+        return (
+          <div className="spinner"></div>
+        );
+      }
     if (error) return <p>Error: {error}</p>;
 
     return (
