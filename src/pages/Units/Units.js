@@ -28,7 +28,7 @@ const Units = () => {
     const fetchUnits = async () => {
       console.time('fetchUnits');
       try {
-        const res = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
+        const res = await fetch('https://seagold-laravel-production.up.railway.app/api/public-units');
         const data = await res.json();
         setUnits(data);
       } catch (err) {
@@ -171,11 +171,14 @@ const Units = () => {
                     >
                     {unit.images.slice(0, 1).map((img, i) => (
                       <img
-                        key={i}
-                        loading="lazy"
                         src={img.image_path}
                         alt={`Room ${unit.unit_code}`}
                         className="rental-image"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/images/fallback.jpg"; // fallback image
+                        }}
                         onClick={() => openFullscreen(unit.images.map(i => i.image_path), i)}
                       />
                     ))}
