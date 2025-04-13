@@ -174,10 +174,10 @@ const PendingApplications = () => {
         try {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
+                    'Authorization': `Bearer ${token}`,
+                  },
                 body: JSON.stringify({
                     name: tenantName,
                     email: tenantEmail,
