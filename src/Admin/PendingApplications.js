@@ -169,6 +169,12 @@ const PendingApplications = () => {
     const handleAccept = async (applicationId, tenantName, tenantEmail, unitCode) => {
         if (!window.confirm('Accept this application and create a tenant account?')) return;
     
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) {
+            alert('Auth token not found. Please log in again.');
+            return;
+        }
+    
         console.log("Sending POST to /accept with ID:", applicationId);
     
         try {
@@ -177,7 +183,7 @@ const PendingApplications = () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
-                  },
+                },
                 body: JSON.stringify({
                     name: tenantName,
                     email: tenantEmail,
@@ -194,6 +200,7 @@ const PendingApplications = () => {
             alert('An error occurred while accepting the application.');
         }
     };
+    
     
     const matchingUnit = selectedApplication
     ? (() => {
