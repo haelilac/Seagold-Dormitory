@@ -103,7 +103,27 @@ const PendingApplications = () => {
         }
     };
     
-    
+    const matchingUnit = units
+    .filter((u) =>
+      u.unit_code === selectedApplication.reservation_details &&
+      u.stay_type.toLowerCase() === selectedApplication.stay_type.toLowerCase() &&
+      u.status === 'available'
+    )
+    .filter((u) => {
+      const sameTypeCount = u.same_staytype_users_count || 0;
+      const totalCount = u.total_users_count || 0;
+      const futureSameType = sameTypeCount + 1;
+      const futureTotal = totalCount + 1;
+  
+      // Use u.occupancy instead of max_capacity for total cap
+      return (
+        futureSameType >= u.capacity &&
+        futureSameType <= u.max_capacity &&
+        futureTotal <= u.occupancy
+      );
+    })
+    .sort((a, b) => a.capacity - b.capacity)[0];
+  
 
     const handleDecline = async (applicationId) => {
         if (!window.confirm('Decline this application?')) return;
@@ -165,9 +185,21 @@ const PendingApplications = () => {
                             <p><strong>Contact Number:</strong> {selectedApplication.contact_number}</p>
                             <p><strong>Duration:</strong> {selectedApplication.duration} months</p>
                             <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
-                            <p><strong>Auto Price:</strong> ₱{selectedApplication.set_price !== null && selectedApplication.set_price !== '' ? parseFloat(selectedApplication.set_price).toFixed(2) : 'Not set'}</p>
-                            <p><strong>Rent Price:</strong> ₱{selectedApplication.set_price !== null && selectedApplication.set_price !== '' ? parseFloat(selectedApplication.set_price).toFixed(2) : 'Not set'}</p>
+                            <p><strong>Auto Price:</strong> ₱
+                                {matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'No matching price'}
+                                </p>
 
+                            <p><strong>Rent Price:</strong> ₱
+                                {selectedApplication.set_price !== null && selectedApplication.set_price !== ''
+                                    ? parseFloat(selectedApplication.set_price).toLocaleString()
+                                    : (matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'Not set')}
+                                </p>
+
+                                {!matchingUnit && (
+                                <p style={{ color: 'red' }}>
+                                    No available pricing. Room may be full or not suitable for current group size.
+                                </p>
+                                )}
 
                             {/* Display Valid ID if available */}
                             

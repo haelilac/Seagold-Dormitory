@@ -107,7 +107,28 @@ const UnitManagement = () => {
         e.target.reset();
         setUnitImageFiles([]);
     };
-
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      };
+      
+      const handleUpdateUnit = async () => {
+        try {
+          const response = await fetch(`${API_URL}/units/${selectedUnit.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+      
+          if (!response.ok) throw new Error('Failed to update unit.');
+          alert('Unit updated!');
+          setShowModal(false);
+          fetchUnits(); // reload unit list
+        } catch (err) {
+          alert('Update error');
+        }
+      };
+      
 
         return (
             <section id="unit-management" className="dashboard-section">
@@ -119,6 +140,13 @@ const UnitManagement = () => {
                             <label>Unit Code:<input type="text" name="unit_code" required /></label>
                             <label>Capacity:<input type="number" name="capacity" required /></label>
                             <label>Price:<input type="number" name="price" required /></label>
+                            <label>Max Occupancy (All Stay Types):</label>
+                            <input
+                            type="number"
+                            name="occupancy"
+                            value={formData.occupancy}
+                            onChange={handleInputChange}
+                            />
                             <label>Upload Room Images:
                                 <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
                             </label>
