@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './UnitManagement.css';
 import { useDataCache } from '../contexts/DataContext';
-
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
 window.Pusher = Pusher;
 window.Echo = new Echo({
