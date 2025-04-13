@@ -104,26 +104,39 @@ const PendingApplications = () => {
     };
     
     const matchingUnit = selectedApplication
-    ? units
-        .filter(
+    ? (() => {
+        const strictlyMatched = units
+          .filter(
+            (u) =>
+              u.unit_code === selectedApplication.reservation_details &&
+              u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase() &&
+              u.status === 'available'
+          )
+          .filter((u) => {
+            const sameTypeCount = u.same_staytype_users_count || 0;
+            const totalCount = u.total_users_count || 0;
+            const futureSameType = sameTypeCount + 1;
+            const futureTotal = totalCount + 1;
+  
+            return (
+              futureSameType >= u.capacity &&
+              futureSameType <= u.max_capacity &&
+              futureTotal <= u.occupancy
+            );
+          })
+          .sort((a, b) => a.capacity - b.capacity)[0];
+  
+        // If no strictly matched unit, fallback to any unit with matching unit_code and stay_type
+        if (strictlyMatched) return strictlyMatched;
+  
+        const fallback = units.find(
           (u) =>
             u.unit_code === selectedApplication.reservation_details &&
-            u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase() &&
-            u.status === 'available'
-        )
-        .filter((u) => {
-          const sameTypeCount = u.same_staytype_users_count || 0;
-          const totalCount = u.total_users_count || 0;
-          const futureSameType = sameTypeCount + 1;
-          const futureTotal = totalCount + 1;
+            u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase()
+        );
   
-          return (
-            futureSameType >= u.capacity &&
-            futureSameType <= u.max_capacity &&
-            futureTotal <= u.occupancy
-          );
-        })
-        .sort((a, b) => a.capacity - b.capacity)[0]
+        return fallback || null;
+      })()
     : null;
   
 
@@ -192,7 +205,7 @@ const PendingApplications = () => {
                                 </p>
 
                             <p><strong>Rent Price:</strong> ₱
-                                {selectedApplication.set_price !== null && selectedApplication.set_price !== ''
+                                {(selectedApplication.set_price !== null && selectedApplication.set_price !== '')
                                     ? parseFloat(selectedApplication.set_price).toLocaleString()
                                     : (matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'Not set')}
                                 </p>
