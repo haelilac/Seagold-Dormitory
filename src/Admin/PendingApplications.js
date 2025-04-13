@@ -251,8 +251,8 @@ const PendingApplications = () => {
                                 {matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'No matching price'}
                                 </p>
 
-                            <p><strong>Rent Price:</strong> ₱
-                                {(selectedApplication.set_price !== null && selectedApplication.set_price !== '')
+                                <p><strong>Rent Price:</strong> ₱
+                                {(selectedApplication.set_price && parseFloat(selectedApplication.set_price) > 0)
                                     ? parseFloat(selectedApplication.set_price).toLocaleString()
                                     : (matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'Not set')}
                                 </p>
