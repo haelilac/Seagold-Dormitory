@@ -1,12 +1,46 @@
 import React, { useEffect, useState } from "react";
 import "./FeedbackAdmin.css";
 import { getAuthToken } from "../utils/auth";
+import { useDataCache } from "../contexts/DataContext";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
+
+window.Pusher = Pusher;
+window.Echo = new Echo({
+  broadcaster: "pusher",
+  key: "fea5d607d4b38ea09320",
+  cluster: "ap1",
+  forceTLS: true,
+});
 
 const FeedbackAdmin = () => {
+    const { getCachedData, updateCache } = useDataCache();
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const cachedFeedback = getCachedData("feedback");
 
+    // Realtime listener
     useEffect(() => {
+        const channel = window.Echo.channel("feedback");
+
+        channel.listen(".new.feedback", (e) => {
+            console.log("📥 New Feedback Received:", e.feedback);
+            const updated = [...(getCachedData("feedback") || []), e.feedback];
+            updateCache("feedback", updated);
+            setFeedbacks(updated);
+        });
+
+        return () => window.Echo.leave("feedback");
+    }, []);
+
+    // Initial fetch or use cached
+    useEffect(() => {
+        if (cachedFeedback?.length) {
+            setFeedbacks(cachedFeedback);
+            setLoading(false);
+            return;
+        }
+
         const fetchFeedbacks = async () => {
             try {
                 const response = await fetch("https://seagold-laravel-production.up.railway.app/api/feedback", {
@@ -20,6 +54,7 @@ const FeedbackAdmin = () => {
 
                 const data = await response.json();
                 setFeedbacks(data);
+                updateCache("feedback", data);
             } catch (error) {
                 console.error("Error fetching feedbacks:", error.message);
             } finally {

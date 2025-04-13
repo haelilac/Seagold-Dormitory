@@ -2,6 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import './MaintenanceRequests.css';
 import { getAuthToken } from "../utils/auth";
+import { useDataCache } from '../contexts/DataContext';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: 'fea5d607d4b38ea09320',
+  cluster: 'ap1',
+  forceTLS: true,
+});
+
 const MaintenanceRequests = () => {
     const [maintenanceRequests, setMaintenanceRequests] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -11,8 +23,16 @@ const MaintenanceRequests = () => {
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [schedule, setSchedule] = useState(''); // Schedule date and time
 
-    // Fetch Maintenance Requests
+    const { getCachedData, updateCache } = useDataCache();
+
     useEffect(() => {
+        const cached = getCachedData('maintenance_requests');
+        if (cached?.length > 0) {
+            setMaintenanceRequests(cached);
+            setLoading(false);
+            return;
+        }
+    
         const fetchMaintenanceRequests = async () => {
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
@@ -21,11 +41,12 @@ const MaintenanceRequests = () => {
                         Authorization: `Bearer ${getAuthToken()}`,
                     },
                 });
-
+    
                 if (!response.ok) throw new Error('Failed to fetch maintenance requests.');
-
+    
                 const data = await response.json();
                 setMaintenanceRequests(data);
+                updateCache('maintenance_requests', data); // ✅ Cache the data
             } catch (err) {
                 console.error(err.message);
                 setError('Failed to load maintenance requests. Please try again.');
@@ -33,10 +54,25 @@ const MaintenanceRequests = () => {
                 setLoading(false);
             }
         };
-
+    
         fetchMaintenanceRequests();
     }, []);
-
+    
+    useEffect(() => {
+        const channel = window.Echo.channel('admin.maintenance');
+    
+        channel.listen('.new.maintenance', (e) => {
+            console.log('🔧 New maintenance request received:', e.request);
+            const updated = [...(getCachedData('maintenance_requests') || []), e.request];
+            setMaintenanceRequests(updated);
+            updateCache('maintenance_requests', updated);
+        });
+    
+        return () => {
+            window.Echo.leave('admin.maintenance');
+        };
+    }, []);
+    
     // Handle Row Click to Open Modal
     const handleRowClick = (request) => {
         setSelectedRequest(request);

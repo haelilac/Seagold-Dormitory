@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import './UnitManagement.css';
+import { useDataCache } from '../contexts/DataContext';
+
+
+window.Pusher = Pusher;
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: 'fea5d607d4b38ea09320',
+  cluster: 'ap1',
+  forceTLS: true,
+});
 
 const UnitManagement = () => {
     const [units, setUnits] = useState([]);
     const [availableUnits, setAvailableUnits] = useState(0);
     const [unavailableUnits, setUnavailableUnits] = useState(0);
+    const { getCachedData, updateCache } = useDataCache();
+    const cachedUnits = getCachedData('unit_groups');
     const [showModal, setShowModal] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
     const [pricingDetails, setPricingDetails] = useState([]);
@@ -25,17 +37,43 @@ const UnitManagement = () => {
         if (showModal && selectedUnit) fetchUnitImages();
     }, [showModal, selectedUnit]);
 
-    const fetchUnits = async () => {
-        try {
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
-            const data = await response.json();
-            setUnits(data);
-            setAvailableUnits(data.filter(unit => unit.status === 'available').length);
-            setUnavailableUnits(data.filter(unit => unit.status === 'unavailable').length);
-        } catch (error) {
-            console.error('Error fetching units:', error.message);
-        }
+  // ✅ Fetch & cache units
+  const fetchUnits = async () => {
+    try {
+      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
+      const data = await response.json();
+      setUnits(data);
+      updateCache('unit_groups', data);
+      setAvailableUnits(data.filter(unit => unit.overall_status === 'available').length);
+      setUnavailableUnits(data.filter(unit => unit.overall_status === 'unavailable').length);
+    } catch (error) {
+      console.error('Error fetching units:', error.message);
+    }
+  };
+
+  // ✅ On load: use cache or fetch
+  useEffect(() => {
+    if (cachedUnits?.length) {
+      setUnits(cachedUnits);
+      setAvailableUnits(cachedUnits.filter(unit => unit.overall_status === 'available').length);
+      setUnavailableUnits(cachedUnits.filter(unit => unit.overall_status === 'unavailable').length);
+    } else {
+      fetchUnits();
+    }
+  }, []);
+
+  // ✅ Pusher Realtime
+  useEffect(() => {
+    const channel = window.Echo.channel('admin.units');
+    channel.listen('.unit.updated', (e) => {
+      console.log("📦 Unit updated via Pusher:", e.unit);
+      fetchUnits(); // Re-fetch when new update comes in
+    });
+
+    return () => {
+      window.Echo.leave('admin.units');
     };
+  }, []);
 
     const handleViewDetails = async (unitCode) => {
         try {
