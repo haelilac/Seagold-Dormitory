@@ -103,26 +103,28 @@ const PendingApplications = () => {
         }
     };
     
-    const matchingUnit = units
-    .filter((u) =>
-      u.unit_code === selectedApplication.reservation_details &&
-      u.stay_type.toLowerCase() === selectedApplication.stay_type.toLowerCase() &&
-      u.status === 'available'
-    )
-    .filter((u) => {
-      const sameTypeCount = u.same_staytype_users_count || 0;
-      const totalCount = u.total_users_count || 0;
-      const futureSameType = sameTypeCount + 1;
-      const futureTotal = totalCount + 1;
+    const matchingUnit = selectedApplication
+    ? units
+        .filter(
+          (u) =>
+            u.unit_code === selectedApplication.reservation_details &&
+            u.stay_type?.toLowerCase() === selectedApplication.stay_type?.toLowerCase() &&
+            u.status === 'available'
+        )
+        .filter((u) => {
+          const sameTypeCount = u.same_staytype_users_count || 0;
+          const totalCount = u.total_users_count || 0;
+          const futureSameType = sameTypeCount + 1;
+          const futureTotal = totalCount + 1;
   
-      // Use u.occupancy instead of max_capacity for total cap
-      return (
-        futureSameType >= u.capacity &&
-        futureSameType <= u.max_capacity &&
-        futureTotal <= u.occupancy
-      );
-    })
-    .sort((a, b) => a.capacity - b.capacity)[0];
+          return (
+            futureSameType >= u.capacity &&
+            futureSameType <= u.max_capacity &&
+            futureTotal <= u.occupancy
+          );
+        })
+        .sort((a, b) => a.capacity - b.capacity)[0]
+    : null;
   
 
     const handleDecline = async (applicationId) => {
