@@ -34,6 +34,7 @@ import Feedback from 'react-bootstrap/esm/Feedback';
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
 import { getAuthToken } from "./utils/auth";
+import { DataProvider } from './contexts/DataContext';
 
 const clientId = "758551378674-8t930isecldottudrarf724h6jlgdcji.apps.googleusercontent.com";
 
@@ -138,7 +139,8 @@ const App = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <Router>
+      <DataProvider>
+        <Router>
         <div className="app-content">
           {console.log("Current Role State:", role)}
 
@@ -188,6 +190,7 @@ const App = () => {
           </Routes>
         </div>
       </Router>
+      </DataProvider>
     </GoogleOAuthProvider>
   );
 };

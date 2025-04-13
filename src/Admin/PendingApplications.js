@@ -13,6 +13,27 @@ window.Echo = new Echo({
   forceTLS: true,
 });
 
+const { getCachedData, updateCache } = useDataCache();
+const cachedApplications = getCachedData('applications');
+
+useEffect(() => {
+  if (cachedApplications) {
+    setApplications(cachedApplications);
+    setLoading(false);
+    return; // ✅ skip fetch if cached
+  }
+
+  const fetchApplications = async () => {
+    const response = await fetch('/api/applications');
+    const data = await response.json();
+    setApplications(data.applications);
+    updateCache('applications', data.applications); // ✅ save to cache
+    setLoading(false);
+  };
+
+  fetchApplications();
+}, []);
+
 const PendingApplications = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     const [applications, setApplications] = useState([]);
@@ -29,18 +50,18 @@ const PendingApplications = () => {
     });
 
     useEffect(() => {
-        const channel = window.Echo.channel('admin.applications');
+        const channel = window.Echo.channel('admin.applications'); // ✅ Make sure this matches your Laravel event
+    
         channel.listen('.new.application', (e) => {
-
           console.log("📥 New Application Received:", e.application);
-          setApplications((prev) => [...prev, e.application]);
-          if (e.application.status === 'pending') {
-            updateCache('applications', [...(cachedData.applications || []), e.application]);
-          }
+    
+          const updatedApps = [...(getCachedData('applications') || []), e.application];
+          updateCache('applications', updatedApps);
+          setApplications(updatedApps); // ✅ update UI state
         });
-      
+    
         return () => {
-          channel.stopListening('NewApplicationSubmitted');
+          window.Echo.leave('admin.applications'); // clean up
         };
       }, []);
 
@@ -76,30 +97,27 @@ const PendingApplications = () => {
 
     // Fetch pending applications
     useEffect(() => {
+        if (cachedApplications) {
+          console.log('✅ Using cached applications');
+          return;
+        }
+      
         const fetchApplications = async () => {
-            const start = performance.now(); // Start timer
-            try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch applications');
-                }
-                const data = await response.json();
-    
-                setApplications(data.applications || []);
-                setUnits(data.units || []);
-    
-                const end = performance.now(); // End timer
-                const seconds = ((end - start) / 1000).toFixed(2);
-                console.log(`✅ Pending applications fetched in ${seconds} seconds`);
-            } catch (err) {
-                console.error('❌ Error fetching applications:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
+          try {
+            const res = await fetch('https://seagold-laravel-production.up.railway.app/api/applications-only');
+            const data = await res.json();
+            updateCache('applications', data.applications || []);
+            setApplications(data.applications || []);
+          } catch (err) {
+            console.error('❌ Error fetching applications:', err);
+          } finally {
+            setLoading(false);
+          }
         };
+      
         fetchApplications();
-    }, []);
+      }, []);
+      
     
 
     const handleSelectApplication = (application) => {

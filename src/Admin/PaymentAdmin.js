@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 import { getAuthToken } from "../utils/auth";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { useDataCache } from '../contexts/DataContext';
 
 window.Pusher = Pusher;
 window.Echo = new Echo({
@@ -17,10 +18,9 @@ useEffect(() => {
     const channel = window.Echo.channel('admin.payments');
   
     channel.listen('.new.payment', (e) => {
-      console.log("📥 New Payment Received:", e.payment);
+      console.log("📥 Real-time payment:", e.payment);
   
-      // Optional: Add only if it matches the current month filter
-      setMergedData((prev) => [...prev, {
+      const newEntry = {
         ...e.payment,
         name: e.payment.user?.name || 'New Tenant',
         unit_code: e.payment.unit?.unit_code || 'N/A',
@@ -28,7 +28,11 @@ useEffect(() => {
         balance: `₱${parseFloat(e.payment.remaining_balance || 0).toFixed(2)}`,
         payment_date: e.payment.created_at,
         status: e.payment.status,
-      }]);
+      };
+  
+      const updated = [...getCache('payments'), newEntry];
+      updateCache('payments', updated);
+      setMergedData(updated);
     });
   
     return () => {
@@ -36,6 +40,7 @@ useEffect(() => {
     };
   }, []);
   
+
 const initSummary = () => ({
     Confirmed: 0,
     Pending: 0,
@@ -47,7 +52,8 @@ const formatDate = (date) =>
     date ? new Date(date).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
 
 const PaymentAdmin = () => {
-    const [mergedData, setMergedData] = useState([]);
+    const { cache, getCache, updateCache } = useDataCache();
+    const [mergedData, setMergedData] = useState(getCache('payments') || []);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({ status: '', month: '', year: '', search: '' });
@@ -170,6 +176,7 @@ const PaymentAdmin = () => {
                 
                 
             ];
+            updateCache('payments', merged);
             setMergedData(merged);
         } catch (err) {
             console.error('Error fetching data:', err.message);
@@ -214,7 +221,13 @@ const PaymentAdmin = () => {
     };
 
     useEffect(() => { getPaymentStatusCounts(); }, [mergedData]);
-    useEffect(() => { fetchMergedData(); }, [filters]);
+    useEffect(() => {
+        if (!getCache('payments')?.length) {
+          fetchMergedData(); // Only fetch if not in cache
+        }
+      }, [filters]);
+
+    <button onClick={fetchMergedData}>🔄 Refresh Payments</button>
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
