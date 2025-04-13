@@ -10,7 +10,13 @@ const UnitManagement = () => {
     const [pricingDetails, setPricingDetails] = useState([]);
     const [unitImages, setUnitImages] = useState([]);
     const [unitImageFiles, setUnitImageFiles] = useState([]);
-
+    const [formData, setFormData] = useState({
+        name: '',
+        capacity: '',
+        max_capacity: '',
+        occupancy: '',
+        price: '',
+      });
     useEffect(() => {
         fetchUnits();
     }, []);
@@ -128,7 +134,7 @@ const UnitManagement = () => {
       
       const handleUpdateUnit = async () => {
         try {
-          const response = await fetch(`${API_URL}/units/${selectedUnit.id}`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/${selectedUnit.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
@@ -232,6 +238,10 @@ const UnitManagement = () => {
                                     {unitImages.map((img) => (
                                         <div key={img.id} className="image-preview-wrapper">
                                             <img src={img.image_path} alt="Room" className="room-image-preview" />
+                                            <button onClick={handleUpdateUnit} className="save-button">
+                                                Save Unit Info
+                                                </button>
+
                                             <button
                                                 onClick={async () => {
                                                     if (!window.confirm('Delete this image?')) return;
@@ -243,6 +253,7 @@ const UnitManagement = () => {
                                             >
                                                 Delete
                                             </button>
+
                                         </div>
                                     ))}
                                 </div>
