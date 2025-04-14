@@ -648,15 +648,23 @@ const ContactUs = () => {
 
                     {formData.stay_type === "weekly" && (
                         <div className="form-group">
-                            <label>Duration</label>
-                            <input
-                                type="number"
+                            <label>Duration (Weeks)</label>
+                            <select
                                 name="duration"
-                                value="7 days"
-                                readOnly
-                            />
+                                value={formData.duration}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Select Duration</option>
+                                {Array.from({ length: 12 }, (_, i) => ( // Allow 1 to 12 weeks (or more if needed)
+                                    <option key={i + 1} value={i + 1}>
+                                        {i + 1} week{ i > 0 && 's' }
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     )}
+
 
                     {formData.stay_type === "daily" && (
                         <div className="form-group">
