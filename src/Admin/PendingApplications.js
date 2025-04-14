@@ -133,7 +133,7 @@ const PendingApplications = () => {
             duration: application.duration,
             reservation_details: application.reservation_details,
             set_price: application.set_price || '',
-            stay_type: application.stay_type || '', // ✅ ADD THIS LINE
+            stay_type: application.stay_type || '',
         });
     };
     
@@ -307,7 +307,13 @@ const PendingApplications = () => {
                             <p><strong>Name:</strong> {`${selectedApplication.first_name} ${selectedApplication.middle_name || ''} ${selectedApplication.last_name}`}</p>
                             <p><strong>Email:</strong> {selectedApplication.email}</p>
                             <p><strong>Contact Number:</strong> {selectedApplication.contact_number}</p>
-                            <p><strong>Duration:</strong> {selectedApplication.duration} months</p>
+                            <p><strong>Duration:</strong> 
+                                {selectedApplication.duration} 
+                                {selectedApplication.stay_type === "monthly" && "month(s)"}
+                                {selectedApplication.stay_type === "half-month" && "half month"}
+                                {selectedApplication.stay_type === "weekly" && "week(s)"}
+                                {selectedApplication.stay_type === "daily" && "day(s)"}
+                                </p>
                             <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
                             <p><strong>Auto Price:</strong> ₱
                                 {matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'No matching price'}
