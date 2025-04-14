@@ -291,7 +291,13 @@ const PendingApplications = () => {
                             <td>{application.email}</td>
                             <td>{application.contact_number}</td>
                             <td>{application.check_in_date || 'N/A'}</td>
-                            <td>{application.duration} months</td>
+                            <td>
+                                {application.duration}{' '}
+                                {application.stay_type === 'monthly' && 'month(s)'}
+                                {application.stay_type === 'half-month' && 'half month'}
+                                {application.stay_type === 'weekly' && 'week(s)'}
+                                {application.stay_type === 'daily' && 'day(s)'}
+                                </td>
                             <td>{application.reservation_details || 'N/A'}</td>
                         </tr>
                     ))}
