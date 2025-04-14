@@ -328,24 +328,20 @@ const PaymentTenant = () => {
             alert("⚠️ Please validate your receipt before submitting the payment.");
             return;
         }
-
+    
         if (!formData.payment_for) {
             alert('❌ Please select a payment period.');
             return;
         }
-        
+    
         const hasPendingPaymentForMonth = paymentHistory.some(
             (payment) =>
                 payment.payment_period === formData.payment_for &&
                 payment.status === "Pending"
         );
-        
+    
         if (hasPendingPaymentForMonth) {
             alert("⚠️ You already have a pending payment for this month. Please wait for it to be confirmed or rejected before submitting another.");
-            return;
-        }
-    
-        if (!window.confirm("Are you sure you want to submit this payment?")) {
             return;
         }
     
@@ -356,11 +352,12 @@ const PaymentTenant = () => {
         requestData.append('reference_number', formData.reference_number);
         requestData.append('payment_for', formData.payment_for);
         requestData.append('receipt', formData.receipt);
+        requestData.append('duration', duration); // Pass the duration here
     
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
                 method: 'POST',
-                Authorization: `Bearer ${getAuthToken()}`,
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
                 body: requestData,
             });
     
