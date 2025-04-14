@@ -375,6 +375,7 @@ const ContactUs = () => {
                 check_in_date: null,
                 duration: '',
                 reservation_details: '',
+                stay_type: '', 
                 valid_id: null,
                 accept_privacy: false,
             });
