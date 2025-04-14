@@ -171,84 +171,103 @@ const PaymentTenant = () => {
     const fetchPaymentData = async (id) => {
         try {
             const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${id}`, {
-                headers: { Authorization: `Bearer ${getAuthToken()}`            },
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
-
+    
             if (!res.ok) throw new Error('Failed to fetch payment data.');
-
+    
             const data = await res.json();
-
+    
             setUnitPrice(data.unit_price || 0);
             setPaymentHistory(data.payments || []);
             setDueDate(data.due_date);
             setCheckInDate(data.check_in_date);
             setDuration(data.duration);
             setBalanceDue(data.unpaid_balances || {}); // Fetch remaining balance
-
-            generatePaymentMonths(data.check_in_date, data.duration, data.payments);
+    
+            // Now calling generatePaymentPeriods with stay_type, duration, and payments
+            generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
         } catch (error) {
             console.error('Error fetching payment data:', error);
             setPaymentHistory([]);
         }
     };
     
-
-    const generatePaymentMonths = (startDate, duration, payments) => {
-        const months = [];
+    const generatePaymentPeriods = (startDate, duration, stayType, payments) => {
+        const periods = [];
         const start = new Date(startDate);
-        start.setMonth(start.getMonth() + 1);
     
+        // Generate payment periods based on stayType
         for (let i = 0; i < duration; i++) {
             const paymentDate = new Date(start);
-            paymentDate.setMonth(start.getMonth() + i);
+    
+            // Handle each stay type differently
+            switch (stayType) {
+                case 'daily':
+                    paymentDate.setDate(start.getDate() + i);  // Increment by day for daily
+                    break;
+                case 'weekly':
+                    paymentDate.setDate(start.getDate() + i * 7);  // Increment by week for weekly
+                    break;
+                case 'half-month':
+                    paymentDate.setDate(start.getDate() + i * 15);  // Increment by half-month (15 days)
+                    break;
+                case 'monthly':
+                    paymentDate.setMonth(start.getMonth() + i);  // Increment by month for monthly
+                    break;
+                default:
+                    paymentDate.setDate(start.getDate() + i);  // Default to daily if unknown stay_type
+                    break;
+            }
+    
             const formattedDate = paymentDate.toISOString().split('T')[0];
-            months.push(formattedDate);
+            periods.push(formattedDate);
         }
     
-        console.log('Generated Months:', months);
+        console.log('Generated Periods:', periods);
     
-        // Separate fully paid, partially paid, and unpaid months
-        const monthStatus = {};
+        // Separate fully paid, partially paid, and unpaid periods
+        const periodStatus = {};
         payments.forEach((p) => {
-            monthStatus[p.payment_period] = {
+            periodStatus[p.payment_period] = {
                 amountPaid: parseFloat(p.amount),
                 remainingBalance: parseFloat(p.remaining_balance),
             };
         });
     
-        let unpaidMonths = [];
-        let partiallyPaidMonths = [];
+        let unpaidPeriods = [];
+        let partiallyPaidPeriods = [];
         let firstPartiallyPaid = null;
     
-        months.forEach((month) => {
-            if (monthStatus[month]) {
-                if (monthStatus[month].remainingBalance > 0) {
-                    partiallyPaidMonths.push(month);
-                    if (!firstPartiallyPaid) firstPartiallyPaid = month; // ✅ Track the first partially paid month
+        periods.forEach((period) => {
+            if (periodStatus[period]) {
+                if (periodStatus[period].remainingBalance > 0) {
+                    partiallyPaidPeriods.push(period);
+                    if (!firstPartiallyPaid) firstPartiallyPaid = period; // Track first partially paid period
                 }
             } else {
-                unpaidMonths.push(month);
+                unpaidPeriods.push(period);
             }
         });
-
-        const limitedMonths = [];
-
-            for (let month of months) {
-                const status = monthStatus[month];
-
-                if (status && status.remainingBalance > 0) {
-                    limitedMonths.push(month); // First partially paid month
-                    break;
-                }
-
-                if (!status) {
-                    limitedMonths.push(month); // First fully unpaid month
-                    break;
-                }
+    
+        const limitedPeriods = [];
+    
+        for (let period of periods) {
+            const status = periodStatus[period];
+    
+            if (status && status.remainingBalance > 0) {
+                limitedPeriods.push(period); // First partially paid period
+                break;
             }
     
-        setAvailableMonths(limitedMonths);
-        setFirstPartialMonth(limitedMonths[0]); // ✅ Save first partially paid month
+            if (!status) {
+                limitedPeriods.push(period); // First fully unpaid period
+                break;
+            }
+        }
+    
+        setAvailableMonths(limitedPeriods);
+        setFirstPartialMonth(limitedPeriods[0]); // Save first partially paid period
     };
     
     
