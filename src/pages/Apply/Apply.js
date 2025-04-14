@@ -214,8 +214,9 @@ const ContactUs = () => {
             let autoDuration = "";
             if (value === "half-month") autoDuration = 15;
             else if (value === "weekly") autoDuration = 7;
-            else if (value === "daily" || value === "monthly") autoDuration = "";
-        
+            else if (value === "daily") autoDuration = formData.duration || ""; // Allow custom duration for daily
+            else if (value === "monthly") autoDuration = "";
+    
             setFormData(prev => ({
                 ...prev,
                 [name]: value,
@@ -224,6 +225,7 @@ const ContactUs = () => {
             return;
         }
     
+        // Handle other inputs
         setFormData({ ...formData, [name]: value });
     };
     
@@ -630,48 +632,51 @@ const ContactUs = () => {
                     </div>
                 )}
 
-                {formData.stay_type === "half-month" && (
-                    <div className="form-group">
-                        <label>Duration</label>
-                        <input
-                            type="text"
-                            name="duration"
-                            value="15 days"
-                            readOnly
-                        />
-                    </div>
-                )}
 
-                {formData.stay_type === "weekly" && (
-                    <div className="form-group">
-                        <label>Duration</label>
-                        <input
-                            type="number"
-                            name="duration"
-                             value="7 days"
-                            readOnly
-                        />
-                    </div>
-                )}
+                    {formData.stay_type === "half-month" && (
+                        <div className="form-group">
+                            <label>Duration</label>
+                            <input
+                                type="text"
+                                name="duration"
+                                value="15 days"
+                                readOnly
+                            />
+                        </div>
+                    )}
 
-                {formData.stay_type === "daily" && (
-                    <div className="form-group">
-                        <label>Duration (Days)</label>
-                        <select
-                            name="duration"
-                            value={formData.duration}
-                            onChange={handleInputChange}
-                            required
-                        >
-                            <option value="">Select Duration</option>
-                            {Array.from({ length: 30 }, (_, i) => (
-                                <option key={i + 1} value={i + 1}>
-                                    {i + 1} day{ i > 0 && 's' }
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
+
+                    {formData.stay_type === "weekly" && (
+                        <div className="form-group">
+                            <label>Duration</label>
+                            <input
+                                type="number"
+                                name="duration"
+                                value="7 days"
+                                readOnly
+                            />
+                        </div>
+                    )}
+
+                    {formData.stay_type === "daily" && (
+                        <div className="form-group">
+                            <label>Duration (Days)</label>
+                            <select
+                                name="duration"
+                                value={formData.duration}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Select Duration</option>
+                                {Array.from({ length: 30 }, (_, i) => (
+                                    <option key={i + 1} value={i + 1}>
+                                        {i + 1} day{ i > 0 && 's' }
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
 
 
                 {/* Reservation */}
