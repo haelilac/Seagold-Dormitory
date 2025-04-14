@@ -324,11 +324,10 @@ const PendingApplications = () => {
                             <p><strong>Auto Price:</strong> ₱
                                 {matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'No matching price'}
                                 </p>
-
                                 <p><strong>Rent Price:</strong> ₱
-                                {(selectedApplication.set_price && parseFloat(selectedApplication.set_price) > 0)
-                                    ? parseFloat(selectedApplication.set_price).toLocaleString()
-                                    : (matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'Not set')}
+                                    {selectedApplication.set_price && selectedApplication.set_price > 0
+                                        ? parseFloat(selectedApplication.set_price).toLocaleString()  // Use the edited price if available
+                                        : (matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'Not set')}  // Default to auto price if set_price is not set
                                 </p>
 
                                 {!matchingUnit && (
