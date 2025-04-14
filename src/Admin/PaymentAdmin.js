@@ -7,11 +7,13 @@ import Pusher from 'pusher-js';
 import { useDataCache } from '../contexts/DataContext';
 
 window.Pusher = Pusher;
+
 window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: 'fea5d607d4b38ea09320',
-  cluster: 'ap1',
-  forceTLS: true,
+    broadcaster: 'pusher',
+    key: 'fea5d607d4b38ea09320', 
+    cluster: 'ap1',
+    forceTLS: true,
+    encrypted: true,
 });
 
   

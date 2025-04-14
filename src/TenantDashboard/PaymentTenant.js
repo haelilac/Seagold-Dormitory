@@ -22,18 +22,6 @@ const PaymentTenant = () => {
     const [isCompact, setIsCompact] = useState(false);
     const [currentView, setCurrentView] = useState("dashboard");
     const [currentBillView, setCurrentBillView] = useState("bills");
-
-    const { width, ref } = useResizeDetector({
-        onResize: (width) => {
-            if (width < 480) {  
-                setIsCompact(true);  // Extra compact mode for smartphones
-            } else if (width < 768) {  
-                setIsCompact(true); // Tablet mode
-            } else {
-                setIsCompact(false); // Default layout
-            }
-        }
-    });
     const [formData, setFormData] = useState({
         payment_for: '',
         payment_type: '',
@@ -41,7 +29,6 @@ const PaymentTenant = () => {
         receipt: null,
         amount: '',
     });
-
     const [unitPrice, setUnitPrice] = useState(0);
     const [paymentHistory, setPaymentHistory] = useState([]);
     const [warningMessage, setWarningMessage] = useState('');
@@ -56,6 +43,18 @@ const PaymentTenant = () => {
     const [showTransactions, setShowTransactions] = useState(false);
     const [billingDetails, setBillingDetails] = useState([]);
     const [receiptValidated, setReceiptValidated] = useState(false); // Track receipt validation
+
+    const { width, ref } = useResizeDetector({
+        onResize: (width) => {
+            if (width < 480) {
+                setIsCompact(true);
+            } else if (width < 768) {
+                setIsCompact(true);
+            } else {
+                setIsCompact(false);
+            }
+        }
+    });
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -196,7 +195,6 @@ const PaymentTenant = () => {
         }
     };
     
-    const [firstPartialMonth, setFirstPartialMonth] = useState(null);
 
     const generatePaymentMonths = (startDate, duration, payments) => {
         const months = [];
