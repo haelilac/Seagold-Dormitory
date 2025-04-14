@@ -124,8 +124,13 @@ const PaymentTenant = () => {
         // Fetch correct remaining balance based on the selected duration and stay type
         const originalRemainingBalance = calculateRemainingBalance(formData.stay_type, duration, unitPrice);
         
+        // Check if the stay_type is 'monthly' for partial payments
         const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
-        const newPaymentType = newRemainingBalance > 0 ? 'Partially Paid' : 'Fully Paid';
+    
+        let newPaymentType = 'Fully Paid';
+        if (formData.stay_type === 'monthly' && newRemainingBalance > 0) {
+            newPaymentType = 'Partially Paid';  // Only applicable for monthly stay_type
+        }
         
         setFormData((prevData) => ({
             ...prevData,
@@ -135,6 +140,7 @@ const PaymentTenant = () => {
     
         setDisplayedRemainingBalance(newRemainingBalance);
     };
+    
     
     
     // ✅ Ensures final amount is registered properly on blur
@@ -482,10 +488,10 @@ const PaymentTenant = () => {
                 >
                     <option value="">Select Payment Date</option>
 
-                    {availableMonths.map((month, index) => (
-                        <option key={index} value={month}>
-                            {new Date(month).toLocaleDateString('default', { month: 'long', year: 'numeric' })}
-                            {balanceDue[month] > 0 ? " (Partially Paid)" : ""}
+                    {availableMonths.map((date, index) => (
+                        <option key={index} value={date}>
+                            {new Date(date).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                            {balanceDue[date] > 0 ? " (Partially Paid)" : ""}
                         </option>
                     ))}
                 </select>
