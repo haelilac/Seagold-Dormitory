@@ -97,6 +97,26 @@ const PaymentTenant = () => {
         }
     }, [tenantId]);
 
+    const calculateRemainingBalance = (stayType, duration, unitPrice) => {
+        switch (stayType) {
+            case 'daily':
+                return unitPrice * duration; // Total for the duration (e.g., 500 per day for 6 days)
+            case 'weekly':
+                const totalWeeks = Math.ceil(duration / 7); // Calculate weeks
+                return unitPrice * totalWeeks; // Weekly calculation
+            case 'half-month':
+                return unitPrice / 2; // Assume half-month pricing is fixed (e.g., ₱1500)
+            case 'monthly':
+                return unitPrice; // Monthly charge remains the same
+            default:
+                return unitPrice;
+        }
+    };
+    
+    // Call this function where you need to update the remaining balance
+    setDisplayedRemainingBalance(calculateRemainingBalance(formData.stay_type, duration, unitPrice));
+    
+
     const [tempAmount, setTempAmount] = useState(""); 
     const [confirmedAmount, setConfirmedAmount] = useState(0); 
     const [displayedRemainingBalance, setDisplayedRemainingBalance] = useState(unitPrice);
@@ -105,26 +125,18 @@ const PaymentTenant = () => {
         const enteredAmount = parseFloat(e.target.value) || 0;
         setTempAmount(e.target.value);
     
-        if (!formData.payment_for) return;
-    
-        const selectedMonth = formData.payment_for;
-    
-        // ✅ Always fetch the correct remaining balance
-        const originalRemainingBalance = balanceDue[selectedMonth] !== undefined
-            ? balanceDue[selectedMonth]  // Get correct remaining balance
-            : unitPrice;  // Default to full price if no payments
-    
-        // ✅ Calculate remaining balance dynamically
+        // Fetch correct remaining balance based on the selected duration and stay type
+        const originalRemainingBalance = calculateRemainingBalance(formData.stay_type, duration, unitPrice);
+        
         const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
         const newPaymentType = newRemainingBalance > 0 ? 'Partially Paid' : 'Fully Paid';
-    
+        
         setFormData((prevData) => ({
             ...prevData,
             amount: enteredAmount,
             payment_type: newPaymentType,
         }));
     
-        // ✅ Update the displayed balance dynamically
         setDisplayedRemainingBalance(newRemainingBalance);
     };
     
@@ -451,20 +463,14 @@ const PaymentTenant = () => {
                 <select
                     name="payment_for"
                     value={formData.payment_for}
-                    onChange={handleMonthSelection}  
+                    onChange={handleMonthSelection}
                     required
                 >
                     <option value="">Select Payment Date</option>
 
-                    {/* Show partially paid months first */}
                     {availableMonths.map((month, index) => (
-                        <option 
-                            key={index} 
-                            value={month} 
-                            disabled={firstPartialMonth && month !== firstPartialMonth}
-                            title={firstPartialMonth && month !== firstPartialMonth ? "Please pay your remaining balance first" : ""}
-                        >
-                            {new Date(month).toLocaleDateString('default', { month: 'long', year: 'numeric' })} 
+                        <option key={index} value={month}>
+                            {new Date(month).toLocaleDateString('default', { month: 'long', year: 'numeric' })}
                             {balanceDue[month] > 0 ? " (Partially Paid)" : ""}
                         </option>
                     ))}
