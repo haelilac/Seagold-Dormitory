@@ -183,6 +183,9 @@ const PaymentTenant = () => {
             if (!res.ok) throw new Error('Failed to fetch payment data.');
     
             const data = await res.json();
+            
+            // Log dueDate here to see if it's being fetched correctly
+            console.log("Due Date from Backend:", data.due_date);
     
             setUnitPrice(data.unit_price || 0);
             setPaymentHistory(data.payments || []);
@@ -431,7 +434,14 @@ const PaymentTenant = () => {
                     </div>
                     <div className="balance-box due">
                         <p>Next Payment Due</p>
-                        <h2>{dueDate ? new Date(dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : "No Dues"}</h2>
+                        <h2>
+                            {dueDate ? new Date(dueDate).toLocaleDateString('en-US', { 
+                                month: 'long', 
+                                day: 'numeric', 
+                                year: 'numeric' 
+                            }) : "No Dues"}
+                        </h2>
+                        {console.log("Due Date in Dashboard:", dueDate)} {/* Debug */}
                     </div>
                 </div>
 
@@ -490,7 +500,12 @@ const PaymentTenant = () => {
 
                     {availableMonths.map((date, index) => (
                         <option key={index} value={date}>
-                            {new Date(date).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                            {new Date(date).toLocaleDateString('default', { 
+                                weekday: 'long', 
+                                month: 'long', 
+                                day: 'numeric', 
+                                year: 'numeric' 
+                            })}
                             {balanceDue[date] > 0 ? " (Partially Paid)" : ""}
                         </option>
                     ))}
@@ -586,25 +601,25 @@ const PaymentTenant = () => {
                         <button onClick={() => setCurrentBillView("paid")}>Paid</button>
                     </div>
 
-            {/* ✅ To Pay Section */}
-            {currentBillView === "toPay" && (
-                <div className="to-pay-section">
-                    <h2>Months Remaining to Pay</h2>
-                    {availableMonths.length > 0 ? (
-                        <ul>
-                            {availableMonths.map((month, index) => (
-                                <li key={index}>
-                                    {new Date(month).toLocaleDateString('default', { month: 'long', year: 'numeric' })} 
-                                    {balanceDue[month] > 0 ? " (Partially Paid)" : " (Unpaid)"}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>All months are paid.</p>
+                    {/* ✅ To Pay Section */}
+                    {currentBillView === "toPay" && (
+                        <div className="to-pay-section">
+                            <h2>Months Remaining to Pay</h2>
+                            {availableMonths.length > 0 ? (
+                                <ul>
+                                    {availableMonths.map((month, index) => (
+                                        <li key={index}>
+                                            {/* Format the date to include day, month, and year */}
+                                            {new Date(month).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} 
+                                            {balanceDue[month] > 0 ? " (Partially Paid)" : " (Unpaid)"}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>All months are paid.</p>
+                            )}
+                        </div>
                     )}
-                </div>
-            )}
-
 
                     {/* ✅ Paid Section */}
                     {currentBillView === "paid" && (
@@ -616,7 +631,8 @@ const PaymentTenant = () => {
                                         .filter(payment => payment.remaining_balance === 0) // Show only fully paid months
                                         .map((payment, index) => (
                                             <li key={index}>
-                                                {new Date(payment.payment_period).toLocaleDateString('default', { month: 'long', year: 'numeric' })}
+                                                {/* Format the payment date to include day, month, and year */}
+                                                {new Date(payment.payment_period).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                                             </li>
                                         ))}
                                 </ul>
