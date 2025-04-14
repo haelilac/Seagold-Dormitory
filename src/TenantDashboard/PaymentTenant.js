@@ -112,9 +112,6 @@ const PaymentTenant = () => {
         }
     };
     
-    // Call this function where you need to update the remaining balance
-    setDisplayedRemainingBalance(calculateRemainingBalance(formData.stay_type, duration, unitPrice));
-    
 
     const [tempAmount, setTempAmount] = useState(""); 
     const [confirmedAmount, setConfirmedAmount] = useState(0); 
