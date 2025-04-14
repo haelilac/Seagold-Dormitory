@@ -43,7 +43,7 @@ const PaymentTenant = () => {
     const [showTransactions, setShowTransactions] = useState(false);
     const [billingDetails, setBillingDetails] = useState([]);
     const [receiptValidated, setReceiptValidated] = useState(false); // Track receipt validation
-
+    const [firstPartialMonth, setFirstPartialMonth] = useState(null);
     const { width, ref } = useResizeDetector({
         onResize: (width) => {
             if (width < 480) {
