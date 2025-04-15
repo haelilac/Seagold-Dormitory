@@ -10,8 +10,8 @@ import {
   TrafficLayer,
 } from "@react-google-maps/api";
 import userPinGif from "../assets/pin-your-location.gif";
-import seagoldPinGif from "../../assets/seagoldpinicon.gif";
-import amenityPinGif from "../../assets/amenities.gif";
+import seagoldPinGif from "../assets/seagoldpinicon.gif";
+import amenityPinGif from "../assets/amenities.gif";
 import { useDataCache } from "../contexts/DataContext";
 
 const libraries = ["places"];
