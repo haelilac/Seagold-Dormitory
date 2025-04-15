@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import "./Location.css";
+import '../pages/Location/Location.css';
 import {
   GoogleMap,
   LoadScriptNext,
