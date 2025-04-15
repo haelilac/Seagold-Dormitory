@@ -1,201 +1,312 @@
-import React, { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import RoutingControl from './RoutingControl.js';
-import customMarkerIcon from '../assets/seagoldlogo.jpg'; // Dorm icon
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import "./Location.css";
+import {
+  GoogleMap,
+  LoadScriptNext,
+  Marker,
+  DirectionsRenderer,
+  Autocomplete,
+  Polyline,
+  TrafficLayer,
+} from "@react-google-maps/api";
+import userPinGif from "../../assets/pin-your-location.gif";
+import seagoldPinGif from "../../assets/seagoldpinicon.gif";
+import amenityPinGif from "../../assets/amenities.gif";
 import { useDataCache } from "../contexts/DataContext";
 
-// Dormitory Icon
-const dormIcon = new L.Icon({
-  iconUrl: customMarkerIcon,
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-});
+const libraries = ["places"];
+const containerStyle = { width: "100%", height: "100vh" };
+const dormPosition = { lat: 14.6036, lng: 120.9889 };
 
-// Dormitory location
-const dormPosition = [14.6036, 120.9889];
+const universities = [
+  { id: 1, name: "TUP Manila", position: { lat: 14.5872, lng: 120.9842 } },
+  { id: 2, name: "UST", position: { lat: 14.6096, lng: 120.9893 } },
+  { id: 3, name: "FEU", position: { lat: 14.6036, lng: 120.9861 } },
+];
 
-const LocationPage = () => {
-  const { sidebarOpen } = useOutletContext();
-  const [places, setPlaces] = useState([]); // All places from the API
-  const [filteredPlaces, setFilteredPlaces] = useState([]); // Filtered places based on category
-  const [categories, setCategories] = useState(['All']); // Categories for filter dropdown
-  const [selectedCategory, setSelectedCategory] = useState('All'); // Selected category for filtering
-  const [routingWaypoints, setRoutingWaypoints] = useState([]); // Waypoints for routing
-  const [userPosition, setUserPosition] = useState(null); // User's geolocation
-  const [panCoords, setPanCoords] = useState(dormPosition); // Coordinates for map panning
+const GoogleMapComponent = () => {
+  const [userLocation, setUserLocation] = useState(null);
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [walkingPath, setWalkingPath] = useState(null);
+  const [travelMode, setTravelMode] = useState("DRIVING");
+  const [distance, setDistance] = useState("");
+  const [duration, setDuration] = useState("");
+  const [autocomplete, setAutocomplete] = useState(null);
+  const [nearbyPlaces, setNearbyPlaces] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("school");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const mapRef = useRef(null);
+  const [showTraffic, setShowTraffic] = useState(false);
+  const [isStreetView, setIsStreetView] = useState(false);
+  const [userMarkerIcon, setUserMarkerIcon] = useState(null);
+  const [dormMarkerIcon, setDormMarkerIcon] = useState(null);
+  const [amenityMarkerIcon, setAmenityMarkerIcon] = useState(null);
+  const [hasClickedLocation, setHasClickedLocation] = useState(false);
+  const [selectedNearbyPlace, setSelectedNearbyPlace] = useState(null);
 
-  // Fetch places from the API
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/places') // Adjust the API endpoint if necessary
-      .then((response) => response.json())
-      .then((data) => {
-        setPlaces(data);
-        setFilteredPlaces(data);
-
-        // Extract unique categories for the filter
-        const uniqueCategories = ['All', ...new Set(data.map((place) => place.category))];
-        setCategories(uniqueCategories);
-      })
-      .catch((error) => {
-        console.error('Error fetching places:', error);
-      });
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, []);
 
-  // Filter places when the selected category changes
-  useEffect(() => {
-    if (selectedCategory === 'All') {
-      setFilteredPlaces(places);
-    } else {
-      setFilteredPlaces(places.filter((place) => place.category === selectedCategory));
-    }
-  }, [selectedCategory, places]);
-
-  // Locate user's current position
-  const handleLocateMe = () => {
+  const handleGetUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const coords = [position.coords.latitude, position.coords.longitude];
-          setUserPosition(coords);
-          setRoutingWaypoints([coords, dormPosition]);
-          setPanCoords(coords);
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setUserLocation(location);
+          setHasClickedLocation(true); // 👈 mark as clicked
+  
+          if (mapRef.current) {
+            mapRef.current.panTo(location);
+            mapRef.current.setZoom(15);
+          }
+  
+          handleGetRoute(location); // draw the route
         },
-        (error) => {
-          console.error('Geolocation error:', error);
-          alert('Unable to retrieve location. Please check your location settings.');
-        }
+        () => alert("⚠️ Location access denied.")
       );
     } else {
-      alert('Geolocation is not supported by this browser.');
+      alert("⚠️ Geolocation not supported.");
     }
   };
+  
+  
+  
 
-  // Clear the current route
-  const handleClearRoute = () => {
-    setRoutingWaypoints([]);
-    setUserPosition(null);
-    setPanCoords(dormPosition);
+  const handleFindNearbyPlaces = (category) => {
+    if (!mapRef.current) return;
+    const service = new window.google.maps.places.PlacesService(mapRef.current);
+    service.nearbySearch(
+      {
+        location: dormPosition,
+        radius: 1500,
+        type: category,
+      },
+      (results, status) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+          setNearbyPlaces(results);
+        } else {
+          setNearbyPlaces([]);
+          alert("No nearby places found.");
+        }
+      }
+    );
   };
 
-  const MapTenant = () => {
-    const { getCachedData, updateCache } = useDataCache();
-    const [mapData, setMapData] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const handleGetRoute = (destination) => {
+    if (!destination) return;
   
-    useEffect(() => {
-      const fetchMapData = async () => {
-        try {
-          const cached = getCachedData("tenant-map-data");
-          if (cached) {
-            setMapData(cached);
+    const travelModes = {
+      DRIVING: window.google.maps.TravelMode.DRIVING,
+      WALKING: window.google.maps.TravelMode.WALKING,
+      BICYCLING: window.google.maps.TravelMode.BICYCLING,
+    };
+  
+    const service = new window.google.maps.DirectionsService();
+    service.route(
+      {
+        origin: dormPosition, // 🔥 always start from the dorm
+        destination,
+        travelMode: travelModes[travelMode],
+      },
+      (result, status) => {
+        if (status === "OK") {
+          setSelectedRoute(result);
+          setDistance(result.routes[0].legs[0].distance.text);
+          setDuration(result.routes[0].legs[0].duration.text);
+          if (travelMode === "WALKING") {
+            setWalkingPath(
+              result.routes[0].overview_path.map((p) => ({
+                lat: p.lat(),
+                lng: p.lng(),
+              }))
+            );
           } else {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/map-data");
-            const data = await response.json();
-            setMapData(data);
-            updateCache("tenant-map-data", data);
+            setWalkingPath(null);
           }
-        } catch (error) {
-          console.error("Error fetching map data:", error);
-        } finally {
-          setLoading(false);
+        } else {
+          alert("Route request failed.");
         }
-      };
-      fetchMapData();
-    }, []);
+      }
+    );
+  };
   
-    if (loading) return <div className="spinner"></div>;
+
+  const onLoadMap = (map) => {
+    mapRef.current = map;
+  
+    setUserMarkerIcon({
+      url: userPinGif,
+      scaledSize: new window.google.maps.Size(130, 70),
+    });
+  
+    setDormMarkerIcon({
+      url: seagoldPinGif,
+      scaledSize: new window.google.maps.Size(120, 70),
+    });
+  
+    setAmenityMarkerIcon({
+      url: amenityPinGif,
+      scaledSize: new window.google.maps.Size(150, 70),
+    });
+  
+    const streetView = map.getStreetView();
+    streetView.addListener("visible_changed", () => {
+      setIsStreetView(streetView.getVisible());
+    });
+  };
 
   return (
-    <div className={`location-page ${sidebarOpen ? 'shifted' : ''}`}>
-      <h1 className="location-header">Map View</h1>
-      <p className="location-description">Explore the property map and nearby locations.</p>
+    <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
+      <div className="location-page">
+        <div className="map-ui">
 
-      <div className="map-and-list-container">
-        <div className="map-container-wrapper">
-          <MapContainer center={panCoords} zoom={14} className="map-container">
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {isStreetView && (
+            <button className="exit-street-view-btn" onClick={() => mapRef.current.getStreetView().setVisible(false)}>
+              🔙 Back to Map
+            </button>
+          )}
 
-            {/* Dormitory Marker */}
-            <Marker position={dormPosition} icon={dormIcon}>
-              <Popup>Fern Building (Dormitory)</Popup>
-            </Marker>
+        <button
+          className={`toggle-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          {isSidebarOpen ? "<" : ">"}
+        </button>
 
-            {/* Place Markers */}
-            {filteredPlaces.map((place) => (
-              <Marker key={place.id} position={[place.latitude, place.longitude]} icon={dormIcon}>
-                <Popup>
-                  <strong>{place.name}</strong>
-                  <p>{place.description}</p>
-                </Popup>
-              </Marker>
-            ))}
+          <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
+            <h2>📍 Get Directions</h2>
+            <button onClick={handleGetUserLocation} className="map-btn">
+              {hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
+            </button>
 
-            {/* User's Current Position */}
-            {userPosition && (
-              <Marker
-                position={userPosition}
-                icon={new L.Icon({
-                  iconUrl: 'https://leafletjs.com/examples/custom-icons/leaf-red.png',
-                  iconSize: [32, 32],
-                  iconAnchor: [16, 32],
-                })}
-              >
-                <Popup>Your Current Location</Popup>
-              </Marker>
-            )}
+            <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
+              <option value="DRIVING">🚗 Driving</option>
+              <option value="WALKING">🚶 Walking</option>
+              <option value="BICYCLING">🚴 Biking</option>
+            </select>
 
-            {/* Routing */}
-            {routingWaypoints.length > 0 && <RoutingControl waypoints={routingWaypoints} />}
-          </MapContainer>
-        </div>
+            <button onClick={() => setShowTraffic(!showTraffic)} className="map-btn">
+              🚧 {showTraffic ? "Hide Traffic" : "Show Traffic"}
+            </button>
+            
+            <div className="route-info">
+              <div className="route-info-inner">
+                {distance && <p>📏 {distance}</p>}
+                {duration && <p>⏱️ {duration}</p>}
+              </div>
+            </div>
 
-        {/* Places List and Filter */}
-        <div className="places-list">
-          <h3>Nearby Places</h3>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="category-filter"
-          >
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+            <h3>🔍 Find Nearby:</h3>
+            <div className="route-select">
+              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                <option value="school">🏫 Schools</option>
+                <option value="laundry">🧺 Laundry</option>
+                <option value="restaurant">🍛 Carinderias</option>
+                <option value="gas_station">⛽ Gas Stations</option>
+              </select>
+              <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="map-btn">
+                🔎 Search
+              </button>
+            </div>
 
-          <ul>
-            {filteredPlaces.map((place) => (
-              <li key={place.id} className="place-item">
-                <strong>{place.name}</strong>
-                <p>{place.description}</p>
-                <button
-                  onClick={() => setRoutingWaypoints([userPosition || dormPosition, [place.latitude, place.longitude]])}
-                  className="view-route-btn"
+            <ul className="nearby-list">
+              {nearbyPlaces.map((place) => (
+                <li
+                  key={place.place_id}
+                  onClick={() => {
+                    const destination = {
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng(),
+                    };
+                    setSelectedNearbyPlace(destination); // 👈 store selected
+                    handleGetRoute(destination);
+                  }}
                 >
-                  View Route
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          {/* Action Buttons */}
-          <div className="action-buttons">
-            <button onClick={handleLocateMe} className="location-btn-primary">
-              Locate Me
-            </button>
-            <button onClick={handleClearRoute} className="location-btn-secondary">
-              Clear Route
-            </button>
+                  {place.name}
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </div>
-    </div>
-  );
+
+          <div className="map-container">
+            <div className="search-bar-container">
+              <Autocomplete onLoad={(auto) => setAutocomplete(auto)}>
+                <input className="search-box" placeholder="Search destination..." />
+              </Autocomplete>
+              <button
+                className="search-btn"
+                onClick={() => {
+                  if (!autocomplete) return alert("Enter a location");
+                  const place = autocomplete.getPlace();
+                  if (place?.geometry) {
+                    const loc = {
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng(),
+                    };
+                    setUserLocation(loc);
+                    mapRef.current?.panTo(loc);
+                    mapRef.current?.setZoom(15);
+                  } else {
+                    alert("No place found.");
+                  }
+                }}
+              >
+                Search
+              </button>
+            </div>
+
+      <GoogleMap mapContainerStyle={containerStyle} center={dormPosition} zoom={15} onLoad={onLoadMap}>
+        {dormMarkerIcon && (
+          <Marker position={dormPosition} icon={dormMarkerIcon} />
+        )}
+
+        {userLocation && userMarkerIcon && (
+          <Marker position={userLocation} icon={userMarkerIcon} />
+        )}
+
+        {selectedNearbyPlace && amenityMarkerIcon && (
+          <Marker position={selectedNearbyPlace} icon={amenityMarkerIcon} />
+        )}
+
+        {selectedRoute && (
+          <>
+            <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
+            <Marker
+              position={selectedRoute.routes[0].legs[0].start_location}
+              icon={{
+                url: "/assets/startingpoint.svg",
+                scaledSize: new window.google.maps.Size(60, 60),
+              }}
+            />
+            <Marker
+              position={selectedRoute.routes[0].legs[0].end_location}
+              icon={{
+                url: "/assets/endpoint.svg",
+                scaledSize: new window.google.maps.Size(40, 40),
+              }}
+            />
+          </>
+        )}
+
+        {walkingPath && (
+          <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />
+        )}
+
+        {showTraffic && <TrafficLayer />}
+      </GoogleMap>
+                </div>
+              </div>
+            </div>
+          </LoadScriptNext>
+        );
+      
 };
-};
-export default LocationPage;
+
+export default GoogleMapComponent;
