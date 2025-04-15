@@ -18,7 +18,14 @@ window.Echo = new Echo({
 
 const PaymentTenant = () => {
     
-
+    const getPaymentLabel = (date) => {
+        if (balanceDue[date] > 0 && paymentHistory.some(p => p.payment_period === date && p.amount > 0)) {
+          return " (Partially Paid)";
+        } else if (balanceDue[date] > 0) {
+          return " (Unpaid)";
+        }
+        return "";
+      };
     const [isCompact, setIsCompact] = useState(false);
     const [currentView, setCurrentView] = useState("dashboard");
     const [currentBillView, setCurrentBillView] = useState("bills");
@@ -495,25 +502,24 @@ const PaymentTenant = () => {
 
 
             <label>Payment For</label>
-                <select
-                    name="payment_for"
-                    value={formData.payment_for}
-                    onChange={handleMonthSelection}
-                    required
+            <select
+                name="payment_for"
+                value={formData.payment_for}
+                onChange={handleMonthSelection}
+                required
                 >
-                    <option value="">Select Payment Date</option>
-
-                    {availableMonths.map((date, index) => (
-                        <option key={index} value={date}>
-                            {new Date(date).toLocaleDateString('default', { 
-                                weekday: 'long', 
-                                month: 'long', 
-                                day: 'numeric', 
-                                year: 'numeric' 
-                            })}
-                            {balanceDue[date] > 0 ? " (Partially Paid)" : ""}
-                        </option>
-                    ))}
+                <option value="">Select Payment Date</option>
+                {availableMonths.map((date, index) => (
+                    <option key={index} value={date}>
+                    {new Date(date).toLocaleDateString('default', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    })}
+                    {getPaymentLabel(date)}
+                    </option>
+                ))}
                 </select>
 
                 <label>Payment Method</label>
@@ -616,7 +622,7 @@ const PaymentTenant = () => {
                                         <li key={index}>
                                             {/* Format the date to include day, month, and year */}
                                             {new Date(month).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} 
-                                            {balanceDue[month] > 0 ? " (Partially Paid)" : " (Unpaid)"}
+                                            {getPaymentLabel(month)}
                                         </li>
                                     ))}
                                 </ul>
