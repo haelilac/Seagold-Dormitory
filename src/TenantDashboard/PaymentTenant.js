@@ -20,7 +20,6 @@ window.Echo = new Echo({
 const PaymentTenant = () => {
 
     const { getCachedData, updateCache } = useDataCache();
-    const cachedPayments = getCachedData(`payments-${tenantId}`);
     const getPaymentLabel = (date) => {
         if (balanceDue[date] > 0 && paymentHistory.some(p => p.payment_period === date && p.amount > 0)) {
           return " (Partially Paid)";
@@ -47,6 +46,7 @@ const PaymentTenant = () => {
     const [duration, setDuration] = useState(0);
     const [availableMonths, setAvailableMonths] = useState([]);
     const [tenantId, setTenantId] = useState(null);
+    const cachedPayments = tenantId ? getCachedData(`payments-${tenantId}`) : null;
     const [balanceDue, setBalanceDue] = useState({}); // Track remaining balances
     const [availableCredits, setAvailableCredits] = useState(0);
     const [paymentDue, setPaymentDue] = useState(0);
