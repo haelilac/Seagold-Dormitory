@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './RoomInfo.css';
+import { getAuthToken } from "../utils/auth";
 import { useDataCache } from "../contexts/DataContext";
 
 const RoomInfoTenant = () => {
   const [info, setInfo] = useState(null);
   const { getCachedData, updateCache } = useDataCache();
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const fetchRoomInfo = async () => {
@@ -14,8 +16,11 @@ const RoomInfoTenant = () => {
         if (cached) {
           setInfo(cached);
         } else {
-          const res = await fetch("https://seagold-laravel-production.up.railway.app/api/room-info", {
-            headers: { Accept: "application/json" },
+          const res = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant-room-info", {
+            headers: {
+              Authorization: `Bearer ${getAuthToken()}`,
+              Accept: "application/json"
+            }
           });
           const data = await res.json();
           setInfo(data);
@@ -30,125 +35,63 @@ const RoomInfoTenant = () => {
     fetchRoomInfo();
   }, []);
 
-  if (loading) return <div className="spinner"></div>;
+  if (loading || !info) return <div className="spinner"></div>;
 
   return (
     <div className="roomCard-wrapper">
-      <div className="roomCard-header">
-        ROOM U210
-      </div>
+      <div className="roomCard-header">ROOM {info.unit_code}</div>
 
       <div className="roomCard-container">
-        <div className="roomContent">
-          <div className="roomImageContainer">
-            <img 
-              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg" 
-              alt="Dorm" 
-              className="roomImage"
-              style={{ cursor: 'default' }}
+        <div className="roomImageGallery">
+          {info.images && info.images.length > 0 ? (
+            info.images.map((img, index) => (
+              <img
+                key={index}
+                src={img.image_path}
+                alt={`Room image ${index + 1}`}
+                className="thumbnail"
+                onClick={() => setSelectedImage(img.image_path)}
+              />
+            ))
+          ) : (
+            <img
+              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg"
+              alt="Default Room"
+              className="thumbnail"
             />
-          </div>
+          )}
+        </div>
 
-          <div className="roomDetails">
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img 
-                  src="https://seagold-laravel-production.up.railway.app/unit.svg" 
-                  alt="Unit icon" 
-                  className="infoIcon" 
-                  style={{ cursor: 'default' }}
-                />
-                UNIT TYPE:
-              </div>
-              <div className="infoValue">Direct Air-con Room</div>
-            </div>
-
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img 
-                  src="https://seagold-laravel-production.up.railway.app/capacity.svg" 
-                  alt="Capacity icon" 
-                  className="infoIcon" 
-                />
-                CAPACITY:
-              </div>
-              <div className="infoValue">8 occupants</div>
-            </div>
-
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img 
-                  src="https://seagold-laravel-production.up.railway.app/rent.svg" 
-                  alt="Rent icon" 
-                  className="infoIcon" 
-                />
-                MONTHLY RENT:
-              </div>
-              <div className="infoValue">₱5,000</div>
-            </div>
-
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img 
-                  src="https://seagold-laravel-production.up.railway.app/due-date.svg" 
-                  alt="Due date icon" 
-                  className="infoIcon" 
-                />
-                RENT DUE DATE:
-              </div>
-              <div className="infoValue">15th of every month</div>
-            </div>
-          </div>
+        <div className="roomDetails">
+          <div className="infoBlock"><span className="infoLabel">UNIT TYPE:</span> {info.stay_types.join(", ")}</div>
+          <div className="infoBlock"><span className="infoLabel">CAPACITY:</span> {info.max_capacity} occupants</div>
+          <div className="infoBlock"><span className="infoLabel">MONTHLY RENT:</span> ₱{info.base_price?.toLocaleString()}</div>
+          <div className="infoBlock"><span className="infoLabel">RENT DUE DATE:</span> 15th of every month</div>
         </div>
 
         <div className="amenitiesSection">
           <h3>AMENITIES:</h3>
           <div className="amenitiesList">
-            <div className="amenityContainer">
-              <img 
-                src="https://seagold-laravel-production.up.railway.app/aircon.svg" 
-                alt="Aircon" 
-                className="amenityIcon" 
-              />
-              <span>Air Conditioning</span>
-            </div>
-            <div className="amenityContainer">
-              <img 
-                src="https://seagold-laravel-production.up.railway.app/bath.svg" 
-                alt="Bathroom" 
-                className="amenityIcon" 
-              />
-              <span>Private Bathroom</span>
-            </div>
-            <div className="amenityContainer">
-              <img 
-                src="https://seagold-laravel-production.up.railway.app/wifi.svg" 
-                alt="Wi-Fi" 
-                className="amenityIcon" 
-              />
-              <span>Wi-Fi</span>
-            </div>
-            <div className="amenityContainer">
-              <img 
-                src="https://seagold-laravel-production.up.railway.app/study.svg" 
-                alt="Study Table" 
-                className="amenityIcon" 
-              />
-              <span>Study Table</span>
-            </div>
-            <div className="amenityContainer">
-              <img 
-                src="https://seagold-laravel-production.up.railway.app/wardrobe.svg" 
-                alt="Wardrobe" 
-                className="amenityIcon" 
-              />
-              <span>Wardrobe</span>
-            </div>
+            {info.amenities.map((a, i) => (
+              <div key={i} className="amenityContainer">
+                <span>{a}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Image Preview Modal */}
+      {selectedImage && (
+        <div className="imageModalOverlay" onClick={() => setSelectedImage(null)}>
+          <div className="imageModalContent" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage} alt="Preview" className="modalImage" />
+            <button className="closeModal" onClick={() => setSelectedImage(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default RoomCard;
+export default RoomInfoTenant;

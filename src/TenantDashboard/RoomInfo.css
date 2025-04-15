@@ -6,6 +6,66 @@
 /*************************************
  * Overall Wrapper & Header
  *************************************/
+ .roomImageGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.thumbnail {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.thumbnail:hover {
+  transform: scale(1.05);
+}
+
+.imageModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.imageModalContent {
+  position: relative;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  max-width: 90%;
+  max-height: 90%;
+  text-align: center;
+}
+
+.modalImage {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+}
+
+.closeModal {
+  margin-top: 10px;
+  padding: 6px 14px;
+  background: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+ 
 .roomCard-wrapper {
   width: 100%;
   min-height: 100vh;
@@ -160,6 +220,7 @@
   object-fit: contain;
   filter: invert(85%) sepia(10%) saturate(700%) hue-rotate(180deg) brightness(110%) contrast(90%);
 }
+
 
 /*************************************
  * RESPONSIVE MEDIA QUERIES

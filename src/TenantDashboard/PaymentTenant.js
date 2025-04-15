@@ -214,7 +214,7 @@ const PaymentTenant = () => {
             applyPaymentData(paymentData);
           }
       
-          setDataLoaded(false);
+          setDataLoaded(true);
       
         } catch (err) {
           console.error("❌ Error loading tenant or payment data:", err);

@@ -15,33 +15,41 @@ const Home = ({ userName, darkMode }) => {
     // Fetch events from the API
     useEffect(() => {
         const fetchEvents = async () => {
+            const cachedEvents = getCachedData("events");
+            if (cachedEvents) {
+                setEvents(cachedEvents);
+                setLoading(false);
+                return;
+            }
+    
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/events', {
                     method: 'GET',
                     headers: {
-                      'Authorization': `Bearer ${getAuthToken()}`,
-                      'Accept': 'application/json'
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Accept': 'application/json'
                     }
-                  });
+                });
+    
                 const data = await response.json();
-
-                // Ensure data is in array format
                 if (Array.isArray(data)) {
                     setEvents(data);
+                    updateCache("events", data); // 💾 Save to cache
                 } else {
                     console.error('Unexpected response format:', data);
-                    setEvents([]); // Fallback to empty array
+                    setEvents([]);
                 }
             } catch (error) {
                 console.error('Error fetching events:', error);
                 setEvents([]);
             } finally {
-                setLoading(false); // 🔥 ensures spinner hides
+                setLoading(false);
             }
         };
     
         fetchEvents();
     }, []);
+    
   if (loading) return <div className="spinner"></div>;
     // Filter events based on the selected date
     const filteredEvents = events
@@ -81,31 +89,6 @@ selected-date">
                     </ul>
                 ) : (
                     <p className="no-events">No events for this date.</p>
-                )}
-            </section>
-
-
-            {/* Transaction Box Section */}
-            <section className="transaction-box">
-                <h3 className="transaction-box-title">Transaction History</h3>
-                {transactions.length > 0 ? (
-                    <ul className="transaction-list">
-                        {transactions.map((transaction, index) => (
-                            <li key={index} className="transaction-item">
-                                <div className="transaction-date">{transaction.date}</div>
-                                <div className="transaction-details">
-                                    <span className="transaction-description">
-                                        {transaction.description}
-                                    </span>
-                                    <span className="transaction-amount">
-                                        ₱{transaction.amount.toFixed(2)}
-                                    </span>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="no-transactions">No transactions recorded.</p>
                 )}
             </section>
         </>
