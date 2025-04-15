@@ -183,7 +183,6 @@ const PaymentTenant = () => {
         setNextDueMonth(getNextDueMonth());
     }, [balanceDue, availableMonths]);
 
-    useEffect(() => {
         const fetchUserAndPayment = async () => {
             try {
                 const res = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
@@ -213,8 +212,6 @@ const PaymentTenant = () => {
             }
         };
     
-        fetchUserAndPayment();
-    }, []);
     
     const applyPaymentData = (data) => {
         setUnitPrice(data.unit_price || 0);
