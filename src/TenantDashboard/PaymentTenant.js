@@ -84,7 +84,7 @@ const PaymentTenant = () => {
             })
             .listen('.payment.rejected', () => {
                 alert("❌ Your previous payment was rejected.");
-                fetchPaymentData(tenantId); // Force update from backend
+                fetchUserAndPayment();
             });
 
         return () => {
@@ -426,7 +426,8 @@ const PaymentTenant = () => {
             alert('✅ Payment submitted successfully!');
             setFormData({ payment_for: '', reference_number: '', receipt: null, amount: '', payment_method: '' });
             setReceiptValidated(false);
-            fetchPaymentData(tenantId);
+            await fetchUserAndPayment(); // ✅ refresh payment data using cache logic
+
     
         } catch (error) {
             console.error("Error submitting payment:", error);
