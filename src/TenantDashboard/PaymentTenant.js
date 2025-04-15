@@ -217,6 +217,9 @@ const PaymentTenant = () => {
             setLoading(false); // ✅ FINISH loading no matter what
         }
     };
+    useEffect(() => {
+        fetchUserAndPayment();
+      }, []);
     
     
     const applyPaymentData = (data) => {
@@ -438,9 +441,9 @@ const PaymentTenant = () => {
         }
     };
     
-    if (!tenantId) {
+    if (loading) {
         return <div className="spinner"></div>;
-    }
+      }
     
     return (
         <div ref={ref} className={`payment-container payment-background ${isCompact ? 'compact-mode' : ''}`}>
