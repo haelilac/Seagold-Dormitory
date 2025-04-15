@@ -3,24 +3,26 @@ import Calendar from 'react-calendar'; // Import the calendar
 import 'react-calendar/dist/Calendar.css'; // Import default calendar styles
 import './HomeTenant.css'; // Your custom styles
 import { getAuthToken } from "../utils/auth";
+import { useDataCache } from "../contexts/DataContext";
 
 const Home = ({ userName, darkMode }) => {
     const [date, setDate] = useState(new Date()); // State for selected date
     const [events, setEvents] = useState([]); // Initialize events as an empty array
-    const [transactions, setTransactions] = useState([
-        { date: '2024-12-20', amount: 1500, description: 'Monthly Rent Payment' },
-        { date: '2024-12-18', amount: 500, description: 'Maintenance Fee' },
-        { date: '2024-12-15', amount: 1200, description: 'Electricity Bill' },
-        { date: '2024-12-10', amount: 800, description: 'Water Bill' },
-    ]);
+    const { getCachedData, updateCache } = useDataCache();
+    const [loading, setLoading] = useState(true);
+
 
     // Fetch events from the API
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/events', {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                });
+                    method: 'GET',
+                    headers: {
+                      'Authorization': `Bearer ${getAuthToken()}`,
+                      'Accept': 'application/json'
+                    }
+                  });
                 const data = await response.json();
 
                 // Ensure data is in array format
@@ -32,13 +34,15 @@ const Home = ({ userName, darkMode }) => {
                 }
             } catch (error) {
                 console.error('Error fetching events:', error);
-                setEvents([]); // Fallback to empty array on error
+                setEvents([]);
+            } finally {
+                setLoading(false); // 🔥 ensures spinner hides
             }
         };
-
+    
         fetchEvents();
     }, []);
-
+  if (loading) return <div className="spinner"></div>;
     // Filter events based on the selected date
     const filteredEvents = events
     .filter((event) => event && event.date) // Exclude null or undefined events

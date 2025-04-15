@@ -4,8 +4,42 @@ import { useNavigate, Link, Outlet } from 'react-router-dom';
 import styles from './TenantDashboard.module.css';
 import { FaBell, FaBars, FaTimes, FaEllipsisV, FaMoon, FaSun } from 'react-icons/fa';
 import { getAuthToken } from "../utils/auth";
+import { useDataCache } from '../contexts/DataContext';
 
-const TenantDashboard = () => {
+const TenantDashboard = ({ onLogout }) => {
+    const { updateCache } = useDataCache();
+  
+    useEffect(() => {
+        const fetchInitialData = async () => {
+          try {
+            const res = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+              headers: {
+                Authorization: `Bearer ${getAuthToken()}`,
+                Accept: 'application/json',
+              },
+            });
+    
+            setUserData(res.data);
+            updateCache('userData', res.data);
+    
+            const paymentRes = await axios.get(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${res.data.id}`, {
+              headers: { Authorization: `Bearer ${getAuthToken()}` },
+            });
+            updateCache(`payments-${res.data.id}`, paymentRes.data);
+    
+            const maintenanceRes = await axios.get(`https://seagold-laravel-production.up.railway.app/api/maintenance/${res.data.id}`, {
+              headers: { Authorization: `Bearer ${getAuthToken()}` },
+            });
+            updateCache(`maintenance-${res.data.id}`, maintenanceRes.data);
+    
+            // Add more API preloads as needed
+          } catch (err) {
+            console.error('Error preloading tenant data:', err);
+          }
+        };
+    
+        fetchInitialData();
+      }, []);
     const [userData, setUserData] = useState(null);
     const [notifications, setNotifications] = useState([]);
     const [filteredNotifications, setFilteredNotifications] = useState([]);
@@ -25,7 +59,10 @@ const TenantDashboard = () => {
             navigate('/login');
             return;
         }
-    
+        const { updateCache } = useDataCache();
+
+
+        
         const fetchData = async () => {
             try {
                 const userRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {

@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import RoutingControl from './RoutingControl.js';
 import customMarkerIcon from '../assets/seagoldlogo.jpg'; // Dorm icon
+import { useDataCache } from "../contexts/DataContext";
 
 // Dormitory Icon
 const dormIcon = new L.Icon({
@@ -79,6 +80,34 @@ const LocationPage = () => {
     setUserPosition(null);
     setPanCoords(dormPosition);
   };
+
+  const MapTenant = () => {
+    const { getCachedData, updateCache } = useDataCache();
+    const [mapData, setMapData] = useState(null);
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      const fetchMapData = async () => {
+        try {
+          const cached = getCachedData("tenant-map-data");
+          if (cached) {
+            setMapData(cached);
+          } else {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/map-data");
+            const data = await response.json();
+            setMapData(data);
+            updateCache("tenant-map-data", data);
+          }
+        } catch (error) {
+          console.error("Error fetching map data:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchMapData();
+    }, []);
+  
+    if (loading) return <div className="spinner"></div>;
 
   return (
     <div className={`location-page ${sidebarOpen ? 'shifted' : ''}`}>
@@ -168,5 +197,5 @@ const LocationPage = () => {
     </div>
   );
 };
-
+};
 export default LocationPage;

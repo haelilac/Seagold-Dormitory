@@ -1,7 +1,37 @@
 import React from 'react';
 import './RoomInfo.css';
+import { useDataCache } from "../contexts/DataContext";
 
-const RoomCard = () => {
+const RoomInfoTenant = () => {
+  const [info, setInfo] = useState(null);
+  const { getCachedData, updateCache } = useDataCache();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRoomInfo = async () => {
+      try {
+        const cached = getCachedData("tenant-room-info");
+        if (cached) {
+          setInfo(cached);
+        } else {
+          const res = await fetch("https://seagold-laravel-production.up.railway.app/api/room-info", {
+            headers: { Accept: "application/json" },
+          });
+          const data = await res.json();
+          setInfo(data);
+          updateCache("tenant-room-info", data);
+        }
+      } catch (err) {
+        console.error("Error fetching room info:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRoomInfo();
+  }, []);
+
+  if (loading) return <div className="spinner"></div>;
+
   return (
     <div className="roomCard-wrapper">
       <div className="roomCard-header">
