@@ -121,17 +121,30 @@ const PaymentTenant = () => {
         const enteredAmount = parseFloat(e.target.value) || 0;
         setTempAmount(e.target.value);
     
-        // Fetch correct remaining balance based on the selected duration and stay type
         const originalRemainingBalance = calculateRemainingBalance(formData.stay_type, duration, unitPrice);
-        
-        // Check if the stay_type is 'monthly' for partial payments
-        const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
     
-        let newPaymentType = 'Fully Paid';
-        if (formData.stay_type === 'monthly' && newRemainingBalance > 0) {
-            newPaymentType = 'Partially Paid';  // Only applicable for monthly stay_type
+        // 💥 Prevent partial payments for non-monthly tenants
+        if (formData.stay_type !== 'monthly' && enteredAmount < originalRemainingBalance) {
+            setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
+            setFormData((prevData) => ({
+                ...prevData,
+                amount: '',
+                payment_type: '',
+            }));
+            setTempAmount('');
+            setDisplayedRemainingBalance(originalRemainingBalance);
+            return;
         }
-        
+    
+        setWarningMessage(""); // Clear warning if valid
+    
+        const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
+        let newPaymentType = 'Fully Paid';
+    
+        if (formData.stay_type === 'monthly' && newRemainingBalance > 0) {
+            newPaymentType = 'Partially Paid';
+        }
+    
         setFormData((prevData) => ({
             ...prevData,
             amount: enteredAmount,
@@ -259,24 +272,16 @@ const PaymentTenant = () => {
             }
         });
     
-        const limitedPeriods = [];
-    
-        for (let period of periods) {
+        const allUnpaidPeriods = periods.filter(period => {
             const status = periodStatus[period];
-    
-            if (status && status.remainingBalance > 0) {
-                limitedPeriods.push(period); // First partially paid period
-                break;
-            }
-    
-            if (!status) {
-                limitedPeriods.push(period); // First fully unpaid period
-                break;
-            }
-        }
-    
-        setAvailableMonths(limitedPeriods);
-        setFirstPartialMonth(limitedPeriods[0]); // Save first partially paid period
+        
+            if (!status) return true; // fully unpaid
+            if (status.remainingBalance > 0) return true; // partially paid
+            return false; // fully paid
+        });
+        
+        setAvailableMonths(allUnpaidPeriods);
+        setFirstPartialMonth(allUnpaidPeriods[0]);
     };
     
     
@@ -435,12 +440,12 @@ const PaymentTenant = () => {
                     <div className="balance-box due">
                         <p>Next Payment Due</p>
                         <h2>
-                            {dueDate ? new Date(dueDate).toLocaleDateString('en-US', { 
-                                month: 'long', 
-                                day: 'numeric', 
-                                year: 'numeric' 
+                            {firstPartialMonth ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
                             }) : "No Dues"}
-                        </h2>
+                            </h2>
                         {console.log("Due Date in Dashboard:", dueDate)} {/* Debug */}
                     </div>
                 </div>
