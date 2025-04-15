@@ -47,6 +47,7 @@ const PaymentTenant = () => {
     const [availableMonths, setAvailableMonths] = useState([]);
     const [tenantId, setTenantId] = useState(null);
     const cachedPayments = tenantId ? getCachedData(`payments-${tenantId}`) : null;
+    const [dataLoaded, setDataLoaded] = useState(false);
     const [balanceDue, setBalanceDue] = useState({}); // Track remaining balances
     const [availableCredits, setAvailableCredits] = useState(0);
     const [paymentDue, setPaymentDue] = useState(0);
@@ -185,38 +186,42 @@ const PaymentTenant = () => {
     }, [balanceDue, availableMonths]);
 
     const fetchUserAndPayment = async () => {
-        setLoading(true); // ✅ START loading immediately
-    
+        // Skip re-fetch if already loaded
+        if (dataLoaded) return;
+      
+        setLoading(true);
         try {
-            const res = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
-                headers: {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                    Accept: 'application/json',
-                },
+          const res = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+            headers: {
+              Authorization: `Bearer ${getAuthToken()}`,
+              Accept: 'application/json',
+            },
+          });
+      
+          const user = await res.json();
+          setTenantId(user.id);
+      
+          const cached = getCachedData(`payments-${user.id}`);
+          if (cached) {
+            applyPaymentData(cached);
+          } else {
+            const paymentRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
+              headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
-    
-            const user = await res.json();
-            setTenantId(user.id);
-    
-            const cached = getCachedData(`payments-${user.id}`);
-            if (cached) {
-                applyPaymentData(cached);
-            } else {
-                const paymentRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
-                    headers: { Authorization: `Bearer ${getAuthToken()}` },
-                });
-    
-                const paymentData = await paymentRes.json();
-                updateCache(`payments-${user.id}`, paymentData);
-                applyPaymentData(paymentData);
-            }
-    
+      
+            const paymentData = await paymentRes.json();
+            updateCache(`payments-${user.id}`, paymentData);
+            applyPaymentData(paymentData);
+          }
+      
+          setDataLoaded(false);
+      
         } catch (err) {
-            console.error("❌ Error loading tenant or payment data:", err);
+          console.error("❌ Error loading tenant or payment data:", err);
         } finally {
-            setLoading(false); // ✅ FINISH loading no matter what
+          setLoading(false);
         }
-    };
+      };
     useEffect(() => {
         fetchUserAndPayment();
       }, []);
