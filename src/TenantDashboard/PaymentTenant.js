@@ -4,6 +4,7 @@ import { useResizeDetector } from 'react-resize-detector';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import { getAuthToken } from "../utils/auth";
+import { useDataCache } from '../contexts/DataContext';
 
 // Initialize Pusher
 window.Pusher = Pusher;
@@ -17,7 +18,9 @@ window.Echo = new Echo({
 });
 
 const PaymentTenant = () => {
-    
+
+    const { getCachedData, updateCache } = useDataCache();
+    const cachedPayments = getCachedData(`payments-${tenantId}`);
     const getPaymentLabel = (date) => {
         if (balanceDue[date] > 0 && paymentHistory.some(p => p.payment_period === date && p.amount > 0)) {
           return " (Partially Paid)";
@@ -63,26 +66,6 @@ const PaymentTenant = () => {
         }
     });
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userResponse = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
-                    method: 'GET',
-                    headers: {
-                      'Authorization': `Bearer ${getAuthToken()}`,
-                      'Accept': 'application/json',
-                    },
-                  });
-                const user = await userResponse.json();
-
-                setTenantId(user.id);
-                fetchPaymentData(user.id);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-        fetchUserData();
-    }, []);
 
     useEffect(() => {
         window.Echo.channel(`tenant-reminder.${tenantId}`).listen('.payment.reminder', (data) => {
@@ -91,16 +74,22 @@ const PaymentTenant = () => {
     }, [tenantId]);
 
     useEffect(() => {
-        if (tenantId) {
-            window.Echo.channel(`tenant-reminder.${tenantId}`)
-                .listen('.payment.reminder', (data) => {
-                    alert(data.message);
-                })
-                .listen('.payment.rejected', () => {
-                    alert("❌ Your previous payment was rejected.");
-                    fetchPaymentData(tenantId); // 🔄 Re-fetch updated data
-                });
-        }
+        if (!tenantId) return;
+
+        const channel = window.Echo.channel(`tenant-reminder.${tenantId}`);
+
+        channel
+            .listen('.payment.reminder', (data) => {
+                alert(data.message);
+            })
+            .listen('.payment.rejected', () => {
+                alert("❌ Your previous payment was rejected.");
+                fetchPaymentData(tenantId); // Force update from backend
+            });
+
+        return () => {
+            window.Echo.leave(`tenant-reminder.${tenantId}`);
+        };
     }, [tenantId]);
 
     const calculateRemainingBalance = (stayType, duration, unitPrice) => {
@@ -194,32 +183,47 @@ const PaymentTenant = () => {
         setNextDueMonth(getNextDueMonth());
     }, [balanceDue, availableMonths]);
 
-    const fetchPaymentData = async (id) => {
-        try {
-            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${id}`, {
-                headers: { Authorization: `Bearer ${getAuthToken()}` },
-            });
+    useEffect(() => {
+        const fetchUserAndPayment = async () => {
+            try {
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+                    headers: {
+                        Authorization: `Bearer ${getAuthToken()}`,
+                        Accept: 'application/json',
+                    },
+                });
     
-            if (!res.ok) throw new Error('Failed to fetch payment data.');
+                const user = await res.json();
+                setTenantId(user.id);
     
-            const data = await res.json();
-            
-            // Log dueDate here to see if it's being fetched correctly
-            console.log("Due Date from Backend:", data.due_date);
+                const cached = getCachedData(`payments-${user.id}`);
+                if (cached) {
+                    applyPaymentData(cached); // Use cached response
+                } else {
+                    const paymentRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
+                        headers: { Authorization: `Bearer ${getAuthToken()}` },
+                    });
     
-            setUnitPrice(data.unit_price || 0);
-            setPaymentHistory(data.payments || []);
-            setDueDate(data.due_date);
-            setCheckInDate(data.check_in_date);
-            setDuration(data.duration);
-            setBalanceDue(data.unpaid_balances || {}); // Fetch remaining balance
+                    const paymentData = await paymentRes.json();
+                    updateCache(`payments-${user.id}`, paymentData);
+                    applyPaymentData(paymentData);
+                }
+            } catch (err) {
+                console.error("❌ Error loading tenant or payment data:", err);
+            }
+        };
     
-            // Now calling generatePaymentPeriods with stay_type, duration, and payments
-            generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
-        } catch (error) {
-            console.error('Error fetching payment data:', error);
-            setPaymentHistory([]);
-        }
+        fetchUserAndPayment();
+    }, []);
+    
+    const applyPaymentData = (data) => {
+        setUnitPrice(data.unit_price || 0);
+        setPaymentHistory(data.payments || []);
+        setDueDate(data.due_date);
+        setCheckInDate(data.check_in_date);
+        setDuration(data.duration);
+        setBalanceDue(data.unpaid_balances || {});
+        generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
     };
     
     const generatePaymentPeriods = (startDate, duration, stayType, payments) => {
@@ -430,7 +434,9 @@ const PaymentTenant = () => {
         }
     };
     
-    
+    if (!tenantId || availableMonths.length === 0) {
+        return <div className="spinner"></div>;
+      }
     return (
         <div ref={ref} className={`payment-container payment-background ${isCompact ? 'compact-mode' : ''}`}>
 
