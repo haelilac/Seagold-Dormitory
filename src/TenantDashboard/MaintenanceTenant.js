@@ -164,25 +164,34 @@ const MaintenanceTenant = () => {
     const [loading, setLoading] = useState(true);
   
     useEffect(() => {
-      const fetchRequests = async () => {
-        try {
-          const cached = getCachedData("tenant-maintenance");
-          if (cached) {
-            setRequests(cached);
-          } else {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/maintenance-requests");
-            const data = await response.json();
-            setRequests(data);
-            updateCache("tenant-maintenance", data);
+        const fetchRequests = async () => {
+          try {
+            const cached = getCachedData("tenant-maintenance");
+            if (cached) {
+              setSubmittedRequests(cached);
+            } else {
+              const response = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
+                headers: {
+                  'Authorization': `Bearer ${getAuthToken()}`,
+                  'Accept': 'application/json',
+                }
+              });
+      
+              if (!response.ok) throw new Error("Failed to fetch maintenance requests");
+      
+              const data = await response.json();
+              setSubmittedRequests(data);
+              updateCache("tenant-maintenance", data);
+            }
+          } catch (error) {
+            console.error("Error fetching maintenance requests:", error);
+          } finally {
+            setLoading(false);
           }
-        } catch (error) {
-          console.error("Error fetching maintenance requests:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchRequests();
-    }, []);
+        };
+      
+        fetchRequests();
+      }, []);
   
     if (loading) return <div className="spinner"></div>;
     return (
