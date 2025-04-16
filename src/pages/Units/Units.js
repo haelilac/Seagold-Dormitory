@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./Units.css";
+import { useDataCache } from "../contexts/DataContext";
 
 const Units = () => {
+  const { getCachedData, updateCache } = useDataCache();
   const [units, setUnits] = useState([]);
   const [capacityInput, setCapacityInput] = useState("");
   const [carouselIndices, setCarouselIndices] = useState({});
@@ -25,22 +27,27 @@ const Units = () => {
     setModalUnit(null);
   };
 
-useEffect(() => {
-  const fetchUnits = async () => {
-    console.time("fetchUnits");
-    try {
-      const res = await fetch('https://seagold-laravel-production.up.railway.app/api/public-units');
-      const data = await res.json();
-      setUnits(data);
-    } catch (err) {
-      console.error("Error fetching units:", err.message);
-    } finally {
-      setLoading(false); // ✅ done loading
+  useEffect(() => {
+    const cached = getCachedData("public-units");
+    if (cached && cached.length > 0) {
+      setUnits(cached);
+      setLoading(false);
+    } else {
+      const fetchUnits = async () => {
+        try {
+          const res = await fetch('https://seagold-laravel-production.up.railway.app/api/public-units');
+          const data = await res.json();
+          setUnits(data);
+          updateCache("public-units", data); // ✅ Save to cache
+        } catch (err) {
+          console.error("Error fetching units:", err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchUnits();
     }
-    console.timeEnd("fetchUnits");
-  };
-  fetchUnits();
-}, []);
+  }, []);
   
   const handleFilterClick = (type, value) => {
     if (type === "availability") {

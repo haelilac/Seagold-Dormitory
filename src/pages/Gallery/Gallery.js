@@ -1,5 +1,40 @@
 import React, { useEffect, useState } from "react";
 import "./Gallery.css";
+import { useDataCache } from "../contexts/DataContext";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: 'fea5d607d4b38ea09320',
+  cluster: 'ap1',
+  forceTLS: true,
+});
+
+useEffect(() => {
+  window.Echo.channel("gallery")
+    .listen("GalleryImageUploaded", (e) => {
+      if (e.image) {
+        const dbCategory = e.image.category.trim().toLowerCase();
+        const mappedCategory = categoryMap[dbCategory];
+        const path = e.image.image_url;
+
+        if (mappedCategory && facilityDescriptions[mappedCategory]) {
+          setFacilityImagesByCategory(prev => {
+            const updated = { ...prev };
+            if (!updated[mappedCategory]) updated[mappedCategory] = [];
+            updated[mappedCategory] = [path, ...updated[mappedCategory]];
+            return updated;
+          });
+        }
+      }
+    });
+
+  return () => {
+    window.Echo.leave("gallery");
+  };
+}, []);
 
 const heroSlides = [
   {
@@ -19,7 +54,6 @@ const heroSlides = [
   },
 ];
 
-// ✅ Display categories used in the frontend
 const categoryMap = {
   "canteen": "canteen",
   "hallway": "hallway",
@@ -34,8 +68,8 @@ const facilityDescriptions = {
   "women’s cr": "Hygienic and comfortable women's restroom facilities."
 };
 
-
 const Gallery = () => {
+  const { getCachedData, updateCache } = useDataCache();
   const [facilityImagesByCategory, setFacilityImagesByCategory] = useState({});
   const [isFacilityModalOpen, setFacilityModalOpen] = useState(false);
   const [facilityCategory, setFacilityCategory] = useState("");
@@ -44,26 +78,31 @@ const Gallery = () => {
   const [heroIndex, setHeroIndex] = useState(0);
 
   useEffect(() => {
-    fetch("https://seagold-laravel-production.up.railway.app/api/gallery")
-      .then((res) => res.json())
-      .then((data) => {
-        const grouped = {};
-  
-        data.images.forEach((img) => {
-          const dbCategory = img.category.trim().toLowerCase();
-          const mappedCategory = categoryMap[dbCategory];
-          const path = img.image_url;
-  
-          if (mappedCategory && facilityDescriptions[mappedCategory]) {
-            if (!grouped[mappedCategory]) grouped[mappedCategory] = [];
-            grouped[mappedCategory].push(path);
-          }
+    const cached = getCachedData("gallery-images");
+
+    if (cached) {
+      setFacilityImagesByCategory(cached);
+    } else {
+      fetch("https://seagold-laravel-production.up.railway.app/api/gallery")
+        .then((res) => res.json())
+        .then((data) => {
+          const grouped = {};
+          data.images.forEach((img) => {
+            const dbCategory = img.category.trim().toLowerCase();
+            const mappedCategory = categoryMap[dbCategory];
+            const path = img.image_url;
+
+            if (mappedCategory && facilityDescriptions[mappedCategory]) {
+              if (!grouped[mappedCategory]) grouped[mappedCategory] = [];
+              grouped[mappedCategory].push(path);
+            }
+          });
+
+          setFacilityImagesByCategory(grouped);
+          updateCache("gallery-images", grouped); // ✅ Save to cache
         });
-  
-        setFacilityImagesByCategory(grouped);
-      });
+    }
   }, []);
-  
 
   const openFacilityModal = (category) => {
     setFacilityCategory(category);
@@ -82,10 +121,10 @@ const Gallery = () => {
     <div className="gallery-container">
       {/* Hero Carousel */}
       <div className="hero-carousel">
-      <div
-        className="hero-slide"
-        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${heroSlides[heroIndex].image})` }}
-      >
+        <div
+          className="hero-slide"
+          style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${heroSlides[heroIndex].image})` }}
+        >
           <button className="carousel-arrow left-arrow" onClick={prevHeroSlide}>&#10094;</button>
           <div className="hero-content">
             <h1>{heroSlides[heroIndex].title}</h1>
