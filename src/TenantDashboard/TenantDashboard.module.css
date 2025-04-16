@@ -45,7 +45,7 @@
 .sidebar {
   background-color: #366e39; /* adjust based on your theme */
   height: 100vh;
-  width: 90px;
+  width: 80px;
   display: flex;
   flex-direction: column;
   z-index: 1500;
