@@ -111,7 +111,7 @@ return (
   >
     {/* Logo (mobile only) */}
         <img
-        src={require("../../assets/seagoldlogo.jpg")}
+        src={require("../../assets/seagoldlogo.png")}
         alt="Logo"
         className="mobile-logo"
       />
