@@ -101,7 +101,7 @@ const LoginModal = ({ onClose, onLogin }) => {
         </button>
 
         <div className="logo-container">
-          <img src={require("../../assets/seagoldlogo.jpg")} alt="Logo" className="logo" />
+          <img src={require("../../assets/seagoldlogo.png")} alt="Logo" className="logo" />
         </div>
 
         <div className="tab-navigation">
