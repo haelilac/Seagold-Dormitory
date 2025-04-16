@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import seagoldLogo from '../assets/seagoldlogo.png';
 
 const SeagoldNavbar = () => {
   const location = useLocation();
@@ -38,7 +39,7 @@ const SeagoldNavbar = () => {
           <div className="seagold-navbar-logo">
             <Link to="/">
               <img 
-                src="/static/media/seagoldlogo.png"
+                src={seagoldLogo}
                 alt="Seagold Dormitory Logo"
                 loading="lazy"
               />
