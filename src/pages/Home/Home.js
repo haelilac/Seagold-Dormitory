@@ -14,6 +14,10 @@ const Home = () => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   };
+  
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn) {
