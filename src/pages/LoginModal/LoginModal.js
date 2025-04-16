@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./LoginModal.css";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVenusMars } from '@fortawesome/free-solid-svg-icons'; // this one is for gender
 
 const LoginModal = ({ onClose, onLogin }) => {
   const [isRegisterMode, setIsRegisterMode] = useState(true);
@@ -143,7 +145,7 @@ const LoginModal = ({ onClose, onLogin }) => {
               </div>
             </div>
             <div className="input-container">
-              <img src={require("../../assets/lock-icon.jpg")} alt="Password" className="input-icon" />
+              <img src={require("../../assets/lock-icon.png")} alt="Password" className="input-icon" />
               <input
                 type="password"
                 placeholder="Password"
@@ -164,7 +166,7 @@ const LoginModal = ({ onClose, onLogin }) => {
                   onChange={(e) => setDateOfBirth(e.target.value)}
                 />
               </div>
-              <div className="input-container">
+              <div className="input-container select-with-icon">
                 <select value={gender} onChange={(e) => setGender(e.target.value)}>
                   <option value="" disabled>
                     Select Gender
@@ -178,8 +180,8 @@ const LoginModal = ({ onClose, onLogin }) => {
             <button type="submit" className="form-button">
               Register
             </button>
-            <div className="divider">
-              <span>Or sign up with</span>
+            <div className="divider-text">
+             <span>Or sign up with</span>
             </div>
             <button className="google-login-button" onClick={handleGoogleLogin}>
               <img src={require("../../assets/google-icon.png")} alt="Google" />
@@ -199,7 +201,7 @@ const LoginModal = ({ onClose, onLogin }) => {
               />
             </div>
             <div className="input-container">
-              <img src={require("../../assets/lock-icon.jpg")} alt="Password" className="input-icon" />
+              <img src={require("../../assets/lock-icon.png")} alt="Password" className="input-icon" />
               <input
                 type="password"
                 placeholder="Password"
@@ -210,7 +212,7 @@ const LoginModal = ({ onClose, onLogin }) => {
             <button type="submit" className="form-button">
               Sign In
             </button>
-            <div className="divider">
+            <div className="divider-text">
               <span>Or</span>
             </div>
             <button className="google-login-button" onClick={handleGoogleLogin}>

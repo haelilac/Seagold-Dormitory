@@ -1,3 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;500&display=swap');
+
+/* Font Families */
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: #34495e;
+    background-color: #f2ede3;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    color: #4a954e; /* SEAGOLD dark green for headings */
+    margin-top: 0;
+  }
+  
+  /* Optional: Improve paragraph spacing and readability */
+  p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  
+
 /* Modal Overlay */
 .login-modal-overlay {
     position: fixed;
@@ -13,26 +37,40 @@
 }
   
 /* Modal Container */
+/* Modal Container */
 .login-modal {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 2rem;
-    width: 800px;
-    max-width: 90%;
-    text-align: center;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  background-image: url('../../assets/abstract-leaves.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.9); /* slightly more solid base */
+  border-radius: 16px;
+  padding: 2rem;
+  width: 800px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
 }
-  
-/* Logo */
+
+
+/* Logo Container becomes the circular frame */
 .logo-container {
-    margin-bottom: 1rem;
-}
-  
-.logo {
-    width: 120px;
+    width: 130px;
     height: auto;
-    margin-left: 30px;
-}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+  
+  .logo {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }  
+  
   
 /* Tab Navigation */
 .tab-navigation {
@@ -51,15 +89,15 @@
 }
   
 .tab.active {
-    color: #1e3a8a; /* Dark blue */
+    color: #4a954e; /* dark green */
     font-weight: bold;
-    border-bottom: 2px solid #1e3a8a;
+    border-bottom: 2px solid #4a954e;
 }
   
 /* Form Title */
 .form-title {
     font-size: 1.5rem;
-    color: #1e3a8a;
+    color: #00bf63; /* light green */
     margin-bottom: 1.5rem;
 }
   
@@ -67,26 +105,26 @@
 .input-container {
     position: relative;
     flex: 1;
-    margin-bottom: 1rem; /* Add space between text boxes */
+    margin-bottom: 1rem;
 }
   
 .input-container input,
 .input-container select {
     width: 100%;
     padding: 12px 16px 12px 48px;
-    border: 1px solid #ddd;
+    border: 1px solid #d2d27d; /* light brown */
     border-radius: 24px;
     font-size: 1rem;
-    background: #f9f9f9;
+    background: #ffffff;
     box-sizing: border-box;
 }
   
 .input-container input:focus,
 .input-container select:focus {
-    border: 1px solid #1e3a8a;
+    border: 1px solid #f6c971; /* sun */
     outline: none;
     background: #ffffff;
-    box-shadow: 0px 4px 8px rgba(30, 58, 138, 0.1);
+    box-shadow: 0px 4px 8px rgba(246, 201, 113, 0.2);
 }
   
 .input-container .input-icon {
@@ -98,32 +136,51 @@
     height: 20px;
     opacity: 0.7;
 }
-  
+  .input-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+}
+
+.input-container select {
+  padding-left: 48px; /* gives space for the icon */
+}
 /* Input Row Spacing */
 .input-row {
     display: flex;
-    gap: 1rem; /* Add space between inputs in the same row */
-    margin-bottom: 0.3rem; /* Add space between rows */
-}  
+    gap: 1rem;
+    margin-bottom: 0.3rem;
+}
+.select-with-icon select {
+    padding-left: 48px; /* give space for the icon */
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='%234a954e' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 12px center;
+  }
   
 /* Form Button */
 .form-button {
-    background: #1e3a8a;
+    background: #00bf63;
     color: #ffffff;
     padding: 0.8rem 0;
     font-size: 1rem;
     font-weight: bold;
     border: none;
     border-radius: 24px;
-    width: 100%;
+    width: 51%;
     margin-top: 0.3rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
   
 .form-button:hover {
-    background: #4b5f9e;
-    box-shadow: 0px 4px 12px rgba(30, 58, 138, 0.2);
+    background: #4a954e;
+    box-shadow: 0px 4px 12px rgba(74, 149, 78, 0.2);
 }
   
 /* Divider */
@@ -141,7 +198,7 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: #ddd;
+    background: #d2d27d;
     margin: 0 10px;
 }
   
@@ -151,16 +208,17 @@
     align-items: center;
     justify-content: center;
     background: #ffffff;
-    border: 1px solid #ddd;
+    border: 1px solid #d2d27d;
     border-radius: 24px;
     padding: 0.8rem;
     font-size: 1rem;
-    color: #3c4043;
+    color: #4a954e;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     margin-left: 185px;
     width: 50%;
+    margin-top: 20px;
 }
   
 .google-login-button img {
@@ -170,9 +228,225 @@
 }
   
 .google-login-button:hover {
-    background: #4285f4;
+    background: #f6c971;
     color: #ffffff;
-    border-color: #4285f4;
-    box-shadow: 0px 6px 12px rgba(66, 133, 244, 0.2);
+    border-color: #f6c971;
+    box-shadow: 0px 6px 12px rgba(246, 201, 113, 0.3);
 }
 
+.divider-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+    color: #4a954e; /* SEAGOLD dark green */
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 500;
+    position: relative;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .divider-text::before,
+  .divider-text::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #d2d27d; /* SEAGOLD light brown */
+    margin: 0 12px;
+    border-radius: 1px;
+  }
+
+  
+  /* 🌐 Responsive: Tablets (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .login-modal {
+      width: 90%;
+      padding: 1.5rem;
+      height: 62px;
+    }
+  
+    .input-row {
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+  
+    .google-login-button {
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    .form-button {
+      width: 70%;
+    }
+  }
+  
+  /* 📱 Responsive: Small Tablets & Phones (max-width: 768px) */
+  @media (max-width: 768px) {
+    .login-modal {
+      width: 90%;
+      padding: 0.8rem 1rem;
+      height: auto; /* allow natural height */
+      height: 826px;
+    }
+  
+    .tab-navigation {
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+  
+    .input-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .form-title {
+      font-size: 1.2rem;
+    }
+  
+    .form-button,
+    .google-login-button {
+      width: 100%;
+      margin: 0.5rem auto 0;
+    }
+  
+    .divider-text {
+      font-size: 0.8rem;
+    }
+  
+    .logo-container {
+      width: 100px;
+      margin-bottom: 0.5rem;
+    }
+  
+    .logo {
+      width: 100%;
+    }
+  }
+  
+  
+  /* 📱 Responsive: Small Devices (max-width: 540px) */
+@media (max-width: 540px) {
+    .login-modal {
+      padding: 0.6rem;
+      width: 95%;
+      height: 76vh; /* ✅ minimizes height dynamically */
+      max-height: 95vh; /* Optional: prevents modal from being too tall */
+      overflow-y: auto; /* Allows scroll if content overflows */
+    }
+  
+    .logo-container {
+      width: 80px;
+    }
+  
+    .form-title {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+  
+    .form-button,
+    .google-login-button {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 0.9rem;
+    }
+  
+    .tab {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.6rem;
+    }
+  
+    .input-container input,
+    .input-container select {
+      font-size: 0.85rem;
+      padding: 8px 12px 8px 42px;
+      border-radius: 20px;
+    }
+  
+    .input-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .divider-text {
+      font-size: 0.8rem;
+      margin: 1rem 0;
+    }
+  }
+  @media (max-width: 775px) and (min-width: 541px) {
+    .maintenance-wrapper {
+      padding: 30px 10px;
+    }
+  
+    .maintenance-container {
+      margin: 0 auto;
+      padding: 25px 15px;
+      max-width: 100%;
+    }
+  
+    .maintenance-header {
+      font-size: 1.8rem;
+      text-align: center;
+    }
+  
+    .maintenance-description {
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  
+    .maintenance-form {
+      padding: 20px;
+      margin-right: 0;
+    }
+  
+    .issue-label {
+      font-size: 0.95rem;
+      justify-content: center;
+    }
+  
+    .label-icon {
+      font-size: 1rem;
+    }
+  
+    .maintenance-form textarea {
+      font-size: 0.9rem;
+      padding: 12px;
+    }
+  
+    .file-upload-container {
+      padding: 15px;
+    }
+  
+    .upload-icon {
+      font-size: 1.8rem;
+    }
+  
+    .status-header {
+      font-size: 1.3rem;
+      margin-top: 30px;
+      text-align: center;
+    }
+  
+    .history-table {
+      font-size: 0.85rem;
+      overflow-x: auto;
+      display: block;
+      white-space: nowrap;
+    }
+  
+    .history-table th,
+    .history-table td {
+      padding: 8px;
+    }
+  
+    button.submit-button,
+    .cancel-button,
+    .view-file-button {
+      font-size: 0.9rem;
+      padding: 10px 14px;
+    }
+  }
+  
