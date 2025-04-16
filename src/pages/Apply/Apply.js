@@ -29,7 +29,9 @@ const ContactUs = () => {
         valid_id: null,
         accept_privacy: false,
     });
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     const [isVerified, setIsVerified] = useState(false); // Google Verification
     const [isIdVerified, setIsIdVerified] = useState(false); // ID Verification
     const [units, setUnits] = useState([]);

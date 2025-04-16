@@ -282,6 +282,7 @@ const AdminDashboard = () => {
             <div className={styles.sidebarDivider}></div>
                 <nav>
                     <ul>
+                    <li><Link to="tour-bookings"><FaCalendarCheck /> <span>Tour Bookings</span></Link></li>
                         <li><Link to="pending-applications"><FaClipboardList /> <span>Pending Applications</span></Link></li>
                         <li><Link to="unit-management"><FaBuilding /> <span>Unit Management</span></Link></li>
                         <li><Link to="manage-tenants"><FaUsers /> <span>Manage Tenants</span></Link></li>
