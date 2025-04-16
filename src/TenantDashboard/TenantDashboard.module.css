@@ -54,7 +54,7 @@
 }
 
 .sidebar.open {
-  width: 280px;
+  width: 175px;
   padding: 15px;
 }
 
@@ -181,7 +181,7 @@ margin: 0 auto;
     align-items: center;
     padding: 10px 20px;
     z-index: 1000;
-    height: 70px;
+    height: 50px;
     transition: left 0.3s ease;
     border-bottom: 5px solid #f6c143; /* gold border line */
 
