@@ -102,12 +102,12 @@ body {
   max-width: 500px;
   margin: 0 auto;
   background-color: #fff;
-  right: 50px;
+  left: 270px;
   padding: 10px;
   height: auto; /* auto-adjust based on content */
   min-height: 217px;
   max-height: 247px; /* or whatever looks good */
-  bottom: 38px;
+  top: 283px;
 }
 
 .react-calendar__month-view__days {
@@ -198,8 +198,8 @@ body {
 /* Event Board Styling */
 .event-board {
   position: relative;
-  bottom: 16px;
-  right: unset;
+  bottom: 226px;
+  left: 52%;
   background-color: #ffffff;
   padding: 20px;
   border-radius: 12px;
