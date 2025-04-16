@@ -1,27 +1,41 @@
 /* === Global Variables for Themes === */
 :root {
-    --color-background: #ecf0f1;
+    --color-background: #f2ede3;
     --color-text: #333;
-    --color-sidebar: #2c3e50;
-    --color-sidebar-text: #fff;
-    --color-topbar: #2c3e50;
-    --color-button: #3498db;
-}
+    --color-sidebar: #366e39;
+    --color-sidebar-text: #ffffff;
+    --color-topbar: #366e39;
+    --color-button: #00bf63;
+    --color-hover: #f2ede3;
+    --color-hover-text: #000000;
+    --color-profile-bg: #ffffff;
+    --color-notification-bg: #ffffff;
+    --color-profile-text: #000;
+    --color-notification-header: #366e39;
+    --color-notification-btn: #4a954e;
+  }
+  
+  [data-theme='dark'] {
+    --color-background: #394540;
+    --color-text: #ffffff;
+    --color-sidebar: #1f2d2b;
+    --color-sidebar-text: #ffffff;
+    --color-topbar: #1f2d2b;
+    --color-button: #bf9e1b;
+    --color-hover-text: #000000;
+    --color-hover: #f2ede3;
+    --color-profile-bg: #1c1c1c;
+    --color-notification-bg: #1c1c1c;
+    --color-profile-text: #ffffff;
+    --color-notification-header: #1f2d2b;
+    --color-notification-btn: #bf9e1b;
+  }
 
-[data-theme='dark'] {
-    --color-background: #2b3e50;
-    --color-text: #996515;
-    --color-sidebar: #000034;
-    --color-sidebar-text: #f0f3f4;
-    --color-topbar: #000034;
-    --color-button: #996515;
-}
-
-/* === Dashboard Container === */
+  
+/* === Dashboard Container -=== */
 .dashboardContainer {
     display: flex;
-    background-color: var(--color-background);
-    color: var(--color-text);
+    background-color: white;
     margin: 0;
     min-height: 1050px;
     width: 100%;
@@ -29,59 +43,88 @@
 
 /* === Sidebar === */
 .sidebar {
-    width: 250px;
-    background-color: #000034;
-    color: #996515;
-    position: fixed;
-    top: 0;
-    left: -250px;
-    height: 100vh;
-    transition: left 0.3s ease;
-    z-index: 1100;
-    padding-top: 20px;
+  background-color: #366e39; /* adjust based on your theme */
+  height: 100vh;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1500;
+  padding-left: 14px;
+  padding-right: 10px;
 }
 
 .sidebar.open {
-    left: 0;
+  width: 175px;
+  padding: 15px;
 }
 
-.sidebar h2 {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #996515;
+.sidebar.closed {
+  width: 60px;
+  padding: 30px;
 }
 
+/* Logo Styles */
+.seagold-logo {
+margin-top: 20%;
+width: 160px;
+transition: width 0.3s ease;
+margin: 0 auto;
+}
+
+.seagold-logo.small {
+  width: 20px;
+}
+
+/* Sidebar Links */
 .sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar ul li {
-    padding: 15px 20px;
-    border-radius: 5px;
-    margin: 5px 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.sidebar ul li:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.05);
-    cursor: pointer;
+  list-style: none;
+  padding: 0;
+  width: 100%;
 }
 
 .sidebar ul li a {
-    color: var(--color-sidebar-text);
+    display: flex;
+    align-items: center;
+    gap: 10px; /* spacing between icon and text */
+    padding: 18px 20px;
     text-decoration: none;
-    font-size: 1rem;
-    font-weight: bold;
-}
+    color: #ffffff;
+    font-weight:600;
+    border-radius: 5px;
+
+  }
+  
+  
+  .sidebar.closed ul li a span {
+    display: none; /* hide labels in collapsed mode */
+  }
+
+  .sidebar.closed ul li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sidebar.closed ul li a {
+    justify-content: center;
+    align-items: center;
+    padding: 18px; /* remove horizontal padding to center icon perfectly */
+    width: 100%;
+  }
+  
+
 
 .sidebar ul li a:hover {
-    color: var(--color-button);
-}
+    background-color: #f2ede3; /* slightly darker yellow */
+    color: #000;
+  }
+
+  .sidebar ul li a:hover svg {
+    transform: scale(1.1); /* subtle hover scale effect */
+  }
+
+ 
+
 
 .closeButton {
     position: absolute;
@@ -112,15 +155,16 @@
 .hamburgerButton {
     background: transparent;
     border: none;
-    color: var(--color-sidebar-text);
+    color: #f2ede3;
     font-size: 1.5rem;
     cursor: pointer;
     transition: transform 0.3s ease, color 0.3s ease;
     margin: 0;
+    margin-bottom:2%;
 }
 
 .hamburgerButton:hover {
-    color: var(--color-button);
+    color:  #ebdcbe;
     transform: scale(1.1);
 }
 
@@ -130,8 +174,8 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: #000034;;
-    color: var(--color-sidebar-text);
+    background-color:#366e39; /* blue similar to image */
+    color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -139,20 +183,41 @@
     z-index: 1000;
     height: 50px;
     transition: left 0.3s ease;
+    border-bottom: 5px solid #f6c143; /* gold border line */
+
 }
 
-.topBar.shifted {
-    left: 250px;
-}
+.branding {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: margin-left 0.3s ease;
+    margin-left: 80px; /* when collapsed */
+  }
+  
+  .branding.shifted {
+    margin-left: 270px; /* adjust based on sidebar width */
+  }
+  
+  .branding h1 {
+    font-style: oblique;
+    font-size: 150%;
+    color: #f2ede3;
+    margin: 0;
+
+  }
+  
 
 .dashboardTitle {
     font-size: 1.5rem;
 }
 
+
+
 /* === Notifications === */
 .notificationContainer {
     position: absolute;
-    top: 5px;
+    top: 11px;
     right: 230px;
     cursor: pointer;
     display: flex;
@@ -164,7 +229,6 @@
 }
 
 .notificationContainer:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle background change on hover */
     transform: scale(1.1); /* Slightly enlarge on hover */
 }
 
@@ -203,7 +267,7 @@
 
 
 .notificationContainer:hover .notificationIcon {
-    color: var(--color-button); /* Change color on hover */
+    color: #f1c40f; /* Change color on hover */
 }
 
 .notificationDropdown {
@@ -234,7 +298,7 @@
     font-weight: bold;
     border-bottom: 1px solid #ddd;
     text-align: center;
-    background-color: var(--color-topbar);
+    background-color:  #366e39;
     color: var(--color-sidebar-text);
 }
 
@@ -280,7 +344,7 @@
 }
 
 .notificationActions button {
-    background-color: var(--color-button);
+    background-color: #4a954e;
     color: var(--color-sidebar-text);
     border: none;
     padding: 5px 10px;
@@ -295,22 +359,25 @@
     transform: scale(1.05); /* Slight scaling effect */
 }
 
-/* === Profile Section === */
+
 
 /* === Main Content === */
+/* Default (when sidebar is closed) */
 .mainContent {
-    background-color: var(--color-background);
-    color: var(--color-text);
-    margin-top: 60px;
-    margin-left: 0;
+    background-color: #f2ede3;
+    margin-top: 80px;
+    margin-left:10px; /* Match closed sidebar */
     padding: 20px;
-    width: 100%;
-    transition: margin-left 0.3s ease;
+    width: calc(96.7% - 60px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
+/* When sidebar is open */
 .mainContent.shifted {
-    margin-left: 250px;
+    margin-left: 10px; /* Match open sidebar */
+    width: calc(111% - 450px);
 }
+
 
 /* Profile Section */
 
@@ -331,8 +398,8 @@
 
 .profileDropdown {
     position: absolute;
-    width: 210px; /* Fixed width */
-    height: 280px; /* Fixed height */
+    width: 250px; /* Fixed width */
+    height: 290px; /* Fixed height */
     top: 50px; /* Positioned below the profile */
     right: 5px;
     background: rgb(255, 255, 255);
@@ -367,13 +434,14 @@
 }
 
 .dropdownProfilePicture {
+    align-items: center;
     width: 80px; /* or any desired size */
     height: 80px;
-    margin-left: 60px;
+    margin-left: 78px;
     margin-top: 10px;
     border-radius: 50%; /* Make it circular */
     object-fit: cover;
-    border: 3px solid #4CAF50; /* Green border, customize color as needed */
+    border: 3px solid #f1c40f; /* Gold border, customize color as needed */
     transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
     animation: popIn 0.5s ease;
 }
@@ -391,13 +459,13 @@
 }
 
 .profileEmail {
-    font-size: 0.9rem; /* Adjust size */
-    color: #000000;      /* Adjust color */
-    display: block;   /* Ensure it appears below the name */
-    margin-top: 0px;  /* Optional spacing */
-    margin-bottom: 48px;
-    margin-right: 50px;
-}
+    font-size: 0.9rem;
+    color: #000000;
+    display: block;
+    margin-top: 0px;
+    text-align: center; /* ✅ This centers the email text */
+  }
+  
 
 .profileDropdown button {
     width: 100%; /* Make logout button span the full width */
@@ -419,12 +487,13 @@
     margin-left: 10px;
 }
 
+
 .profilePicture {
     width: 40px; /* or any desired size */
     height: 40px;
     border-radius: 50%; /* Make it circular */
     object-fit: cover;
-    border: 3px solid #4CAF50; /* Green border, customize color as needed */
+    border: 3px solid #f1c40f; /* Gold border, customize color as needed */
     transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
     animation: popIn 0.5s ease;
 }
@@ -432,7 +501,7 @@
 /* Hover effect: scale up slightly and change border color */
 .profilePicture:hover {
     transform: scale(1.1); /* Slight zoom on hover */
-    border-color: #2196F3; /* Change border color to blue */
+    border-color: #f2ede3; /* Change border color to blue */
 }
 
 /* Animation for when the profile picture appears */
@@ -462,6 +531,7 @@
 
 .profileDropdown .darkModeToggle:hover {
     background-color: #f0f0f0;
+    color: black;
 }
 
 
@@ -480,3 +550,274 @@
         opacity: 1;
     }
 }
+
+/* === Responsive Layout for Mobile (phones) === */
+@media screen and (max-width: 767px) {
+    .dashboardContainer {
+      flex-direction: column;
+      min-height: 100vh;
+    }
+  
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 80%;
+      max-width: 280px;
+      z-index: 999;
+      height: 100vh;
+      transition: left 0.3s ease-in-out;
+    }
+  
+    .sidebar.open {
+      left: 0;
+    }
+  
+    .topBar {
+      flex-direction: column;
+      height: auto;
+      padding: 10px;
+    }
+  
+    .branding {
+      margin-left: 0;
+      justify-content: center;
+    }
+  
+    .branding.shifted {
+      margin-left: 0;
+    }
+  
+    .mainContent,
+    .mainContent.shifted {
+      width: 100% !important;
+      margin-left: 0 !important;
+      padding: 15px;
+    }
+  
+    .notificationContainer {
+      position: static;
+      margin-top: 10px;
+      justify-content: center;
+    }
+  
+    .notificationDropdown {
+      width: 90vw;
+      left: 5vw;
+      right: auto;
+    }
+  
+    .profileDropdown {
+      width: 90vw;
+      left: 5vw;
+      right: auto;
+    }
+  
+    .dropdownProfilePicture {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    .profileDropdown .userName {
+      margin-left: 0;
+      text-align: center;
+    }
+  }
+  
+
+
+  @media screen and (max-width: 767px) {
+    .sidebar {
+      width: 80vw;
+      max-width: 280px;
+      position: fixed;
+      left: -100%;
+      top: 0;
+      transition: left 0.3s ease-in-out;
+      z-index: 1500;
+    }
+  
+    .sidebar.collapsed {
+      left: -100%;
+    }
+  
+    .sidebar.open {
+      left: 0;
+    }
+  
+    .menu-btn {
+      left: 15px !important;
+      top: 10px;
+      font-size: 20px;
+      z-index: 1600;
+    }
+  
+    .header1 {
+      flex-direction: column;
+      height: auto;
+      padding: 15px;
+    }
+  
+    .header1-title {
+      margin-left: 0 !important;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+  
+    .menu-main-content,
+    .layout-container.collapsed .menu-main-content {
+      margin-left: 0 !important;
+      width: 100% !important;
+      padding: 10px;
+      position: relative;
+      top: 100px;
+    }
+  
+    .seagold-logo {
+      width: 100px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+  
+    .nav-link {
+      padding: 12px 20px;
+      font-size: 0.95rem;
+    }
+  }
+  
+
+/* === Dashboard Container === */
+.dashboardContainer {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+  
+  .sidebar {
+    background-color: var(--color-sidebar);
+    color: var(--color-sidebar-text);
+  }
+  
+  .sidebar ul li a {
+    color: var(--color-sidebar-text);
+  }
+  
+  .sidebar ul li a:hover {
+    background-color: var(--color-hover);
+    color: black;
+  }
+  
+  .topBar {
+    background-color: var(--color-topbar);
+    color: var(--color-sidebar-text);
+  }
+  
+  .profileDropdown {
+    background-color: var(--color-profile-bg);
+    color: var(--color-profile-text);
+  }
+  
+  .profileDropdown .userName,
+  .profileDropdown .profileEmail {
+    color: var(--color-profile-text);
+  }
+  
+  .profileDropdown .darkModeToggle {
+    border: 1px solid var(--color-profile-text);
+    color: var(--color-profile-text);
+    background-color: transparent;
+  }
+  
+  .profileDropdown .darkModeToggle:hover {
+    background-color: var(--color-hover-text);
+    color: var(--color-hover-text);
+  }
+  
+  .notificationDropdown {
+    background-color: var(--color-notification-bg);
+    color: var(--color-text);
+  }
+  
+  .notificationHeader {
+    background-color: var(--color-notification-header);
+    color: var(--color-sidebar-text);
+  }
+  
+  .notificationActions button {
+    background-color: var(--color-notification-btn);
+    color: #fff;
+  }
+  
+  .notificationActions button:hover {
+    background-color: #145a32;
+    transform: scale(1.05);
+  }
+  
+  .mainContent {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+  
+  /* Ensure text visibility for content */
+  .topBarProfile span,
+  .notificationList li,
+  .notificationList li.read,
+  .noNotifications,
+  .profileDropdown span {
+    color: var(--color-text);
+  }
+  
+  /* Add other dark-mode-safe styles here as needed */
+  
+
+  /* === Notification Content Text === */
+[data-theme='dark'] .notificationContent span {
+    color: #ffffff !important;
+  }
+  
+  [data-theme='dark'] .notificationHeader {
+    background-color: var(--color-notification-header);
+    color: #ffffff;
+  }
+  
+  [data-theme='dark'] .notificationActions button {
+    background-color: var(--color-notification-btn);
+    color: #ffffff;
+  }
+  
+  [data-theme='dark'] .notificationDropdown {
+    background-color: var(--color-notification-bg);
+    color: #ffffff;
+  }
+  
+  /* === TopBar Profile Span Text === */
+[data-theme='dark'] .topBarProfile span {
+    color: #ffffff !important;
+  }
+
+/* === LIGHT MODE Hover === */
+[data-theme='light'] .profileDropdown .darkModeToggle:hover {
+  background-color: #000000; /* black background */
+  color: #ffffff;            /* white text */
+}
+
+/* === DARK MODE Hover === */
+[data-theme='dark'] .profileDropdown .darkModeToggle:hover {
+  background-color: #ffffff; /* white background */
+  color: #000000;            /* black text */
+}
+
+
+  .topBarProfile span {
+    color: var(--color-profile-span);
+  }
+
+
+[data-theme='dark'] h5,
+[data-theme='dark'] h6,
+[data-theme='dark'] p{
+  color: var(--color-text) !important;
+}
+
+  
+
+  

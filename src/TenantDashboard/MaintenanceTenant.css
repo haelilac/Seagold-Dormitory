@@ -1,128 +1,772 @@
-/* Maintenance.css */
-.maintenance-container {
-    margin: 0 auto;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;500&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+Pro:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Ubuntu:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Quicksand:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Muli:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:wght@600&family=Work+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500&display=swap');
+body {
+  font-family: 'Lato', sans-serif; /* Body text */
+    background-color: #edf1f2;
+    color: #34495e;
+    margin: 0;
+    padding: 0;
+  }
+  .TenantDashboard_mainContent__STIJE {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    margin-top: 60px;
+    margin-left: 0;
     padding: 20px;
+    width: 113%;
+    transition: margin-left 0.3s ease;
+}
+
+  /* 🛠️ CONTAINER */
+  .maintenance-container {
     max-width: 900px;
-    transition: margin-left 0.3s ease; /* Smooth adjustment */
-}
-
-.maintenance-container.shifted {
-    margin-left: 200px; /* Adjust for sidebar when retracted */
-}
-
-.maintenance-description {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 30px;
-}
-
-.maintenance-form {
-    background-color: #f9f9f9;
+    margin: 0 auto; /* centers horizontally */
+    margin-left: 350px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .maintenance-wrapper {
+    background-color: #f2ede3; /* dirty white background */
+    display: flex;
+    justify-content: center;
+    background-color: #f2ede3; /* Dirty white */
+    width: 180vw;              /* Full viewport width */
+    min-height: 190vh;         /* Optional: ensure full vertical height */
+    margin-top: -30px;
+    margin-bottom: -20px;
+    margin-left: -20px;
 }
 
-.maintenance-form input,
-.maintenance-form textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-    box-sizing: border-box;
+  
+  .maintenance-header {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #4a954e; /* dark green for stronger heading */
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .maintenance-description {
+    font-size: 1.1rem;
+    font-family: 'Open Sans', sans-serif;
+    color: #7c7954; /* subtle earthy tone */
+
+  }
+  
+.maintenance-form {
+    background-color: #ffffff; /* Clean white */
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    margin-left: -346px;
+    font-family: 'Open Sans', sans-serif;
+    min-width: 771px; /* adjust as needed */
+    max-width: 770px; /* increased width */
+    width: 100%; /* ensures responsiveness */
+    box-sizing: border-box; /* prevents overflow */
+  }
+    
+
+/* ✅ LABEL STYLING */
+.issue-label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #4a954e; /* dark green */
+  gap: 8px;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.maintenance-form textarea {
-    min-height: 150px;
+/* 🟩 ICON */
+.label-icon {
+  font-size: 1.2rem;
+  color: #4a954e; /* light green */
+  flex-shrink: 0;
 }
 
-.maintenance-form button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
+/* 📝 TEXTAREA & FILE INPUT */
+.maintenance-form textarea,
+.maintenance-form input[type="file"] {
+  width: 100%;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 5px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  font-family: 'Open Sans', sans-serif;
+  transition: border-color 0.3s;
+}
+
+/* ✨ FOCUS EFFECT */
+.maintenance-form textarea:focus,
+.maintenance-form input[type="file"]:focus {
+  outline: none;
+  border-color: #f6c971; /* sun color */
+}
+  
+  /* ⬆️ FILE UPLOAD */
+  
+  .upload-icon {
+    font-size: 20rem;
+    color: #34495e;
+    margin-bottom: 10px;
+  }
+
+  .upload-icon.alt {
+    width: 108px;
+    height: 72px;
+    color: #f6c971; /* light yellow from SEAGOLD */
+    margin-bottom: 12px;
+    transition: transform 0.2s ease;
+  }
+  
+  .upload-icon.alt:hover {
+    transform: scale(1.05);
+  }
+  
+  .upload-text {
+    font-size: 1rem;
+    color: #34495e;
+    margin-bottom: 5px;
+  }
+  
+  .file-status {
+    font-size: 0.9rem;
+    color: #2980b9;
+  }
+  
+  .reminder {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+  }
+  
+  /* BOX for FILE UPLOAD */
+  .file-upload-box {
+    border: 2px dashed #dcdde1;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* ✅ BUTTON */
+  .maintenance-form button[type="submit"] {
+    background-color: #00bf63;  
+    color: #ffffff;                    /* Dark green text */
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.08rem;                    /* Smaller font */
+    font-weight: 600;
+    margin-left: 633px;
+    padding: 6px 15px;                     /* Smaller padding */
     border: none;
-    border-radius: 4px;
+    border-radius: 16px;
     cursor: pointer;
-    font-size: 1.1em;
-    width: 100%;
-    margin-top: 15px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: fit-content;                   /* Button only as wide as needed */
+    margin-top: 5px;
+    height: 40px;
+  }
+  
+  .maintenance-form button[type="submit"]:hover {
+    background-color: #4a954e;               /* Light green hover */
+    color: white;
+    transform: scale(1.03);
+  }
+ /* 🔷 Maintenance History Container */
+.maintenance-history-container {
+  padding: 40px;
+  background-color: #ffffff; /* Clean white background */
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  margin-top: -635px;
+  max-width: 1100px;
+  margin-left: 442px;
+  border: 2px solid #d2d27d; /* Light brown border */
+  min-width: 755px;
+  max-width: 1000px;
+  overflow-y: auto;
+  min-height: 21px;
+  max-height: 638px;
 }
 
-.maintenance-form button:hover {
-    background-color: #45a049;
+/* 🔧 Maintenance Textarea Styling */
+#maintenance-request {
+  width: 100%;
+  min-height: 160px;
+  padding: 16px 18px;
+  border: 2px solid #d2d27d; /* Light brown */
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #34495e;
+  background-color: #ffffff; /* Dirty white */
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+#maintenance-request::placeholder {
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+#maintenance-request:focus {
+  outline: none;
+  border-color: #f6c971;
+  box-shadow: 0 0 8px rgba(246, 201, 113, 0.5);
+}
+
+
+.maintenance-form button:hover,
+.submit-button:hover {
+  background-color: #00bf63;
+  color: white;
+}
+
+/* --- Status & Table --- */
 .maintenance-status {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .status-header {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 10px;
+  font-size: 1.6em;
+  color: #4a954e; /* Dark green */
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .status-list {
-    list-style-type: none;
-    padding-left: 0;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .status-item {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .status-item p {
-    margin: 0;
+  margin: 0;
 }
 
 .status-item.pending {
-    border-color: #ff9800;
+  border-color: #f6c971; /* Sun color */
 }
 
 .status-item.in-progress {
-    border-color: #2196F3;
+  border-color: #00bf63; /* Light green */
 }
 
 .status-item.completed {
-    border-color: #4CAF50;
+  border-color: #4a954e; /* Dark green */
 }
+
 .history-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 25px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
 }
 
 .history-table th,
 .history-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
 .history-table th {
-    background-color: #f0f0f0;
-    font-weight: bold;
+  background-color: #d2d27d; /* Light brown */
+  color: #333;
+  font-weight: 600;
 }
 
 .history-table tr:nth-child(even) {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
 .cancel-button {
-    background-color: #d9534f;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #e74c3c;           /* modern red tone */
+  color: #fff;
+  border: none;
+  padding: 8px 16px;                   /* sleeker spacing */
+  border-radius: 13.9px;                /* softer corners */
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.25s ease, transform 0.2s ease;
 }
 
 .cancel-button:hover {
-    background-color: #c9302c;
+  background-color: #c0392b;           /* deeper red on hover */
+  transform: scale(1.03);              /* slight zoom effect */
 }
+table th,
+table td {
+  font-family: 'Open sans', sans-serif;
+}
+
+
+  .label-icon {
+    width: 24px;           /* Consistent icon size */
+    height: 24px;
+    margin-right: 8px;     /* Adds spacing between icon and text */
+    vertical-align: middle;
+  }
+  
+  .upload-label {
+    font-weight: 600;
+    margin: 20px 0 10px 0;
+    font-size: 1rem;
+    color: #4a954e; /* dark green */
+    font-family: 'Montserrat', sans-serif;
+  }
+
+/* --- File Upload Container --- */
+.file-upload-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #d2d27d; /* light brown border */
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #ffffff; /* dirty white bg */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.file-upload-container:hover {
+  background-color: #ffffff;
+  border-color: #ffffff; /* sun yellow */
+}
+
+.upload-icon {
+  font-size: 2.2rem;
+  color: #00bf63; /* light green */
+  margin-bottom: 12px;
+}
+
+.upload-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #4a954e; /* dark green */
+  margin-bottom: 6px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.file-status {
+  font-size: 0.9rem;
+  color: #888;
+  font-style: italic;
+  margin-bottom: 4px;
+  font-family: 'Open Sans', sans-serif;
+
+}
+
+.reminder {
+  font-size: 0.85rem;
+  color: #666;
+  font-family: 'Open Sans', sans-serif;
+}
+
+/* Arrange previews horizontally */
+.file-preview {
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Each preview item */
+.file-preview-item {
+  position: relative;
+  margin: 12px;
+  cursor: default;
+}
+
+/* Larger preview images */
+.preview-image {
+  width: 100%;
+  max-width: 6px;               /* Reduced from 240px */
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 2px solid #00bf63;
+  background-color: #f2ede3;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+
+.preview-image:hover {
+  transform: scale(1.03);
+}
+
+/* Improved remove button */
+.remove-file-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: #f6c971; /* sun color */
+  border: none;
+  color: #4a954e; /* dark green X */
+  border-radius: 50%;
+  width: 20px; 
+  height: 20px;
+  font-size: 14px; 
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* 🌐 RESPONSIVE: Tablets & Below (max 768px) */
+@media (max-width: 768px) {
+
+    .maintenance-wrapper {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 5px;
+      padding: 9px;
+      width: 103%;
+      margin: -29px auto;
+      box-sizing: border-box;
+  }
+  
+  .maintenance-container {
+    margin: 0 auto;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .maintenance-form,
+  .maintenance-history-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    min-width: unset;
+    box-sizing: border-box;
+  }
+
+  .maintenance-header {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .maintenance-form button[type="submit"] {
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin: 10px auto 0;
+    display: block;
+  }
+
+  .file-upload-container {
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
+  .file-preview {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .preview-image {
+    max-width: 100px;
+    height: auto;
+  }
+
+  .history-table {
+    width: 100%;
+    border: 0;
+  }
+
+  .history-table thead {
+    display: none;
+  }
+
+  .history-table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+    margin: 0 auto;
+    background: transparent;
+    border-collapse: collapse;
+  }
+  
+  .history-table tr {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;            /* Ensures left alignment */
+    gap: 10px;
+    width: 116%;
+    max-width: 540px;
+    margin: 0 auto 24px auto;           /* Vertical spacing + center */
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05); /* Softer shadow */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .history-table tr:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(74, 149, 78, 0.15); /* Seagold green tint */
+  }
+  
+
+  
+  .history-table td {
+    display: block;
+    width: 100%;
+    padding: 10px 6px;
+    font-size: 0.92rem;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    color: #34495e;
+    border-left: 5px solid #4a954e;   /* Highlighted left border */
+    font-family: 'Open Sans', sans-serif;
+  }
+  
+  .history-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #4a954e; /* Green label */
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .history-table td:last-child {
+    border-bottom: none;
+  }
+}  
+
+/* 📱 Responsive: Phones (max 480px) */
+@media (max-width: 480px) {
+  .maintenance-wrapper {
+    padding: 0;
+    margin: -29px;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .maintenance-container,
+  .maintenance-form,
+  .maintenance-history-container {
+    width: 156vw;
+    padding: 15px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+  @media (max-width: 480px) {
+    .maintenance-form {
+      margin-bottom: 20px; /* adds space between form and history */
+    }
+  
+    .maintenance-history-container {
+      margin-top: 0; /* optional reset in case may negative margin */
+    }
+  }
+  
+  .maintenance-header {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .file-upload-container {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .preview-image {
+    max-width: 80px;
+    height: auto;
+  }
+
+  .file-preview {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .maintenance-form button[type="submit"] {
+    font-size: 1rem;
+    padding: 10px 16px;
+    margin: 10px auto 0;
+    display: block;
+  }
+
+  .file-status,
+  .reminder {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .upload-text {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .history-table {
+    overflow-x: auto;
+    display: block;
+  }
+
+  .history-table td::before {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 1341px) {
+  .maintenance-wrapper {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    margin: 0 auto;
+    min-width: 70%;
+    max-width: 103.9%;
+    margin-top: -30px;
+    margin-bottom: -35px;
+    margin-left: -20px;
+    margin-right: -20px !important;
+    
+  }
+
+  .maintenance-container {
+    margin: 0 auto !important;
+    padding: 20px;
+    width: 95% !important;
+    max-width: 1000px;
+  }
+
+  .maintenance-form,
+  .maintenance-history-container {
+    width: 95% !important;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .maintenance-form {
+    margin-bottom: 24px;
+    max-width: 100%;
+    padding: 20px 24px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    font-family: 'Open Sans', sans-serif;
+  }
+  
+  /* Make textarea shorter */
+  .maintenance-form textarea {
+    min-height: 100px; /* Default is too tall, this looks better */
+    resize: vertical; /* Keep resizable for flexibility */
+    margin-bottom: 16px;
+  }
+  
+  /* Add gap between form and history */
+  .maintenance-history-container {
+    margin-top: 32px;
+  }
+  
+  
+
+  .TenantDashboard_mainContent__STIJE {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 20px;
+  }
+}
+
+.maintenance-form button[type="submit"] {
+  background-color: #00bf63;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  
+  /* ✅ Center the button */
+  display: block;
+  margin: 20px auto 0 auto;
+}
+
+.maintenance-form button[type="submit"]:hover {
+  background-color: #4a954e;
+  transform: scale(1.03);
+}
+.maintenance-form button[type="submit"] {
+  background-color: #00bf63;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  
+  /* ✅ Center the button */
+  display: block;
+  margin: 20px auto 0 auto;
+}
+
+.maintenance-form button[type="submit"]:hover {
+  background-color: #4a954e;
+  transform: scale(1.03);
+}
+
+
+

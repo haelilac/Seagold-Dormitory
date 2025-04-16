@@ -1,6 +1,20 @@
 /* Import Google Font */
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
 
+
+html, body {
+    height: 100%;
+    overflow: auto;
+}
+
+#root {
+    min-height: 100vh;
+}
+
+.app-content {
+    min-height: 100vh;
+    overflow: auto;
+}
 /* Apply Font Globally */
 body {
     font-family: 'Libre Baskerville', serif;
@@ -29,7 +43,7 @@ body {
 
 /* Unit Header */
 .unit-header {
-    background-color: #14518e; /* Dark Blue Background */
+    background-color: #00bf63; /* Dark Blue Background */
     color: white;
     padding: 15px;
     text-align: center;
@@ -114,7 +128,6 @@ body {
     border-collapse: collapse;
     background-color: #fff;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -158,7 +171,7 @@ body {
     align-items: flex-start;
     width: 90%;
     max-width: 1200px;
-    background: white;
+    background: #f2ede3;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -244,3 +257,183 @@ body {
 .available {
     background-color: #20af00 !important;
 }
+
+.unit-card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .unit-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    font-size: 14px;
+  }
+  
+  .unit-card h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #28319a;
+  }
+  
+  .unit-card p {
+    margin: 4px 0;
+  }
+  
+  .unit-card-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .unit-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .unit-card.available {
+    border-left: 6px solid #20af00;
+  }
+  
+  .unit-card.unavailable {
+    border-left: 6px solid #cc0000;
+  }
+  
+
+  .modal {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .pricing-table th {
+    background: #f2f2f2;
+  }
+  
+  .pricing-table td, .pricing-table th {
+    padding: 10px;
+    text-align: left;
+  }
+
+  .image-upload-section {
+    margin-top: 1rem;
+  }
+  
+  .image-preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .room-image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .image-preview-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .room-image-preview {
+    width: 100px;
+    margin: 5px;
+    border-radius: 4px;
+  }
+  
+  .delete-image-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+  
+  
+/*************************************
+ * RESPONSIVE MEDIA QUERIES
+ *************************************/
+
+/* Medium to small devices (Tablets & Phones) */
+@media screen and (max-width: 768px) {
+    .roomContent {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+  
+    .roomImage {
+      max-height: 30vh;
+    }
+  
+    .roomDetails {
+      margin-left: 0;
+      font-size: 1rem;
+    }
+  
+    .infoLabel {
+      font-size: 0.95rem;
+    }
+  
+    .infoValue {
+      font-size: 0.95rem;
+    }
+  
+    .infoIcon,
+    .amenityIcon {
+      width: 24px;
+    }
+  
+    .roomCard-header {
+      font-size: 1.5rem;
+      padding: 0.75rem;
+    }
+  
+    .roomCard-container {
+      padding: 2rem 1rem;
+    }
+  
+    .amenitiesSection h3 {
+      font-size: 1.1rem;
+    }
+  
+    .amenitiesList {
+      font-size: 1rem;
+      gap: 0.75rem 1.25rem;
+    }
+  
+    .amenityContainer {
+      font-size: 0.95rem;
+      padding: 0.4rem 0.6rem;
+    }
+  }
+  

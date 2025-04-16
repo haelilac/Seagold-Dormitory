@@ -1,74 +1,429 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.location-page {
+  background: none;
+  font-family: Roboto, sans-serif;
+  margin: 0 auto;
+  left: 185px;
+  bottom: 40px;
+  position: relative;
+  transition: margin-left .3s ease;
+}
+
 .map-ui {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
+  right: 370px;
+  position: relative;
 }
 
+/* Sidebar */
 .map-sidebar {
-  width: 350px;
+  background: #ffffff;
+  position: fixed;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #0003;
+  height: 50%;
+  top: 100px;
+  left: 14px;
+  max-width: 300px;
+  min-width: 300px;
   padding: 15px;
-  background: white;
-  border-right: 1px solid #ddd;
-  overflow-y: auto;
+  transition: all .3s ease;
+  width: 300px;
+  z-index: 10;
 }
 
+.map-sidebar.collapsed {
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.map-sidebar h2,
+.map-sidebar h3 {
+  font-size: 20px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Map */
 .map-container {
   flex: 1;
+  width: 100%;
   height: 100vh;
+  position: relative;
+  transition: right 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.search-bar-container {
+  position: absolute;
+  top: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 15;
 }
 
 .search-box {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-.map-btn {
-  width: 100%;
-  background-color: #4285F4;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.map-btn:hover {
-  background-color: #357ae8;
-}
-
-.travel-mode select {
-  width: 100%;
+  width: 250px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-top: 10px;
 }
 
-.travel-details {
-  margin-top: 15px;
-  padding: 10px;
-  background: #f9f9f9;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-.traffic-toggle {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.traffic-toggle input {
-  margin-right: 10px;
+.search-btn {
+  border: 1px solid #4285F4;
+  background: white;
+  color: #4285F4;
+  padding: 8px 12px;
+  margin-left: 5px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.polyline-dotted {
-  stroke-dasharray: 5, 5;
-  stroke-width: 2;
-  stroke: #34A853; /* Green for walking */
+.search-btn:hover {
+  background-color: #366e39;
+  color: #FFC857;
 }
+
+/* Sidebar Button */
+.toggle-sidebar {
+  position: absolute;
+  top: 300px;
+  left: -55px;
+  transform: translateY(-50%);
+  z-index: 20;
+  background-color: #366e39;
+  color: white;
+  border: none;
+  border-radius: 0 30px 30px 0;
+  padding: 20px 3px;
+  cursor: pointer;
+  transition: left 0.3s ease;
+}
+
+.toggle-sidebar.collapsed {
+  position: absolute;
+  top: 300px;
+  left: -370px;
+  transform: translateY(-50%);
+  z-index: 20;
+  background-color: #366e39;
+  color: white;
+  border: none;
+  border-radius: 0 30px 30px 0;
+  padding: 20px 3px;
+  cursor: pointer;
+  transition: left 0.3s ease;
+}
+
+/* Buttons */
+.map-btn {
+  border-radius: 8px;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.traffic-btn {
+  position: relative;
+  font-size: 15px;
+  border-radius: 8px;
+  text-align: center;
+  left: 40px;
+  top: 3px;
+  margin-top: 10px;
+}
+
+.nearby-btn {
+  position: relative;
+  font-size: 15px;
+  border-radius: 8px;
+  text-align: center;
+  left: 192px;
+  margin-top: 10px;
+  bottom: 60px;
+
+}
+
+.travel-mode-selector,
+.route-select select,
+.nearby-list {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.nearby-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0;
+}
+
+.nearby-list li {
+  padding: 8px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.nearby-list li:hover {
+  background-color: #FFC857;
+}
+
+.route-info {
+  margin-top: 10px;
+  padding: 5px;
+  border: 3px solid #01a451; /* green border */
+  border-radius: 10px;
+  background: #f0fff5;
+  box-shadow: 0 4px 12px rgba(1, 164, 81, 0.2);
+  animation: fadeInBox 0.6s ease-in-out;
+}
+
+.route-info p {
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.route-info-inner {
+  border: 2px solid #cc0000; /* red border */
+  padding: 12px 16px;
+  border-radius: 6px;
+  background-color: #ffffff;
+  box-shadow: inset 0 0 8px rgba(204, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  color: #333;
+  animation: popIn 0.4s ease-in-out;
+}
+
+.route-info-inner p {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes fadeInBox {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.route-select {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 68%;
+  cursor: pointer;
+}
+
+.route-select:hover {
+  background-color: #e0e0e0;
+}
+
+.route-select select {
+  flex: 1;
+}
+
+.route-select button {
+  padding: 8px 10px;
+}
+
+.gm-style-mtc-bbw {
+  margin: 10px !important;
+  z-index: 0 !important;
+  position: absolute !important;
+  cursor: pointer !important;
+  left: 1650px !important;
+  top: 80px !important;
+}
+
+.gm-bundled-control-on-bottom {
+  margin: 10px !important;
+  user-select: none !important;
+  position: absolute !important;
+  bottom: 178px !important;
+  right: 75px !important;
+  z-index: 100 !important;
+}
+
+.gm-fullscreen-control{
+  background: none rgb(255, 255, 255);
+  border: 0px;
+  margin: 10px;
+  padding: 0px;
+  text-transform: none;
+  appearance: none;
+  position: absolute;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 2px;
+  height: 40px;
+  width: 40px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  overflow: hidden;
+  top: 80px;
+  right: 12px;
+}
+
+.exit-street-view-btn {
+  position: absolute;
+  top: 90px;
+  left: 20px;
+  z-index: 999;
+  padding: 10px 14px;
+  background-color: #366e39;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background 0.3s ease;
+}
+
+.exit-street-view-btn:hover {
+  background-color: #2c5d30;
+}
+
+@media (max-width: 768px) {
+  .map-sidebar {
+      width: 200px;
+      min-width: 200px;
+      height: 400px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .map-sidebar.collapsed {
+      width: 0;
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+  .map-sidebar h2,
+  .map-sidebar h3 {
+    font-size: 17px;
+    text-align: center;
+    margin-top: 10px;
+    top: -93px;
+  }
+
+  .toggle-sidebar {
+    top: 370px;
+    left: -155px;
+}
+
+  .toggle-sidebar.collapsed {
+    top: 370px;
+    left: -370px;
+  }
+
+  .travel-mode-selector,
+  .route-select select {
+    position: relative;
+    width: 115px;
+    right: 28px;
+  }
+
+  .travel-mode-selector option::before {
+    content: attr(data-icon);
+    font-size: 18px;
+  }
+
+  .map-btn {
+  font-size: 13px;
+  position: relative;
+  top: 10px;
+  text-align: center;
+  width: 100%;
+  }
+
+
+  .traffic-btn {
+    position: relative;
+    top: -162px;
+    left: 60px;
+    text-align: center;
+    width: 28%;
+  }
+
+  .nearby-btn {
+    position: relative;
+    top: -76px;
+    left: 60px;
+    text-align: center;
+    width: 28%;
+  }
+
+  .route-select {
+    position: relative;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    padding: 10px;
+    top: -20px;
+    left: 20px;
+    width: 50%;
+  }
+
+  .route-info {
+    font-size: 10px;
+    padding: 4px;
+    width: 100%;
+    height: 15%;
+  }
+
+  .route-info-inner {
+    font-size: 0;
+    padding: 4px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .route-info-inner p {
+    font-size: 10px;
+    position: relative;
+    top: -11px;
+}
+  .route-select select {
+    padding: 6px;
+  }
+}
+
+

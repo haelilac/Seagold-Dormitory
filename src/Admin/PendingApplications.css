@@ -28,10 +28,33 @@ body {
     font-family: 'Libre Baskerville', serif;
 }
 
+/* PendingApplications.css */
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.spinner::after {
+  content: '';
+  width: 50px;
+  height: 50px;
+  border: 5px solid #ccc;
+  border-top-color: #00bf63; /* SEAGOLD light green */
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .pending-applications {
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #f2ede3;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -126,7 +149,7 @@ body {
 
 /* Table Header */
 .applications-table th {
-    background: #73b2f0;
+    background: #00bf63;
     color: white;
     padding: 15px;
     border: 1px solid #000;
@@ -263,4 +286,131 @@ body {
 
 .close-details:hover {
     background: #5a6268;
+}
+
+/*************************************
+ * RESPONSIVE MEDIA QUERIES
+ *************************************/
+/*************************************
+ * RESPONSIVE MEDIA QUERIES
+ *************************************/
+
+/* Responsive: Mobile Devices (≤768px) */
+@media screen and (max-width: 768px) {
+  .pending-applications {
+    padding: 10px;
+  }
+
+  .pending-title {
+    font-size: 1.4rem;
+    padding: 10px;
+  }
+
+  .applications-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+
+  .applications-table th,
+  .applications-table td {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .application-details {
+    padding: 15px;
+    max-width: 100%;
+    min-height: auto;
+    font-size: 1rem;
+  }
+
+  .application-details h3 {
+    font-size: 1.4rem;
+  }
+
+  .application-details p {
+    font-size: 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .accept-button,
+  .decline-button,
+  .close-details {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  .no-applications {
+    font-size: 1rem;
+  }
+}
+
+/* Responsive: Tablets (769px–1024px) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .pending-applications {
+    padding: 15px;
+  }
+
+  .pending-title {
+    font-size: 1.6rem;
+    padding: 12px;
+  }
+
+  .applications-table th,
+  .applications-table td {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  .application-details {
+    padding: 20px;
+    max-width: 90%;
+    font-size: 1.1rem;
+  }
+
+  .application-details h3 {
+    font-size: 1.6rem;
+  }
+
+  .action-buttons {
+    flex-direction: row;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .accept-button,
+  .decline-button,
+  .close-details {
+    font-size: 1.1rem;
+    padding: 12px 18px;
+    min-width: 120px;
+  }
+
+  
+}
+
+/* Optional: Base font scaling for smoother UX */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
 }

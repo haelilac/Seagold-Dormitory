@@ -1,38 +1,60 @@
-/* General styles */
-body, html {
+/* Reset & Font */
+* {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
 .login-page {
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
   display: flex;
-  height: 100vh;
-  padding: 0 20px; /* Add padding to both sides */
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px;
 }
 
-/* Left section (Form) */
-.login-left {
-  flex: 1;
-  padding: 15px;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Align the form at the top */
+/* Optional dark overlay */
+.login-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
+/* Login Form Container */
+.login-container {
+  background: rgba(129, 129, 129, 0.123);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 55px 30px;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 520px;
+  margin-right: 850px;
+  z-index: 2;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .welcome-text {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #2d50ef; /* Blue color for the welcome text */
-  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #366e39;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .login-form {
@@ -48,7 +70,7 @@ body, html {
 
 .input-group label {
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 5px;
 }
 
 .input-group input {
@@ -62,17 +84,14 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-}
-
-.remember-me input {
-  margin-right: 0.5rem;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .forgot-password-link {
-  color: #2d50ef;
-  text-decoration: none;
+  color: #366e39;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 
 .forgot-password-link:hover {
@@ -80,78 +99,228 @@ body, html {
 }
 
 .button-group {
-  display: flex;
-  gap: 1rem;
+  margin-top: 10px;
 }
 
-.login-button, 
-.signup-button {
-  padding: 10px 20px;
+.login-button {
+  background-color: #366e39;
+  color: white;
+  padding: 10px;
   font-size: 1rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  width: 100%;
 }
 
-.login-button {
-  color: white;
+.login-button:hover {
+  background-color: #f1c40f;
 }
 
-.signup-button {
-  background-color: transparent;
-  border: 2px solid #2d50ef;
-  color: #2d50ef;
+.create-account-link {
+  color: #366e39;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
-.signup-button:hover {
-  background-color: #2d50ef;
-  color: white;
-}
-
-/* Social icons */
-.social-links {
-  margin-top: 2rem;
-}
-
-.social-links span {
+/* Error Message */
+.error-message {
+  color: #d32f2f;
   font-size: 0.9rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.typing-text {
+  display: inline-block;
+  border-right: 2px solid #366e39;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing 2.5s steps(20, end) 1s forwards, blink 0.75s step-end infinite;
+  font-size: 2rem;
   font-weight: bold;
+  color: #366e39;
 }
 
-.social-icons {
+.mobile-logo {
+  display: none;
+  height: 130px;
+  width: 130px;
+  margin: 0 auto 20px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid white; /* 🔲 White border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Optional soft shadow */
+  z-index: 10;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 14ch;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: #366e39;
+  }
+}
+
+/* Checkbox Styling */
+.remember-me {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
 }
 
-.social-icons a {
-  color: #000;
+.remember-me input[type="checkbox"] {
+  accent-color: #366e39;
+  width: 16px;
+  height: 16px;
+}
+
+/* Forgot Password Link Styling */
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: #366e39;
   text-decoration: none;
-  font-size: 1.2rem;
+  transition: color 0.3s ease;
 }
 
-.social-icons a:hover {
-  color: #2d50ef;
+.forgot-password-link:hover {
+  text-decoration: underline;
+  color: #f1c40f;
 }
 
-/* Right section (Background) */
-.login-right {
-  flex: 1; /* Ensure this section takes up one portion of the available space */
-  background: url('/public/bgroom.jpg') no-repeat center center;
-  background-size: cover; /* Ensure the image covers the entire area */
-  height: 100vh; /* Make the right side take up the full viewport height */
 
-
+/* Responsive */
+@media (max-width: 1200px) {
+  .login-container {
+    margin-right: 600px;
+  }
 }
 
-/* Responsive adjustments */
+@media (max-width: 992px) {
+  .login-container {
+    margin-right: 300px;
+  }
+}
+
 @media (max-width: 768px) {
   .login-page {
-    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
   }
 
-  .login-left, .login-right {
-    flex: none;
-    width: 100%;
+  .login-container {
+    margin-right: 0;
+    margin-left: 0;
+    max-width: 100%;
+    padding: 30px 25px;
   }
+
+  .mobile-logo {
+    display: block;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  .welcome-text {
+    font-size: 1.6rem;
+  }
+
+  .typing-text {
+    font-size: 1.5rem;
+  }
+
+  .login-button {
+    font-size: 0.95rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    position: relative;
+  }
+
+  .remember-me {
+    font-size: 0.95rem;
+    position: relative;
+    bottom: auto;
+    left: auto;
+  }
+
+
+.forgot-password-link {
+  font-size: 0.95rem;
+  position: relative;
+  bottom: auto;
+  left: auto;
+  margin-top: 4px;
+  text-align: left;
 }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 25px 20px;
+  }
+
+  .input-group input {
+    font-size: 0.95rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .welcome-text {
+    font-size: 1.5rem;
+  }
+
+  .typing-text {
+    font-size: 1.3rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    position: relative;
+  }
+
+  .remember-me input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+
+  .remember-me {
+    font-size: .9rem;
+    position: relative;
+    bottom: auto;
+    left: auto;
+  }
+
+  .forgot-password-link {
+    font-size: .9rem;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 4px;
+    text-align: left;
+  }
+
+}
+
+

@@ -3,37 +3,8 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   color: #333;
-}
-
-/* Header Container */
-.sea-gold-heading {
-  text-align: center;
-  font-family: 'Georgia', serif;
-  margin: 40px auto;
-  line-height: 1.2;
-}
-
-/* "Unit" Title */
-.unit-text {
-  display: block;
-  font-size: 4.5rem; /* Large text */
-  color: #79C9F4; /* Light Blue */
-  font-weight: bold;
-  font-style: italic;
-  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-}
-
-/* Description Text */
-.description-text {
-  display: block;
-  font-size: 1.8rem; /* Subtitle size */
-  color: #003366; /* Dark Navy Blue */
-  font-weight: bold;
-  font-style: italic;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .Units {
@@ -42,9 +13,9 @@ body {
   padding: 10px;
 }
 
-/* Filter Bar */
+/* Filter Bar & Search Section */
 .filter-bar {
-  background-color: #ffffff;
+  background-color: #f2ede3;
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -53,54 +24,72 @@ body {
 }
 
 .search-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   margin-bottom: 15px;
+  text-align: center;
 }
 
-.search-section h1 {
-  font-size: 1.5rem;
+.sea-gold-heading {
+  font-family: 'Georgia', serif;
+  margin: 40px auto;
+  line-height: 1.2;
+}
+
+.unit-text {
+  display: block;
+  font-size: 4.5rem;
+  color: #00bf63;
   font-weight: bold;
-  color: #333;
+  font-style: italic;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
 }
 
+.description-text {
+  display: block;
+  font-size: 1.8rem;
+  color: #4a954e;
+  font-weight: bold;
+  font-style: italic;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Search Input & Icon */
 .search-input {
   display: flex;
   align-items: center;
-  width: 100%;
   max-width: 500px;
-  border: 2px solid #007bff;
-  border-radius: 25px;
-  overflow: hidden;
+  margin: 0 auto;
 }
 
 .search-input input {
   flex: 1;
-  padding: 10px;
-  border: none;
-  outline: none;
+  padding: 8px 12px;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .search-icon {
-  padding: 0 10px;
-  color: #007bff;
-  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  cursor: pointer;
+  object-fit: contain;
 }
 
+/* Filter Buttons */
 .filters {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
+  margin-top: 15px;
 }
 
 .filters button {
   background-color: white;
-  border: 2px solid #007bff;
-  color: #007bff;
+  border: 2px solid #00bf63;
+  color: #00bf63;
   padding: 10px 15px;
   border-radius: 20px;
   font-size: 14px;
@@ -109,28 +98,40 @@ body {
   transition: all 0.3s ease;
 }
 
-.filters button.active {
-  background-color: #007bff;
-  color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
+.filters button.active,
 .filters button:hover {
-  background-color: #007bff;
-  color: white;
+  background-color: #d2d27d;
+  color: #4a954e;
 }
 
-/* Rental Container */
+/* Rental Container using Flexbox */
 #rental-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
   margin-top: 20px;
 }
 
+#rental-container.animate {
+  animation: containerFadeIn 0.6s ease;
+}
+
+@keyframes containerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Rental Card */
 .rental-card {
-  background-color: #fff;
+  width: 320px;
+  background-color: #f2ede3;
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -138,6 +139,7 @@ body {
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
+  min-height: 400px;
 }
 
 .rental-card:hover {
@@ -153,7 +155,7 @@ body {
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: #007bff;
+  background-color: #00bf63;
   color: white;
   padding: 5px 10px;
   border-radius: 5px;
@@ -177,6 +179,7 @@ body {
 }
 
 .carousel-images img {
+  flex: 0 0 100%;
   width: 100%;
   height: 200px;
   object-fit: cover;
@@ -217,30 +220,30 @@ body {
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 5px;
-  color: #333;
+  color: #4a954e;
 }
 
 .rental-inclusion {
   font-size: 0.9rem;
-  color: #555;
+  color: #00bf63;
   margin: 5px 0;
 }
 
 .rental-price {
   font-size: 1rem;
-  color: #007bff;
+  color: #00bf63;
   font-weight: bold;
   margin: 10px 0;
 }
 
 .rental-availability {
   font-size: 0.9rem;
-  color: #007bff;
+  color: #00bf63;
   margin-bottom: 10px;
 }
 
 .details-button {
-  background-color: #007bff;
+  background-color: #00bf63;
   color: white;
   text-align: center;
   padding: 10px;
@@ -252,31 +255,263 @@ body {
 }
 
 .details-button:hover {
-  background-color: #0056b3;
+  background-color: #4a954e;
 }
 
-/* Responsive Design */
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 600px;  /* Set a wider container for a rectangular shape */
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: #f2ede3;
+  border-radius: 0;  /* No rounded corners for a rectangle */
+  padding: 25px;
+  box-sizing: border-box;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal Content Text Adjustments */
+.modal-content h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.modal-content p {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  line-height: 1.6;
+}
+
+/* Rental Notes with Custom Properties */
+:root {
+  --rental-notes-font-size: 60%;
+  --rental-notes-line-height: 1.5;
+  --rental-notes-max-width: 800px;
+  --rental-notes-padding: 10px;
+}
+
+.rental-notes {
+  font-size: var(--rental-notes-font-size);
+  line-height: var(--rental-notes-line-height);
+  margin: 10px auto;
+  padding: var(--rental-notes-padding);
+  max-width: var(--rental-notes-max-width);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rental-notes p {
+  margin-bottom: 1rem;
+}
+
+.price-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.price-modal {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.close-modal-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #4a954e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.view-price-btn {
+  background: #00bf63;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.loading-spinner {
+  text-align: center;
+  margin-top: 50px;
+  color: #4a954e;
+  font-weight: bold;
+}
+
+/* Responsive adjustments for rental-notes */
+@media (max-width: 768px) {
+  .rental-notes {
+    font-size: 0.9rem;
+    max-width: 600px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .rental-notes {
+    font-size: 0.8rem;
+    max-width: 100%;
+    padding: 5px;
+  }
+}
+
+/* Close Button */
+.close-modal {
+  background-color: #00bf63;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.close-modal:hover {
+  background-color: #4a954e;
+  box-shadow: 0 0 20px #4a954e;
+}
+
+/* Fullscreen Styles */
+.fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fullscreen-image {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.fullscreen-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 3;
+}
+
+.fullscreen-nav.prev {
+  left: 10px;
+}
+
+.fullscreen-nav.next {
+  right: 10px;
+}
+
+/* Additional Animations */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rental-card,
+.sea-gold-heading,
+.filter-bar {
+  animation: fadeSlideUp 0.6s ease-in-out both;
+}
+
+.rental-card {
+  animation-delay: 0.6s;
+}
+
+.sea-gold-heading {
+  animation-delay: 0.2s;
+}
+
+.filter-bar {
+  animation-delay: 0.4s;
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
   .search-input {
     flex-direction: column;
-    gap: 5px;
   }
-
-  .filters {
-    flex-wrap: wrap;
-  }
-
   #rental-container {
-    grid-template-columns: 1fr;
+    justify-content: center;
   }
-
   .carousel-btn {
     font-size: 12px;
     padding: 5px;
   }
-
   .rental-image {
     height: 150px;
   }
 }
 
+/* Extra small screens for modal content */
+@media (max-width: 576px) {
+  .modal-content {
+    max-width: 100%;
+    padding: 15px;
+  }
+}

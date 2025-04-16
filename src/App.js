@@ -8,7 +8,6 @@ import Gallery from './pages/Gallery/Gallery';
 import Units from './pages/Units/Units';
 import TourBooking from './pages/TourBooking/TourBooking';
 import Login from './pages/Login/Login';
-import CreateAccount from './pages/CreateAccount/CreateAccount';
 import AdminDashboard from './Admin/AdminDashboard';
 import PendingApplications from './Admin/PendingApplications';
 import UnitManagement from './Admin/UnitManagement';
@@ -32,12 +31,25 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import './App.css';
 import LoginModal from "./pages/LoginModal/LoginModal";
 import Feedback from 'react-bootstrap/esm/Feedback';
+import ForgotPassword from './pages/Login/ForgotPassword';
+import ResetPassword from './pages/Login/ResetPassword';
+import { getAuthToken } from "./utils/auth";
+import { DataProvider } from './contexts/DataContext';
 
 const clientId = "758551378674-8t930isecldottudrarf724h6jlgdcji.apps.googleusercontent.com";
 
+const getStorageItem = (key) => {
+  return localStorage.getItem(key) || sessionStorage.getItem(key);
+};
+
 const App = () => {
-  const [role, setRole] = useState(localStorage.getItem('role') || null);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const getStorageItem = (key) => {
+    return localStorage.getItem(key) || sessionStorage.getItem(key);
+  };
+  
+  const [role, setRole] = useState(getStorageItem('role') || null);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!getStorageItem('token'));
+  
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   // Function to handle adding a new unit
@@ -65,9 +77,10 @@ const App = () => {
 
   // Authentication check function
   const checkAuth = async () => {
-    const token = localStorage.getItem("token");
+    const token = getStorageItem("token");
     if (!token) {
       localStorage.clear();
+      sessionStorage.clear();
       setRole(null);
       setIsLoggedIn(false);
       return;
@@ -77,7 +90,7 @@ const App = () => {
       const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/validate-token", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,  // ✅ Fixed string interpolation issue
+          Authorization: `Bearer ${getAuthToken()}`,
           "Content-Type": "application/json",
         },
       });
@@ -98,6 +111,7 @@ const App = () => {
     } catch (error) {
       console.error("Token validation failed:", error.message);
       localStorage.clear();
+      sessionStorage.clear();
       setRole(null);
       setIsLoggedIn(false);
     }
@@ -106,6 +120,7 @@ const App = () => {
   // Handle logout function
   const handleLogout = () => {
     localStorage.clear(); // Clear all local storage data
+    sessionStorage.clear();
     setRole(null);
     setIsLoggedIn(false);
   };
@@ -124,7 +139,8 @@ const App = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <Router>
+      <DataProvider>
+        <Router>
         <div className="app-content">
           {console.log("Current Role State:", role)}
 
@@ -138,7 +154,8 @@ const App = () => {
             <Route path="/book-tour" element={<TourBooking />} />
             <Route path="/apply" element={<Apply />} />
             <Route path="/login" element={<Login setRole={handleLoginSuccess} />} />
-            <Route path="/create-account" element={<CreateAccount />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Admin-only routes */}
             <Route
@@ -173,6 +190,7 @@ const App = () => {
           </Routes>
         </div>
       </Router>
+      </DataProvider>
     </GoogleOAuthProvider>
   );
 };

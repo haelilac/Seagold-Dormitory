@@ -1,65 +1,183 @@
 import React, { useEffect, useState } from 'react';
 import './PaymentAdmin.css';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { getAuthToken } from "../utils/auth";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+import { useDataCache } from '../contexts/DataContext';
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'fea5d607d4b38ea09320', 
+    cluster: 'ap1',
+    forceTLS: true,
+    encrypted: true,
+});
+
+  
+
+const initSummary = () => ({
+    Confirmed: 0,
+    Pending: 0,
+    Rejected: 0,
+    Unpaid: 0,
+});
+
+const formatDate = (date) =>
+    date ? new Date(date).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) : 'N/A';
 
 const PaymentAdmin = () => {
-    const [mergedData, setMergedData] = useState([]);
+    const { getCachedData: getCache, updateCache } = useDataCache();
+    const [mergedData, setMergedData] = useState([]);  
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [filters, setFilters] = useState({
-        status: '',
-        month: '',
-        year: '',
-        search: '',
-    });
+    const [filters, setFilters] = useState({ status: '', month: '', year: '', search: '' });
     const [expandedRow, setExpandedRow] = useState(null);
-    const [explanation, setExplanation] = useState('');
+    const [paymentSummary, setPaymentSummary] = useState(initSummary());
+    const [selectedStatus, setSelectedStatus] = useState('All');
+    const [showModal, setShowModal] = useState(false);
+    const [selectedTenantPayments, setSelectedTenantPayments] = useState([]);
+    const [selectedTenantName, setSelectedTenantName] = useState('');
+    const [selectedTenantId, setSelectedTenantId] = useState(null);
+    const [selectedMonthData, setSelectedMonthData] = useState(null);
+
+    useEffect(() => {
+        const channel = window.Echo.channel('admin.payments');
+      
+        channel.listen('.new.payment', (e) => {
+          const newEntry = {
+            ...e.payment,
+            name: e.payment.user?.name || 'New Tenant',
+            unit_code: e.payment.unit?.unit_code || 'N/A',
+            total_due: `₱${parseFloat(e.payment.amount).toFixed(2)}`,
+            balance: `₱${parseFloat(e.payment.remaining_balance || 0).toFixed(2)}`,
+            payment_date: e.payment.created_at,
+            status: e.payment.status,
+          };
+      
+          const updated = [...getCache('payments') || [], newEntry];
+          updateCache('payments', updated);
+          setMergedData(updated);
+        });
+      
+        return () => {
+          channel.stopListening('.new.payment');
+        };
+      }, []);
+
+    const fetchTenantPayments = async (tenantId, unpaidMonth, tenantName) => {
+        if (!tenantId) {
+            console.warn('❗ tenantId is undefined in fetchTenantPayments');
+            return;
+        }
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/payments`, {
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
+            });
+            const allPayments = await res.json();
+    
+            const isSameMonth = (a, b) => {
+                const dateA = new Date(a);
+                const dateB = new Date(b);
+                return (
+                    !isNaN(dateA) && !isNaN(dateB) &&
+                    dateA.getFullYear() === dateB.getFullYear() &&
+                    dateA.getMonth() === dateB.getMonth()
+                );
+            };
+    
+            const filtered = allPayments.filter(p =>
+                p.user_id === tenantId &&
+                p.status !== 'Rejected' &&
+                isSameMonth(p.payment_period, unpaidMonth)
+            );
+    
+            setSelectedTenantPayments(filtered);
+            setSelectedTenantName(tenantName);
+            setSelectedTenantId(tenantId);
+            setShowModal(true);
+    
+            const monthData = mergedData.find(
+                (entry) =>
+                    String(entry.id) === String(tenantId) &&
+                    isSameMonth(entry.payment_period || entry.due_date, unpaidMonth)
+            );
+    
+            // ✅ Calculate balance BEFORE setting state
+            const confirmedOnly = filtered.filter(p => p.status.toLowerCase() === 'confirmed');
+            const totalPaid = confirmedOnly.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+            const unitPrice = parseFloat(monthData?.total_due?.replace('₱', '') || 0);
+            const remaining = unitPrice - totalPaid;
+    
+            // ✅ Now set the full object
+            setSelectedMonthData({
+                ...monthData,
+                balance: `₱${remaining.toFixed(2)}`
+            });
+        } catch (error) {
+            console.error("Error fetching tenant payments:", error);
+        }
+    };
+    
+    
+    const getYearsFromData = (data) => {
+        const years = new Set();
+        data.forEach(item => {
+            const date = new Date(item.payment_date || item.due_date);
+            if (!isNaN(date)) years.add(date.getFullYear());
+        });
+        return Array.from(years).sort();
+    };
+
+    const getPaymentStatusCounts = () => {
+        const summary = initSummary();
+        mergedData.forEach((item) => {
+            summary[item.status] = (summary[item.status] || 0) + 1;
+        });
+        setPaymentSummary(summary);
+        return [
+            { name: 'Paid', value: summary.Confirmed },
+            { name: 'Pending', value: summary.Pending },
+            { name: 'Rejected', value: summary.Rejected },
+            { name: 'Unpaid', value: summary.Unpaid },
+        ];
+    };
 
     const fetchMergedData = async () => {
         const token = localStorage.getItem('token');
         const query = new URLSearchParams(filters).toString();
-
         try {
             setLoading(true);
             const [paymentsRes, unpaidRes] = await Promise.all([
-                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
+                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
             ]);
-
-            const paymentsData = paymentsRes.ok ? await paymentsRes.json() : { data: [] };
-            const unpaidData = unpaidRes.ok ? await unpaidRes.json() : [];
-
-            const payments = Array.isArray(paymentsData.data) ? paymentsData.data : [];
-            const unpaid = Array.isArray(unpaidData) ? unpaidData : [];
-
+            const payments = await paymentsRes.json();
+            const unpaid = await unpaidRes.json();
             const merged = [
                 ...payments.map((p) => ({
-                    id: p.id,
-                    user_id: p.user_id,
+                    ...p,
                     name: p.tenant_name,
-                    unit_code: p.unit_code || 'N/A',
                     total_due: `₱${parseFloat(p.amount).toFixed(2)}`,
-                    balance: '₱0.00',
-                    due_date: '-',
-                    status: p.status,
-                    receipt_path: p.receipt_path || null,
+                    balance: `₱${parseFloat(p.remaining_balance || 0).toFixed(2)}`,
+                    payment_date: p.submitted_at,
+                    remaining_months: '-',
                 })),
                 ...unpaid.map((u) => ({
-                    id: u.id,
-                    user_id: u.id,
-                    name: u.name,
-                    unit_code: u.unit_code || 'N/A',
+                    ...u,
+                    id: u.id || u.user_id,  // ✅ Fallback to `id` if `user_id` is not present
+                    name: u.tenant_name || u.name,  // ✅ Normalize tenant name
                     total_due: `₱${parseFloat(u.total_due).toFixed(2)}`,
                     balance: `₱${parseFloat(u.balance).toFixed(2)}`,
-                    due_date: u.due_date || 'N/A',
-                    status: u.status,
-                    receipt_path: null,
+                    status: 'Unpaid',
                 })),
+                
+                
             ];
-
+            updateCache('payments', merged);
             setMergedData(merged);
         } catch (err) {
             console.error('Error fetching data:', err.message);
@@ -70,25 +188,30 @@ const PaymentAdmin = () => {
         }
     };
 
-    const handleStatusUpdate = async (user_id, status) => {
+    const exportToCSV = () => {
+        const rows = mergedData.map(({ name, unit_code, total_due, status, due_date }) =>
+            `${name},${unit_code},${total_due},${status},${due_date}`);
+        const csvContent = `data:text/csv;charset=utf-8,Name,Unit,Due,Status,Due Date\n${rows.join('\n')}`;
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'payment_summary.csv');
+        document.body.appendChild(link);
+        link.click();
+    };
+
+    const handleStatusUpdate = async (paymentId, status) => {
         const token = localStorage.getItem('token');
-    
+        const endpoint = status === 'Confirmed'
+            ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
+            : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
+
         try {
-            const endpoint =
-                status === 'Confirmed'
-                    ? `https://seagold-laravel-production.up.railway.app/api/payments/confirm/${user_id}`
-                    : `https://seagold-laravel-production.up.railway.app/api/payments/reject/${user_id}`;
-    
             const response = await fetch(endpoint, {
                 method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
+                headers: { Authorization: `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
             });
-    
             if (!response.ok) throw new Error(`Failed to ${status.toLowerCase()} payment`);
-    
             alert(`Payment ${status} successfully!`);
             setExpandedRow(null);
             fetchMergedData();
@@ -97,43 +220,80 @@ const PaymentAdmin = () => {
             alert(`Failed to ${status.toLowerCase()} payment`);
         }
     };
-    
-    
 
+    useEffect(() => { getPaymentStatusCounts(); }, [mergedData]);
     useEffect(() => {
-        fetchMergedData();
-    }, [filters]);
+        const cached = getCache('payments');
+        if (cached?.length > 0) {
+          setMergedData(cached);
+          setLoading(false);
+        } else {
+          fetchMergedData(); // only fetch if no cache
+        }
+      }, []);
+
+    <button onClick={fetchMergedData}>🔄 Refresh Payments</button>
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters({ ...filters, [name]: value.padStart(2, '0') });
     };
 
-    // Group tenants by unit
-    const groupByUnit = (data) => {
-        return data.reduce((acc, tenant) => {
-            const unit = tenant.unit_code || 'N/A';
-            if (!acc[unit]) acc[unit] = [];
-            acc[unit].push(tenant);
-            return acc;
-        }, {});
-    };
+    const groupByUnit = (data) => data.reduce((acc, tenant) => {
+        const unit = tenant.unit_code || 'N/A';
+        acc[unit] = acc[unit] || [];
+        acc[unit].push(tenant);
+        return acc;
+    }, {});
 
-    const groupedData = groupByUnit(mergedData);
+    const sendReminder = async (id) => {
+        if (!id) {
+          console.warn("⚠️ No tenant ID provided for reminder.");
+          return;
+        }
+      
+        const token = localStorage.getItem('token');
+        try {
+          const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${getAuthToken()}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          });
+      
+          const data = await res.json();
+          if (res.ok) alert("Reminder sent!");
+          else alert("Failed to send reminder: " + data.message);
+        } catch (error) {
+          console.error("Error sending reminder:", error);
+          alert("Error sending reminder.");
+        }
+      };
+      
+
+    const viewProfile = (id) => window.location.href = `/tenant/profile/${id}`;
+    const markAsPaid = (id) => window.location.href = `/payment/form/${id}`;
+    
+const normalizedStatus = selectedStatus.toLowerCase();
+
+const filteredData = selectedStatus === 'All'
+    ? mergedData.filter((t) => t.status?.toLowerCase() !== 'unpaid')
+    : mergedData.filter((t) => t.status?.toLowerCase() === normalizedStatus);
+
+    const groupedData = selectedStatus !== 'Unpaid'
+        ? groupByUnit(filteredData)
+        : {};
+
+    const years = getYearsFromData(mergedData);
 
     return (
         <div className="admin-payment-container">
             <h2>Admin Payment Dashboard</h2>
 
-            {/* Filters */}
             <div className="payment-filters">
-                <input
-                    type="text"
-                    name="search"
-                    placeholder="Search by Tenant or Reference"
-                    value={filters.search}
-                    onChange={handleFilterChange}
-                />
+                <input type="text" name="search" placeholder="Search by Tenant or Reference" value={filters.search} onChange={handleFilterChange} />
                 <select name="month" value={filters.month} onChange={handleFilterChange}>
                     <option value="">All Months</option>
                     {Array.from({ length: 12 }, (_, i) => (
@@ -142,15 +302,28 @@ const PaymentAdmin = () => {
                         </option>
                     ))}
                 </select>
-                <select name="status" value={filters.status} onChange={handleFilterChange}>
-                    <option value="">All Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Unpaid">Unpaid</option>
+                <select name="year" value={filters.year} onChange={handleFilterChange}>
+                    <option value="">All Years</option>
+                    {years.map((year) => (
+                        <option key={year} value={year}>{year}</option>
+                    ))}
                 </select>
+                <button onClick={exportToCSV}>Export CSV</button>
             </div>
 
-            {/* Table */}
+            <div className="status-buttons">
+                {['All', 'Confirmed', 'Pending', 'Rejected', 'Unpaid'].map((status) => (
+                    <button
+                    key={status}
+                    className={selectedStatus === status ? 'active' : ''}
+                    onClick={() => setSelectedStatus(status)}
+                    >
+                    {status === 'Confirmed' ? 'Paid' : status}
+                    </button>
+                ))}
+                </div>
+
+
             {Object.keys(groupedData).map((unit) => (
                 <div key={unit} className="unit-section">
                     <h3>Unit {unit}</h3>
@@ -160,7 +333,8 @@ const PaymentAdmin = () => {
                                 <th>Tenant</th>
                                 <th>Total Due</th>
                                 <th>Balance</th>
-                                <th>Due Date</th>
+                                <th>Payment Period</th>
+                                <th>Date & Time</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -172,75 +346,158 @@ const PaymentAdmin = () => {
                                         <td>{tenant.name}</td>
                                         <td>{tenant.total_due}</td>
                                         <td>{tenant.balance}</td>
-                                        <td>{tenant.due_date}</td>
+                                        <td>{tenant.payment_period}</td>
+                                        <td>{formatDate(tenant.payment_date)}</td>
                                         <td>{tenant.status}</td>
                                         <td>
-                                        {tenant.status?.toLowerCase() === 'pending' && (
-                                                <button
-                                                    onClick={() =>
-                                                        setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
-                                                    }
-                                                >
+                                            {tenant.status?.toLowerCase() === 'pending' && (
+                                                <button onClick={() =>
+                                                    setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
+                                                }>
                                                     {expandedRow === tenant.id ? 'Close' : 'Actions'}
                                                 </button>
                                             )}
                                         </td>
                                     </tr>
-                                    {expandedRow === tenant.id && (
+                                    {expandedRow === tenant.id && tenant.id && (
                                         <tr>
-                                            <td colSpan="6">
+                                            <td colSpan="7">
                                                 <div className="expanded-details">
-                                                    <p>Amount Given: ₱{(tenant.total_paid || 0).toFixed(2)}</p>
+                                                    <p>Amount Given: ₱{Number(tenant.total_paid).toFixed(2)}</p>
+                                                    <p>Remaining Balance: ₱{Number(tenant.remaining_balance).toFixed(2)}</p>
                                                     <p>Payment Type: {tenant.payment_type}</p>
-                                                    <p>Payment Date: {tenant.payment_date}</p>
+                                                    <p>Payment Method: {tenant.payment_method}</p>
+                                                    <p>Payment Date: {formatDate(tenant.payment_date)}</p>
                                                     <p>Reference Number: {tenant.reference_number}</p>
-                                                    <p>Remaining Months: {tenant.remaining_months}</p>
-                                                    <p>Remaining Balance: ₱{(tenant.remaining_balance || 0).toFixed(2)}</p>
                                                     {tenant.receipt_path && (
-                                                        <>
-                                                            {console.log('Image Path:', tenant.receipt_path)} {/* Log the receipt path */}
-                                                            <img
-                                                                src={`${tenant.receipt_path}`} // Explicitly using the full path
-                                                                alt="Receipt"
-                                                                className="receipt-preview"
-                                                            />
-                                                        </>
+                                                        <img src={tenant.receipt_path} alt="Receipt" className="receipt-preview" />
                                                     )}
-
-
-
-
-                                                    {/* Confirm and Reject Buttons */}
                                                     {tenant.status?.toLowerCase() === 'pending' && (
                                                         <>
-                                                        <button
-                                                            onClick={() =>
-                                                                handleStatusUpdate(tenant.user_id, 'Confirmed')
-                                                            }
-                                                        >
-                                                            Confirm
-                                                        </button>
-                                                        <button
-                                                            onClick={() =>
-                                                                handleStatusUpdate(tenant.user_id, 'Rejected')
-                                                            }
-                                                        >
-                                                            Reject
-                                                        </button>
+                                                            <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>Confirm</button>
+                                                            <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>Reject</button>
                                                         </>
                                                     )}
                                                 </div>
                                             </td>
                                         </tr>
                                     )}
-
                                 </React.Fragment>
                             ))}
                         </tbody>
-
                     </table>
                 </div>
             ))}
+            {selectedStatus === 'Unpaid' && (
+                <div className="unpaid-section">
+                    <h3>Unpaid Tenants</h3>
+                    <table className="payment-table unpaid-table">
+                        <thead>
+                            <tr>
+                                <th>Tenant</th>
+                                <th>Unit</th>
+                                <th>Due For (Month)</th>
+                                <th>Expected Amount</th>
+                                <th>Status</th>
+                                <th>Last Payment</th>
+                                <th>Unpaid Months</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {mergedData
+                            .filter((t) => t.status === 'Unpaid')
+                            .map((tenant) => {
+                                console.log('🔍 Tenant Row:', tenant); // ✅ move this here
+                                const firstDayOfMonth = tenant.due_date.slice(0, 7) + '-01';
+
+                                return (
+                                <tr key={tenant.user_id}>
+                                    <td>{tenant.name}</td>
+                                    <td>{tenant.unit_code}</td>
+                                    <td>{tenant.due_date}</td>
+                                    <td>{tenant.total_due}</td>
+                                    <td>{new Date(tenant.due_date) < new Date() ? 'Overdue' : 'Unpaid'}</td>
+                                    <td>{tenant.last_payment ? new Date(tenant.last_payment).toLocaleDateString('en-PH') : 'N/A'}</td>
+                                    <td>{tenant.unpaid_months || '1'}</td>
+                                    <td>
+                                    <button onClick={() => sendReminder(tenant.user_id)}>Send Reminder</button>
+                                    <button
+                                    onClick={() => {
+                                        const firstDayOfMonth = tenant.due_date.slice(0, 7) + '-01';
+                                        fetchTenantPayments(tenant.id, firstDayOfMonth, tenant.name);
+                                        setSelectedTenantId(tenant.id);
+                                        setSelectedMonthData(tenant); // ✅ save balance info
+                                    }}
+                                    >
+                                    View
+                                    </button>
+                                    <button onClick={() => markAsPaid(tenant.user_id)}>Mark as Paid</button>
+                                    </td>
+                                </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                
+            )}
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="custom-modal-content">
+                    <h3>
+                        Payment History for {selectedTenantName}{' '}
+                        {selectedTenantPayments[0]?.payment_period && (
+                            <span style={{ fontWeight: 'normal', fontSize: '0.9em' }}>
+                            – {new Date(selectedTenantPayments[0].payment_period).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                            </span>
+                        )}
+                        </h3>
+                        <button className="close-modal" onClick={() => setShowModal(false)}>✖</button>
+                        {selectedTenantPayments.length > 0 ? (
+                            <table className="modal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Amount</th>
+                                        <th>Payment Method</th>
+                                        <th>Reference</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedTenantPayments.map((payment) => (
+                                        <tr key={payment.id}>
+                                            <td>₱{parseFloat(payment.amount).toFixed(2)}</td>
+                                            <td>{payment.payment_method}</td>
+                                            <td>{payment.reference_number}</td>
+                                            <td>{formatDate(payment.submitted_at || payment.payment_date)}</td>
+                                            <td>{payment.status}</td>
+                                        </tr>
+                                    ))}
+                                    {selectedMonthData && (
+                                        <div className="modal-balance-info">
+                                            <p><strong>Remaining Balance:</strong> {selectedMonthData.balance}</p>
+                                        </div>
+                                    )}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p>
+                            No payments made for this month.
+                            {selectedTenantName && selectedTenantId && (
+                                <>
+                                    Send a reminder to notify <strong>{selectedTenantName}</strong>.
+                                    <br />
+                                    <button onClick={() => sendReminder(selectedTenantId)}>Send Reminder</button>
+                                </>
+                                )}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };

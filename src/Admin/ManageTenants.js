@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './ManageTenants.css';
 
 const ManageTenants = () => {
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     const [tenants, setTenants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -66,10 +67,9 @@ const ManageTenants = () => {
         
                 const data = await response.json();
                 const formattedData = data.map((tenant) => ({
-                    id: tenant.id,
                     name: tenant.full_name,
                     email: tenant.email,
-                    address: tenant.address,  // Corrected field
+                    address: tenant.address,
                     contact_number: tenant.contact_number || 'N/A',
                     check_in_date: tenant.check_in_date,
                     duration: tenant.duration || 'N/A',
@@ -171,7 +171,6 @@ const ManageTenants = () => {
                 <table className="tenants-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Address</th>
@@ -185,7 +184,6 @@ const ManageTenants = () => {
                     <tbody>
                         {tenants.map((tenant) => (
                             <tr key={tenant.id} className="clickable-row" onClick={() => handleRowClick(tenant)}>
-                                <td>{tenant.id}</td>
                                 <td>{tenant.name}</td>
                                 <td>{tenant.email}</td>
                                 <td>{tenant.address}</td>

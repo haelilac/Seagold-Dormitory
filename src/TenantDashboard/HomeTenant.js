@@ -2,42 +2,55 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar'; // Import the calendar
 import 'react-calendar/dist/Calendar.css'; // Import default calendar styles
 import './HomeTenant.css'; // Your custom styles
+import { getAuthToken } from "../utils/auth";
+import { useDataCache } from "../contexts/DataContext";
 
 const Home = ({ userName, darkMode }) => {
     const [date, setDate] = useState(new Date()); // State for selected date
     const [events, setEvents] = useState([]); // Initialize events as an empty array
-    const [transactions, setTransactions] = useState([
-        { date: '2024-12-20', amount: 1500, description: 'Monthly Rent Payment' },
-        { date: '2024-12-18', amount: 500, description: 'Maintenance Fee' },
-        { date: '2024-12-15', amount: 1200, description: 'Electricity Bill' },
-        { date: '2024-12-10', amount: 800, description: 'Water Bill' },
-    ]);
+    const { getCachedData, updateCache } = useDataCache();
+    const [loading, setLoading] = useState(true);
+
 
     // Fetch events from the API
     useEffect(() => {
         const fetchEvents = async () => {
+            const cachedEvents = getCachedData("events");
+            if (cachedEvents) {
+                setEvents(cachedEvents);
+                setLoading(false);
+                return;
+            }
+    
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/events', {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Accept': 'application/json'
+                    }
                 });
+    
                 const data = await response.json();
-
-                // Ensure data is in array format
                 if (Array.isArray(data)) {
                     setEvents(data);
+                    updateCache("events", data); // 💾 Save to cache
                 } else {
                     console.error('Unexpected response format:', data);
-                    setEvents([]); // Fallback to empty array
+                    setEvents([]);
                 }
             } catch (error) {
                 console.error('Error fetching events:', error);
-                setEvents([]); // Fallback to empty array on error
+                setEvents([]);
+            } finally {
+                setLoading(false);
             }
         };
-
+    
         fetchEvents();
     }, []);
-
+    
+  if (loading) return <div className="spinner"></div>;
     // Filter events based on the selected date
     const filteredEvents = events
     .filter((event) => event && event.date) // Exclude null or undefined events
@@ -76,31 +89,6 @@ selected-date">
                     </ul>
                 ) : (
                     <p className="no-events">No events for this date.</p>
-                )}
-            </section>
-
-
-            {/* Transaction Box Section */}
-            <section className="transaction-box">
-                <h3 className="transaction-box-title">Transaction History</h3>
-                {transactions.length > 0 ? (
-                    <ul className="transaction-list">
-                        {transactions.map((transaction, index) => (
-                            <li key={index} className="transaction-item">
-                                <div className="transaction-date">{transaction.date}</div>
-                                <div className="transaction-details">
-                                    <span className="transaction-description">
-                                        {transaction.description}
-                                    </span>
-                                    <span className="transaction-amount">
-                                        ₱{transaction.amount.toFixed(2)}
-                                    </span>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="no-transactions">No transactions recorded.</p>
                 )}
             </section>
         </>

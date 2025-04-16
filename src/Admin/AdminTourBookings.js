@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './AdminTourBookings.css';
+import { getAuthToken } from "../utils/auth";
 
 const AdminTourBookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -32,10 +33,37 @@ const AdminTourBookings = () => {
             .catch((error) => console.error('Error fetching bookings:', error));
     }, []);
 
+    const handleToggleSlot = async (time, status) => {
+        try {
+          const formattedDate = selectedDate.toISOString().split('T')[0];
+          const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${getAuthToken()}`,
+            },
+            body: JSON.stringify({
+              date: formattedDate,
+              time,
+              status,
+            }),
+          });
+      
+          if (response.ok) {
+            setMessage(`Slot ${time} marked as ${status}`);
+          } else {
+            throw new Error("Failed to update slot");
+          }
+        } catch (err) {
+          console.error("Error updating slot:", err);
+          setMessage("Error updating slot");
+        }
+      };
+
     const fetchBookings = async () => {
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const data = await response.json();
     
@@ -55,7 +83,7 @@ const AdminTourBookings = () => {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/confirm/${id}`, {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Authorization: `Bearer ${getAuthToken()}`,
                 },
             });
     
@@ -75,7 +103,7 @@ const AdminTourBookings = () => {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/cancel/${id}`, {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Authorization: `Bearer ${getAuthToken()}`,
                 },
             });
     
@@ -109,10 +137,49 @@ const AdminTourBookings = () => {
     return (
         <div className="admin-tour-bookings">
             <h2>Tour Bookings</h2>
-            <p>Manage tour bookings and set your availability:</p>
+<div className="calendar-availability-section">
+  <h3>Set Availability</h3>
+  <p>Choose a date and toggle available time slots:</p>
 
-            {message && <p className="message">{message}</p>}
+  {/* Simple date input (or replace with a fancier calendar later) */}
+  <input
+    type="date"
+    value={selectedDate.toISOString().split("T")[0]}
+    onChange={(e) => {
+      const date = new Date(e.target.value);
+      setSelectedDate(date);
+      fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${e.target.value}`)
+        .then((res) => res.json())
+        .then((data) => setAvailability(data.slots))
+        .catch((err) => {
+          console.error("Error fetching availability:", err);
+          setAvailability([]);
+        });
+    }}
+  />
 
+  {/* Render time slots with toggle buttons */}
+  <div className="time-slots-container">
+    {predefinedTimes.map((time) => {
+      const slot = availability.find((s) => s.time === time);
+      const currentStatus = slot?.status || "unavailable";
+
+      return (
+        <div key={time} className="time-slot-item">
+          <span>{time}</span>
+          <button
+            className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
+            onClick={() =>
+              handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
+            }
+          >
+            {currentStatus === "available" ? "Mark Unavailable" : "Mark Available"}
+          </button>
+        </div>
+      );
+    })}
+  </div>
+</div>
             <h3>Existing Bookings</h3>
             <input
                 type="text"

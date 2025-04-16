@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Gallery.css";
+import { useDataCache } from "../../contexts/DataContext";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 const heroSlides = [
   {
@@ -19,173 +22,153 @@ const heroSlides = [
   },
 ];
 
-const roomsData = {
-  "Room (For 2 persons)": ["2beds1.jpg", "2beds2.jpg", "2beds3.jpg"],
-  "Room (For 4 persons)": ["4beds1.jpg"],
-  "Room (For 6 persons)": ["6beds1.jpg", "6beds2.jpg", "6beds3.jpg", "6beds4.jpg"],
-  "Room (For 8 persons)": ["8beds1.jpg", "8beds2.jpg", "8beds3.jpg"],
-  "Room (For 10 persons)": ["10beds.jpg", "10beds1.jpg"],
+const categoryMap = {
+  "canteen": "canteen",
+  "hallway": "hallway",
+  "men's bathroom": "men’s cr",
+  "women's bathroom": "women’s cr"
 };
 
-const facilitiesData = {
-  Canteen: {
-    description: "Our canteen offers a variety of delicious meals and snacks.",
-    images: ["canteen1.jpg", "canteen2.jpg", "canteen3.jpg"],
-  },
-  "Men’s CR": {
-    description: "Clean and well-maintained men's comfort room for residents.",
-    images: ["menscr1.jpg", "menscr2.jpg", "menscr3.jpg", "menscr4.jpg"],
-  },
-  "Women’s CR": {
-    description: "Hygienic and comfortable women's restroom facilities.",
-    images: ["womenscr1.jpg", "womenscr2.jpg", "womenscr3.jpg", "womenscr4.jpg"],
-  },
-  Hallway: {
-    description: "Spacious hallways connecting dormitory rooms and common areas.",
-    images: ["hallway1.jpg", "hallway2.jpg", "hallway3.jpg"],
-  },
+const facilityDescriptions = {
+  "canteen": "Our canteen offers a variety of delicious meals and snacks.",
+  "hallway": "Spacious hallways connecting dormitory rooms and common areas.",
+  "men’s cr": "Clean and well-maintained men's comfort room for residents.",
+  "women’s cr": "Hygienic and comfortable women's restroom facilities."
 };
 
 const Gallery = () => {
-  const [isRoomModalOpen, setRoomModalOpen] = useState(false);
+  const { getCachedData, updateCache } = useDataCache();
+  const [facilityImagesByCategory, setFacilityImagesByCategory] = useState({});
   const [isFacilityModalOpen, setFacilityModalOpen] = useState(false);
-
-  // Separate state variables for Room and Facilities Modals
-  const [roomCategory, setRoomCategory] = useState(Object.keys(roomsData)[0]);
-  const [roomImages, setRoomImages] = useState(roomsData[roomCategory] || []);
-  const [roomIndex, setRoomIndex] = useState(0);
-
   const [facilityCategory, setFacilityCategory] = useState("");
   const [facilityImages, setFacilityImages] = useState([]);
   const [facilityIndex, setFacilityIndex] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [heroIndex, setHeroIndex] = useState(0);
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
+  useEffect(() => {
+    if (!window.Echo) {
+      window.Pusher = Pusher;
+      window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: 'fea5d607d4b38ea09320',
+        cluster: 'ap1',
+        forceTLS: true,
+      });
+    }
+  
+    const channel = window.Echo.channel("gallery");
+    channel.listen("GalleryImageUploaded", (e) => {
+      if (e.image) {
+        const dbCategory = e.image.category.trim().toLowerCase();
+        const mappedCategory = categoryMap[dbCategory];
+        const path = e.image.image_url;
+  
+        if (mappedCategory && facilityDescriptions[mappedCategory]) {
+          setFacilityImagesByCategory(prev => {
+            const updated = { ...prev };
+            if (!updated[mappedCategory]) updated[mappedCategory] = [];
+            updated[mappedCategory] = [path, ...updated[mappedCategory]];
+            updateCache("gallery-images", updated);
+            return updated;
+          });
+        }
+      }
+    });
+  
+    return () => {
+      window.Echo.leave("gallery");
+    };
+  }, []);
+  
+  useEffect(() => {
+    const cached = getCachedData("gallery-images");
 
-  // ✅ Open Room Modal and Close Facility Modal
-  const openRoomModal = () => {
-    setFacilityModalOpen(false);
-    setRoomCategory(Object.keys(roomsData)[0]);
-    setRoomImages(roomsData[Object.keys(roomsData)[0]]);
-    setRoomIndex(0);
-    setRoomModalOpen(true);
-  };
+    if (cached) {
+      setFacilityImagesByCategory(cached);
+    } else {
+      fetch("https://seagold-laravel-production.up.railway.app/api/gallery")
+        .then((res) => res.json())
+        .then((data) => {
+          const grouped = {};
+          data.images.forEach((img) => {
+            const dbCategory = img.category.trim().toLowerCase();
+            const mappedCategory = categoryMap[dbCategory];
+            const path = img.image_url;
 
-  // ✅ Open Facility Modal and Close Room Modal
+            if (mappedCategory && facilityDescriptions[mappedCategory]) {
+              if (!grouped[mappedCategory]) grouped[mappedCategory] = [];
+              grouped[mappedCategory].push(path);
+            }
+          });
+
+          setFacilityImagesByCategory(grouped);
+          updateCache("gallery-images", grouped); // ✅ Save to cache
+        });
+    }
+  }, []);
+
   const openFacilityModal = (category) => {
-    setRoomModalOpen(false);
     setFacilityCategory(category);
-    setFacilityImages(facilitiesData[category].images);
+    setFacilityImages(facilityImagesByCategory[category.toLowerCase()] || []);
     setFacilityIndex(0);
     setFacilityModalOpen(true);
   };
 
-  // Close Modals
-  const closeRoomModal = () => setRoomModalOpen(false);
   const closeFacilityModal = () => setFacilityModalOpen(false);
-
-  // ✅ Navigate between Room Categories
-  const nextRoomCategory = () => {
-    const categories = Object.keys(roomsData);
-    const currentIndex = categories.indexOf(roomCategory);
-    const nextIndex = (currentIndex + 1) % categories.length;
-    setRoomCategory(categories[nextIndex]);
-    setRoomImages(roomsData[categories[nextIndex]] || []);
-    setRoomIndex(0);
-  };
-
-  const prevRoomCategory = () => {
-    const categories = Object.keys(roomsData);
-    const currentIndex = categories.indexOf(roomCategory);
-    const prevIndex = (currentIndex - 1 + categories.length) % categories.length;
-    setRoomCategory(categories[prevIndex]);
-    setRoomImages(roomsData[categories[prevIndex]] || []);
-    setRoomIndex(0);
-  };
-
-  // ✅ Navigate Next/Previous images
-  const nextRoomImage = () => setRoomIndex((prev) => (prev + 1) % roomImages.length);
-  const prevRoomImage = () => setRoomIndex((prev) => (prev === 0 ? roomImages.length - 1 : prev - 1));
-
   const nextFacilityImage = () => setFacilityIndex((prev) => (prev + 1) % facilityImages.length);
   const prevFacilityImage = () => setFacilityIndex((prev) => (prev === 0 ? facilityImages.length - 1 : prev - 1));
-
- // Hero Section Navigation
-  const nextHeroSlide = () => {
-    setHeroIndex((prevIndex) => (prevIndex + 1) % heroSlides.length);
-  };
-
-  const prevHeroSlide = () => {
-    setHeroIndex((prevIndex) =>
-      prevIndex === 0 ? heroSlides.length - 1 : prevIndex - 1
-    );
-  };
+  const nextHeroSlide = () => setHeroIndex((prev) => (prev + 1) % heroSlides.length);
+  const prevHeroSlide = () => setHeroIndex((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
 
   return (
     <div className="gallery-container">
-    {/* Hero Carousel Section */}
-    <div className="hero-carousel">
-      <div
-        className="hero-slide"
-        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${heroSlides[heroIndex].image})` }}
-      >
-        <button className="carousel-arrow left-arrow" onClick={prevHeroSlide}>
-          &#10094;
-        </button>
-        <div className="hero-content">
-          <h1>{heroSlides[heroIndex].title}</h1>
-          <p>{heroSlides[heroIndex].description}</p>
-          <button className="explore-btn" onClick={openRoomModal}>Explore Now</button>
+      {/* Hero Carousel */}
+      <div className="hero-carousel">
+        <div
+          className="hero-slide"
+          style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${heroSlides[heroIndex].image})` }}
+        >
+          <button className="carousel-arrow left-arrow" onClick={prevHeroSlide}>&#10094;</button>
+          <div className="hero-content">
+            <h1>{heroSlides[heroIndex].title}</h1>
+            <p>{heroSlides[heroIndex].description}</p>
+            <button className="explore-btn">Explore Now</button>
+          </div>
+          <button className="carousel-arrow right-arrow" onClick={nextHeroSlide}>&#10095;</button>
         </div>
-        <button className="carousel-arrow right-arrow" onClick={nextHeroSlide}>
-          &#10095;
-        </button>
+        <div className="dots-container">
+          {heroSlides.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === heroIndex ? "active-dot" : ""}`}
+              onClick={() => setHeroIndex(index)}
+            ></span>
+          ))}
+        </div>
       </div>
-      <div className="dots-container">
-        {heroSlides.map((_, index) => (
-          <span
-            key={index}
-            className={`dot ${index === heroIndex ? "active-dot" : ""}`}
-            onClick={() => setHeroIndex(index)}
-          ></span>
-        ))}
-      </div>
-    </div>
 
       {/* Facilities Section */}
       <h3 className="facilities-title">Facilities</h3>
       <div className="facilities-container">
-        {Object.keys(facilitiesData).map((facility, index) => (
+        {Object.keys(facilityDescriptions).map((category, index) => (
           <div key={index} className="facility-card">
             <div className="facility-circle">
-              <img src={`${process.env.PUBLIC_URL}/images/${facilitiesData[facility].images[0]}`} alt={facility} className="facility-image" />
+              <img
+                src={facilityImagesByCategory[category]?.[0] || `${process.env.PUBLIC_URL}/images/placeholder.png`}
+                alt={category}
+                className="facility-image"
+              />
             </div>
-            <h4 className="facility-heading">{facility}</h4>
-            <p className="facility-description">{facilitiesData[facility].description}</p>
-            <button className="view-btn" onClick={() => openFacilityModal(facility)}>View</button>
+            <h4 className="facility-heading">{category.charAt(0).toUpperCase() + category.slice(1)}</h4>
+            <p className="facility-description">{facilityDescriptions[category]}</p>
+            <button className="view-btn" onClick={() => openFacilityModal(category)}>View</button>
           </div>
         ))}
       </div>
 
-      {/* ✅ Room Modal */}
-      {isRoomModalOpen && roomImages.length > 0 && (
-        <div className="room-modal">
-          <div className="room-modal-content">
-            <span className="close-btn" onClick={closeRoomModal}>&times;</span>
-            <h2>{roomCategory}</h2>
-            <div className="modal-image-container">
-              <button className="arrow-btn left-arrow" onClick={prevRoomImage}>&#9665;</button>
-              <img src={`${process.env.PUBLIC_URL}/images/${roomImages[roomIndex]}`} alt="Room View" className="modal-image" />
-              <button className="arrow-btn right-arrow" onClick={nextRoomImage}>&#9655;</button>
-            </div>
-            <div className="modal-controls">
-              <button className="category-btn" onClick={prevRoomCategory}>Previous Room</button>
-              <button className="category-btn" onClick={nextRoomCategory}>Next Room</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ✅ Facility Modal */}
+      {/* Facility Modal */}
       {isFacilityModalOpen && facilityImages.length > 0 && (
         <div className="facility-modal">
           <div className="facility-modal-content">
@@ -193,7 +176,11 @@ const Gallery = () => {
             <h2>{facilityCategory}</h2>
             <div className="modal-image-container">
               <button className="arrow-btn left-arrow" onClick={prevFacilityImage}>&#9665;</button>
-              <img src={`${process.env.PUBLIC_URL}/images/${facilityImages[facilityIndex]}`} alt="Facility View" className="modal-image" />
+              <img
+                src={facilityImages[facilityIndex]}
+                alt="Facility View"
+                className="modal-image"
+              />
               <button className="arrow-btn right-arrow" onClick={nextFacilityImage}>&#9655;</button>
             </div>
           </div>

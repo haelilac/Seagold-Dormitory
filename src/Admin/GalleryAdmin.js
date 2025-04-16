@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './GalleryAdmin.css';
+import { getAuthToken } from "../utils/auth";
 
 const AdminGallery = () => {
   const [images, setImages] = useState([]);
@@ -9,26 +10,14 @@ const AdminGallery = () => {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [editMode, setEditMode] = useState(null); // Holds the ID of the image being edited
+  const [activeCategory, setActiveCategory] = useState('ALL');
 
   useEffect(() => {
     fetchImages();
     fetchCategories();
   }, []);
 
-  const fetchImages = async () => {
-    try {
-      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      const data = await response.json();
-      setImages(data.images || []);
-    } catch (error) {
-      console.error('Error fetching images:', error);
-    }
-  };
-
-  const fetchCategories = async () => {
-    // Populate categories for dropdown (hardcoded or fetched dynamically)
+  const fetchCategories = () => {
     const predefinedCategories = [
       'ROOMS',
       'HALLWAY',
@@ -38,8 +27,19 @@ const AdminGallery = () => {
     ];
     setCategories(predefinedCategories);
   };
-
-  const handleImageUpload = async (e) => {
+  const fetchImages = async () => {
+    try {
+      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery', {
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
+      });
+      const data = await response.json();
+      setImages(data.images || []);
+    } catch (error) {
+      console.error('Error fetching images:', error);
+    }
+  };
+  
+  const handleImageUpload = async () => {
     const formData = new FormData();
     formData.append('image', newImage);
     formData.append('title', title);
@@ -50,11 +50,14 @@ const AdminGallery = () => {
       const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery/upload', {
         method: 'POST',
         body: formData,
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
       });
       if (response.ok) {
         alert('Image uploaded successfully!');
         fetchImages();
+        resetForm();
       } else {
         alert('Failed to upload image.');
       }
@@ -70,7 +73,7 @@ const AdminGallery = () => {
       const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${getAuthToken()}`,
         },
       });
       if (response.ok) {
@@ -85,36 +88,39 @@ const AdminGallery = () => {
     }
   };
   
+const handleImageEdit = async (id) => {
+  if (!category) {
+    alert('Please select a category.');
+    return;
+  }
 
-  const handleImageEdit = async (id) => {
-    if (!category) {
-      alert('Please select a category.');
-      return;
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('description', description);
+  formData.append('category', category);
+
+  try {
+    const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
+      method: 'POST', // Change to 'PUT' if Laravel route is defined as PUT
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
+    if (response.ok) {
+      alert('Image updated successfully!');
+      fetchImages();
+      setEditMode(null);
+      resetForm();
+    } else {
+      alert('Failed to update image.');
     }
+  } catch (error) {
+    console.error('Error updating image:', error);
+  }
+};
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('category', category);
-
-    try {
-      const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
-        method: 'PUT',
-        body: formData,
-      });
-      if (response.ok) {
-        alert('Image updated successfully!');
-        fetchImages();
-        setEditMode(null);
-        resetForm();
-      } else {
-        alert('Failed to update image.');
-      }
-    } catch (error) {
-      console.error('Error updating image:', error);
-    }
-  };
-
+  
   const resetForm = () => {
     setNewImage(null);
     setTitle('');
@@ -182,9 +188,12 @@ const AdminGallery = () => {
 
       {/* Image Gallery */}
       <div className="gallery-grid">
-        {images.map((img) => (
+      {images
+        .filter((img) => activeCategory === 'ALL' || img.category === activeCategory)
+        .map((img) => (
+
           <div key={img.id} className="gallery-card">
-            <img src={`https://seagold-laravel-production.up.railway.app/storage/${img.image_path}`} alt={img.title} />
+            <img src={img.image_url} alt={img.title} />
             <div className="gallery-info">
               <h4>{img.title}</h4>
               <p>{img.description}</p>
@@ -207,6 +216,24 @@ const AdminGallery = () => {
 
       <button className= "upload-action"type="submit">{editMode ? 'Update Image' : 'Upload Image'}</button>
       </form>
+      <div className="category-filter">
+        <button
+          onClick={() => setActiveCategory('ALL')}
+          className={activeCategory === 'ALL' ? 'active-category' : ''}
+        >
+          All
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={activeCategory === cat ? 'active-category' : ''}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+      
     </div>
   );
 };

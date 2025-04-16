@@ -3,6 +3,8 @@ import './PaymentTenant.css';
 import { useResizeDetector } from 'react-resize-detector';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { getAuthToken } from "../utils/auth";
+import { useDataCache } from '../contexts/DataContext';
 
 // Initialize Pusher
 window.Pusher = Pusher;
@@ -16,23 +18,19 @@ window.Echo = new Echo({
 });
 
 const PaymentTenant = () => {
-    
 
+    const { getCachedData, updateCache } = useDataCache();
+    const getPaymentLabel = (date) => {
+        if (balanceDue[date] > 0 && paymentHistory.some(p => p.payment_period === date && p.amount > 0)) {
+          return " (Partially Paid)";
+        } else if (balanceDue[date] > 0) {
+          return " (Unpaid)";
+        }
+        return "";
+      };
     const [isCompact, setIsCompact] = useState(false);
     const [currentView, setCurrentView] = useState("dashboard");
     const [currentBillView, setCurrentBillView] = useState("bills");
-
-    const { width, ref } = useResizeDetector({
-        onResize: (width) => {
-            if (width < 480) {  
-                setIsCompact(true);  // Extra compact mode for smartphones
-            } else if (width < 768) {  
-                setIsCompact(true); // Tablet mode
-            } else {
-                setIsCompact(false); // Default layout
-            }
-        }
-    });
     const [formData, setFormData] = useState({
         payment_for: '',
         payment_type: '',
@@ -40,7 +38,6 @@ const PaymentTenant = () => {
         receipt: null,
         amount: '',
     });
-
     const [unitPrice, setUnitPrice] = useState(0);
     const [paymentHistory, setPaymentHistory] = useState([]);
     const [warningMessage, setWarningMessage] = useState('');
@@ -49,35 +46,70 @@ const PaymentTenant = () => {
     const [duration, setDuration] = useState(0);
     const [availableMonths, setAvailableMonths] = useState([]);
     const [tenantId, setTenantId] = useState(null);
+    const cachedPayments = tenantId ? getCachedData(`payments-${tenantId}`) : null;
+    const [dataLoaded, setDataLoaded] = useState(false);
     const [balanceDue, setBalanceDue] = useState({}); // Track remaining balances
     const [availableCredits, setAvailableCredits] = useState(0);
     const [paymentDue, setPaymentDue] = useState(0);
     const [showTransactions, setShowTransactions] = useState(false);
     const [billingDetails, setBillingDetails] = useState([]);
     const [receiptValidated, setReceiptValidated] = useState(false); // Track receipt validation
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userResponse = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-                });
-                const user = await userResponse.json();
-
-                setTenantId(user.id);
-                fetchPaymentData(user.id);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
+    const [firstPartialMonth, setFirstPartialMonth] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const { width, ref } = useResizeDetector({
+        onResize: (width) => {
+            if (width < 480) {
+                setIsCompact(true);
+            } else if (width < 768) {
+                setIsCompact(true);
+            } else {
+                setIsCompact(false);
             }
-        };
-        fetchUserData();
-    }, []);
+        }
+    });
+
 
     useEffect(() => {
         window.Echo.channel(`tenant-reminder.${tenantId}`).listen('.payment.reminder', (data) => {
             alert(data.message);
         });
     }, [tenantId]);
+
+    useEffect(() => {
+        if (!tenantId) return;
+
+        const channel = window.Echo.channel(`tenant-reminder.${tenantId}`);
+
+        channel
+            .listen('.payment.reminder', (data) => {
+                alert(data.message);
+            })
+            .listen('.payment.rejected', () => {
+                alert("❌ Your previous payment was rejected.");
+                fetchUserAndPayment();
+            });
+
+        return () => {
+            window.Echo.leave(`tenant-reminder.${tenantId}`);
+        };
+    }, [tenantId]);
+
+    const calculateRemainingBalance = (stayType, duration, unitPrice) => {
+        switch (stayType) {
+            case 'daily':
+                return unitPrice * duration; // Total for the duration (e.g., 500 per day for 6 days)
+            case 'weekly':
+                const totalWeeks = Math.ceil(duration / 7); // Calculate weeks
+                return unitPrice * totalWeeks; // Weekly calculation
+            case 'half-month':
+                return unitPrice / 2; // Assume half-month pricing is fixed (e.g., ₱1500)
+            case 'monthly':
+                return unitPrice; // Monthly charge remains the same
+            default:
+                return unitPrice;
+        }
+    };
+    
 
     const [tempAmount, setTempAmount] = useState(""); 
     const [confirmedAmount, setConfirmedAmount] = useState(0); 
@@ -87,18 +119,29 @@ const PaymentTenant = () => {
         const enteredAmount = parseFloat(e.target.value) || 0;
         setTempAmount(e.target.value);
     
-        if (!formData.payment_for) return;
+        const originalRemainingBalance = calculateRemainingBalance(formData.stay_type, duration, unitPrice);
     
-        const selectedMonth = formData.payment_for;
+        // 💥 Prevent partial payments for non-monthly tenants
+        if (formData.stay_type !== 'monthly' && enteredAmount < originalRemainingBalance) {
+            setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
+            setFormData((prevData) => ({
+                ...prevData,
+                amount: '',
+                payment_type: '',
+            }));
+            setTempAmount('');
+            setDisplayedRemainingBalance(originalRemainingBalance);
+            return;
+        }
     
-        // ✅ Always fetch the correct remaining balance
-        const originalRemainingBalance = balanceDue[selectedMonth] !== undefined
-            ? balanceDue[selectedMonth]  // Get correct remaining balance
-            : unitPrice;  // Default to full price if no payments
+        setWarningMessage(""); // Clear warning if valid
     
-        // ✅ Calculate remaining balance dynamically
         const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
-        const newPaymentType = newRemainingBalance > 0 ? 'Partially Paid' : 'Fully Paid';
+        let newPaymentType = 'Fully Paid';
+    
+        if (formData.stay_type === 'monthly' && newRemainingBalance > 0) {
+            newPaymentType = 'Partially Paid';
+        }
     
         setFormData((prevData) => ({
             ...prevData,
@@ -106,9 +149,9 @@ const PaymentTenant = () => {
             payment_type: newPaymentType,
         }));
     
-        // ✅ Update the displayed balance dynamically
         setDisplayedRemainingBalance(newRemainingBalance);
     };
+    
     
     
     // ✅ Ensures final amount is registered properly on blur
@@ -142,72 +185,125 @@ const PaymentTenant = () => {
         setNextDueMonth(getNextDueMonth());
     }, [balanceDue, availableMonths]);
 
-    const fetchPaymentData = async (id) => {
+    const fetchUserAndPayment = async () => {
+        // Skip re-fetch if already loaded
+        if (dataLoaded) return;
+      
+        setLoading(true);
         try {
-            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${id}`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          const res = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+            headers: {
+              Authorization: `Bearer ${getAuthToken()}`,
+              Accept: 'application/json',
+            },
+          });
+      
+          const user = await res.json();
+          setTenantId(user.id);
+      
+          const cached = getCachedData(`payments-${user.id}`);
+          if (cached) {
+            applyPaymentData(cached);
+          } else {
+            const paymentRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
+              headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
-
-            if (!res.ok) throw new Error('Failed to fetch payment data.');
-
-            const data = await res.json();
-
-            setUnitPrice(data.unit_price || 0);
-            setPaymentHistory(data.payments || []);
-            setDueDate(data.due_date);
-            setCheckInDate(data.check_in_date);
-            setDuration(data.duration);
-            setBalanceDue(data.unpaid_balances || {}); // Fetch remaining balance
-
-            generatePaymentMonths(data.check_in_date, data.duration, data.payments);
-        } catch (error) {
-            console.error('Error fetching payment data:', error);
-            setPaymentHistory([]);
+      
+            const paymentData = await paymentRes.json();
+            updateCache(`payments-${user.id}`, paymentData);
+            applyPaymentData(paymentData);
+          }
+      
+          setDataLoaded(true);
+      
+        } catch (err) {
+          console.error("❌ Error loading tenant or payment data:", err);
+        } finally {
+          setLoading(false);
         }
+      };
+    useEffect(() => {
+        fetchUserAndPayment();
+      }, []);
+    
+    
+    const applyPaymentData = (data) => {
+        setUnitPrice(data.unit_price || 0);
+        setPaymentHistory(data.payments || []);
+        setDueDate(data.due_date);
+        setCheckInDate(data.check_in_date);
+        setDuration(data.duration);
+        setBalanceDue(data.unpaid_balances || {});
+        generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
     };
     
-    const [firstPartialMonth, setFirstPartialMonth] = useState(null);
-
-    const generatePaymentMonths = (startDate, duration, payments) => {
-        const months = [];
+    const generatePaymentPeriods = (startDate, duration, stayType, payments) => {
+        const periods = [];
         const start = new Date(startDate);
-        start.setMonth(start.getMonth() + 1);
     
+        // Generate payment periods based on stayType
         for (let i = 0; i < duration; i++) {
             const paymentDate = new Date(start);
-            paymentDate.setMonth(start.getMonth() + i);
+    
+            // Handle each stay type differently
+            switch (stayType) {
+                case 'daily':
+                    paymentDate.setDate(start.getDate() + i);  // Increment by day for daily
+                    break;
+                case 'weekly':
+                    paymentDate.setDate(start.getDate() + i * 7);  // Increment by week for weekly
+                    break;
+                case 'half-month':
+                    paymentDate.setDate(start.getDate() + i * 15);  // Increment by half-month (15 days)
+                    break;
+                case 'monthly':
+                    paymentDate.setMonth(start.getMonth() + i);  // Increment by month for monthly
+                    break;
+                default:
+                    paymentDate.setDate(start.getDate() + i);  // Default to daily if unknown stay_type
+                    break;
+            }
+    
             const formattedDate = paymentDate.toISOString().split('T')[0];
-            months.push(formattedDate);
+            periods.push(formattedDate);
         }
     
-        console.log('Generated Months:', months);
+        console.log('Generated Periods:', periods);
     
-        // Separate fully paid, partially paid, and unpaid months
-        const monthStatus = {};
+        // Separate fully paid, partially paid, and unpaid periods
+        const periodStatus = {};
         payments.forEach((p) => {
-            monthStatus[p.payment_period] = {
+            periodStatus[p.payment_period] = {
                 amountPaid: parseFloat(p.amount),
                 remainingBalance: parseFloat(p.remaining_balance),
             };
         });
     
-        let unpaidMonths = [];
-        let partiallyPaidMonths = [];
+        let unpaidPeriods = [];
+        let partiallyPaidPeriods = [];
         let firstPartiallyPaid = null;
     
-        months.forEach((month) => {
-            if (monthStatus[month]) {
-                if (monthStatus[month].remainingBalance > 0) {
-                    partiallyPaidMonths.push(month);
-                    if (!firstPartiallyPaid) firstPartiallyPaid = month; // ✅ Track the first partially paid month
+        periods.forEach((period) => {
+            if (periodStatus[period]) {
+                if (periodStatus[period].remainingBalance > 0) {
+                    partiallyPaidPeriods.push(period);
+                    if (!firstPartiallyPaid) firstPartiallyPaid = period; // Track first partially paid period
                 }
             } else {
-                unpaidMonths.push(month);
+                unpaidPeriods.push(period);
             }
         });
     
-        setAvailableMonths([...partiallyPaidMonths, ...unpaidMonths]);
-        setFirstPartialMonth(firstPartiallyPaid); // ✅ Save first partially paid month
+        const allUnpaidPeriods = periods.filter(period => {
+            const status = periodStatus[period];
+        
+            if (!status) return true; // fully unpaid
+            if (status.remainingBalance > 0) return true; // partially paid
+            return false; // fully paid
+        });
+        
+        setAvailableMonths(allUnpaidPeriods);
+        setFirstPartialMonth(allUnpaidPeriods[0]);
     };
     
     
@@ -221,11 +317,20 @@ const PaymentTenant = () => {
             return;
         }
     
-        console.log("📤 Uploading file:", file.name);
+        const selectedMethod = formData.payment_method;
     
-        setReceiptValidated(false);
-        setIsScanning(true); // Start scanning
         setFormData((prevData) => ({ ...prevData, receipt: file }));
+    
+        // ✅ Skip validation for Cash
+        if (selectedMethod === 'Cash') {
+            setReceiptValidated(true);
+            console.log("💰 Cash selected — skipping validation.");
+            return;
+        }
+    
+        // ✅ Continue with GCash validation
+        setReceiptValidated(false);
+        setIsScanning(true);
     
         const formDataUpload = new FormData();
         formDataUpload.append("receipt", file);
@@ -239,34 +344,23 @@ const PaymentTenant = () => {
             });
     
             const textResponse = await response.text();
-            console.log("📜 Raw API Response:", textResponse);
+            const result = JSON.parse(textResponse);
     
-            // Check if response is valid JSON
-            try {
-                const result = JSON.parse(textResponse);
-                console.log("📊 Parsed JSON:", result);
-    
-                if (response.ok && result.match === true) {
-                    alert("✅ Receipt validated successfully!");
-                    setReceiptValidated(true);
-                } else {
-                    alert(result.message || "❌ Error processing receipt.");
-                    setReceiptValidated(false);
-                }
-            } catch (error) {
-                console.error("❌ Error parsing JSON:", error);
-                alert("❌ Server returned an unexpected response. Please check the Laravel backend.");
+            if (response.ok && result.match === true) {
+                alert("✅ Receipt validated successfully!");
+                setReceiptValidated(true);
+            } else {
+                alert(result.message || "❌ Error processing receipt.");
                 setReceiptValidated(false);
             }
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ An error occurred while processing the receipt.");
+            alert("❌ Server error while validating receipt.");
             setReceiptValidated(false);
         } finally {
-            setIsScanning(false); // Stop scanning once validation is done
+            setIsScanning(false);
         }
     };
-    
     
 
     const handleMonthSelection = (e) => {
@@ -286,11 +380,13 @@ const PaymentTenant = () => {
         setDisplayedRemainingBalance(originalRemainingBalance);
         setTempAmount("");  // Clear amount input
     };
+
+    
     
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!receiptValidated) {
+        if (formData.payment_method === 'GCash' && !receiptValidated) {
             alert("⚠️ Please validate your receipt before submitting the payment.");
             return;
         }
@@ -300,7 +396,14 @@ const PaymentTenant = () => {
             return;
         }
     
-        if (!window.confirm("Are you sure you want to submit this payment?")) {
+        const hasPendingPaymentForMonth = paymentHistory.some(
+            (payment) =>
+                payment.payment_period === formData.payment_for &&
+                payment.status === "Pending"
+        );
+    
+        if (hasPendingPaymentForMonth) {
+            alert("⚠️ You already have a pending payment for this month. Please wait for it to be confirmed or rejected before submitting another.");
             return;
         }
     
@@ -311,11 +414,12 @@ const PaymentTenant = () => {
         requestData.append('reference_number', formData.reference_number);
         requestData.append('payment_for', formData.payment_for);
         requestData.append('receipt', formData.receipt);
+        requestData.append('duration', duration); // Pass the duration here
     
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
                 body: requestData,
             });
     
@@ -333,7 +437,8 @@ const PaymentTenant = () => {
             alert('✅ Payment submitted successfully!');
             setFormData({ payment_for: '', reference_number: '', receipt: null, amount: '', payment_method: '' });
             setReceiptValidated(false);
-            fetchPaymentData(tenantId);
+            await fetchUserAndPayment(); // ✅ refresh payment data using cache logic
+
     
         } catch (error) {
             console.error("Error submitting payment:", error);
@@ -341,6 +446,9 @@ const PaymentTenant = () => {
         }
     };
     
+    if (loading) {
+        return <div className="spinner"></div>;
+      }
     
     return (
         <div ref={ref} className={`payment-container payment-background ${isCompact ? 'compact-mode' : ''}`}>
@@ -357,7 +465,14 @@ const PaymentTenant = () => {
                     </div>
                     <div className="balance-box due">
                         <p>Next Payment Due</p>
-                        <h2>{dueDate ? new Date(dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : "No Dues"}</h2>
+                        <h2>
+                            {firstPartialMonth ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }) : "No Dues"}
+                            </h2>
+                        {console.log("Due Date in Dashboard:", dueDate)} {/* Debug */}
                     </div>
                 </div>
 
@@ -406,65 +521,97 @@ const PaymentTenant = () => {
 
 
             <label>Payment For</label>
-                <select
-                    name="payment_for"
-                    value={formData.payment_for}
-                    onChange={handleMonthSelection}  
-                    required
+            <select
+                name="payment_for"
+                value={formData.payment_for}
+                onChange={handleMonthSelection}
+                required
                 >
-                    <option value="">Select Payment Date</option>
-
-                    {/* Show partially paid months first */}
-                    {availableMonths.map((month, index) => (
-                        <option 
-                            key={index} 
-                            value={month} 
-                            disabled={firstPartialMonth && month !== firstPartialMonth}
-                            title={firstPartialMonth && month !== firstPartialMonth ? "Please pay your remaining balance first" : ""}
-                        >
-                            {new Date(month).toLocaleDateString('default', { month: 'long', year: 'numeric' })} 
-                            {balanceDue[month] > 0 ? " (Partially Paid)" : ""}
-                        </option>
-                    ))}
+                <option value="">Select Payment Date</option>
+                {availableMonths.map((date, index) => (
+                    <option key={index} value={date}>
+                    {new Date(date).toLocaleDateString('default', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    })}
+                    {getPaymentLabel(date)}
+                    </option>
+                ))}
                 </select>
 
-            <label>Payment Method</label>
-                <select
-                    name="payment_method"
-                    value={formData.payment_method}
-                    onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
-                    required
-                >
-                    <option value="">Select Payment Method</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                    <option value="E-Wallet">E-Wallet</option>
-                </select>
-
+                <label>Payment Method</label>
+                    <select
+                        name="payment_method"
+                        value={formData.payment_method}
+                        onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
+                        required
+                    >
+                        <option value="">Select Payment Method</option>
+                        <option value="GCash">GCash</option>
+                        <option value="Cash">Cash (Please direct to Landlord)</option>
+                    </select>
                 <p>
                     <strong>Payment Type:</strong> {formData.payment_type || "N/A"}
                 </p>
 
+                {formData.payment_method === 'GCash' && (
+                    <>
+                        <label>Reference Number</label>
+                        <input
+                            type="text"
+                            name="reference_number"
+                            onChange={(e) => setFormData({ ...formData, reference_number: e.target.value })}
+                            required
+                        />
 
-                <label>Reference Number</label>
-                <input
-                    type="text"
-                    name="reference_number"
-                    onChange={(e) => setFormData({ ...formData, reference_number: e.target.value })}
-                    required
-                />
+                        <label>Upload Receipt</label>
+                        <input
+                            type="file"
+                            name="receipt"
+                            accept="image/png, image/jpeg, image/jpg, application/pdf"
+                            onChange={(e) => handleReceiptUpload(e)}
+                            required
+                        />
+                    </>
+                )}
 
-                <label>Upload Receipt</label>
-                <input
-                    type="file"
-                    name="receipt"
-                    accept="image/png, image/jpeg, image/jpg, application/pdf"
-                    onChange={(e) => handleReceiptUpload(e)}  // Ensure function is called
-                    required
-                />
+                {formData.payment_method === 'Cash' && (
+                    <>
+                        <label>Optional Proof of Payment (Image)</label>
+                        <input
+                            type="file"
+                            name="receipt"
+                            accept="image/png, image/jpeg, image/jpg"
+                            onChange={(e) => {
+                                const file = e.target.files[0];
+                                setFormData((prevData) => ({
+                                    ...prevData,
+                                    receipt: file || null,
+                                    reference_number: `CASH-${Date.now()}` // auto-ref if needed
+                                }));
+                            }}
+                        />
+                    </>
+                )}
 
-            <button type="submit" disabled={isScanning || (!receiptValidated && !isScanning)}>
-                {isScanning ? "Scanning Receipt..." : receiptValidated ? "Submit Payment" : "Waiting for Receipt Validation..."}
-            </button>
+                <button
+                    type="submit"
+                    disabled={
+                        isScanning ||
+                        (formData.payment_method === 'GCash' && !receiptValidated && !isScanning)
+                    }
+                >
+                    {formData.payment_method === 'Cash'
+                        ? "Submit Cash Payment"
+                        : isScanning
+                        ? "Scanning Receipt..."
+                        : receiptValidated
+                        ? "Submit Payment"
+                        : "Waiting for Receipt Validation..."}
+                </button>
+
 
             </form>
 
@@ -484,25 +631,25 @@ const PaymentTenant = () => {
                         <button onClick={() => setCurrentBillView("paid")}>Paid</button>
                     </div>
 
-            {/* ✅ To Pay Section */}
-            {currentBillView === "toPay" && (
-                <div className="to-pay-section">
-                    <h2>Months Remaining to Pay</h2>
-                    {availableMonths.length > 0 ? (
-                        <ul>
-                            {availableMonths.map((month, index) => (
-                                <li key={index}>
-                                    {new Date(month).toLocaleDateString('default', { month: 'long', year: 'numeric' })} 
-                                    {balanceDue[month] > 0 ? " (Partially Paid)" : " (Unpaid)"}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>All months are paid.</p>
+                    {/* ✅ To Pay Section */}
+                    {currentBillView === "toPay" && (
+                        <div className="to-pay-section">
+                            <h2>Months Remaining to Pay</h2>
+                            {availableMonths.length > 0 ? (
+                                <ul>
+                                    {availableMonths.map((month, index) => (
+                                        <li key={index}>
+                                            {/* Format the date to include day, month, and year */}
+                                            {new Date(month).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} 
+                                            {getPaymentLabel(month)}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>All months are paid.</p>
+                            )}
+                        </div>
                     )}
-                </div>
-            )}
-
 
                     {/* ✅ Paid Section */}
                     {currentBillView === "paid" && (
@@ -514,7 +661,8 @@ const PaymentTenant = () => {
                                         .filter(payment => payment.remaining_balance === 0) // Show only fully paid months
                                         .map((payment, index) => (
                                             <li key={index}>
-                                                {new Date(payment.payment_period).toLocaleDateString('default', { month: 'long', year: 'numeric' })}
+                                                {/* Format the payment date to include day, month, and year */}
+                                                {new Date(payment.payment_period).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                                             </li>
                                         ))}
                                 </ul>
@@ -535,21 +683,26 @@ const PaymentTenant = () => {
                     {paymentHistory.length > 0 ? (
                         <div className="payment-history">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Amount Paid</th>
-                                        <th>Remaining Balance</th>
-                                        <th>Payment Type</th>
-                                        <th>Payment Method</th>
-                                        <th>Reference Number</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Amount Paid</th>
+                                    <th>Remaining Balance</th>
+                                    <th>Payment Type</th>
+                                    <th>Payment Method</th>
+                                    <th>Reference Number</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
                                 <tbody>
                                     {paymentHistory.map((payment, index) => (
                                         <tr key={index}>
-                                            <td>{payment.payment_period}</td>
+                                            <td>
+                                            {new Date(payment.created_at || payment.payment_period).toLocaleString('en-PH', {
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short',
+                                            })}
+                                            </td>
                                             <td>₱{payment.amount}</td>
                                             <td>₱{payment.remaining_balance}</td>
                                             <td>{payment.payment_method}</td> {/* ✅ "E-Wallet" or "Bank Transfer" */}

@@ -65,3 +65,30 @@
 .admin-tour-booking .make-all-unavailable:hover {
     background-color: #cc0000;
 }
+
+.calendar-availability-section {
+    margin-top: 2rem;
+  }
+  
+  .time-slots-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+  }
+  
+  .time-slot-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .toggle-btn.available {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .toggle-btn.unavailable {
+    background-color: #f44336;
+    color: white;
+  }

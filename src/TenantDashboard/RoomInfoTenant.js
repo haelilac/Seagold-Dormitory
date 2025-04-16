@@ -1,104 +1,97 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './RoomInfo.css';
+import { getAuthToken } from "../utils/auth";
+import { useDataCache } from "../contexts/DataContext";
 
-// Importing images properly
-import sampleDormImage from '../images/dormpic1.jpg';
-import unitIcon from '../images/unit.svg';
-import capacityIcon from '../images/capacity.svg';
-import rentIcon from '../images/rent.svg';
-import dueDateIcon from '../images/due-date.svg';
+const RoomInfoTenant = () => {
+  const [info, setInfo] = useState(null);
+  const { getCachedData, updateCache } = useDataCache();
+  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-// Amenity icons
-import airconIcon from '../images/aircon.svg';
-import bathIcon from '../images/bath.svg';
-import wifiIcon from '../images/wifi.svg';
-import studyIcon from '../images/study.svg';
-import wardrobeIcon from '../images/wardrobe.svg';
+  useEffect(() => {
+    const fetchRoomInfo = async () => {
+      try {
+        const cached = getCachedData("tenant-room-info");
+        if (cached) {
+          setInfo(cached);
+        } else {
+          const res = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant-room-info", {
+            headers: {
+              Authorization: `Bearer ${getAuthToken()}`,
+              Accept: "application/json"
+            }
+          });
+          const data = await res.json();
+          setInfo(data);
+          updateCache("tenant-room-info", data);
+        }
+      } catch (err) {
+        console.error("Error fetching room info:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRoomInfo();
+  }, []);
 
-const RoomCard = () => {
+  if (loading || !info) return <div className="spinner"></div>;
+
   return (
     <div className="roomCard-wrapper">
-      <div className="roomCard-header">
-        ROOM U210
-      </div>
+      <div className="roomCard-header">ROOM {info.unit_code}</div>
 
       <div className="roomCard-container">
-        <div className="roomContent">
-          <div className="roomImageContainer">
-            <img 
-              src={sampleDormImage} 
-              alt="Dorm" 
-              className="roomImage"
+        <div className="roomImageGallery">
+          {info.images && info.images.length > 0 ? (
+            info.images.map((img, index) => (
+              <img
+                key={index}
+                src={img.image_path}
+                alt={`Room image ${index + 1}`}
+                className="thumbnail"
+                onClick={() => setSelectedImage(img.image_path)}
+              />
+            ))
+          ) : (
+            <img
+              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg"
+              alt="Default Room"
+              className="thumbnail"
             />
-          </div>
+          )}
+        </div>
 
-          <div className="roomDetails">
-            {/* 1) UNIT TYPE */}
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img src={unitIcon} alt="Unit icon" className="infoIcon" />
-                UNIT TYPE:
-              </div>
-              <div className="infoValue">Direct Air-con Room</div>
-            </div>
-
-            {/* 2) CAPACITY */}
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img src={capacityIcon} alt="Capacity icon" className="infoIcon" />
-                CAPACITY:
-              </div>
-              <div className="infoValue">8 occupants</div>
-            </div>
-
-            {/* 3) MONTHLY RENT */}
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img src={rentIcon} alt="Rent icon" className="infoIcon" />
-                MONTHLY RENT:
-              </div>
-              <div className="infoValue">₱5,000</div>
-            </div>
-
-            {/* 4) RENT DUE DATE */}
-            <div className="infoBlock">
-              <div className="infoLabel">
-                <img src={dueDateIcon} alt="Due date icon" className="infoIcon" />
-                RENT DUE DATE:
-              </div>
-              <div className="infoValue">15th of every month</div>
-            </div>
-          </div>
+        <div className="roomDetails">
+          <div className="infoBlock"><span className="infoLabel">UNIT TYPE:</span> {info.stay_types.join(", ")}</div>
+          <div className="infoBlock"><span className="infoLabel">CAPACITY:</span> {info.max_capacity} occupants</div>
+          <div className="infoBlock"><span className="infoLabel">MONTHLY RENT:</span> ₱{info.base_price?.toLocaleString()}</div>
+          <div className="infoBlock"><span className="infoLabel">RENT DUE DATE:</span> 15th of every month</div>
         </div>
 
         <div className="amenitiesSection">
           <h3>AMENITIES:</h3>
           <div className="amenitiesList">
-            <div className="amenityContainer">
-              <img src={airconIcon} alt="Aircon" className="amenityIcon" />
-              <span>Air Conditioning</span>
-            </div>
-            <div className="amenityContainer">
-              <img src={bathIcon} alt="Bathroom" className="amenityIcon" />
-              <span>Private Bathroom</span>
-            </div>
-            <div className="amenityContainer">
-              <img src={wifiIcon} alt="Wi-Fi" className="amenityIcon" />
-              <span>Wi-Fi</span>
-            </div>
-            <div className="amenityContainer">
-              <img src={studyIcon} alt="Study Table" className="amenityIcon" />
-              <span>Study Table</span>
-            </div>
-            <div className="amenityContainer">
-              <img src={wardrobeIcon} alt="Wardrobe" className="amenityIcon" />
-              <span>Wardrobe</span>
-            </div>
+            {info.amenities.map((a, i) => (
+              <div key={i} className="amenityContainer">
+                <span>{a}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Image Preview Modal */}
+      {selectedImage && (
+        <div className="imageModalOverlay" onClick={() => setSelectedImage(null)}>
+          <div className="imageModalContent" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage} alt="Preview" className="modalImage" />
+            <button className="closeModal" onClick={() => setSelectedImage(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default RoomCard;
+export default RoomInfoTenant;

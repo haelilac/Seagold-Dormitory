@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./TourBooking.css";
 import LoginModal from "../LoginModal/LoginModal";
-
+import { getAuthToken } from "../../utils/auth";
 const TourBooking = () => {
   const [calendarDates, setCalendarDates] = useState([]); // Calendar for the selected month
   const [availableSlots, setAvailableSlots] = useState([]); // Time slots for the selected date
@@ -76,7 +76,7 @@ const TourBooking = () => {
       headers: {
         "Content-Type": "application/json",
         Authorization: isLoggedIn
-          ? `Bearer ${localStorage.getItem("token")}`
+          ? `Bearer ${getAuthToken()}`
           : null,
       },
       body: JSON.stringify(bookingData),

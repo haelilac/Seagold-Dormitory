@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./EventsBoard.css";
+import { getAuthToken } from "../utils/auth";
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 // Helper functions to convert between formats
 const convertDateToISO = (mmddyyyy) => {
@@ -55,7 +58,7 @@ const EventsBoard = () => {
   const fetchEvents = async () => {
     try {
       const response = await fetch("https://seagold-laravel-production.up.railway.app/api/events", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       if (response.status === 401) {
         console.error("Unauthorized. Redirecting to login.");
@@ -94,7 +97,7 @@ const EventsBoard = () => {
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getAuthToken()}`,
       },
       body: JSON.stringify(bodyData),
     });
@@ -122,7 +125,7 @@ const EventsBoard = () => {
 
     await fetch(`https://seagold-laravel-production.up.railway.app/api/events/${id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${getAuthToken()}` },
     });
 
     setEvents((prev) => prev.filter((event) => event.id !== id));

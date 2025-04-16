@@ -25,14 +25,19 @@ const ContactUs = () => {
         check_in_date: null,
         duration: '',
         reservation_details: '',
+        stay_type: '', 
         valid_id: null,
         accept_privacy: false,
     });
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     const [isVerified, setIsVerified] = useState(false); // Google Verification
     const [isIdVerified, setIsIdVerified] = useState(false); // ID Verification
     const [units, setUnits] = useState([]);
     const [showTermsModal, setShowTermsModal] = useState(false);
+    const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
+    const [unitPrice, setUnitPrice] = useState(null);
 
     // Address Data
     const [provinces, setProvinces] = useState([]);
@@ -151,16 +156,43 @@ const ContactUs = () => {
         }));
     };
     
-    
+    useEffect(() => {
+    const fetchRoomPrice = async () => {
+        if (!formData.reservation_details || !formData.stay_type) return;
+
+        try {
+            const response = await axios.get(`https://seagold-laravel-production.up.railway.app/api/room-pricing`, {
+                params: {
+                    unit_code: formData.reservation_details,
+                    stay_type: formData.stay_type
+                }
+            });
+
+            // Find pricing for unit capacity
+            const unit = units.find(u => u.unit_code === formData.reservation_details);
+            if (!unit) return;
+
+            const matchedPrice = response.data.find(p =>
+                p.unit_code === formData.reservation_details &&
+                p.capacity >= (unit.users_count + 1)
+              );
+            setUnitPrice(matchedPrice?.price || null);
+        } catch (error) {
+            console.error("Error fetching dynamic room pricing:", error);
+        }
+    };
+
+    fetchRoomPrice();
+}, [formData.reservation_details, formData.stay_type]);
+
     // Fetch units
     useEffect(() => {
         const fetchUnits = async () => {
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch units');
-                }
+                if (!response.ok) throw new Error('Failed to fetch units');
                 const data = await response.json();
+                console.log('✅ Units fetched:', data); // ✅ Debug here
                 setUnits(data);
             } catch (err) {
                 console.error('Error fetching units:', err);
@@ -168,34 +200,47 @@ const ContactUs = () => {
         };
         fetchUnits();
     }, []);
-
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
     
         if (name === "contact_number") {
-            let numericValue = value.replace(/\D/g, ""); // Remove non-numeric characters
-    
-            if (!numericValue.startsWith("9")) return; // Ensure it starts with '9'
-    
-            if (numericValue.length > 10) return; // Limit to 10 digits
-    
+            let numericValue = value.replace(/\D/g, "");
+            if (!numericValue.startsWith("9")) return;
+            if (numericValue.length > 10) return;
             setFormData({ ...formData, [name]: numericValue });
             return;
         }
     
+        if (name === "stay_type") {
+            let autoDuration = "";
+            if (value === "half-month") autoDuration = 15;
+            else if (value === "weekly") autoDuration = 7;
+            else if (value === "daily") autoDuration = formData.duration || ""; // Allow custom duration for daily
+            else if (value === "monthly") autoDuration = "";
+    
+            setFormData(prev => ({
+                ...prev,
+                [name]: value,
+                duration: autoDuration
+            }));
+            return;
+        }
+    
+        // Handle other inputs
         setFormData({ ...formData, [name]: value });
     };
+    
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        setFormData({ ...formData, valid_id: file });
-    
+
         const formDataUpload = new FormData();
         formDataUpload.append("file", file);
         formDataUpload.append("id_type", formData.id_type);  // ✅ Append 'id_type' to FormData
         
         try {
-            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id/", { 
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/upload-id", { 
                 method: 'POST',
                 body: formDataUpload,
                 headers: { 
@@ -209,15 +254,26 @@ const ContactUs = () => {
             }
         
             const data = await response.json();
+            console.log("Returned file path from backend:", data.file_path);
+        
+            // ✅ Set formData.valid_id here, now that data is available
+            setFormData((prev) => ({
+                ...prev,
+                valid_id: data.file_path,             // (optional: keep if you want to preview)
+                valid_id_url: data.file_path          // ✅ this makes it part of formData!
+              }));
+        
+            setUploadedValidIdPath(data.file_path);
+            console.log("Image Preview URL", data.file_path);
         
             if (data.error) {
                 alert(`❌ ID Processing Error: ${data.error}`);
                 setIsIdVerified(false);
-            } else if (data.id_type_matched) {
-                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.text}`);
+            } else if (data.id_verified) {
+                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.ocr_text}`);
                 setIsIdVerified(true);
             } else {
-                alert(`❌ ID Mismatch!\nExtracted Text: ${data.text}`);
+                alert(`❌ ID Mismatch!\nExtracted Text: ${data.ocr_text}`);
                 setIsIdVerified(false);
             }
         } catch (error) {
@@ -276,17 +332,20 @@ const ContactUs = () => {
     
         try {
             const requestData = new FormData();
-
-            // Append other form data
+    
+            // Append all form fields
             Object.keys(formData).forEach((key) => {
-                if (key !== "address") {
-                    if (key === 'check_in_date') {
-                        requestData.append(key, formatDateTime(formData[key]));
-                    } else {
-                        requestData.append(key, formData[key]);
-                    }
+                if (key === 'check_in_date') {
+                    requestData.append(key, formatDateTime(formData[key]));
+                } else if (key === 'valid_id') {
+                    return; // Skip raw file field
+                } else {
+                    requestData.append(key, formData[key]);
                 }
             });
+    
+            // ✅ Add unit price after FormData is created
+            requestData.append("set_price", unitPrice || 0);
     
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
@@ -318,6 +377,7 @@ const ContactUs = () => {
                 check_in_date: null,
                 duration: '',
                 reservation_details: '',
+                stay_type: '', 
                 valid_id: null,
                 accept_privacy: false,
             });
@@ -327,7 +387,6 @@ const ContactUs = () => {
             alert(`An error occurred: ${error.message}`);
         }
     };
-    
     
     const duration = Number(formData.duration);
 
@@ -542,52 +601,94 @@ const ContactUs = () => {
                             required
                         >
                             <option value="">Select Stay Type</option>
-                            <option value="day">Day Basis</option>
-                            <option value="short-term">Short-Term Stay</option>
-                            <option value="long-term">Long-Term Stay</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="half-month">Half-Month</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="daily">Daily</option>
                         </select>
                     </div>
                 </div>
 
-                {/* Duration Selection (Updated) */}
-                <div className="form-row">
+                {unitPrice && (
+                    <p style={{ fontWeight: 'bold', marginTop: '10px' }}>
+                        Estimated Price: ₱{parseFloat(unitPrice).toLocaleString()}
+                    </p>
+                )}
+
+                {/* Duration based on Stay Type */}
+                {formData.stay_type === "monthly" && (
                     <div className="form-group">
-                        <label>Duration</label>
+                        <label>Duration (Months)</label>
                         <select
                             name="duration"
                             value={formData.duration}
                             onChange={handleInputChange}
                             required
-                            disabled={!formData.stay_type} // Disable if stay type is not selected
                         >
                             <option value="">Select Duration</option>
-
-                            {/* Day Basis (1-30 days) */}
-                            {formData.stay_type === "day" &&
-                                [...Array(30).keys()].map((day) => (
-                                    <option key={day + 1} value={day + 1}>
-                                        {day + 1} {day + 1 === 1 ? "Day" : "Days"}
-                                    </option>
-                                ))}
-
-                            {/* Short-Term Stay (1-6 months) */}
-                            {formData.stay_type === "short-term" &&
-                                [...Array(6).keys()].map((month) => (
-                                    <option key={month + 1} value={month + 1}>
-                                        {month + 1} {month + 1 === 1 ? "Month" : "Months"}
-                                    </option>
-                                ))}
-
-                            {/* Long-Term Stay (7-12 months) */}
-                            {formData.stay_type === "long-term" &&
-                                [...Array(6).keys()].map((month) => (
-                                    <option key={month + 7} value={month + 7}>
-                                        {month + 7} Months
-                                    </option>
-                                ))}
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {i + 1} month{ i > 0 && 's' }
+                                </option>
+                            ))}
                         </select>
                     </div>
-                </div>
+                )}
+
+
+                    {formData.stay_type === "half-month" && (
+                        <div className="form-group">
+                            <label>Duration</label>
+                            <input
+                                type="text"
+                                name="duration"
+                                value="15 days"
+                                readOnly
+                            />
+                        </div>
+                    )}
+
+
+                    {formData.stay_type === "weekly" && (
+                        <div className="form-group">
+                            <label>Duration (Weeks)</label>
+                            <select
+                                name="duration"
+                                value={formData.duration}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Select Duration</option>
+                                {Array.from({ length: 12 }, (_, i) => ( // Allow 1 to 12 weeks (or more if needed)
+                                    <option key={i + 1} value={i + 1}>
+                                        {i + 1} week{ i > 0 && 's' }
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+
+                    {formData.stay_type === "daily" && (
+                        <div className="form-group">
+                            <label>Duration (Days)</label>
+                            <select
+                                name="duration"
+                                value={formData.duration}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Select Duration</option>
+                                {Array.from({ length: 30 }, (_, i) => (
+                                    <option key={i + 1} value={i + 1}>
+                                        {i + 1} day{ i > 0 && 's' }
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+
 
                 {/* Reservation */}
                 <div className="form-group">
@@ -601,59 +702,32 @@ const ContactUs = () => {
                     >
                         <option value="">Select a Unit</option>
 
-                        {/* Day Basis (Now Shows Short-Term Stay Units) */}
-                        {formData.stay_type === "day" && (
-                            <optgroup label="Day Basis (Short-Term Units)">
-                                {units
-                                    .filter(
-                                        (unit) =>
-                                            unit.status === "available" &&
-                                            unit.users_count < unit.capacity &&
-                                            unit.capacity <= 6 // Show only short-term units
-                                    )
-                                    .map((unit) => (
-                                        <option key={unit.id} value={unit.unit_code}>
-                                            {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
-                                        </option>
-                                    ))}
-                            </optgroup>
-                        )}
+                        {formData.stay_type && (
+                            <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
+                                {Object.entries(
+                                units
+                                .filter(unit => unit.monthly_users_count < unit.max_capacity) // changed this line
+                                .reduce((acc, unit) => {
+                                if (!acc[unit.unit_code]) {
+                                    acc[unit.unit_code] = unit;
+                                } else if (
+                                    (unit.max_capacity - unit.monthly_users_count) >
+                                    (acc[unit.unit_code].max_capacity - acc[unit.unit_code].monthly_users_count)
+                                ) {
+                                    acc[unit.unit_code] = unit;
+                                }
+                                return acc;
+                                }, {})
 
-                        {/* Short-Term Stay Units */}
-                        {formData.stay_type === "short-term" && (
-                            <optgroup label="Short-Term Stay">
-                                {units
-                                    .filter(
-                                        (unit) =>
-                                            unit.status === "available" &&
-                                            unit.users_count < unit.capacity &&
-                                            unit.capacity <= 6
-                                    )
-                                    .map((unit) => (
-                                        <option key={unit.id} value={unit.unit_code}>
-                                            {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
-                                        </option>
-                                    ))}
-                            </optgroup>
-                        )}
+                                ).map(([unitCode, unit]) => (
+                                    <option key={unitCode} value={unit.unit_code}>
+                                    {unit.unit_code} - ({unit.max_capacity - unit.monthly_users_count} slots available)
+                                    </option>
 
-                        {/* Long-Term Stay Units */}
-                        {formData.stay_type === "long-term" && (
-                            <optgroup label="Long-Term Stay">
-                                {units
-                                    .filter(
-                                        (unit) =>
-                                            unit.status === "available" &&
-                                            unit.users_count < unit.capacity &&
-                                            unit.capacity > 6
-                                    )
-                                    .map((unit) => (
-                                        <option key={unit.id} value={unit.unit_code}>
-                                            {unit.name} - ₱{unit.price} ({unit.capacity - unit.users_count} slots)
-                                        </option>
-                                    ))}
+                                ))}
+
                             </optgroup>
-                        )}
+                            )}
                     </select>
                 </div>
 
@@ -686,7 +760,14 @@ const ContactUs = () => {
                             <label>Upload {formData.id_type}</label>
                             <input type="file" name="valid_id" onChange={handleFileChange} required />
                         </div>
-                    </div>
+                        </div>
+)}
+                {uploadedValidIdPath && (
+                <img 
+                    src={uploadedValidIdPath} 
+                    alt="Uploaded Valid ID" 
+                    style={{ width: '250px', marginTop: '10px', border: '1px solid #ccc' }} 
+                />
                 )}
 
                 {/* Privacy Checkbox */}

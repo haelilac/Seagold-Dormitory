@@ -1,33 +1,106 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import seagoldLogo from '../assets/seagoldlogo.png';
 
-const Navbar = () => {
-  const logoUrl = 'https://seagold-laravel-production.up.railway.app/storage/icons/SeagoldLogo.svg'; // Update to your backend logo URL
+const SeagoldNavbar = () => {
+  const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+  const [activeLink, setActiveLink] = useState('');
+
+  // Set active link based on route
+  useEffect(() => {
+    setActiveLink(location.pathname);
+  }, [location]);
+
+  // Scroll effect for desktop
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Navigation items
+  const navItems = [
+    { path: '/', label: 'Home' },
+    { path: '/location', label: 'Location' },
+    { path: '/gallery', label: 'Gallery' },
+    { path: '/units', label: 'Units' },
+    { path: '/apply', label: 'Apply' },
+    { path: '/login', label: 'Account' }
+  ];
 
   return (
-    <div className="navbar-container">
-      <div className="navbar">
-        <div className="navbar-logo">
-          <img src={logoUrl} alt="Seagold Dormitory Logo" />
-          <span className="navbar-logo-text">Seagold Dormitory</span> {/* Added text beside the logo */}
-        </div>
-        <div className="navbar-links">
-          <Link to="/" className="navbar-link">Home</Link>
-          <Link to="/location" className="navbar-link">Location</Link>
-          <Link to="/gallery" className="navbar-link">Gallery</Link>
-          <Link to="/units" className="navbar-link">Units</Link>
-          <Link to="/apply" className="navbar-link">Apply Now!</Link>
-        </div>
-        <div className="navbar-login">
-          <Link to="/login" className="navbar-login-button">
-            <span>Account</span>
-            <img src="/user.png" alt="User Icon" />
-          </Link>
+    <>
+      {/* Desktop Navbar (stays at top) */}
+      <div className={`seagold-navbar-container ${scrolled ? 'scrolled' : ''}`}>
+        <div className="seagold-navbar">
+          {/* Logo */}
+          <div className="seagold-navbar-logo">
+            <Link to="/">
+              <img 
+                src={seagoldLogo}
+                alt="Seagold Dormitory Logo"
+                loading="lazy"
+              />
+            </Link>
+            <span className="seagold-navbar-logo-text"></span>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="seagold-navbar-links">
+            {navItems.filter(item => item.path !== '/login').map(item => (
+              <NavLink 
+                key={item.path}
+                to={item.path}
+                className={activeLink === item.path ? 'active' : ''}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Login Section */}
+          <div className="seagold-navbar-login">
+            <Link 
+              to="/login" 
+              className="seagold-navbar-login-button"
+            >
+              <span>Account</span>
+              <img 
+                src="/user.png" 
+                alt="User Icon" 
+                loading="lazy"
+              />
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="mobile-bottom-nav">
+        {navItems.map(item => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`nav-item ${activeLink === item.path ? 'active' : ''}`}
+          >
+            <span className="nav-label">{item.label}</span>
+          </Link>
+        ))}
+      </div>
+    </>
   );
 };
 
-export default Navbar;
+// Reusable NavLink component
+const NavLink = ({ to, className, children }) => (
+  <Link 
+    to={to} 
+    className={`seagold-navbar-link ${className}`}
+  >
+    {children}
+  </Link>
+);
+
+export default SeagoldNavbar;

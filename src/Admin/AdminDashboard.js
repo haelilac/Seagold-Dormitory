@@ -22,234 +22,185 @@ import {
     FaCog
 } from "react-icons/fa";
 import Pusher from "pusher-js";
+import { getAuthToken } from "../utils/auth";
 
 const AdminDashboard = () => {
-    const navigate = useNavigate(); // ✅ Initialize useNavigate
+    const navigate = useNavigate();
     const [admin, setAdmin] = useState({ name: "", email: "", profilePicture: "" });
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-    const [activeDropdown, setActiveDropdown] = useState(null); // 🔹 Three-Dot Menu State
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [notificationSound, setNotificationSound] = useState("Default");
-    const [muteDuration, setMuteDuration] = useState(""); // Options: "1 Hour", "24 Hours", etc.
-  
+    const [muteDuration, setMuteDuration] = useState("");
+
     const clearAllNotifications = () => setNotifications([]);
     const markAllAsUnread = () => setNotifications((prev) => prev.map(n => ({ ...n, read: false })));
     const markAllAsRead = () => setNotifications((prev) => prev.map(n => ({ ...n, read: true })));
-    const toggleSidebar = () => {setIsSidebarCollapsed((prev) => !prev); };
+    const toggleSidebar = () => { setIsSidebarCollapsed((prev) => !prev); };
 
     const dropdownRef = useRef(null);
     const profileRef = useRef(null);
 
-    console.log("Dropdown State Inside Component:", showNotifications);
-
-    // Fetch Admin Profile
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
-                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                });
-                const user = await response.json();
-                setAdmin({
-                    name: user.name,
-                    email: user.email,
-                    profilePicture: user.profile_picture
-                        ? `https://seagold-laravel-production.up.railway.app/storage/profile/${user.profile_picture}`
-                        : "https://seagold-laravel-production.up.railway.app/storage/profile/default-profile.png",
-                });
+              const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
+                headers: {
+                  Authorization: `Bearer ${getAuthToken()}`,
+                  Accept: "application/json",
+                },
+              });
+              const user = await response.json();
+              setAdmin({
+                name: user.name,
+                email: user.email,
+                profilePicture: user.profile_picture
+                  ? `https://seagold-laravel-production.up.railway.app/storage/profile/${user.profile_picture}`
+                  : "https://seagold-laravel-production.up.railway.app/storage/profile/default-profile.png",
+              });
             } catch (error) {
-                console.error("Error fetching admin data:", error);
+              console.error("Error fetching admin data:", error);
             }
-        };
+          };
         fetchAdminData();
-        //
     }, []);
-    
+
     useEffect(() => {
-        // Initialize Pusher for real-time updates
-        const pusher = new Pusher("fea5d607d4b38ea09320", {
-            cluster: "ap1",
-            encrypted: true
-        });
-    
-        // Subscribe to the 'notifications' channel
+        const pusher = new Pusher("fea5d607d4b38ea09320", { cluster: "ap1", encrypted: true });
         const channel = pusher.subscribe("notifications");
-    
-        // Listen for 'new-notification' events and update state
         channel.bind("new-notification", function (data) {
             if (!notificationsEnabled) return;
-            console.log("Received new notification: ", data); // Log the received data
             setNotifications((prev) => [
                 { message: data.message, time: data.time, read: false },
                 ...prev
             ]);
         });
-    
-        // Cleanup: Unsubscribe from Pusher when component unmounts
-        return () => {
-            pusher.unsubscribe("notifications");
-        };
+        return () => { pusher.unsubscribe("notifications"); };
     }, [notificationsEnabled]);
 
+    const toggleDropdown = (event, index) => {
+        event.stopPropagation();
+        setActiveDropdown(activeDropdown === index ? null : index);
+    };
 
-       // Function to toggle dropdown for a specific notification
-       const toggleDropdown = (event, index) => {
-           event.stopPropagation(); // Prevents dropdown from closing immediately
-           setActiveDropdown(activeDropdown === index ? null : index);
-       };
-
-    // Fetch Notifications
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                });
-                const data = await response.json();
-                setNotifications(data || []);
+              const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
+                headers: {
+                  Authorization: `Bearer ${getAuthToken()}`,
+                  Accept: "application/json",
+                },
+              });
+              const data = await response.json();
+              setNotifications(data || []);
             } catch (error) {
-                console.error("Error fetching notifications:", error);
+              console.error("Error fetching notifications:", error);
             }
-        };
+          };
         fetchNotifications();
     }, []);
-  // Function to mark a single notification as read/unread
-  const markAsRead = (index) => {
-    setNotifications((prev) => 
-        prev.map((notif, i) => 
-            i === index ? { ...notif, read: !notif.read } : notif
-        )
-    );
-    setActiveDropdown(null); // Close dropdown after clicking
-};
 
-// Function to delete a notification
-const deleteNotification = (index) => {
-    setNotifications((prev) => prev.filter((_, i) => i !== index));
-    setActiveDropdown(null); // Close dropdown after clicking
-};
-
-const [expandSettings, setExpandSettings] = useState(null);
-
-const handleViewDetails = (notification) => {
-    console.log("Notification clicked:", notification); // Debugging to see the notification object
- 
-    const routes = {
-        "pending_application": "/admin/dashboard/pending-applications",
-        "unit_management": "/admin/dashboard/unit-management",
-        "tenant_update": "/admin/dashboard/manage-tenants",
-        "event_notification": "/admin/dashboard/events-board",
-        "payment_alert": "/admin/dashboard/payment-dashboard",
-        "maintenance_request": "/admin/dashboard/maintenance-requests",
-        "gallery_update": "/admin/dashboard/gallery-admin",
-        "feedback_received": "/admin/dashboard/feedback-admin",
-    };
-
-    const targetRoute = routes[notification.type];
-
-    if (!targetRoute) {
-        console.error("No route found for notification type:", notification.type);
-        return;
-    }
-
-    console.log("Navigating to:", targetRoute); // ✅ Debugging
-
-    navigate(targetRoute);
-
-    console.log("Notification Data:", notification);
-
-};
-// ✅ Other functions go here (toggleNotifications, deleteNotification, etc.)
-useEffect(() => {
-    const handleClickOutside = (event) => {
-        const notificationDropdown = document.querySelector(`.${styles.notificationDropdown}`);
-        const settingsDropdown = document.querySelector(`.${styles.settingsDropdown}`);
-        const threeDotsMenu = document.querySelector(`.${styles.dropdownMenu}`);
-        const muteDropdown = document.querySelector(`.${styles.muteDropdown}`);
-        
-        // ✅ Detect if click is inside settingsDropdown or dropdown elements
-        const isClickInsideSettings = settingsDropdown && settingsDropdown.contains(event.target);
-        const isClickInsideNotification = notificationDropdown && notificationDropdown.contains(event.target);
-        const isClickInsideMenu = threeDotsMenu && threeDotsMenu.contains(event.target);
-        const isClickInsideMuteDropdown = muteDropdown && muteDropdown.contains(event.target);
-        const isClickOnSelect = event.target.tagName === 'SELECT' || event.target.tagName === 'OPTION' || event.target.closest('select');
-
-        // Debug Logs - to check if it's detecting correctly
-        console.log({
-            isClickInsideSettings,
-            isClickInsideNotification,
-            isClickInsideMenu,
-            isClickInsideMuteDropdown,
-            isClickOnSelect
-        });
-
-        // ❌ Don't close if clicking inside any valid dropdown or select elements
-        if (isClickInsideSettings || isClickInsideNotification || isClickInsideMenu || isClickInsideMuteDropdown || isClickOnSelect) {
-            return; 
-        }
-
-        // ✅ Close if clicking outside all valid areas
-        setShowNotifications(false);
-        setShowSettingsDropdown(false);
+    const markAsRead = (index) => {
+        setNotifications((prev) =>
+            prev.map((notif, i) =>
+                i === index ? { ...notif, read: !notif.read } : notif
+            )
+        );
         setActiveDropdown(null);
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-    };
-}, []);
-
-const getNotificationIcon = (type) => {
-    // Define iconStyle inside the function
-    const iconStyle = {
-        color: "#FFD700", /* Vibrant Gold */
-        marginRight: "10px",
-        filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.7))", /* Adds glowing effect */
+    const deleteNotification = (index) => {
+        setNotifications((prev) => prev.filter((_, i) => i !== index));
+        setActiveDropdown(null);
     };
 
-    switch (type) {
-        case "maintenance_request":
-            return <FaTools style={iconStyle} />;
-        case "payment_alert":
-            return <FaMoneyBillWave style={iconStyle} />;
-        case "event_notification":
-            return <FaCalendarCheck style={iconStyle} />;
-        case "tenant_update":
-            return <FaUsers style={iconStyle} />;
-        case "feedback_received":
-            return <FaCommentDots style={iconStyle} />;
-        default:
-            return <FaBell style={iconStyle} />;
-    }
-};
+    const [expandSettings, setExpandSettings] = useState(null);
 
-    // Logout Function
+    const handleViewDetails = (notification) => {
+        const routes = {
+            "pending_application": "/admin/dashboard/pending-applications",
+            "unit_management": "/admin/dashboard/unit-management",
+            "tenant_update": "/admin/dashboard/manage-tenants",
+            "event_notification": "/admin/dashboard/events-board",
+            "payment_alert": "/admin/dashboard/payment-dashboard",
+            "maintenance_request": "/admin/dashboard/maintenance-requests",
+            "gallery_update": "/admin/dashboard/gallery-admin",
+            "feedback_received": "/admin/dashboard/feedback-admin",
+        };
+
+        const targetRoute = routes[notification.type];
+        if (!targetRoute) return;
+        navigate(targetRoute);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            const notificationDropdown = document.querySelector(`.${styles.notificationDropdown}`);
+            const settingsDropdown = document.querySelector(`.${styles.settingsDropdown}`);
+            const threeDotsMenu = document.querySelector(`.${styles.dropdownMenu}`);
+            const muteDropdown = document.querySelector(`.${styles.muteDropdown}`);
+
+            const isClickInsideSettings = settingsDropdown && settingsDropdown.contains(event.target);
+            const isClickInsideNotification = notificationDropdown && notificationDropdown.contains(event.target);
+            const isClickInsideMenu = threeDotsMenu && threeDotsMenu.contains(event.target);
+            const isClickInsideMuteDropdown = muteDropdown && muteDropdown.contains(event.target);
+            const isClickOnSelect = event.target.tagName === 'SELECT' || event.target.tagName === 'OPTION' || event.target.closest('select');
+
+            if (isClickInsideSettings || isClickInsideNotification || isClickInsideMenu || isClickInsideMuteDropdown || isClickOnSelect) return;
+
+            setShowNotifications(false);
+            setShowSettingsDropdown(false);
+            setActiveDropdown(null);
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const getNotificationIcon = (type) => {
+        const iconStyle = {
+            color: "#FFD700",
+            marginRight: "10px",
+            filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.7))",
+        };
+
+        switch (type) {
+            case "maintenance_request": return <FaTools style={iconStyle} />;
+            case "payment_alert": return <FaMoneyBillWave style={iconStyle} />;
+            case "event_notification": return <FaCalendarCheck style={iconStyle} />;
+            case "tenant_update": return <FaUsers style={iconStyle} />;
+            case "feedback_received": return <FaCommentDots style={iconStyle} />;
+            default: return <FaBell style={iconStyle} />;
+        }
+    };
+
     const handleLogout = (e) => {
         e.stopPropagation();
-        localStorage.removeItem("token");
+        localStorage.clear();
         sessionStorage.clear();
-        window.location.href = "/login";
-        
-    };   
+        window.location.href = '/login';
+    };
+
     const handleSoundChange = (e) => {
         const selectedSound = e.target.value;
         setNotificationSound(selectedSound);
-    
-        // Define sound file paths (WAV format)
+
         const soundMap = {
             Default: "/sounds/mixkit-correct-answer-tone-2870.wav",
             Doorbell: "/sounds/mixkit-doorbell-tone-2864.wav",
             Beep: "/sounds/mixkit-gaming-lock-2848.wav",
             Brrt: "/sounds/mixkit-long-pop-2358.wav",
             Ring: "/sounds/mixkit-software-interface-start-2574.wav",
-            Silent: null, // Silent means no sound to be played
+            Silent: null,
         };
-    
+
         if (soundMap[selectedSound]) {
             const audio = new Audio(soundMap[selectedSound]);
             audio.play();
@@ -257,74 +208,65 @@ const getNotificationIcon = (type) => {
     };
 
     const toggleNotifications = (event) => {
-        event.stopPropagation(); // ✅ Prevents event bubbling issues
-        setShowNotifications((prev) => !prev); // ✅ Toggle notification dropdown
-    
-        // ✅ Ensure other dropdowns close when this opens
+        event.stopPropagation();
+        setShowNotifications((prev) => !prev);
         setShowSettingsDropdown(false);
         setShowProfileDropdown(false);
     };
+
     const muteTimeoutRef = useRef(null);
     const handleMuteDurationChange = (e) => {
         const duration = e.target.value;
-        setMuteDuration(duration);  // ✅ Update state with selected mute duration
-      
-    // Clear previous timeout if it exists
-    if (muteTimeoutRef.current) {
-        clearTimeout(muteTimeoutRef.current);
-    }
+        setMuteDuration(duration);
+
+        if (muteTimeoutRef.current) clearTimeout(muteTimeoutRef.current);
 
         if (duration === "Until I Change It") {
-            setNotificationsEnabled(false); // ✅ Disable notifications permanently
-            return;  // Exit function to prevent auto re-enabling
+            setNotificationsEnabled(false);
+            return;
         }
-    
-        if (duration) {
-            setNotificationsEnabled(false); // ✅ Disable notifications
-    
-            // Convert duration into milliseconds
-            const durationMap = {
-                "5 Minutes": 5 * 60 * 1000,
-                "15 Minutes": 15 * 60 * 1000,
-                "30 Minutes": 30 * 60 * 1000,
-                "1 Hour": 60 * 60 * 1000,
-                "3 Hours": 3 * 60 * 60 * 1000,
-                "6 Hours": 6 * 60 * 60 * 1000,
-                "12 Hours": 12 * 60 * 60 * 1000,
-                "24 Hours": 24 * 60 * 60 * 1000,
-                "3 Days": 3 * 24 * 60 * 60 * 1000,
-                "7 Days": 7 * 24 * 60 * 60 * 1000,
-                "14 Days": 14 * 24 * 60 * 60 * 1000,
-                "1 Month": 30 * 24 * 60 * 60 * 1000,
-            };
-    
-            // Set a timeout to re-enable notifications after the mute duration ends
-              muteTimeoutRef.current = setTimeout(() => {
-                setNotificationsEnabled(true);
-                setMuteDuration(""); // Reset mute duration
-            }, durationMap[duration]);
 
+        const durationMap = {
+            "5 Minutes": 5 * 60 * 1000,
+            "15 Minutes": 15 * 60 * 1000,
+            "30 Minutes": 30 * 60 * 1000,
+            "1 Hour": 60 * 60 * 1000,
+            "3 Hours": 3 * 60 * 60 * 1000,
+            "6 Hours": 6 * 60 * 60 * 1000,
+            "12 Hours": 12 * 60 * 60 * 1000,
+            "24 Hours": 24 * 60 * 60 * 1000,
+            "3 Days": 3 * 24 * 60 * 60 * 1000,
+            "7 Days": 7 * 24 * 60 * 60 * 1000,
+            "14 Days": 14 * 24 * 60 * 60 * 1000,
+            "1 Month": 30 * 24 * 60 * 60 * 1000,
+        };
+
+        if (durationMap[duration]) {
+            setNotificationsEnabled(false);
+            muteTimeoutRef.current = setTimeout(() => {
+                setNotificationsEnabled(true);
+                setMuteDuration("");
+            }, durationMap[duration]);
         } else {
-            setNotificationsEnabled(true); // ✅ Enable notifications if "None" is selected
+            setNotificationsEnabled(true);
         }
-    };  // ✅ Close function properly
-    
-    // ✅ Move this function OUTSIDE of handleMuteDurationChange
+    };
+
     const handleNotificationClick = (index) => {
         setNotifications((prev) =>
             prev.map((notif, i) =>
                 i === index ? { ...notif, read: true } : notif
             )
         );
-    };    
-
+    };
+    
    return (
     <div className={styles.adminDashboard}>
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
                 <div className={styles.sidebarHeader}>
                 <img 
-                    src="https://seagold-laravel-production.up.railway.app/public/seagold-logo2.svg"
+                    src="https://seagold-laravel-production.up.railway.app/seagold-logo2.svg"
                     alt="SEAGOLD LOGO" 
                     className={styles.sidebarLogo} 
                     onClick={toggleSidebar} 
@@ -339,6 +281,7 @@ const getNotificationIcon = (type) => {
             <div className={styles.sidebarDivider}></div>
                 <nav>
                     <ul>
+                    <li><Link to="tour-bookings"><FaCalendarCheck /> <span>Tour Bookings</span></Link></li>
                         <li><Link to="pending-applications"><FaClipboardList /> <span>Pending Applications</span></Link></li>
                         <li><Link to="unit-management"><FaBuilding /> <span>Unit Management</span></Link></li>
                         <li><Link to="manage-tenants"><FaUsers /> <span>Manage Tenants</span></Link></li>
