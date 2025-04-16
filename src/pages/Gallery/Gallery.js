@@ -4,38 +4,6 @@ import { useDataCache } from "../../contexts/DataContext";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
-window.Pusher = Pusher;
-window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: 'fea5d607d4b38ea09320',
-  cluster: 'ap1',
-  forceTLS: true,
-});
-
-useEffect(() => {
-  window.Echo.channel("gallery")
-    .listen("GalleryImageUploaded", (e) => {
-      if (e.image) {
-        const dbCategory = e.image.category.trim().toLowerCase();
-        const mappedCategory = categoryMap[dbCategory];
-        const path = e.image.image_url;
-
-        if (mappedCategory && facilityDescriptions[mappedCategory]) {
-          setFacilityImagesByCategory(prev => {
-            const updated = { ...prev };
-            if (!updated[mappedCategory]) updated[mappedCategory] = [];
-            updated[mappedCategory] = [path, ...updated[mappedCategory]];
-            return updated;
-          });
-        }
-      }
-    });
-
-  return () => {
-    window.Echo.leave("gallery");
-  };
-}, []);
-
 const heroSlides = [
   {
     image: "/images/2beds1.jpg",
@@ -77,6 +45,41 @@ const Gallery = () => {
   const [facilityIndex, setFacilityIndex] = useState(0);
   const [heroIndex, setHeroIndex] = useState(0);
 
+  useEffect(() => {
+    if (!window.Echo) {
+      window.Pusher = Pusher;
+      window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: 'fea5d607d4b38ea09320',
+        cluster: 'ap1',
+        forceTLS: true,
+      });
+    }
+  
+    const channel = window.Echo.channel("gallery");
+    channel.listen("GalleryImageUploaded", (e) => {
+      if (e.image) {
+        const dbCategory = e.image.category.trim().toLowerCase();
+        const mappedCategory = categoryMap[dbCategory];
+        const path = e.image.image_url;
+  
+        if (mappedCategory && facilityDescriptions[mappedCategory]) {
+          setFacilityImagesByCategory(prev => {
+            const updated = { ...prev };
+            if (!updated[mappedCategory]) updated[mappedCategory] = [];
+            updated[mappedCategory] = [path, ...updated[mappedCategory]];
+            updateCache("gallery-images", updated);
+            return updated;
+          });
+        }
+      }
+    });
+  
+    return () => {
+      window.Echo.leave("gallery");
+    };
+  }, []);
+  
   useEffect(() => {
     const cached = getCachedData("gallery-images");
 
