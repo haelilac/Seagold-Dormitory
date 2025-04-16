@@ -12,6 +12,7 @@ window.Echo = new Echo({
     key: 'fea5d607d4b38ea09320', // Replace with your Pusher app key
     cluster: 'ap1', // Replace with your cluster, e.g., 'mt1'
     forceTLS: true, // Use secure connection
+    encrypted: true,     // To ensure WebSocket connection is encrypted
 });
 
 const PaymentTenant = () => {
@@ -245,7 +246,7 @@ const PaymentTenant = () => {
                 const result = JSON.parse(textResponse);
                 console.log("📊 Parsed JSON:", result);
     
-                if (response.ok && result.extracted_reference && result.extracted_amount) {
+                if (response.ok && result.match === true) {
                     alert("✅ Receipt validated successfully!");
                     setReceiptValidated(true);
                 } else {
@@ -461,7 +462,7 @@ const PaymentTenant = () => {
                     required
                 />
 
-            <button type="submit" disabled={!receiptValidated || isScanning}>
+            <button type="submit" disabled={isScanning || (!receiptValidated && !isScanning)}>
                 {isScanning ? "Scanning Receipt..." : receiptValidated ? "Submit Payment" : "Waiting for Receipt Validation..."}
             </button>
 

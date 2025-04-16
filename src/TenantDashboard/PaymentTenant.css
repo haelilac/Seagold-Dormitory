@@ -8,7 +8,7 @@
 }
 
 .payment-background {
-    background-image: url('http://localhost:3000/Background/pay.png');
+    background-image: url('https://seagold-dormitory.vercel.app/Background/pay.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

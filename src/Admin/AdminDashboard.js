@@ -44,7 +44,8 @@ const AdminDashboard = () => {
     const dropdownRef = useRef(null);
     const profileRef = useRef(null);
 
-    {console.log("Dropdown State Inside Component:", showNotifications)}  
+    console.log("Dropdown State Inside Component:", showNotifications);
+
     // Fetch Admin Profile
     useEffect(() => {
         const fetchAdminData = async () => {
@@ -322,10 +323,13 @@ const getNotificationIcon = (type) => {
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
                 <div className={styles.sidebarHeader}>
-                <img src="/SEA GOLD LOGO 2 (SVG)-01.svg" alt="SEA GOLD LOGO" />
-                        className={styles.sidebarLogo}
-                        onClick={toggleSidebar}
-                        style={{ cursor: 'pointer' }}
+                <img 
+                    src="https://seagold-laravel-production.up.railway.app/public/seagold-logo2.svg"
+                    alt="SEAGOLD LOGO" 
+                    className={styles.sidebarLogo} 
+                    onClick={toggleSidebar} 
+                    style={{ cursor: 'pointer' }}
+                />
                     {!isSidebarCollapsed && (
                         <span className={styles.sidebarTitle}>Seagold Dormitory</span>
                     )}

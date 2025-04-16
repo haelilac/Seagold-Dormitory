@@ -1,20 +1,21 @@
 import React from 'react';
 import './RoomInfo.css';
 
+// Importing images properly
+import sampleDormImage from '../images/dormpic1.jpg';
+import unitIcon from '../images/unit.svg';
+import capacityIcon from '../images/capacity.svg';
+import rentIcon from '../images/rent.svg';
+import dueDateIcon from '../images/due-date.svg';
+
+// Amenity icons
+import airconIcon from '../images/aircon.svg';
+import bathIcon from '../images/bath.svg';
+import wifiIcon from '../images/wifi.svg';
+import studyIcon from '../images/study.svg';
+import wardrobeIcon from '../images/wardrobe.svg';
+
 const RoomCard = () => {
-  const sampleDormImage = '/dormpic1.jpg';
-  const unitIcon = '/unit.svg';
-  const capacityIcon = '/capacity.svg';
-  const rentIcon = '/rent.svg';
-  const dueDateIcon = '/due-date.svg';
-
-  // Amenity icons
-  const airconIcon = '/aircon.svg';
-  const bathIcon = '/bath.svg';
-  const wifiIcon = '/wifi.svg';
-  const studyIcon = '/study.svg';
-  const wardrobeIcon = '/wardrobe.svg';
-
   return (
     <div className="roomCard-wrapper">
       <div className="roomCard-header">
@@ -50,7 +51,7 @@ const RoomCard = () => {
               <div className="infoValue">8 occupants</div>
             </div>
 
-            {/* 3) MONTHLY RENT (Now with ₱ sign) */}
+            {/* 3) MONTHLY RENT */}
             <div className="infoBlock">
               <div className="infoLabel">
                 <img src={rentIcon} alt="Rent icon" className="infoIcon" />
