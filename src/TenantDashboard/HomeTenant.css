@@ -73,7 +73,7 @@ body {
   bottom: -280px;
   right: 421px;
   margin-top: 24px;
-  bottom: 178px;
+  bottom: 85px;
   font-size: 1rem;
   color: #4a954e; /* dark green */
   font-weight: bold;
@@ -88,7 +88,7 @@ body {
     margin-top: 13px;
     font-size: 0.9rem;
     color: #4a954e;
-    bottom: 160px;
+    bottom: 71px;
 }
 .react-calendar {
   font-family: Arial, sans-serif;
