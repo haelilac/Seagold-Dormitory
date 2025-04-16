@@ -5,6 +5,9 @@ import styles from './TenantDashboard.module.css';
 import { FaBell, FaBars, FaTimes, FaEllipsisV, FaMoon, FaSun } from 'react-icons/fa';
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from '../contexts/DataContext';
+import Sidebar from '../components/sidebar';
+import '../components/sidebar.css';
+import TopBar from '../components/topbar';
 
 const TenantDashboard = ({ onLogout }) => {
     const { updateCache, getCachedData } = useDataCache();
@@ -159,37 +162,26 @@ const TenantDashboard = ({ onLogout }) => {
 
     return (
         <div className={`${styles.dashboardContainer} ${darkMode ? styles.dark : ''}`}>
-            <div className={`${styles.sidebar} ${sidebarOpen ? styles.open : 'closed'}`}>
-                {sidebarOpen && (
-                    <button className={styles.closeButton} onClick={toggleSidebar}>
-                        <FaTimes size={24} />
-                    </button>
-                )}
-                <h2>Menu</h2>
-                <nav>
-                    <ul>
-                        <li><Link to="home">Home</Link></li>
-                        <li><Link to="room-info">Room Information</Link></li>
-                        <li><Link to="bills">Bills and Payments</Link></li>
-                        <li><Link to="maintenance">Maintenance Request</Link></li>
-                        <li><Link to="map">Map</Link></li>
-                    </ul>
-                </nav>
-            </div>
-
-            <div className={`${styles.topBar} ${sidebarOpen ? styles.shifted : ''}`}>
-                <div className={styles.topBarLeft}>
-                    {!sidebarOpen && (
-                        <button className={styles.hamburgerButton} onClick={toggleSidebar}>
-                            <FaBars size={24} />
-                        </button>
-                    )}
-                </div>
-                <div className={styles.topBarRight}>
-                    {/* Notification & Profile omitted for brevity */}
-                </div>
-            </div>
-
+            <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+            <TopBar
+                sidebarOpen={sidebarOpen}
+                toggleSidebar={toggleSidebar}
+                userData={userData}
+                filteredNotifications={filteredNotifications}
+                showNotifications={showNotifications}
+                setShowNotifications={setShowNotifications}
+                showProfileDropdown={showProfileDropdown}
+                setShowProfileDropdown={setShowProfileDropdown}
+                handleMarkAllAsRead={handleMarkAllAsRead}
+                handleDeleteNotification={handleDeleteNotification}
+                darkMode={darkMode}
+                toggleDarkMode={toggleDarkMode}
+                handleLogout={handleLogout}
+                dropdownRef={dropdownRef}
+                bellRef={bellRef}
+                profileDropdownRef={profileDropdownRef}
+                setNotifications={setNotifications}
+            />
             <div className={`${styles.mainContent} ${sidebarOpen ? styles.shifted : ''}`}>
                 <Outlet context={{ sidebarOpen }} />
             </div>
