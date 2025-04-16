@@ -38,7 +38,7 @@ const SeagoldNavbar = () => {
           <div className="seagold-navbar-logo">
             <Link to="/">
               <img 
-                src="/static/media/seagoldlogo.ed8d6b9d01f0e350f87c.jpg"
+                src="/static/media/seagoldlogo.png"
                 alt="Seagold Dormitory Logo"
                 loading="lazy"
               />
