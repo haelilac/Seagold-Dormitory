@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Gallery.css";
-import { useDataCache } from "../contexts/DataContext";
+import { useDataCache } from "../../contexts/DataContext";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
