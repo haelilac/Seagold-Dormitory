@@ -16,7 +16,9 @@ const Units = () => {
   const [showPriceModal, setShowPriceModal] = useState(false);
   const [modalUnit, setModalUnit] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
   const openPriceModal = (unit) => {
     setModalUnit(unit);
     setShowPriceModal(true);

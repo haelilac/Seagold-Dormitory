@@ -44,7 +44,9 @@ const Gallery = () => {
   const [facilityImages, setFacilityImages] = useState([]);
   const [facilityIndex, setFacilityIndex] = useState(0);
   const [heroIndex, setHeroIndex] = useState(0);
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
   useEffect(() => {
     if (!window.Echo) {
       window.Pusher = Pusher;
