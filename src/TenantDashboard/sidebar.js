@@ -4,7 +4,7 @@ import styles from '../TenantDashboard/TenantDashboard.module.css';
 import { FaHome, FaMapMarkedAlt } from "react-icons/fa";
 import { MdOutlineBedroomParent, MdOutlinePayment } from "react-icons/md";
 import { GrHostMaintenance } from "react-icons/gr";
-import logo from "../assets/seagold-logo.png";
+import logo from "../assets/seagoldlogo.jpg";
 import './sidebar.css';
 
 const Sidebar = ({ sidebarOpen }) => {
