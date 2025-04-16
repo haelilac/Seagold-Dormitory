@@ -5,9 +5,9 @@ import styles from './TenantDashboard.module.css';
 import { FaBell, FaBars, FaTimes, FaEllipsisV, FaMoon, FaSun } from 'react-icons/fa';
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from '../contexts/DataContext';
-import Sidebar from '../components/sidebar';
-import '../components/sidebar.css';
-import TopBar from '../components/topbar';
+import Sidebar from './sidebar';
+import './sidebar.css';
+import TopBar from './topbar';
 
 const TenantDashboard = ({ onLogout }) => {
     const { updateCache, getCachedData } = useDataCache();
