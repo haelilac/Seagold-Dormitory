@@ -102,11 +102,11 @@ body {
   max-width: 500px;
   margin: 0 auto;
   background-color: #fff;
-  left: 270px;
+  left: 366px;
   padding: 10px;
   height: auto; /* auto-adjust based on content */
   min-height: 217px;
-  max-height: 247px; /* or whatever looks good */
+  max-height: 253px; /* or whatever looks good */
   top: 283px;
 }
 
@@ -281,124 +281,4 @@ body {
     opacity: 0.7;
   }
   
-  @media (max-width: 1024px) {
-    .main-content,
-    .home-container {
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-      gap: 15px;
-    }
-  
-    .right-column {
-      width: 100%;
-      max-width: 700px;
-      margin: 0 auto;
-      align-items: center;
-      gap: 15px;
-    }
-  
-    .react-calendar,
-    .event-board {
-      width: 100%;
-      max-width: 100%;
-      margin: 10px auto;
-    }
-  
-    .calendar-title,
-    .selected-date {
-      position: static;
-      text-align: center;
-      margin: 10px 0;
-    }
-  
-    .calendar-title {
-      display: block;
-      text-align: center;
-      font-size: 1.1rem;
-      color: #4a954e;
-      font-weight: 600;
-      margin-bottom: 8px;
-      margin-top: -50px; /* Move it slightly upward */
-    }
-  
-    .selected-date {
-      display: inline-block;
-      margin: -60px auto 10px auto; /* Pull upward */
-      padding: 6px 12px;
-      background-color: #f0f0f0;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      text-align: center;
-      margin-left: 115px;
-    }
-    .react-calendar {
-      padding: 10px;
-      height: auto;
-      min-height: 267px;   /* or try 600px if you want it taller */
-      max-height: none;    /* remove upper limit if you want it fully expandable */
-      right: 135px;
-      bottom: unset;
-      min-width: 167%;
-      max-width: 300%;
-    }
-  
-    .event-board {
-      max-height: none;
-      overflow-y: auto;
-      padding: 15px;
-      width: 95%;
-    }
-  
-    .event-board-title {
-      font-size: 1.3rem;
-    }
-  
-    .no-events {
-      margin-top: 30px;
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .main-content,
-    .home-container {
-      padding: 10px;
-      gap: 10px;
-    }
-  
-    .right-column {
-      max-width: 100%;
-      gap: 10px;
-    }
-  
-    .react-calendar,
-    .event-board {
-      padding: 10px;
-      box-shadow: none;
-      border-radius: 8px;
-    }
-  .react-calendar{
-    min-width: 94%;
-    margin-left: 155px;
-    max-width: 94%;
-  }
-    .react-calendar__tile {
-      padding: 5px;
-      font-size: 0.65rem;
-    }
-  
-    .event-board-title,
-    .calendar-title {
-      font-size: 1.2rem;
-    }
-    .calendar-title {
-      margin-top: -15px;
-    }
-  
-    .selected-date {
-      font-size: 0.8rem;
-      margin-top: -240px;
-      margin-left: 180px;
-    }
-  }
   
