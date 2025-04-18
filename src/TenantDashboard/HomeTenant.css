@@ -70,8 +70,8 @@ body {
 /* Calendar */
 .calendar-title {
   position: absolute;
-  bottom: -280px;
-  right: 421px;
+  bottom: 73px;
+  right: 334px;
   margin-top: 24px;
   bottom: 85px;
   font-size: 1rem;
@@ -84,11 +84,11 @@ body {
   background-color: #f3f3f3;
   border-radius: 8px;
     position: absolute; /* Use absolute positioning */
-    right: 46px;
+    right: 22px;
     margin-top: 13px;
     font-size: 0.9rem;
     color: #4a954e;
-    bottom: 71px;
+    bottom: 62px;
 }
 .react-calendar {
   font-family: Arial, sans-serif;
@@ -100,14 +100,13 @@ body {
   box-sizing: border-box;
   width: 112%;
   max-width: 500px;
-  margin: 0 auto;
   background-color: #fff;
-  left: 366px;
+  left: 746px;
   padding: 10px;
   height: auto; /* auto-adjust based on content */
   min-height: 217px;
   max-height: 253px; /* or whatever looks good */
-  top: 283px;
+  top: 287px;
 }
 
 .react-calendar__month-view__days {
