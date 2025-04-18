@@ -28,7 +28,9 @@
 }
 body {
     overflow-x: hidden;
+
 }
+
 /* Column containing calendar and event board */
 .right-column {
     display: flex;
