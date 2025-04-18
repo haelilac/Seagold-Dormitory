@@ -197,8 +197,8 @@ body {
 /* Event Board Styling */
 .event-board {
   position: relative;
-  bottom: 249px;
-  left: 57%;
+  bottom: 264px;
+  left: 58%;
   background-color: #ffffff;
   padding: 20px;
   border-radius: 12px;
@@ -206,7 +206,7 @@ body {
   width: 100%;
   box-sizing: border-box;
   max-width: 500px;
-  min-height: 260px;     /* starts at this height */
+  min-height: 305px;     /* starts at this height */
   max-height: 800px;     /* scrolls if content exceeds */
   overflow-y: auto;
 }
