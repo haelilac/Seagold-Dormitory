@@ -299,24 +299,34 @@ const ContactUs = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            if (user.emailVerified) {
-                setFormData((prev) => ({
-                    ...prev,
-                    email: user.email,
-                    first_name: user.displayName.split(" ")[0],
-                    last_name: user.displayName.split(" ").slice(-1)[0],
-                }));
-                setIsVerified(true);
-                alert(`Email verified: ${user.email}`);
+            
+            const idToken = await user.getIdToken(); // ✅ get actual ID token
+            
+            const verifyResponse = await fetch("https://seagold-laravel-production.up.railway.app/api/google-verify-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: idToken }),
+            });
+            
+            const verifyData = await verifyResponse.json();
+            
+            if (verifyData.email) {
+              setFormData((prev) => ({
+                ...prev,
+                email: verifyData.email,
+                first_name: verifyData.name.split(" ")[0],
+                last_name: verifyData.name.split(" ").slice(-1)[0],
+              }));
+              setIsVerified(true);
+              alert(`Email verified: ${verifyData.email}`);
             } else {
-                alert("Please verify your email in your Google account settings before proceeding.");
+              alert("Failed to verify Google account.");
             }
         } catch (error) {
             console.error("Google Sign-In Error:", error);
             alert("Failed to verify email. Please try again.");
+          }
         }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
     

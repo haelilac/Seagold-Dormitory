@@ -20,7 +20,7 @@ const LoginModal = ({ onClose, onLogin }) => {
     signInWithPopup(auth, provider)
       .then((result) => {
         const idToken = result.user.accessToken;
-        fetch("https://seagold-laravel-production.up.railway.app/api/google-login", {
+        fetch("https://seagold-laravel-production.up.railway.app/api/google-login-guest", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: idToken }),
@@ -32,6 +32,7 @@ const LoginModal = ({ onClose, onLogin }) => {
           .then((data) => {
             if (data.access_token) {
               localStorage.setItem("token", data.access_token);
+              localStorage.setItem("role", "guest"); // 👈 Add this line
               onLogin();
               onClose();
             } else {
