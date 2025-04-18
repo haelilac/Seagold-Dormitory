@@ -70,9 +70,9 @@ body {
 /* Calendar */
 .calendar-title {
   position: absolute;
-  bottom: 73px;
-  right: 334px;
-  margin-top: 24px;
+  bottom: 85px;
+  right: 368px;
+  margin-top: 28px;
   bottom: 85px;
   font-size: 1rem;
   color: #4a954e; /* dark green */
@@ -84,11 +84,11 @@ body {
   background-color: #f3f3f3;
   border-radius: 8px;
     position: absolute; /* Use absolute positioning */
-    right: 22px;
+    right: 9px;
     margin-top: 13px;
     font-size: 0.9rem;
     color: #4a954e;
-    bottom: 62px;
+    bottom: 69px;
 }
 .react-calendar {
   font-family: Arial, sans-serif;
