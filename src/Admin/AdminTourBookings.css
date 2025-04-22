@@ -218,24 +218,26 @@
     pointer-events: none;
   }
 
-  .react-datepicker__day.available-date {
-    background-color: #ccffcc;
+/* 🔴 Unavailable Dates */
+.react-datepicker__day.unavailable-date {
+    background-color: #f8d7da;
+    color: #721c24;
     border-radius: 50%;
-    color: #000;
-  }
-  
-  .react-datepicker__day.unavailable-date {
-    background-color: #ffcccc;
-    border-radius: 50%;
-    color: #000;
-  }
-  
-  .react-datepicker__day.has-booking {
-    background-color: #fffacc;
-    border-radius: 50%;
-    color: #000;
-  }
+}
 
+/* 🟢 Available Dates */
+.react-datepicker__day.available-date {
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 50%;
+}
+
+/* 🟡 Has Booking Dates */
+.react-datepicker__day.has-booking {
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 50%;
+}
   .bulk-toggle-switch {
     display: flex;
     align-items: center;

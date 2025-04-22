@@ -228,7 +228,7 @@ const AdminTourBookings = () => {
         const anyAvailable = slotsForDay.some(s => s.status === "available");
         return anyAvailable ? "available-date" : "unavailable-date"; // ✅ 🟢 or 🔴
       };
-      
+
       if (!isInitialized) return null;
       if (loading) return <div className="spinner"></div>;
   
@@ -249,14 +249,14 @@ const AdminTourBookings = () => {
                 })}
             </h4>
 
-{/* 📅 Inline Calendar */}
-<DatePicker
-    selected={selectedDate}
-    onChange={handleDateChange}
-    minDate={new Date()}
-    inline
-    dayClassName={getDateStatus}
-/>
+        {/* 📅 Inline Calendar */}
+        <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            minDate={new Date()}
+            inline
+            dayClassName={getDateStatus}
+        />
 
         </div>
             <h3>Existing Bookings</h3>
