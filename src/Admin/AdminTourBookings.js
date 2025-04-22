@@ -187,17 +187,18 @@ const AdminTourBookings = () => {
         booking.name ? booking.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
     );
 
-    const getDateStatus = (date) => {
-        const formatted = date.toISOString().split("T")[0];
+    const getDateStatus = (dateObj) => {
+        if (!(dateObj instanceof Date)) return "";
+      
+        const formatted = dateObj.toISOString().split("T")[0];
       
         const hasBooking = bookings.some(b => b.date === formatted);
         const slotsForDay = availability.filter(a => a.date === formatted);
       
         if (hasBooking) return "has-booking";        // 🟡
-        if (slotsForDay.length === 0) return "";     // No record
-      
+        if (slotsForDay.length === 0) return "";     // default
         const anyAvailable = slotsForDay.some(s => s.status === "available");
-        return anyAvailable ? "available-date" : "unavailable-date";
+        return anyAvailable ? "available-date" : "unavailable-date"; // ✅ 🟢 or 🔴
       };
 
     return (
@@ -235,11 +236,9 @@ const AdminTourBookings = () => {
                     });
                 }}
                 inline
-                dayClassName={(date) => {
-                    const formatted = date.toISOString().split("T")[0];
-                    return getDateStatus(formatted); // ✅ pass formatted date string to getDateStatus
-                }}
-                />
+                dayClassName={getDateStatus}
+              />
+              
         <div className="bulk-buttons">
         <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
         <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
