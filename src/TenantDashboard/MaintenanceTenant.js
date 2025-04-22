@@ -19,7 +19,9 @@ const MaintenanceTenant = () => {
 
     const user_id = localStorage.getItem('user_id');
     const token = getAuthToken();
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     useEffect(() => {
         if (!token) {
             alert('Session expired. Please log in again.');

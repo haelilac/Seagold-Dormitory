@@ -23,6 +23,8 @@ import {
 } from "react-icons/fa";
 import Pusher from "pusher-js";
 import { getAuthToken } from "../utils/auth";
+import TopBarAdmin from "../components/topbar-admin";
+import Sidebar from "../components/sidebar-admin";
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -36,15 +38,17 @@ const AdminDashboard = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [notificationSound, setNotificationSound] = useState("Default");
     const [muteDuration, setMuteDuration] = useState("");
-
+    const [darkMode, setDarkMode] = useState(false);
     const clearAllNotifications = () => setNotifications([]);
     const markAllAsUnread = () => setNotifications((prev) => prev.map(n => ({ ...n, read: false })));
     const markAllAsRead = () => setNotifications((prev) => prev.map(n => ({ ...n, read: true })));
     const toggleSidebar = () => { setIsSidebarCollapsed((prev) => !prev); };
-
+    const bellRef = useRef(null);
     const dropdownRef = useRef(null);
     const profileRef = useRef(null);
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
@@ -58,9 +62,7 @@ const AdminDashboard = () => {
               setAdmin({
                 name: user.name,
                 email: user.email,
-                profilePicture: user.profile_picture
-                  ? `https://seagold-laravel-production.up.railway.app/storage/profile/${user.profile_picture}`
-                  : "https://seagold-laravel-production.up.railway.app/storage/profile/default-profile.png",
+                profilePicture: user.profile_picture,
               });
             } catch (error) {
               console.error("Error fetching admin data:", error);
@@ -70,17 +72,31 @@ const AdminDashboard = () => {
     }, []);
 
     useEffect(() => {
-        const pusher = new Pusher("fea5d607d4b38ea09320", { cluster: "ap1", encrypted: true });
-        const channel = pusher.subscribe("notifications");
-        channel.bind("new-notification", function (data) {
-            if (!notificationsEnabled) return;
-            setNotifications((prev) => [
-                { message: data.message, time: data.time, read: false },
-                ...prev
-            ]);
-        });
-        return () => { pusher.unsubscribe("notifications"); };
-    }, [notificationsEnabled]);
+      const pusher = new Pusher("fea5d607d4b38ea09320", {
+        cluster: "ap1",
+        encrypted: true,
+      });
+    
+      const channel = pusher.subscribe("admin.notifications");
+    
+      channel.bind("admin.notification", (data) => {
+        console.log("📩 New Admin Notification:", data);
+    
+        const newNotif = {
+          message: data.message,
+          time: data.time,
+          type: data.type,
+          read: false
+        };
+    
+        setNotifications(prev => [newNotif, ...prev]);
+      });
+    
+      return () => {
+        channel.unbind_all();
+        channel.unsubscribe();
+      };
+    }, []);
 
     const toggleDropdown = (event, index) => {
         event.stopPropagation();
@@ -97,7 +113,11 @@ const AdminDashboard = () => {
                 },
               });
               const data = await response.json();
-              setNotifications(data || []);
+              const normalized = data.map((notif) => ({
+                ...notif,
+                read: notif.read ?? false // make sure it's always a boolean
+              }));
+              setNotifications(normalized);
             } catch (error) {
               console.error("Error fetching notifications:", error);
             }
@@ -105,18 +125,50 @@ const AdminDashboard = () => {
         fetchNotifications();
     }, []);
 
-    const markAsRead = (index) => {
+    const markAsRead = async (id) => {
+      try {
+        // Update in backend
+        await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+            Accept: "application/json",
+          },
+        });
+    
+        // Update in frontend
         setNotifications((prev) =>
-            prev.map((notif, i) =>
-                i === index ? { ...notif, read: !notif.read } : notif
-            )
+          prev.map((notif) =>
+            notif.id === id ? { ...notif, read: true } : notif
+          )
         );
-        setActiveDropdown(null);
+      } catch (error) {
+        console.error("Failed to mark notification as read:", error);
+      }
+    
+      setActiveDropdown(null);
     };
 
-    const deleteNotification = (index) => {
-        setNotifications((prev) => prev.filter((_, i) => i !== index));
+    const deleteNotification = async (id) => {
+      try {
+        const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+            Accept: "application/json",
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to delete notification");
+        }
+    
+        // Remove from local state
+        setNotifications((prev) => prev.filter((notif) => notif.id !== id));
         setActiveDropdown(null);
+      } catch (error) {
+        console.error("Error deleting notification:", error);
+      }
     };
 
     const [expandSettings, setExpandSettings] = useState(null);
@@ -139,29 +191,30 @@ const AdminDashboard = () => {
     };
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            const notificationDropdown = document.querySelector(`.${styles.notificationDropdown}`);
-            const settingsDropdown = document.querySelector(`.${styles.settingsDropdown}`);
-            const threeDotsMenu = document.querySelector(`.${styles.dropdownMenu}`);
-            const muteDropdown = document.querySelector(`.${styles.muteDropdown}`);
-
-            const isClickInsideSettings = settingsDropdown && settingsDropdown.contains(event.target);
-            const isClickInsideNotification = notificationDropdown && notificationDropdown.contains(event.target);
-            const isClickInsideMenu = threeDotsMenu && threeDotsMenu.contains(event.target);
-            const isClickInsideMuteDropdown = muteDropdown && muteDropdown.contains(event.target);
-            const isClickOnSelect = event.target.tagName === 'SELECT' || event.target.tagName === 'OPTION' || event.target.closest('select');
-
-            if (isClickInsideSettings || isClickInsideNotification || isClickInsideMenu || isClickInsideMuteDropdown || isClickOnSelect) return;
-
-            setShowNotifications(false);
-            setShowSettingsDropdown(false);
-            setActiveDropdown(null);
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
+      const handleClickOutside = (event) => {
+        if (
+          dropdownRef.current &&
+          bellRef.current &&
+          !dropdownRef.current.contains(event.target) &&
+          !bellRef.current.contains(event.target)
+        ) {
+          setShowNotifications(false);
+          setShowSettingsDropdown(false);
+          setActiveDropdown(null);
+        }
+    
+        if (
+          profileRef.current &&
+          !profileRef.current.contains(event.target)
+        ) {
+          setShowProfileDropdown(false);
+        }
+      };
+    
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
     }, []);
 
     const getNotificationIcon = (type) => {
@@ -260,247 +313,52 @@ const AdminDashboard = () => {
         );
     };
     
-   return (
-    <div className={styles.adminDashboard}>
-            {/* Sidebar */}
-            <aside className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ""}`}>
-                <div className={styles.sidebarHeader}>
-                <img 
-                    src="https://seagold-laravel-production.up.railway.app/seagold-logo2.svg"
-                    alt="SEAGOLD LOGO" 
-                    className={styles.sidebarLogo} 
-                    onClick={toggleSidebar} 
-                    style={{ cursor: 'pointer' }}
-                />
-                    {!isSidebarCollapsed && (
-                        <span className={styles.sidebarTitle}>Seagold Dormitory</span>
-                    )}
-                </div>
-
-            {/* Line Separator */}
-            <div className={styles.sidebarDivider}></div>
-                <nav>
-                    <ul>
-                    <li><Link to="tour-bookings"><FaCalendarCheck /> <span>Tour Bookings</span></Link></li>
-                        <li><Link to="pending-applications"><FaClipboardList /> <span>Pending Applications</span></Link></li>
-                        <li><Link to="unit-management"><FaBuilding /> <span>Unit Management</span></Link></li>
-                        <li><Link to="manage-tenants"><FaUsers /> <span>Manage Tenants</span></Link></li>
-                        <li><Link to="events-board"><FaCalendarCheck /> <span>Events Board</span></Link></li>
-                        <li><Link to="payment-dashboard"><FaMoneyBillWave /> <span>Payment Dashboard</span></Link></li>
-                        <li><Link to="maintenance-requests"><FaTools /> <span>Maintenance Requests</span></Link></li>
-                        <li><Link to="gallery-admin"><FaCamera /> <span>Gallery Management</span></Link></li>
-                        <li><Link to="feedback-admin"><FaCommentDots /> <span>Feedback</span></Link></li>
-                    </ul>
-                </nav>
-            </aside>
-            {/* Top Navigation */}
-            <div className={`${styles.topBar} ${isSidebarCollapsed ? styles.shifted : ""}`}>
-                <div className={styles.topRight}>
-
-                    {/* 🔔 Notifications */}
-                    <div className={styles.notificationContainer} ref={dropdownRef} onClick={toggleNotifications}>
-                        <div className={styles.bellWrapper}>
-                            <FaBell className={styles.notificationIcon} />
-                            {notifications.length > 0 && (
-                                <span className={styles.notificationBadge}>
-                                    {notifications.length}
-                                </span>
-                            )}
-                        </div>
-                        
-                         {/* Dropdown Menu */}
-                         {showNotifications && (
-                            <div className={styles.notificationDropdown}>
-                                <h4 className={styles.notificationHeader}>Notifications
-                                <button 
-                     className={styles.settingsButton} 
-                    onClick={(e) => {
-                    e.stopPropagation(); // ✅ Prevents notification dropdown from closing
-                setShowSettingsDropdown((prev) => !prev);
-                }}
-            >
-    <FaCog />
-</button>
- </h4>
- <ul className={styles.notificationList}>
-    {notifications.length === 0 ? (
-        <li className={styles.noNotifications}>No Notifications</li>
-    ) : notifications.map((note, index) => (
-        <li 
-            key={index} 
-            className={`${styles.notificationItem} ${note.read ? styles.read : styles.unread}`}
-            onClick={() => handleViewDetails(note)} // ✅ Correctly placed click event
-        >
-            <div className={styles.notificationContent}>
-                <span>{note.message}</span>
-                <small>{note.time}</small>
-            </div>
-
-            {/* Three Dots Menu (⋮) */}
-    <div className={styles.menuContainer}>
-        <button 
-    className={styles.menuButton} 
-    onClick={(e) => {
-        e.stopPropagation(); // ✅ Prevents dropdown from closing
-        toggleDropdown(e, index);
-        }}
-        >
-         <FaEllipsisV />
-        </button>
-
-        {activeDropdown === index && (
-                    <div className={styles.dropdownMenu}>
-                        <button 
-                            className={`${styles.dropdownItem} ${styles.markAsRead}`} 
-                            onClick={() => markAsRead(index)}
-                        >
-                            <FaCheckCircle /> {note.read ? "Mark as Unread" : "Mark as Read"}
-                        </button>
-
-                        <button 
-                            className={`${styles.dropdownItem} ${styles.deleteNotification}`} 
-                            onClick={() => deleteNotification(index)}
-                        >
-                            <FaTrash /> Delete Notification
-                        </button>
-
-                        <button
-                            className={`${styles.dropdownItem} ${styles.viewDetails}`} 
-                            onClick={() => handleViewDetails(note)}
-                        >
-                            <FaInfoCircle /> View Details
-                        </button>
-                    </div>
-                )}
-            </div>
-        </li>
-    ))}
-</ul>  
-
-{showSettingsDropdown && (
-    <div className={styles.settingsDropdown}>
-        {/* 🔹 Enable/Disable Notifications Section */}
-        <div 
-            className={styles.settingCategory} 
-            onClick={() => setExpandSettings(prev => prev === 'notifications' ? null : 'notifications')}
-        >
-            <span>Notifications</span>
-            <span className={styles.arrow}>{expandSettings === 'notifications' ? '▲' : '▼'}</span>
-        </div>
-
-        {expandSettings === 'notifications' && (
-            <div className={styles.settingOptions}>
-                <label className={styles.enableNotificationsWrapper}>
-                    <input 
-                        type="checkbox" 
-                        checked={notificationsEnabled} 
-                        onChange={() => setNotificationsEnabled(!notificationsEnabled)} 
-                    />
-                    <span className={styles.labelText}>Enable Notifications</span>
-                </label>
-            </div>
-        )}
-
-{/* 🔹 Notification Sound */}
-<div 
-    className={styles.settingCategory} 
-    onClick={() => setExpandSettings(prev => prev === 'sound' ? null : 'sound')}
->
-    <span>Notification Sound</span>
-    <span className={`${styles.arrow} ${expandSettings === 'sound' ? styles.rotated : ''}`}></span>
-</div>
-
-{expandSettings === 'sound' && (
-    <div className={styles.settingOptions}>
-        <div className={styles.selectInputWrapper}>
-        <select 
-           className={styles.selectInput} 
-           value={notificationSound} 
-           onChange={handleSoundChange}
-                >
-
-                <option value="Default">Default</option>
-                <option value="Doorbell">Chime</option>
-                <option value="Beep">Beep</option>
-                <option value="Silent">Silent</option>
-                <option value="Brrt">Brrt</option>
-                <option value="Ring">Ring</option>
-            </select>
-        </div>
-    </div>
-)}
-
-
-  {/* Mute Notifications */}
-<div className={styles.settingCategory} onClick={() => setExpandSettings(prev => prev === 'mute' ? null : 'mute')}>
-    <span>Mute for</span>
-    <span className={styles.arrow}>{expandSettings === 'mute' ? '▲' : '▼'}</span>
-</div>
-
-{expandSettings === 'mute' && (
-    <div className={styles.settingOptions}>
-     
-        <select 
-            value={muteDuration} 
-            onChange={(e) => handleMuteDurationChange(e)}
-        >
-            <option value="">None</option>
-            <option value="5 Minutes">5 Minutes</option>
-            <option value="15 Minutes">15 Minutes</option>
-            <option value="30 Minutes">30 Minutes</option>
-            <option value="1 Hour">1 Hour</option>
-            <option value="3 Hours">3 Hours</option>
-            <option value="6 Hours">6 Hours</option>
-            <option value="12 Hours">12 Hours</option>
-            <option value="24 Hours">24 Hours</option>
-            <option value="3 Days">3 Days</option>
-            <option value="7 Days">7 Days</option>
-            <option value="14 Days">14 Days</option>
-            <option value="1 Month">1 Month</option>
-            <option value="Until I Change It">Until I Change It</option>  {/* Added Option */}
-        </select>
-    </div>
-)}
-
-        {/* Clear All Button */}
-        <button className={styles.clearNotifBtn} onClick={clearAllNotifications}>
-            <FaTrash className={styles.icon} /> Clear All
-        </button>
-    </div>
-
-                        )}
-
-                    </div>
-                        )}
-                    </div>
-                    {/* Profile */}
-                    <div className={styles.profileContainer} ref={profileRef} onClick={() => setShowProfileDropdown((prev) => !prev)}>
-                        <img src="https://seagold-laravel-production.up.railway.app/storage/profile/admin.png" alt="Admin Profile" className={styles.profilePicture} />
-                        <span>{admin.name || "Admin"}</span>
-
-                        {showProfileDropdown && (
-                            <div className={styles.profileDropdown}>
-                                <ul>
-                                    <li>
-                                        <img src="https://seagold-laravel-production.up.railway.app/storage/profile/admin.png" alt="Admin Profile" className={styles.dropdownProfilePicture} />
-                                    </li>
-                                    <span>{admin.name || "Admin"}</span>
-                                    <span className={styles.profileEmail}>{admin.email}</span>
-                                    <li>
-                                        <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
-                                    </li>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-            
-      {/* Main Content */}
+    const toggleDarkMode = () => {
+        setDarkMode((prev) => {
+          const newMode = !prev;
+          document.documentElement.setAttribute('data-theme', newMode ? 'dark' : 'light');
+          localStorage.setItem('theme', newMode ? 'dark' : 'light');
+          return newMode;
+        });
+      };
+      return (
+      <div className={`${styles.dashboardContainer} ${darkMode ? styles.dark : ''}`}>
+      <Sidebar sidebarOpen={!isSidebarCollapsed} toggleSidebar={toggleSidebar} />
+      <TopBarAdmin
+        admin={admin}
+        setAdmin={setAdmin} 
+        profileRef={profileRef}
+        dropdownRef={dropdownRef}
+        bellRef={bellRef}
+        notifications={notifications}
+        showNotifications={showNotifications}
+        showSettingsDropdown={showSettingsDropdown}
+        setShowSettingsDropdown={setShowSettingsDropdown}
+        showProfileDropdown={showProfileDropdown}
+        setShowProfileDropdown={setShowProfileDropdown}
+        toggleNotifications={toggleNotifications}
+        activeDropdown={activeDropdown}
+        toggleDropdown={toggleDropdown}
+        markAsRead={markAsRead}
+        deleteNotification={deleteNotification}
+        handleViewDetails={handleViewDetails}
+        clearAllNotifications={clearAllNotifications}
+        expandSettings={expandSettings}
+        setExpandSettings={setExpandSettings}
+        notificationsEnabled={notificationsEnabled}
+        setNotificationsEnabled={setNotificationsEnabled}
+        notificationSound={notificationSound}
+        handleSoundChange={handleSoundChange}
+        muteDuration={muteDuration}
+        handleMuteDurationChange={handleMuteDurationChange}
+        isSidebarCollapsed={isSidebarCollapsed}
+        handleLogout={handleLogout}
+        toggleSidebar={toggleSidebar}
+      />
       <main className={`${styles.mainContent} ${isSidebarCollapsed ? styles.shifted : ""}`}>
-                <Outlet />
-            </main>
-      </div>
+        <Outlet />
+      </main>
+    </div>
   );
 };
 

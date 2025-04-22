@@ -74,7 +74,9 @@ const PaymentTenant = () => {
             alert(data.message);
         });
     }, [tenantId]);
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     useEffect(() => {
         if (!tenantId) return;
 

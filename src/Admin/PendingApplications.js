@@ -33,6 +33,10 @@ const PendingApplications = () => {
     const { getCachedData, updateCache } = useDataCache();
     const cachedApplications = getCachedData('applications');
     
+     useEffect(() => {
+       document.body.style.overflow = "auto"; // force scroll back on
+     }, []);
+    
     useEffect(() => {
         const channel = window.Echo.channel('admin.applications'); // ✅ Make sure this matches your Laravel event
     

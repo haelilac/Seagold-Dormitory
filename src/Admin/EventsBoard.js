@@ -38,27 +38,29 @@ const EventsBoard = () => {
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
 
-  const token = localStorage.getItem("token");
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
   /**
    * Fetch events on mount if token is present
    */
   useEffect(() => {
+    const token = getAuthToken();
     if (!token) {
       console.error("No token found. Redirecting to login.");
       window.location.href = "/login";
       return;
     }
-    fetchEvents();
-  }, [token]);
+    fetchEvents(token);
+  }, []);
 
   /**
    * Fetch events and convert their date formats for display
    */
-  const fetchEvents = async () => {
+  const fetchEvents = async (token) => {
     try {
       const response = await fetch("https://seagold-laravel-production.up.railway.app/api/events", {
-        headers: { Authorization: `Bearer ${getAuthToken()}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 401) {
         console.error("Unauthorized. Redirecting to login.");

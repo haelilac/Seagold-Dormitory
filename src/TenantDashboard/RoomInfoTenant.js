@@ -8,7 +8,9 @@ const RoomInfoTenant = () => {
   const { getCachedData, updateCache } = useDataCache();
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
   useEffect(() => {
     const fetchRoomInfo = async () => {
       try {
@@ -63,7 +65,7 @@ const RoomInfoTenant = () => {
         </div>
 
         <div className="roomDetails">
-          <div className="infoBlock"><span className="infoLabel">UNIT TYPE:</span> {info.stay_types.join(", ")}</div>
+        <div className="infoBlock"><span className="infoLabel">UNIT TYPE:</span> {info.stay_types?.join(", ") || "N/A"}</div>
           <div className="infoBlock"><span className="infoLabel">CAPACITY:</span> {info.max_capacity} occupants</div>
           <div className="infoBlock"><span className="infoLabel">MONTHLY RENT:</span> ₱{info.base_price?.toLocaleString()}</div>
           <div className="infoBlock"><span className="infoLabel">RENT DUE DATE:</span> 15th of every month</div>
@@ -72,11 +74,15 @@ const RoomInfoTenant = () => {
         <div className="amenitiesSection">
           <h3>AMENITIES:</h3>
           <div className="amenitiesList">
-            {info.amenities.map((a, i) => (
-              <div key={i} className="amenityContainer">
-                <span>{a}</span>
-              </div>
-            ))}
+          {Array.isArray(info.amenities) && info.amenities.length > 0 ? (
+                info.amenities.map((a, i) => (
+                  <div key={i} className="amenityContainer">
+                    <span>{a}</span>
+                  </div>
+                ))
+              ) : (
+                <p>No amenities listed.</p>
+              )}
           </div>
         </div>
       </div>

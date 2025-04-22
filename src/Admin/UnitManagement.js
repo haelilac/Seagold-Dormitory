@@ -34,6 +34,10 @@ const UnitManagement = () => {
         fetchUnits();
     }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
+
     useEffect(() => {
         if (showModal && selectedUnit) fetchUnitImages();
     }, [showModal, selectedUnit]);

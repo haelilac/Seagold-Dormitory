@@ -18,7 +18,9 @@ const ManageTenants = () => {
         stay_type: '',
     });
 
-    
+      useEffect(() => {
+        document.body.style.overflow = "auto"; // force scroll back on
+      }, []);
     useEffect(() => {
         const fetchTerminatedTenants = async () => {
             try {

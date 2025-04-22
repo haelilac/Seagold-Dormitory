@@ -42,7 +42,9 @@ const PaymentAdmin = () => {
     const [selectedTenantName, setSelectedTenantName] = useState('');
     const [selectedTenantId, setSelectedTenantId] = useState(null);
     const [selectedMonthData, setSelectedMonthData] = useState(null);
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     useEffect(() => {
         const channel = window.Echo.channel('admin.payments');
       
@@ -74,7 +76,7 @@ const PaymentAdmin = () => {
         }
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/payments`, {
+            const res = await fetch(`http://localhost:8000/api/payments`, {
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const allPayments = await res.json();
@@ -152,8 +154,8 @@ const PaymentAdmin = () => {
         try {
             setLoading(true);
             const [paymentsRes, unpaidRes] = await Promise.all([
-                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
-                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`http://localhost:8000/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`http://localhost:8000/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
             ]);
             const payments = await paymentsRes.json();
             const unpaid = await unpaidRes.json();
@@ -203,8 +205,8 @@ const PaymentAdmin = () => {
     const handleStatusUpdate = async (paymentId, status) => {
         const token = localStorage.getItem('token');
         const endpoint = status === 'Confirmed'
-            ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
-            : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
+            ? `http://localhost:8000/api/payments/${paymentId}/confirm`
+            : `http://localhost:8000/api/payments/${paymentId}/reject`;
 
         try {
             const response = await fetch(endpoint, {
@@ -254,7 +256,7 @@ const PaymentAdmin = () => {
       
         const token = localStorage.getItem('token');
         try {
-          const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
+          const res = await fetch(`http://localhost:8000/api/tenants/${id}/send-reminder`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${getAuthToken()}`,

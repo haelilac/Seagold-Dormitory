@@ -18,7 +18,9 @@ const FeedbackAdmin = () => {
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
     const cachedFeedback = getCachedData("feedback");
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     // Realtime listener
     useEffect(() => {
         const channel = window.Echo.channel("feedback");

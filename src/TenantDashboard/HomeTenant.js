@@ -11,7 +11,9 @@ const Home = ({ userName, darkMode }) => {
     const { getCachedData, updateCache } = useDataCache();
     const [loading, setLoading] = useState(true);
 
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     // Fetch events from the API
     useEffect(() => {
         const fetchEvents = async () => {

@@ -57,7 +57,9 @@ const MaintenanceRequests = () => {
     
         fetchMaintenanceRequests();
     }, []);
-    
+      useEffect(() => {
+        document.body.style.overflow = "auto"; // force scroll back on
+      }, []);
     useEffect(() => {
         const channel = window.Echo.channel('admin.maintenance');
     

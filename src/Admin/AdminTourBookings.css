@@ -92,3 +92,25 @@
     background-color: #f44336;
     color: white;
   }
+
+  .bulk-buttons {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .bulk-buttons button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #4a954e;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .bulk-buttons button:hover {
+    background-color: #36743a;
+  }
+  

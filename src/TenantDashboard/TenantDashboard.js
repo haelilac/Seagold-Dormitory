@@ -6,7 +6,7 @@ import { FaBell, FaBars, FaTimes, FaEllipsisV, FaMoon, FaSun } from 'react-icons
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from '../contexts/DataContext';
 import Sidebar from './sidebar';
-import './sidebar.css';
+import '../components/sidebar.css';
 import TopBar from './topbar';
 
 const TenantDashboard = ({ onLogout }) => {
@@ -63,7 +63,9 @@ const TenantDashboard = ({ onLogout }) => {
 
         preloadCache();
     }, []);
-
+  useEffect(() => {
+    document.body.style.overflow = "auto"; // force scroll back on
+  }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -162,11 +164,12 @@ const TenantDashboard = ({ onLogout }) => {
 
     return (
         <div className={`${styles.dashboardContainer} ${darkMode ? styles.dark : ''}`}>
-            <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+<Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
             <TopBar
                 sidebarOpen={sidebarOpen}
                 toggleSidebar={toggleSidebar}
                 userData={userData}
+                setUserData={setUserData}
                 filteredNotifications={filteredNotifications}
                 showNotifications={showNotifications}
                 setShowNotifications={setShowNotifications}
