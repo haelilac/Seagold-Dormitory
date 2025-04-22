@@ -61,12 +61,10 @@ const AdminTourBookings = () => {
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
-        setModalDate(date);
-        setShowModal(true);
-
+    
         const formattedDate = date.toISOString().split("T")[0];
         const cachedAvailability = getCachedData(`availability-${formattedDate}`);
-
+    
         if (cachedAvailability) {
             setAvailability(cachedAvailability);
             const allAreAvailable = predefinedTimes.every(time => {
@@ -249,14 +247,54 @@ const AdminTourBookings = () => {
                 })}
             </h4>
 
-        {/* 📅 Inline Calendar */}
-        <DatePicker
-            selected={selectedDate}
-            onChange={handleDateChange}
-            minDate={new Date()}
-            inline
-            dayClassName={getDateStatus}
-        />
+            {/* 📅 Inline Calendar */}
+            <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                minDate={new Date()}
+                inline
+                dayClassName={getDateStatus}
+            />
+
+            {/* 🚀 Toggle All Available Switch */}
+            <div className="bulk-toggle-switch">
+                <label className="switch">
+                    <input
+                        type="checkbox"
+                        checked={allAvailable}
+                        onChange={(e) => {
+                            const newStatus = e.target.checked ? "available" : "unavailable";
+                            handleBulkToggle(newStatus);
+                            setAllAvailable(e.target.checked);
+                        }}
+                    />
+                    <span className="slider"></span>
+                </label>
+                <span style={{ marginLeft: '10px' }}>Toggle All Available</span>
+            </div>
+
+            {/* 🕒 Time Slot Buttons */}
+            <div className="time-slots-container">
+                {predefinedTimes.map((time) => {
+                    const slot = availability.find((s) => s.time === time);
+                    const currentStatus = slot ? slot.status : "unavailable";
+
+                    return (
+                        <button
+                            key={time}
+                            className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
+                            onClick={() =>
+                                handleToggleSlot(
+                                    time,
+                                    currentStatus === "available" ? "unavailable" : "available"
+                                )
+                            }
+                        >
+                            {time}
+                        </button>
+                    );
+                })}
+            </div>
 
         </div>
             <h3>Existing Bookings</h3>
@@ -300,63 +338,7 @@ const AdminTourBookings = () => {
                     )}
                 </tbody>
             </table>
-            {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content-tour">
-                        <h3>
-                            {modalDate.toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "2-digit",
-                            })}
-                        </h3>
 
-                        {/* Toggle All Switch */}
-                        <div className="bulk-toggle-switch">
-                            <label className="switch">
-                            <input
-                                type="checkbox"
-                                checked={allAvailable}
-                                onChange={(e) => {
-                                    const newStatus = e.target.checked ? "available" : "unavailable";
-                                    handleBulkToggle(newStatus);
-                                    setAllAvailable(e.target.checked);  // Update local state immediately
-                                }}
-                            />
-                                <span className="slider"></span>
-                            </label>
-                            <span style={{ marginLeft: '10px' }}>Toggle All Available</span>
-                        </div>
-
-                        {/* Time Slot Buttons */}
-                        <div className="time-slots-container">
-                            {predefinedTimes.map((time) => {
-                                const slot = availability.find((s) => s.time === time);
-                                const currentStatus = slot ? slot.status : "unavailable";
-
-                                return (
-                                    <button
-                                        key={time}
-                                        className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
-                                        onClick={() =>
-                                            handleToggleSlot(
-                                                time,
-                                                currentStatus === "available" ? "unavailable" : "available"
-                                            )
-                                        }
-                                    >
-                                        {time}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <button className="close-modal-btn" onClick={() => setShowModal(false)}>
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
