@@ -15,6 +15,7 @@ const AdminTourBookings = () => {
     const [modalDate, setModalDate] = useState(null);
     const [allAvailable, setAllAvailable] = useState(false);
     const [availabilityCache, setAvailabilityCache] = useState({});
+    const [loading, setLoading] = useState(true);
 
     const predefinedTimes = [
         '09:00 AM',
@@ -118,20 +119,20 @@ const AdminTourBookings = () => {
             }
         };
 
-
-    const fetchBookings = async () => {
+        const fetchBookings = async () => {
+        setLoading(true);
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
-                headers: { Authorization: `Bearer ${getAuthToken()}` },
+            headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const data = await response.json();
-    
-            console.log('Fetched Bookings:', data.bookings); // Debugging
             setBookings(data.bookings || []);
         } catch (error) {
             console.error('Error fetching bookings:', error);
+        } finally {
+            setLoading(false);
         }
-    };
+        };
     
     useEffect(() => {
         fetchBookings(); // Call fetchBookings to load bookings
@@ -210,6 +211,7 @@ const AdminTourBookings = () => {
     return (
         <div className="admin-tour-bookings">
             <h2>Tour Bookings</h2>
+            
         <div className="calendar-availability-section">
             <h3>Set Availability</h3>
             <p>Choose a date and toggle available time slots:</p>
@@ -277,6 +279,9 @@ const AdminTourBookings = () => {
                 onChange={handleSearch}
                 placeholder="Search by guest name"
             />
+            {loading ? (
+            <div className="loader">Loading bookings...</div>
+            ) : (
             <table className="bookings-table">
                 <thead>
                     <tr>
@@ -311,7 +316,7 @@ const AdminTourBookings = () => {
                     )}
                 </tbody>
             </table>
-
+            )}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content-tour">
