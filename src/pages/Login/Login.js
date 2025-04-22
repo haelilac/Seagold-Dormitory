@@ -165,9 +165,9 @@ return (
           </Link>
         </div>
         <div className="button-group">
-          <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? <span className="spinner"></span> : "Login"}
-          </button>
+        <button type="submit" className="login-button" disabled={isLoading}>
+          {isLoading ? <span className="login-spinner"></span> : "Login"}
+        </button>
         </div>
       </form>
 
