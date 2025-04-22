@@ -11,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -34,9 +35,10 @@ const Login = () => {
     }
   }, []);
 
-  const handleLogin = async (event) => {
+const handleLogin = async (event) => {
     event.preventDefault();
     setErrorMessage('');
+    setIsLoading(true);   // Start spinner
 
     try {
       await axiosInstance.get('/sanctum/csrf-cookie');
@@ -49,6 +51,7 @@ const Login = () => {
 
       if (data.error) {
         setErrorMessage(data.error);
+        setIsLoading(false);  // Stop spinner on error
         return;
       }
 
@@ -56,16 +59,15 @@ const Login = () => {
       storage.setItem("token", data.access_token);
       storage.setItem("role", data.role);
       storage.setItem("user_id", data.user_id);
-      
 
       axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.access_token}`;
-
 
       if (data.role === "admin") {
         window.location.href = "/admin/dashboard";
       } else if (data.role === "tenant") {
         if (data.status === 'terminated') {
           setErrorMessage("Your account has been terminated. Please contact the administrator.");
+          setIsLoading(false);  // Stop spinner if terminated
         } else {
           window.location.href = "/tenant/dashboard/home";
         }
@@ -73,8 +75,10 @@ const Login = () => {
     } catch (error) {
       console.error("Login error:", error);
       setErrorMessage(error.response?.data?.error || "Invalid credentials or CSRF issue");
+      setIsLoading(false);  // Stop spinner on catch
     }
-  };
+};
+
 
   const scheduleTokenRefresh = (token) => {
     setTimeout(async () => {
@@ -161,8 +165,8 @@ return (
           </Link>
         </div>
         <div className="button-group">
-          <button type="submit" className="login-button">
-            Login
+          <button type="submit" className="login-button" disabled={isLoading}>
+            {isLoading ? <span className="spinner"></span> : "Login"}
           </button>
         </div>
       </form>
