@@ -66,16 +66,6 @@ const UnitManagement = () => {
     }
 };
 
-  // ✅ On load: use cache or fetch
-  useEffect(() => {
-    if (cachedUnits?.length) {
-      setUnits(cachedUnits);
-      setAvailableUnits(cachedUnits.filter(unit => unit.overall_status === 'available').length);
-      setUnavailableUnits(cachedUnits.filter(unit => unit.overall_status === 'unavailable').length);
-    } else {
-      fetchUnits();
-    }
-  }, []);
 
   // ✅ Pusher Realtime
   useEffect(() => {
