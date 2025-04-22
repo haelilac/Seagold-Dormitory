@@ -30,13 +30,19 @@ const UnitManagement = () => {
         occupancy: '',
         price: '',
       });
-    useEffect(() => {
-        fetchUnits();
+      
+      useEffect(() => {
+        document.body.style.overflow = "auto";
+    
+        if (cachedUnits?.length) {
+            setUnits(cachedUnits);
+            setAvailableUnits(cachedUnits.filter(unit => unit.overall_status === 'available').length);
+            setUnavailableUnits(cachedUnits.filter(unit => unit.overall_status === 'unavailable').length);
+            setLoading(false);   // ✅ Stop loading when cache is used
+        } else {
+            fetchUnits();
+        }
     }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = "auto"; // force scroll back on
-  }, []);
 
     useEffect(() => {
         if (showModal && selectedUnit) fetchUnitImages();
@@ -44,17 +50,20 @@ const UnitManagement = () => {
 
   // ✅ Fetch & cache units
   const fetchUnits = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
-      const data = await response.json();
-      setUnits(data);
-      updateCache('unit_groups', data);
-      setAvailableUnits(data.filter(unit => unit.overall_status === 'available').length);
-      setUnavailableUnits(data.filter(unit => unit.overall_status === 'unavailable').length);
+        const response = await fetch('http://localhost:8000/api/units');
+        const data = await response.json();
+        setUnits(data);
+        updateCache('unit_groups', data);
+        setAvailableUnits(data.filter(unit => unit.overall_status === 'available').length);
+        setUnavailableUnits(data.filter(unit => unit.overall_status === 'unavailable').length);
     } catch (error) {
-      console.error('Error fetching units:', error.message);
+        console.error('Error fetching units:', error.message);
+    } finally {
+        setLoading(false);   // ✅ Always stop loading
     }
-  };
+};
 
   // ✅ On load: use cache or fetch
   useEffect(() => {
@@ -192,7 +201,7 @@ const UnitManagement = () => {
         }
       };
       
-
+      if (loading) return <div className="spinner"></div>;
         return (
             <section id="unit-management" className="dashboard-section">
                 <div className="unit-section">
