@@ -1,5 +1,5 @@
 .admin-tour-booking .fixed-calendar {
-    position: sticky; /* Keeps it fixed when scrolling */
+    position: relative;
     top: 10px;
     background: #f9f9f9;
     padding: 1rem;
@@ -202,6 +202,14 @@
     align-items: center;
     justify-content: space-between;
     margin: 0.5rem 0;
+  }
+
+  .react-datepicker {
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px #0000001a;
+    font-family: Roboto, sans-serif;
+    overflow: hidden;
   }
 
   .react-datepicker__day.available-date {
