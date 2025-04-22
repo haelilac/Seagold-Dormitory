@@ -11,8 +11,6 @@ const AdminTourBookings = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [message, setMessage] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [modalDate, setModalDate] = useState(null);
     const [allAvailable, setAllAvailable] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isInitialized, setIsInitialized] = useState(false);
@@ -29,6 +27,9 @@ const AdminTourBookings = () => {
         '03:00 PM',
         '04:00 PM',
     ];
+
+    useEffect(() => {
+
         const cached = getCachedData("admin-tour-bookings");
         if (cached) {
             setBookings(cached);
