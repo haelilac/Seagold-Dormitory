@@ -220,15 +220,14 @@ const AdminTourBookings = () => {
 
       return (
         <div key={time} className="time-slot-item">
-          <span>{time}</span>
-          <button
+            <button
             className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
             onClick={() =>
-              handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
+                handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
             }
-          >
-            {currentStatus === "available" ? "Mark Unavailable" : "Mark Available"}
-          </button>
+            >
+            {time}
+            </button>
         </div>
       );
     })}
