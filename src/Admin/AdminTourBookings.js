@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './AdminTourBookings.css';
 import { getAuthToken } from "../utils/auth";
+import { useDataCache } from "../contexts/DataContext";
 
 const AdminTourBookings = () => {
     const [bookings, setBookings] = useState([]);
@@ -14,8 +15,9 @@ const AdminTourBookings = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalDate, setModalDate] = useState(null);
     const [allAvailable, setAllAvailable] = useState(false);
-    const [availabilityCache, setAvailabilityCache] = useState({});
     const [loading, setLoading] = useState(true);
+
+    const { getCachedData, updateCache } = useDataCache();
 
     const predefinedTimes = [
         '09:00 AM',
@@ -30,15 +32,6 @@ const AdminTourBookings = () => {
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
-    useEffect(() => {
-        fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Fetched Bookings:', data.bookings);
-                setBookings(data.bookings || []);
-            })
-            .catch((error) => console.error('Error fetching bookings:', error));
-    }, []);
 
         const handleToggleSlot = async (time, status) => {
             try {
@@ -66,10 +59,7 @@ const AdminTourBookings = () => {
                         }
         
                         // ✅ Sync Cache
-                        setAvailabilityCache((prevCache) => ({
-                            ...prevCache,
-                            [formattedDate]: updated
-                        }));
+                        updateCache(`availability-${formattedDate}`, updated);
         
                         return updated;
                     });
@@ -119,25 +109,72 @@ const AdminTourBookings = () => {
             }
         };
 
+        useEffect(() => {
+            const cachedBookings = getCachedData("admin-tour-bookings");
+            if (cachedBookings) {
+                setBookings(cachedBookings);
+                setLoading(false);
+            } else {
+                fetchBookings();
+            }
+        }, []);
+    
         const fetchBookings = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
-            headers: { Authorization: `Bearer ${getAuthToken()}` },
-            });
-            const data = await response.json();
-            setBookings(data.bookings || []);
-        } catch (error) {
-            console.error('Error fetching bookings:', error);
-        } finally {
-            setLoading(false);
-        }
+            setLoading(true);
+            try {
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
+                    headers: { Authorization: `Bearer ${getAuthToken()}` },
+                });
+                const data = await response.json();
+                setBookings(data.bookings || []);
+                updateCache("admin-tour-bookings", data.bookings || []);
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+            } finally {
+                setLoading(false);
+            }
         };
+    
     
     useEffect(() => {
         fetchBookings(); // Call fetchBookings to load bookings
     }, []);
     
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+        setModalDate(date);
+        setShowModal(true);
+
+        const formattedDate = date.toISOString().split("T")[0];
+        const cachedAvailability = getCachedData(`availability-${formattedDate}`);
+
+        if (cachedAvailability) {
+            setAvailability(cachedAvailability);
+            const allAreAvailable = predefinedTimes.every(time => {
+                const slot = cachedAvailability.find(s => s.time === time);
+                return slot && slot.status === "available";
+            });
+            setAllAvailable(allAreAvailable);
+        } else {
+            fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setAvailability(data.slots);
+                    updateCache(`availability-${formattedDate}`, data.slots);
+                    const allAreAvailable = predefinedTimes.every(time => {
+                        const slot = data.slots.find(s => s.time === time);
+                        return slot && slot.status === "available";
+                    });
+                    setAllAvailable(allAreAvailable);
+                })
+                .catch((err) => {
+                    console.error("Error fetching availability:", err);
+                    setAvailability([]);
+                    setAllAvailable(false);
+                });
+        }
+    };
+
     const handleConfirmBooking = async (id) => {
         try {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/confirm/${id}`, {
@@ -208,6 +245,7 @@ const AdminTourBookings = () => {
         return anyAvailable ? "available-date" : "unavailable-date"; // ✅ 🟢 or 🔴
       };
 
+      if (loading) return <div className="spinner"></div>;
     return (
         <div className="admin-tour-bookings">
             <h2>Tour Bookings</h2>
@@ -228,47 +266,7 @@ const AdminTourBookings = () => {
             {/* 📅 Inline Calendar */}
             <DatePicker
                 selected={selectedDate}
-                onChange={(date) => {
-                    setSelectedDate(date);
-                    setModalDate(date);
-                    setShowModal(true);
-
-                    const formattedDate = date.toISOString().split("T")[0];
-
-                    // ✅ Check Cache First
-                    if (availabilityCache[formattedDate]) {
-                        setAvailability(availabilityCache[formattedDate]);
-                        const allAreAvailable = predefinedTimes.every(time => {
-                            const slot = availabilityCache[formattedDate].find(s => s.time === time);
-                            return slot && slot.status === "available";
-                        });
-                        setAllAvailable(allAreAvailable);
-                    } else {
-                        // 🚀 Fetch if not cached
-                        fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
-                            .then((res) => res.json())
-                            .then((data) => {
-                                setAvailability(data.slots);
-                                setAvailabilityCache(prev => ({
-                                    ...prev,
-                                    [formattedDate]: data.slots   // Store in cache
-                                }));
-                                const allAreAvailable = predefinedTimes.every(time => {
-                                    const slot = data.slots.find(s => s.time === time);
-                                    return slot && slot.status === "available";
-                                });
-                                setAllAvailable(allAreAvailable);
-                            })
-                            .catch((err) => {
-                                console.error("Error fetching availability:", err);
-                                setAvailability([]);
-                                setAllAvailable(false);
-                            });
-                    }
-                }}
-                minDate={new Date()}
-                inline
-                dayClassName={getDateStatus}
+                onChange={handleDateChange}
             />
 
         </div>
@@ -279,9 +277,6 @@ const AdminTourBookings = () => {
                 onChange={handleSearch}
                 placeholder="Search by guest name"
             />
-            {loading ? (
-            <div className="loader">Loading bookings...</div>
-            ) : (
             <table className="bookings-table">
                 <thead>
                     <tr>
@@ -316,7 +311,6 @@ const AdminTourBookings = () => {
                     )}
                 </tbody>
             </table>
-            )}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content-tour">
