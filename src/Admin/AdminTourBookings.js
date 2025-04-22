@@ -11,6 +11,8 @@ const AdminTourBookings = () => {
     const [timeSlots, setTimeSlots] = useState([]);
     const [message, setMessage] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [modalDate, setModalDate] = useState(null);
 
     const predefinedTimes = [
         '09:00 AM',
@@ -203,20 +205,23 @@ const AdminTourBookings = () => {
 
             {/* 📅 Inline Calendar */}
             <DatePicker
-                selected={selectedDate}
-                onChange={(date) => {
+            selected={selectedDate}
+            onChange={(date) => {
                 setSelectedDate(date);
+                setModalDate(date);
+                setShowModal(true); // 👉 open modal
+
                 const formattedDate = date.toISOString().split("T")[0];
 
                 fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
-                    .then((res) => res.json())
-                    .then((data) => setAvailability(data.slots))
-                    .catch((err) => {
+                .then((res) => res.json())
+                .then((data) => setAvailability(data.slots))
+                .catch((err) => {
                     console.error("Error fetching availability:", err);
                     setAvailability([]);
-                    });
-                }}
-                inline
+                });
+            }}
+            inline
             />
         <div className="bulk-buttons">
         <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
@@ -238,11 +243,11 @@ const AdminTourBookings = () => {
             >
             {time}
             </button>
+                </div>
+            );
+            })}
         </div>
-      );
-    })}
-  </div>
-</div>
+        </div>
             <h3>Existing Bookings</h3>
             <input
                 type="text"
@@ -284,8 +289,45 @@ const AdminTourBookings = () => {
                     )}
                 </tbody>
             </table>
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                    <h3>
+                        {modalDate.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "2-digit",
+                        })}
+                    </h3>
+
+                    <div className="time-slots-container">
+                        {predefinedTimes.map((time) => {
+                        const slot = availability.find((s) => s.time === time);
+                        const currentStatus = slot ? slot.status : "unavailable";
+
+                        return (
+                            <button
+                            key={time}
+                            className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
+                            onClick={() =>
+                                handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
+                            }
+                            >
+                            {time}
+                            </button>
+                        );
+                        })}
+                    </div>
+
+                    <button className="close-modal-btn" onClick={() => setShowModal(false)}>Close</button>
+                    </div>
+                </div>
+                )}
+
         </div>
+        
     );
+    
 };
 
 export default AdminTourBookings;
