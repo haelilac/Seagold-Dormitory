@@ -192,7 +192,7 @@ const UnitManagement = () => {
         }
       };
       
-      if (loading) return <div className="spinner"></div>;
+      if (loading) return <div className="unitm-spinner"></div>;
         return (
             <section id="unit-management" className="dashboard-section">
                 <div className="unit-section">

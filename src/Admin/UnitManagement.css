@@ -379,7 +379,7 @@ body {
     padding: 2px 6px;
   }
   
-  .spinner {
+  .unitm-spinner {
     border: 6px solid #f3f3f3;
     border-top: 6px solid #366e39;  /* SEAGOLD green */
     border-radius: 50%;
