@@ -1,264 +1,193 @@
-import React, { useState, useEffect } from "react";
-import "./TourBooking.css";
-import LoginModal from "../LoginModal/LoginModal";
-import { getAuthToken } from "../../utils/auth";
-const TourBooking = () => {
-  const [calendarDates, setCalendarDates] = useState([]); // Calendar for the selected month
-  const [availableSlots, setAvailableSlots] = useState([]); // Time slots for the selected date
-  const [selectedDate, setSelectedDate] = useState(""); // Currently selected date
-  const [selectedTime, setSelectedTime] = useState(""); // Currently selected time
-  const [message, setMessage] = useState("");
-  const [month, setMonth] = useState(new Date().getMonth() + 1); // Current month
-  const [year, setYear] = useState(new Date().getFullYear()); // Current year
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token")); // Check login status
-  const [showLoginModal, setShowLoginModal] = useState(!isLoggedIn); // Force login if not logged in
+import React, { useEffect, useState } from "react";
+import "./Gallery.css";
+import { useDataCache } from "../../contexts/DataContext";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [numVisitors, setNumVisitors] = useState("");
+const heroSlides = [
+  {
+    image: "/images/2beds1.jpg",
+    title: "Comfortable & Affordable",
+    description: "Discover a cozy and budget-friendly living space tailored for students and professionals.",
+  },
+  {
+    image: "/images/4beds1.jpg",
+    title: "Your Home Away from Home",
+    description: "Enjoy a safe and welcoming environment with all the amenities you need.",
+  },
+  {
+    image: "/images/6beds1.jpg",
+    title: "Experience Quality Living",
+    description: "Spacious rooms, great facilities, and an excellent community await you.",
+  },
+];
+
+const categoryMap = {
+  "canteen": "canteen",
+  "hallway": "hallway",
+  "men's bathroom": "men’s cr",
+  "women's bathroom": "women’s cr"
+};
+
+const facilityDescriptions = {
+  "canteen": "Our canteen offers a variety of delicious meals and snacks.",
+  "hallway": "Spacious hallways connecting dormitory rooms and common areas.",
+  "men’s cr": "Clean and well-maintained men's comfort room for residents.",
+  "women’s cr": "Hygienic and comfortable women's restroom facilities."
+};
+
+const Gallery = () => {
+  const { getCachedData, updateCache } = useDataCache();
+  const [facilityImagesByCategory, setFacilityImagesByCategory] = useState({});
+  const [isFacilityModalOpen, setFacilityModalOpen] = useState(false);
+  const [facilityCategory, setFacilityCategory] = useState("");
+  const [facilityImages, setFacilityImages] = useState([]);
+  const [facilityIndex, setFacilityIndex] = useState(0);
+  const [heroIndex, setHeroIndex] = useState(0);
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
   useEffect(() => {
-    if (!isLoggedIn) return; // Skip fetching if user is not logged in
-
-    // Fetch calendar data for the selected month and year
-    fetch(`https://seagold-laravel-production.up.railway.app/api/tour-calendar?month=${month}&year=${year}`)
-      .then((response) => response.json())
-      .then((data) => setCalendarDates(generateAlignedCalendar(data.calendar)))
-      .catch((error) => console.error("Error fetching calendar:", error));
-  }, [month, year, isLoggedIn]);
-
-  // Fetch available slots for the selected date
-  useEffect(() => {
-    if (!isLoggedIn || !selectedDate) {
-      setAvailableSlots([]); // Clear slots when no date is selected or user is not logged in
-      return;
-    }
-
-    fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${selectedDate}`)
-      .then((response) => response.json())
-      .then((data) => setAvailableSlots(data.slots))
-      .catch((error) => console.error("Error fetching slots:", error));
-  }, [selectedDate, isLoggedIn]);
-
-  const generateAlignedCalendar = (calendarData) => {
-    const firstDayOfMonth = new Date(year, month - 1, 1);
-    const firstWeekday = firstDayOfMonth.getDay(); // 0 = Sunday, 6 = Saturday
-
-    const alignedCalendar = [];
-
-    // Fill in empty days before the first day of the month
-    for (let i = 0; i < (firstWeekday === 0 ? 6 : firstWeekday - 1); i++) {
-      alignedCalendar.push({ date: null, status: "empty" });
-    }
-
-    // Add the actual dates from the API data
-    calendarData.forEach((day) => alignedCalendar.push(day));
-
-    return alignedCalendar;
-  };
-
-  const handleBooking = () => {
-    if (!selectedDate || !selectedTime || !name || !phoneNumber || !numVisitors) {
-      setMessage("Please fill out all fields and select a date and time.");
-      return;
-    }
-  
-    const bookingData = {
-      date_booked: selectedDate,
-      time_slot: selectedTime, // Directly use the 12-hour format
-      name,
-      phone_number: phoneNumber,
-      num_visitors: numVisitors,
-    };
-  
-    fetch("https://seagold-laravel-production.up.railway.app/api/book-tour", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: isLoggedIn
-          ? `Bearer ${getAuthToken()}`
-          : null,
-      },
-      body: JSON.stringify(bookingData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((err) => Promise.reject(err));
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setMessage("Your tour has been successfully booked!");
-          setAvailableSlots((prev) =>
-            prev.map((slot) =>
-              slot.time === selectedTime ? { ...slot, status: "booked" } : slot
-            )
-          );
-          setSelectedTime("");
-          setName("");
-          setPhoneNumber("");
-          setNumVisitors("");
-        } else {
-          setMessage(data.error || "Failed to book the tour.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error booking tour:", error);
-        setMessage("An error occurred. Please try again.");
+    if (!window.Echo) {
+      window.Pusher = Pusher;
+      window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: 'fea5d607d4b38ea09320',
+        cluster: 'ap1',
+        forceTLS: true,
       });
-  };
-  
-  
-  const changeMonth = (direction) => {
-    // Reset the selected date and available slots
-    setSelectedDate("");
-    setSelectedTime("");
-    setAvailableSlots([]);
-
-    if (direction === "next") {
-      if (month === 12) {
-        setMonth(1);
-        setYear((prev) => prev + 1);
-      } else {
-        setMonth((prev) => prev + 1);
-      }
-    } else if (direction === "previous") {
-      if (month === 1) {
-        setMonth(12);
-        setYear((prev) => prev - 1);
-      } else {
-        setMonth((prev) => prev - 1);
-      }
     }
+  
+    const channel = window.Echo.channel("gallery");
+    channel.listen("GalleryImageUploaded", (e) => {
+      if (e.image) {
+        const dbCategory = e.image.category.trim().toLowerCase();
+        const mappedCategory = categoryMap[dbCategory];
+        const path = e.image.image_url;
+  
+        if (mappedCategory && facilityDescriptions[mappedCategory]) {
+          setFacilityImagesByCategory(prev => {
+            const updated = { ...prev };
+            if (!updated[mappedCategory]) updated[mappedCategory] = [];
+            updated[mappedCategory] = [path, ...updated[mappedCategory]];
+            updateCache("gallery-images", updated);
+            return updated;
+          });
+        }
+      }
+    });
+  
+    return () => {
+      window.Echo.leave("gallery");
+    };
+  }, []);
+  
+  useEffect(() => {
+    const cached = getCachedData("gallery-images");
+
+    if (cached) {
+      setFacilityImagesByCategory(cached);
+    } else {
+      fetch("http://localhost:8000/api/gallery")
+        .then((res) => res.json())
+        .then((data) => {
+          const grouped = {};
+          data.images.forEach((img) => {
+            const dbCategory = img.category.trim().toLowerCase();
+            const mappedCategory = categoryMap[dbCategory];
+            const path = img.image_url;
+
+            if (mappedCategory && facilityDescriptions[mappedCategory]) {
+              if (!grouped[mappedCategory]) grouped[mappedCategory] = [];
+              grouped[mappedCategory].push(path);
+            }
+          });
+
+          setFacilityImagesByCategory(grouped);
+          updateCache("gallery-images", grouped); // ✅ Save to cache
+        });
+    }
+  }, []);
+
+  const openFacilityModal = (category) => {
+    setFacilityCategory(category);
+    setFacilityImages(facilityImagesByCategory[category.toLowerCase()] || []);
+    setFacilityIndex(0);
+    setFacilityModalOpen(true);
   };
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const closeFacilityModal = () => setFacilityModalOpen(false);
+  const nextFacilityImage = () => setFacilityIndex((prev) => (prev + 1) % facilityImages.length);
+  const prevFacilityImage = () => setFacilityIndex((prev) => (prev === 0 ? facilityImages.length - 1 : prev - 1));
+  const nextHeroSlide = () => setHeroIndex((prev) => (prev + 1) % heroSlides.length);
+  const prevHeroSlide = () => setHeroIndex((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
 
   return (
-    <div className="client-tour-booking">
-      {showLoginModal && (
-        <LoginModal
-          onClose={() => setShowLoginModal(false)}
-          onLogin={() => {
-            setIsLoggedIn(true);
-            setShowLoginModal(false);
-          }}
-          mandatory={true}
-        />
-      )}
+    <div className="gallery-container">
+      {/* Hero Carousel */}
+      <div className="hero-carousel">
+        <div
+          className="hero-slide"
+          style={{ backgroundImage: `url(${process.env.PUBLIC_URL}${heroSlides[heroIndex].image})` }}
+        >
+          <button className="carousel-arrow left-arrow" onClick={prevHeroSlide}>&#10094;</button>
+          <div className="hero-content">
+            <h1>{heroSlides[heroIndex].title}</h1>
+            <p>{heroSlides[heroIndex].description}</p>
+            <button className="explore-btn">Explore Now</button>
+          </div>
+          <button className="carousel-arrow right-arrow" onClick={nextHeroSlide}>&#10095;</button>
+        </div>
+        <div className="dots-container">
+          {heroSlides.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === heroIndex ? "active-dot" : ""}`}
+              onClick={() => setHeroIndex(index)}
+            ></span>
+          ))}
+        </div>
+      </div>
 
-      {!showLoginModal && (
-        <>
-          <h2>Book a Tour</h2>
-          <p>Select a date and time for your dormitory tour:</p>
-
-          {/* Calendar Section */}
-          <div className="calendar">
-            <h3>
-              <button onClick={() => changeMonth("previous")}>Previous</button>{" "}
-              {new Date(year, month - 1).toLocaleString("default", {
-                month: "long",
-              })}{" "}
-              {year}{" "}
-              <button onClick={() => changeMonth("next")}>Next</button>
-            </h3>
-            <div className="days-of-week">
-              {daysOfWeek.map((day) => (
-                <div key={day} className="day-label">
-                  {day}
-                </div>
-              ))}
+      {/* Facilities Section */}
+      <h3 className="facilities-title">Facilities</h3>
+      <div className="facilities-container">
+        {Object.keys(facilityDescriptions).map((category, index) => (
+          <div key={index} className="facility-card">
+            <div className="facility-circle">
+              <img
+                src={facilityImagesByCategory[category]?.[0] || `${process.env.PUBLIC_URL}/images/placeholder.png`}
+                alt={category}
+                className="facility-image"
+              />
             </div>
-            <div className="date-grid">
-              {calendarDates.map((day, index) => (
-                <button
-                  key={index}
-                  className={`date-button ${day.status} ${selectedDate === day.date ? "selected" : ""}`}
-                  disabled={day.status !== "available"}
-                  onClick={() => day.date && setSelectedDate(day.date)}
-                >
-                  {day.date ? new Date(day.date).getDate() : ""}
-                </button>
-              ))}
+            <h4 className="facility-heading">{category.charAt(0).toUpperCase() + category.slice(1)}</h4>
+            <p className="facility-description">{facilityDescriptions[category]}</p>
+            <button className="view-btn" onClick={() => openFacilityModal(category)}>View</button>
+          </div>
+        ))}
+      </div>
+
+      {/* Facility Modal */}
+      {isFacilityModalOpen && facilityImages.length > 0 && (
+        <div className="facility-modal">
+          <div className="facility-modal-content">
+            <span className="close-btn" onClick={closeFacilityModal}>&times;</span>
+            <h2>{facilityCategory}</h2>
+            <div className="modal-image-container">
+              <button className="arrow-btn left-arrow" onClick={prevFacilityImage}>&#9665;</button>
+              <img
+                src={facilityImages[facilityIndex]}
+                alt="Facility View"
+                className="modal-image"
+              />
+              <button className="arrow-btn right-arrow" onClick={nextFacilityImage}>&#9655;</button>
             </div>
           </div>
-
-          {/* Time Slots Section */}
-          {selectedDate && (
-            <div className="time-slots-section">
-              <h3>Select Time</h3>
-              <div className="time-slot-grid">
-                {availableSlots.map((slot) => (
-                  <button
-                    key={slot.time}
-                    className={`time-slot ${slot.status} ${
-                      selectedTime === slot.time ? "selected" : ""
-                    }`}
-                    disabled={slot.status !== "available"}
-                    onClick={() => setSelectedTime(slot.time)}
-                  >
-                    {slot.time}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Additional Booking Information */}
-          <div className="booking-form">
-            <h3>Provide Your Details</h3>
-            <div className="input-group">
-              <label htmlFor="name">Name</label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your Full Name"
-                required
-              />
-            </div>
-            <div className="input-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                type="tel"
-                id="phone"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Your Phone Number"
-                required
-              />
-            </div>
-            <div className="input-group">
-              <label htmlFor="num-visitors">Number of Visitors</label>
-              <input
-                type="number"
-                id="num-visitors"
-                value={numVisitors}
-                onChange={(e) => setNumVisitors(e.target.value)}
-                placeholder="How Many People?"
-                min="1"
-                required
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={handleBooking}
-            disabled={!selectedDate || !selectedTime || !name || !phoneNumber || !numVisitors}
-            className="book-button"
-          >
-            Book Tour
-          </button>
-
-          {message && <p className="message">{message}</p>}
-        </>
+        </div>
       )}
     </div>
   );
 };
 
-export default TourBooking;
+export default Gallery;
