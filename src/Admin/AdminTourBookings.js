@@ -14,6 +14,7 @@ const AdminTourBookings = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalDate, setModalDate] = useState(null);
     const [allAvailable, setAllAvailable] = useState(false);
+    const [availabilityCache, setAvailabilityCache] = useState({});
 
     const predefinedTimes = [
         '09:00 AM',
@@ -54,65 +55,85 @@ const AdminTourBookings = () => {
           }),
         });
     
-        if (response.ok) {
-          setMessage(`Slot ${time} marked as ${status}`);
-    
-          // ✅ Manually update availability state
-          setAvailability((prev) => {
-            const updated = [...prev];
-            const index = updated.findIndex((slot) => slot.time === time);
-    
-            if (index !== -1) {
-              updated[index] = { ...updated[index], status };
-            } else {
-              updated.push({ time, status }); // if not found, add it
+        const handleToggleSlot = async (time, status) => {
+            try {
+                const formattedDate = selectedDate.toISOString().split('T')[0];
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${getAuthToken()}`,
+                    },
+                    body: JSON.stringify({ date: formattedDate, time, status }),
+                });
+        
+                if (response.ok) {
+                    setMessage(`Slot ${time} marked as ${status}`);
+        
+                    setAvailability((prev) => {
+                        const updated = [...prev];
+                        const index = updated.findIndex((slot) => slot.time === time);
+        
+                        if (index !== -1) {
+                            updated[index] = { ...updated[index], status };
+                        } else {
+                            updated.push({ time, status });
+                        }
+        
+                        // ✅ Update Cache
+                        setAvailabilityCache((prevCache) => ({
+                            ...prevCache,
+                            [formattedDate]: updated
+                        }));
+        
+                        return updated;
+                    });
+                } else {
+                    throw new Error("Failed to update slot");
+                }
+            } catch (err) {
+                console.error("Error updating slot:", err);
+                setMessage("Error updating slot");
             }
-    
-            return updated;
-          });
-        } else {
-          throw new Error("Failed to update slot");
-        }
-      } catch (err) {
-        console.error("Error updating slot:", err);
-        setMessage("Error updating slot");
-      }
-    };
-
-      const handleBulkToggle = async (status) => {
-        try {
-          const formattedDate = selectedDate.toISOString().split("T")[0];
-      
-          for (const time of predefinedTimes) {
-            await fetch("https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${getAuthToken()}`,
-              },
-              body: JSON.stringify({
-                date: formattedDate,
-                time,
-                status,
-              }),
-            });
-          }
-      
-          setMessage(`All slots marked as ${status}`);
-          
-          // Refresh the availability UI
-          fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
-            .then((res) => res.json())
-            .then((data) => setAvailability(data.slots))
-            .catch((err) => {
-              console.error("Error fetching updated availability:", err);
-              setAvailability([]);
-            });
-        } catch (err) {
-          console.error("Bulk update error:", err);
-          setMessage("Failed to update all slots.");
-        }
-      };
+        };
+        
+        const handleBulkToggle = async (status) => {
+            try {
+                const formattedDate = selectedDate.toISOString().split("T")[0];
+        
+                for (const time of predefinedTimes) {
+                    await fetch("https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${getAuthToken()}`,
+                        },
+                        body: JSON.stringify({ date: formattedDate, time, status }),
+                    });
+                }
+        
+                setMessage(`All slots marked as ${status}`);
+        
+                // Refresh and Cache
+                fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        setAvailability(data.slots);
+                        setAvailabilityCache((prevCache) => ({
+                            ...prevCache,
+                            [formattedDate]: data.slots
+                        }));
+                    })
+                    .catch((err) => {
+                        console.error("Error fetching updated availability:", err);
+                        setAvailability([]);
+                    });
+            } catch (err) {
+                console.error("Bulk update error:", err);
+                setMessage("Failed to update all slots.");
+            }
+        };
+        
 
     const fetchBookings = async () => {
         try {
@@ -228,28 +249,42 @@ const AdminTourBookings = () => {
 
                     const formattedDate = date.toISOString().split("T")[0];
 
-                fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
-                .then((res) => res.json())
-                .then((data) => {
-                    setAvailability(data.slots);
-                    // Check if all slots are available
-                    const allAreAvailable = predefinedTimes.every(time => {
-                        const slot = data.slots.find(s => s.time === time);
-                        return slot && slot.status === "available";
-                    });
-                    setAllAvailable(allAreAvailable);
-                })
-                .catch((err) => {
-                    console.error("Error fetching availability:", err);
-                    setAvailability([]);
-                    setAllAvailable(false);
-                });
-
+                    // ✅ Check Cache First
+                    if (availabilityCache[formattedDate]) {
+                        setAvailability(availabilityCache[formattedDate]);
+                        const allAreAvailable = predefinedTimes.every(time => {
+                            const slot = availabilityCache[formattedDate].find(s => s.time === time);
+                            return slot && slot.status === "available";
+                        });
+                        setAllAvailable(allAreAvailable);
+                    } else {
+                        // 🚀 Fetch if not cached
+                        fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+                            .then((res) => res.json())
+                            .then((data) => {
+                                setAvailability(data.slots);
+                                setAvailabilityCache(prev => ({
+                                    ...prev,
+                                    [formattedDate]: data.slots   // Store in cache
+                                }));
+                                const allAreAvailable = predefinedTimes.every(time => {
+                                    const slot = data.slots.find(s => s.time === time);
+                                    return slot && slot.status === "available";
+                                });
+                                setAllAvailable(allAreAvailable);
+                            })
+                            .catch((err) => {
+                                console.error("Error fetching availability:", err);
+                                setAvailability([]);
+                                setAllAvailable(false);
+                            });
+                    }
                 }}
-                minDate={new Date()} // 🚫 disables past dates
+                minDate={new Date()}
                 inline
                 dayClassName={getDateStatus}
-                />
+            />
+
         </div>
             <h3>Existing Bookings</h3>
             <input
