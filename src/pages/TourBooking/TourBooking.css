@@ -1,105 +1,395 @@
-.client-tour-booking {
+/* 1) Global Reset */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #f0f0f0; /* Page background */
     font-family: Arial, sans-serif;
-    margin: 2rem;
-    max-width: 600px;
 }
 
-.client-tour-booking .calendar {
-    margin-bottom: 2rem;
+/* 2) Main container spanning full page height */
+.client-tour-booking {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 2rem;
 }
 
-.client-tour-booking .days-of-week {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* Align with date grid */
-    gap: 1rem;
+/* 3) Booking container with comfortable sizing & spacing */
+.booking-container {
+    width: 450px; /* Container width */
+    min-height: 600px; /* Increased vertical space for content */
+    margin-top: 1rem; /* Smaller margin raises container higher */
+    margin-left: 2rem; /* Space from the left side */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.4) 100%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    backdrop-filter: blur(12px) saturate(150%);
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+/* SVG Title Container */
+.book-a-tour-title {
     text-align: center;
-    font-weight: bold;
-    margin-bottom: 1rem; /* Space between days of the week and dates */
+    margin-bottom: 1rem;
 }
 
-.client-tour-booking .date-grid {
+/* Tagline Wrapper */
+.tagline-wrapper {
+    margin-bottom: 1rem;
+}
+
+/* Fixed-height tagline */
+.intro-tagline {
+    text-align: center;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 1.1rem;
+    color: #036600;
+    margin: 0;
+}
+
+/* Paragraph text inside .booking-container */
+.booking-container p {
+    font-size: 1.1rem;
+    color: #036600;
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+}
+
+/* Section headings */
+.booking-container h3 {
+    font-size: 1.2rem;
+    color: #036600;
+    margin: 0.5rem 0;
+    font-weight: 700;
+}
+
+/* Input group labels */
+.booking-container .input-group label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #036600;
+    margin-bottom: 0.3rem;
+}
+
+/* Text inputs */
+.booking-container .input-group input[type="text"],
+.booking-container .input-group input[type="tel"],
+.booking-container .input-group input[type="number"] {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 0.8rem;
+}
+
+/* Booking Button */
+.book-button {
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    background-color: #f0c36d;
+    color: #036600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.book-button:hover:not(:disabled) {
+    background-color: #f5d08d;
+}
+
+.book-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Booking Message */
+.message {
+    margin-top: 1rem;
+    text-align: center;
+    color: #036600;
+    font-weight: 600;
+}
+
+/* Calendar Section */
+.calendar {
+    margin-bottom: 1rem;
+}
+
+/* Days of Week Header (for main calendar, if used) */
+.days-of-week {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 1rem;
+    gap: 0.5rem;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #036600;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+/* Date Grid (for main calendar, if used) */
+.date-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
     justify-items: center;
 }
 
-.client-tour-booking .date-button {
-    padding: 1rem;
+/* Date Buttons */
+.date-button {
+    padding: 0.5rem;
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 8px;
     cursor: pointer;
     width: 40px;
     height: 40px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
 }
 
-.client-tour-booking .date-button.available {
+.date-button:hover {
+    background-color: #f0f0f0;
+}
+
+.date-button.available {
     background-color: #ccffcc;
     color: #008000;
 }
 
-.client-tour-booking .date-button.booked {
+.date-button.booked {
     background-color: #ffcccc;
     color: #ff0000;
     cursor: not-allowed;
 }
 
-.client-tour-booking .date-button.unavailable {
+.date-button.unavailable {
     background-color: #f0f0f0;
     color: #808080;
     cursor: not-allowed;
 }
 
-.client-tour-booking .time-slot-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+.date-button.selected {
+    background-color: #ffeb3b;
+    color: #000;
+    font-weight: bold;
 }
 
-.client-tour-booking .time-slot {
-    padding: 0.8rem;
+/* Time Slots Section */
+.time-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+.time-slot {
+    padding: 0.5rem;
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 0.9rem;
 }
 
-.client-tour-booking .time-slot.unavailable,
-.client-tour-booking .time-slot.booked {
-    background-color: #f0f0f0; /* Light grey */
-    color: #808080; /* Dark grey */
+.time-slot.unavailable,
+.time-slot.booked {
+    background-color: #f0f0f0;
+    color: #808080;
     cursor: not-allowed;
 }
 
-.client-tour-booking .time-slot.available {
-    background-color: #ccffcc; /* Light green */
-    color: #008000; /* Dark green */
+.time-slot.available {
+    background-color: #ccffcc;
+    color: #008000;
 }
 
-.client-tour-booking .time-slot.selected {
-    background-color: #ffeb3b; /* Yellow */
-    color: #000; /* Black text */
+.time-slot.selected {
+    background-color: #ffeb3b;
+    color: #000;
     font-weight: bold;
 }
 
-.client-tour-booking .book-button {
-    margin-top: 2rem;
-    padding: 0.8rem 1.5rem;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
+/* DateTimeBar and Input Styles */
+.date-time-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    padding: 0.8rem 1rem;
     border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.date-input-section,
+.time-input-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.date-input {
+    font-size: 1rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100px;
+}
+
+.time-input {
+    font-size: 1rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100px;
+}
+
+.calendar-icon,
+.clock-icon {
+    font-size: 1.2rem;
+    color: #036600;
     cursor: pointer;
 }
 
-.client-tour-booking .book-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.apply-date-btn {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+    border: none;
+    background-color: #036600;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-.client-tour-booking .message {
-    margin-top: 1rem;
+/* -------------------------
+   Updated Popup Calendar Layout
+--------------------------*/
+
+/* Calendar Popup */
+.calendar-popup {
+    position: absolute;
+    top: 3rem;
+    left: 0;
+    z-index: 999;
+    width: 300px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-popup-inner {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+
+    /* NEW: Container background (pick any color or gradient) */
+    background: linear-gradient(135deg, #ffffff 0%, #fdfdfd 100%);
+
+    /* Optional: add padding for space at the bottom so 
+       the background remains visible behind the grid */
+    padding-bottom: 1rem;
+}
+
+
+/* Calendar Header with Navigation (Green Background) */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4CAF50; /* Green header */
+    color: #fff;
+    padding: 0.5rem 1rem;
+}
+
+.calendar-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+}
+
+.prev-month, .next-month {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Dropdown selectors for Month and Year */
+.calendar-selectors {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #e9e9e9;
+}
+.calendar-selectors select {
+    padding: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Weekdays Row */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #f0f0f0;
+    padding: 0.5rem 0;
     text-align: center;
-    color: #007bff;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+.weekday-cell {
+    padding: 0.25rem;
+}
+
+/* Calendar Grid for Days */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    padding: 1rem;
+}
+
+/* Calendar Day Cells with Background */
+.calendar-day {
+    /* Remove or reduce background so the container's background shows through */
+    background: none; /* or background: rgba(255,255,255,0.7); for a semi-transparent effect */
+    
+    text-align: center;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    color: #333;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.calendar-day:hover {
+    background-color: #f1f1f1; /* Slight hover effect */
+}
+
+
+.empty-day {
+    background: none;
+    border: none;
+    cursor: default;
 }
