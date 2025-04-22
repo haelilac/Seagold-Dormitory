@@ -238,38 +238,6 @@ const AdminTourBookings = () => {
                 inline
                 dayClassName={getDateStatus}
               />
-              
-        <div className="bulk-buttons">
-        <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
-        <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
-        </div>
-        {/* Render time slots with toggle buttons */}
-        <div className="time-slots-container">
-        {predefinedTimes.map((time) => {
-            const slot = availability.find((s) => s.time === time);
-            const currentStatus = slot ? slot.status : "unavailable";
-            const isAvailable = currentStatus === "available";
-
-      return (
-        <div key={time} className="time-slot-toggle">
-        <span>{time}</span>
-        <label className="switch">
-            <input
-            type="checkbox"
-            checked={isAvailable}
-            onChange={() =>
-                handleToggleSlot(
-                time,
-                isAvailable ? "unavailable" : "available"
-                )
-            }
-            />
-            <span className="slider"></span>
-        </label>
-        </div>
-    );
-    })}
-        </div>
         </div>
             <h3>Existing Bookings</h3>
             <input
@@ -323,25 +291,25 @@ const AdminTourBookings = () => {
                         })}
                     </h3>
 
-                    <div className="time-slots-container">
-                        {predefinedTimes.map((time) => {
-                        const slot = availability.find((s) => s.time === time);
-                        const currentStatus = slot ? slot.status : "unavailable";
-
-                        return (
-                            <button
-                            key={time}
-                            className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
-                            onClick={() =>
-                                handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
-                            }
-                            >
-                            {time}
-                            </button>
-                        );
-                        })}
+    {/* Toggle All Switch */}
+                    <div className="bulk-toggle-switch">
+                    <label className="switch">
+                        <input
+                        type="checkbox"
+                        onChange={(e) =>
+                            handleBulkToggle(e.target.checked ? "available" : "unavailable")
+                        }
+                        />
+                        <span className="slider"></span>
+                    </label>
+                    <span style={{ marginLeft: '10px' }}>Toggle All Available</span>
                     </div>
 
+                    {/* Buttons remain */}
+                    <div className="bulk-buttons">
+                    <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
+                    <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
+                    </div>
                     <button className="close-modal-btn" onClick={() => setShowModal(false)}>Close</button>
                     </div>
                 </div>

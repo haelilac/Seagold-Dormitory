@@ -222,6 +222,10 @@
     color: #000;
   }
 
+  .bulk-toggle-switch {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
   
 
-  
