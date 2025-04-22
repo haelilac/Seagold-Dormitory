@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../TourBooking.css";
+import "./TourBooking.css";
 import LoginModal from "../LoginModal/LoginModal";
 import { getAuthToken } from "../../utils/auth";
 const TourBooking = () => {
