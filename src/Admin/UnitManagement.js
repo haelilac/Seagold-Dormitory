@@ -53,7 +53,7 @@ const UnitManagement = () => {
   const fetchUnits = async () => {
     setLoading(true);
     try {
-        const response = await fetch('http://localhost:8000/api/units');
+        const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
         const data = await response.json();
         setUnits(data);
         updateCache('unit_groups', data);
