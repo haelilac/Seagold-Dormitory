@@ -106,7 +106,7 @@ const AdminTourBookings = () => {
             }
         };
 
-        
+
         useEffect(() => {
             const cachedBookings = getCachedData("admin-tour-bookings");
             if (cachedBookings) {
@@ -261,11 +261,14 @@ const AdminTourBookings = () => {
                 })}
             </h4>
 
-            {/* 📅 Inline Calendar */}
-            <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-            />
+{/* 📅 Inline Calendar */}
+<DatePicker
+    selected={selectedDate}
+    onChange={handleDateChange}
+    minDate={new Date()}
+    inline
+    dayClassName={getDateStatus}
+/>
 
         </div>
             <h3>Existing Bookings</h3>
