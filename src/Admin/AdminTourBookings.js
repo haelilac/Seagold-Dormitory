@@ -29,10 +29,6 @@ const AdminTourBookings = () => {
         '03:00 PM',
         '04:00 PM',
     ];
-
-    useEffect(() => {
-        document.body.style.overflow = "auto";
-
         const cached = getCachedData("admin-tour-bookings");
         if (cached) {
             setBookings(cached);
