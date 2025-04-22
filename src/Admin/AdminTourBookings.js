@@ -280,45 +280,63 @@ const AdminTourBookings = () => {
                     )}
                 </tbody>
             </table>
+
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content-tour">
-                    <h3>
-                        {modalDate.toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "2-digit",
-                        })}
-                    </h3>
+                        <h3>
+                            {modalDate.toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "2-digit",
+                            })}
+                        </h3>
 
-    {/* Toggle All Switch */}
-                    <div className="bulk-toggle-switch">
-                    <label className="switch">
-                        <input
-                        type="checkbox"
-                        onChange={(e) =>
-                            handleBulkToggle(e.target.checked ? "available" : "unavailable")
-                        }
-                        />
-                        <span className="slider"></span>
-                    </label>
-                    <span style={{ marginLeft: '10px' }}>Toggle All Available</span>
-                    </div>
+                        {/* Toggle All Switch */}
+                        <div className="bulk-toggle-switch">
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        handleBulkToggle(e.target.checked ? "available" : "unavailable")
+                                    }
+                                />
+                                <span className="slider"></span>
+                            </label>
+                            <span style={{ marginLeft: '10px' }}>Toggle All Available</span>
+                        </div>
 
-                    {/* Buttons remain */}
-                    <div className="bulk-buttons">
-                    <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
-                    <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
-                    </div>
-                    <button className="close-modal-btn" onClick={() => setShowModal(false)}>Close</button>
+                        {/* Time Slot Buttons */}
+                        <div className="time-slots-container">
+                            {predefinedTimes.map((time) => {
+                                const slot = availability.find((s) => s.time === time);
+                                const currentStatus = slot ? slot.status : "unavailable";
+
+                                return (
+                                    <button
+                                        key={time}
+                                        className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
+                                        onClick={() =>
+                                            handleToggleSlot(
+                                                time,
+                                                currentStatus === "available" ? "unavailable" : "available"
+                                            )
+                                        }
+                                    >
+                                        {time}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <button className="close-modal-btn" onClick={() => setShowModal(false)}>
+                            Close
+                        </button>
                     </div>
                 </div>
-                )}
-
+            )}
         </div>
-        
     );
-    
 };
 
 export default AdminTourBookings;
