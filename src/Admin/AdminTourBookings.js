@@ -188,35 +188,45 @@ const AdminTourBookings = () => {
     return (
         <div className="admin-tour-bookings">
             <h2>Tour Bookings</h2>
-<div className="calendar-availability-section">
-  <h3>Set Availability</h3>
-  <p>Choose a date and toggle available time slots:</p>
+        <div className="calendar-availability-section">
+            <h3>Set Availability</h3>
+            <p>Choose a date and toggle available time slots:</p>
 
-  {/* Simple date input (or replace with a fancier calendar later) */}
-  <input
-    type="date"
-    value={selectedDate.toISOString().split("T")[0]}
-    onChange={(e) => {
-      const date = new Date(e.target.value);
-      setSelectedDate(date);
-      fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${e.target.value}`)
-        .then((res) => res.json())
-        .then((data) => setAvailability(data.slots))
-        .catch((err) => {
-          console.error("Error fetching availability:", err);
-          setAvailability([]);
-        });
-    }}
-  />
-<div className="bulk-buttons">
-  <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
-  <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
-</div>
-  {/* Render time slots with toggle buttons */}
-  <div className="time-slots-container">
-    {predefinedTimes.map((time) => {
-      const slot = availability.find((s) => s.time === time);
-      const currentStatus = slot ? slot.status : "unavailable";
+            {/* 🗓️ Digital Date Display */}
+            <h4>
+                {selectedDate.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "2-digit",
+                })}
+            </h4>
+
+            {/* 📅 Inline Calendar */}
+            <DatePicker
+                selected={selectedDate}
+                onChange={(date) => {
+                setSelectedDate(date);
+                const formattedDate = date.toISOString().split("T")[0];
+
+                fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+                    .then((res) => res.json())
+                    .then((data) => setAvailability(data.slots))
+                    .catch((err) => {
+                    console.error("Error fetching availability:", err);
+                    setAvailability([]);
+                    });
+                }}
+                inline
+            />
+        <div className="bulk-buttons">
+        <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
+        <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
+        </div>
+        {/* Render time slots with toggle buttons */}
+        <div className="time-slots-container">
+            {predefinedTimes.map((time) => {
+            const slot = availability.find((s) => s.time === time);
+            const currentStatus = slot ? slot.status : "unavailable";
 
       return (
         <div key={time} className="time-slot-item">
