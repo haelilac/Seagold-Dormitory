@@ -13,6 +13,7 @@ const AdminTourBookings = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [modalDate, setModalDate] = useState(null);
+    const [allAvailable, setAllAvailable] = useState(false);
 
     const predefinedTimes = [
         '09:00 AM',
@@ -227,13 +228,23 @@ const AdminTourBookings = () => {
 
                     const formattedDate = date.toISOString().split("T")[0];
 
-                    fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
-                    .then((res) => res.json())
-                    .then((data) => setAvailability(data.slots))
-                    .catch((err) => {
-                        console.error("Error fetching availability:", err);
-                        setAvailability([]);
+                fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setAvailability(data.slots);
+                    // Check if all slots are available
+                    const allAreAvailable = predefinedTimes.every(time => {
+                        const slot = data.slots.find(s => s.time === time);
+                        return slot && slot.status === "available";
                     });
+                    setAllAvailable(allAreAvailable);
+                })
+                .catch((err) => {
+                    console.error("Error fetching availability:", err);
+                    setAvailability([]);
+                    setAllAvailable(false);
+                });
+
                 }}
                 minDate={new Date()} // 🚫 disables past dates
                 inline
@@ -296,12 +307,15 @@ const AdminTourBookings = () => {
                         {/* Toggle All Switch */}
                         <div className="bulk-toggle-switch">
                             <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    onChange={(e) =>
-                                        handleBulkToggle(e.target.checked ? "available" : "unavailable")
-                                    }
-                                />
+                            <input
+                                type="checkbox"
+                                checked={allAvailable}
+                                onChange={(e) => {
+                                    const newStatus = e.target.checked ? "available" : "unavailable";
+                                    handleBulkToggle(newStatus);
+                                    setAllAvailable(e.target.checked);  // Update local state immediately
+                                }}
+                            />
                                 <span className="slider"></span>
                             </label>
                             <span style={{ marginLeft: '10px' }}>Toggle All Available</span>
