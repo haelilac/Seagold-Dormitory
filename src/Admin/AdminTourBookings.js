@@ -106,6 +106,7 @@ const AdminTourBookings = () => {
             }
         };
 
+        
         useEffect(() => {
             const cachedBookings = getCachedData("admin-tour-bookings");
             if (cachedBookings) {
