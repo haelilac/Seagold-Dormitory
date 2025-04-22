@@ -187,6 +187,19 @@ const AdminTourBookings = () => {
         booking.name ? booking.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
     );
 
+    const getDateStatus = (date) => {
+        const formatted = date.toISOString().split("T")[0];
+      
+        const hasBooking = bookings.some(b => b.date === formatted);
+        const slotsForDay = availability.filter(a => a.date === formatted);
+      
+        if (hasBooking) return "has-booking";        // 🟡
+        if (slotsForDay.length === 0) return "";     // No record
+      
+        const anyAvailable = slotsForDay.some(s => s.status === "available");
+        return anyAvailable ? "available-date" : "unavailable-date";
+      };
+
     return (
         <div className="admin-tour-bookings">
             <h2>Tour Bookings</h2>
@@ -205,47 +218,58 @@ const AdminTourBookings = () => {
 
             {/* 📅 Inline Calendar */}
             <DatePicker
-            selected={selectedDate}
-            onChange={(date) => {
-                setSelectedDate(date);
-                setModalDate(date);
-                setShowModal(true); // 👉 open modal
+                selected={selectedDate}
+                onChange={(date) => {
+                    setSelectedDate(date);
+                    setModalDate(date);
+                    setShowModal(true); // open modal
 
-                const formattedDate = date.toISOString().split("T")[0];
+                    const formattedDate = date.toISOString().split("T")[0];
 
-                fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
-                .then((res) => res.json())
-                .then((data) => setAvailability(data.slots))
-                .catch((err) => {
-                    console.error("Error fetching availability:", err);
-                    setAvailability([]);
-                });
-            }}
-            inline
-            />
+                    fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+                    .then((res) => res.json())
+                    .then((data) => setAvailability(data.slots))
+                    .catch((err) => {
+                        console.error("Error fetching availability:", err);
+                        setAvailability([]);
+                    });
+                }}
+                inline
+                dayClassName={(date) => {
+                    const formatted = date.toISOString().split("T")[0];
+                    return getDateStatus(formatted); // ✅ pass formatted date string to getDateStatus
+                }}
+                />
         <div className="bulk-buttons">
         <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
         <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
         </div>
         {/* Render time slots with toggle buttons */}
         <div className="time-slots-container">
-            {predefinedTimes.map((time) => {
+        {predefinedTimes.map((time) => {
             const slot = availability.find((s) => s.time === time);
             const currentStatus = slot ? slot.status : "unavailable";
+            const isAvailable = currentStatus === "available";
 
       return (
-        <div key={time} className="time-slot-item">
-            <button
-            className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
-            onClick={() =>
-                handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
+        <div key={time} className="time-slot-toggle">
+        <span>{time}</span>
+        <label className="switch">
+            <input
+            type="checkbox"
+            checked={isAvailable}
+            onChange={() =>
+                handleToggleSlot(
+                time,
+                isAvailable ? "unavailable" : "available"
+                )
             }
-            >
-            {time}
-            </button>
-                </div>
-            );
-            })}
+            />
+            <span className="slider"></span>
+        </label>
+        </div>
+    );
+    })}
         </div>
         </div>
             <h3>Existing Bookings</h3>
