@@ -213,6 +213,11 @@
     overflow: hidden;
   }
 
+  .react-datepicker__day--disabled {
+    color: #ccc !important;
+    pointer-events: none;
+  }
+
   .react-datepicker__day.available-date {
     background-color: #ccffcc;
     border-radius: 50%;

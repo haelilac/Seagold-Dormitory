@@ -223,7 +223,7 @@ const AdminTourBookings = () => {
                 onChange={(date) => {
                     setSelectedDate(date);
                     setModalDate(date);
-                    setShowModal(true); // open modal
+                    setShowModal(true);
 
                     const formattedDate = date.toISOString().split("T")[0];
 
@@ -235,9 +235,10 @@ const AdminTourBookings = () => {
                         setAvailability([]);
                     });
                 }}
+                minDate={new Date()} // 🚫 disables past dates
                 inline
                 dayClassName={getDateStatus}
-              />
+                />
         </div>
             <h3>Existing Bookings</h3>
             <input
