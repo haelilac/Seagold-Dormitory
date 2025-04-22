@@ -117,14 +117,21 @@ html, body {
   background-color: #f1c40f;
 }
 
-.spinner {
+.login-spinner {
   border: 3px solid #f3f3f3;
-  border-top: 3px solid #4a954e;  /* Use SEAGOLD color */
+  border-top: 3px solid #4a954e;  /* SEAGOLD color */
   border-radius: 50%;
+  width: 18px;
+  height: 18px;
   animation: spin 0.8s linear infinite;
   display: inline-block;
+  vertical-align: middle;
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 .login-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
