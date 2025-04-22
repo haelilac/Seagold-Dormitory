@@ -15,6 +15,7 @@ const AdminTourBookings = () => {
     const [modalDate, setModalDate] = useState(null);
     const [allAvailable, setAllAvailable] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     const { getCachedData, updateCache } = useDataCache();
 
@@ -28,111 +29,36 @@ const AdminTourBookings = () => {
         '03:00 PM',
         '04:00 PM',
     ];
-  useEffect(() => {
-    document.body.style.overflow = "auto"; // force scroll back on
-  }, []);
 
-        const handleToggleSlot = async (time, status) => {
-            try {
-                const formattedDate = selectedDate.toISOString().split('T')[0];
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${getAuthToken()}`,
-                    },
-                    body: JSON.stringify({ date: formattedDate, time, status }),
-                });
-        
-                if (response.ok) {
-                    setMessage(`Slot ${time} marked as ${status}`);
-        
-                    setAvailability((prev) => {
-                        const updated = [...prev];
-                        const index = updated.findIndex((slot) => slot.time === time);
-        
-                        if (index !== -1) {
-                            updated[index] = { ...updated[index], status };
-                        } else {
-                            updated.push({ time, status });
-                        }
-        
-                        // ✅ Sync Cache
-                        updateCache(`availability-${formattedDate}`, updated);
-        
-                        return updated;
-                    });
-                } else {
-                    throw new Error("Failed to update slot");
-                }
-            } catch (err) {
-                console.error("Error updating slot:", err);
-                setMessage("Error updating slot");
-            }
-        };
+    useEffect(() => {
+        document.body.style.overflow = "auto";
 
-        const handleBulkToggle = async (status) => {
-            try {
-                const formattedDate = selectedDate.toISOString().split("T")[0];
+        const cached = getCachedData("admin-tour-bookings");
+        if (cached) {
+            setBookings(cached);
+            setLoading(false);
+        } else {
+            fetchBookings();
+        }
+        setIsInitialized(true);   // ✅ Mark as initialized after checking cache
+    }, []);
 
-                for (const time of predefinedTimes) {
-                    await fetch("https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${getAuthToken()}`,
-                        },
-                        body: JSON.stringify({ date: formattedDate, time, status }),
-                    });
-                }
+    const fetchBookings = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
+                headers: { Authorization: `Bearer ${getAuthToken()}` },
+            });
+            const data = await response.json();
+            setBookings(data.bookings || []);
+            updateCache("admin-tour-bookings", data.bookings || []);
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                setMessage(`All slots marked as ${status}`);
-
-                // Fetch latest availability and cache it
-                fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
-                    .then((res) => res.json())
-                    .then((data) => {
-                        setAvailability(data.slots);
-                        updateCache(`availability-${formattedDate}`, data.slots);
-                    })
-                    .catch((err) => {
-                        console.error("Error fetching updated availability:", err);
-                        setAvailability([]);
-                    });
-            } catch (err) {
-                console.error("Bulk update error:", err);
-                setMessage("Failed to update all slots.");
-            }
-        };
-
-
-        useEffect(() => {
-            const cachedBookings = getCachedData("admin-tour-bookings");
-            if (cachedBookings) {
-                setBookings(cachedBookings);
-                setLoading(false);
-            } else {
-                fetchBookings();
-            }
-        }, []);
-    
-        const fetchBookings = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
-                    headers: { Authorization: `Bearer ${getAuthToken()}` },
-                });
-                const data = await response.json();
-                setBookings(data.bookings || []);
-                updateCache("admin-tour-bookings", data.bookings || []);
-            } catch (error) {
-                console.error('Error fetching bookings:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-    
-    
     const handleDateChange = (date) => {
         setSelectedDate(date);
         setModalDate(date);
@@ -165,6 +91,71 @@ const AdminTourBookings = () => {
                     setAvailability([]);
                     setAllAvailable(false);
                 });
+        }
+    };
+
+    const handleToggleSlot = async (time, status) => {
+        try {
+            const formattedDate = selectedDate.toISOString().split('T')[0];
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getAuthToken()}`,
+                },
+                body: JSON.stringify({ date: formattedDate, time, status }),
+            });
+
+            if (response.ok) {
+                setMessage(`Slot ${time} marked as ${status}`);
+                setAvailability((prev) => {
+                    const updated = [...prev];
+                    const index = updated.findIndex((slot) => slot.time === time);
+                    if (index !== -1) {
+                        updated[index] = { ...updated[index], status };
+                    } else {
+                        updated.push({ time, status });
+                    }
+                    updateCache(`availability-${formattedDate}`, updated);
+                    return updated;
+                });
+            } else {
+                throw new Error("Failed to update slot");
+            }
+        } catch (err) {
+            console.error("Error updating slot:", err);
+            setMessage("Error updating slot");
+        }
+    };
+
+    const handleBulkToggle = async (status) => {
+        try {
+            const formattedDate = selectedDate.toISOString().split("T")[0];
+            for (const time of predefinedTimes) {
+                await fetch("https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${getAuthToken()}`,
+                    },
+                    body: JSON.stringify({ date: formattedDate, time, status }),
+                });
+            }
+
+            setMessage(`All slots marked as ${status}`);
+            fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setAvailability(data.slots);
+                    updateCache(`availability-${formattedDate}`, data.slots);
+                })
+                .catch((err) => {
+                    console.error("Error fetching updated availability:", err);
+                    setAvailability([]);
+                });
+        } catch (err) {
+            console.error("Bulk update error:", err);
+            setMessage("Failed to update all slots.");
         }
     };
 
@@ -237,8 +228,10 @@ const AdminTourBookings = () => {
         const anyAvailable = slotsForDay.some(s => s.status === "available");
         return anyAvailable ? "available-date" : "unavailable-date"; // ✅ 🟢 or 🔴
       };
-
+      
+      if (!isInitialized) return null;
       if (loading) return <div className="spinner"></div>;
+  
     return (
         <div className="admin-tour-bookings">
             <h2>Tour Bookings</h2>
