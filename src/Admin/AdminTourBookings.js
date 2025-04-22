@@ -282,7 +282,7 @@ const AdminTourBookings = () => {
             </table>
             {showModal && (
                 <div className="modal-overlay">
-                    <div className="modal-content">
+                    <div className="modal-content-tour">
                     <h3>
                         {modalDate.toLocaleDateString("en-US", {
                         year: "numeric",
