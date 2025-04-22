@@ -23,6 +23,7 @@ const UnitManagement = () => {
     const [pricingDetails, setPricingDetails] = useState([]);
     const [unitImages, setUnitImages] = useState([]);
     const [unitImageFiles, setUnitImageFiles] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         name: '',
         capacity: '',
@@ -30,7 +31,7 @@ const UnitManagement = () => {
         occupancy: '',
         price: '',
       });
-      
+
       useEffect(() => {
         document.body.style.overflow = "auto";
     
