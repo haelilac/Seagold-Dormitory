@@ -94,10 +94,7 @@ const AdminTourBookings = () => {
                     .then((res) => res.json())
                     .then((data) => {
                         setAvailability(data.slots);
-                        setAvailabilityCache((prevCache) => ({
-                            ...prevCache,
-                            [formattedDate]: data.slots
-                        }));
+                        updateCache(`availability-${formattedDate}`, data.slots);
                     })
                     .catch((err) => {
                         console.error("Error fetching updated availability:", err);
