@@ -39,22 +39,6 @@ const AdminTourBookings = () => {
             .catch((error) => console.error('Error fetching bookings:', error));
     }, []);
 
-    const handleToggleSlot = async (time, status) => {
-      try {
-        const formattedDate = selectedDate.toISOString().split('T')[0];
-        const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${getAuthToken()}`,
-          },
-          body: JSON.stringify({
-            date: formattedDate,
-            time,
-            status,
-          }),
-        });
-    
         const handleToggleSlot = async (time, status) => {
             try {
                 const formattedDate = selectedDate.toISOString().split('T')[0];
@@ -80,7 +64,7 @@ const AdminTourBookings = () => {
                             updated.push({ time, status });
                         }
         
-                        // ✅ Update Cache
+                        // ✅ Sync Cache
                         setAvailabilityCache((prevCache) => ({
                             ...prevCache,
                             [formattedDate]: updated
@@ -96,11 +80,11 @@ const AdminTourBookings = () => {
                 setMessage("Error updating slot");
             }
         };
-        
+
         const handleBulkToggle = async (status) => {
             try {
                 const formattedDate = selectedDate.toISOString().split("T")[0];
-        
+
                 for (const time of predefinedTimes) {
                     await fetch("https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle", {
                         method: "POST",
@@ -111,10 +95,10 @@ const AdminTourBookings = () => {
                         body: JSON.stringify({ date: formattedDate, time, status }),
                     });
                 }
-        
+
                 setMessage(`All slots marked as ${status}`);
-        
-                // Refresh and Cache
+
+                // Fetch latest availability and cache it
                 fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
                     .then((res) => res.json())
                     .then((data) => {
@@ -133,7 +117,7 @@ const AdminTourBookings = () => {
                 setMessage("Failed to update all slots.");
             }
         };
-        
+
 
     const fetchBookings = async () => {
         try {
