@@ -9,7 +9,6 @@ const AdminTourBookings = () => {
     const [bookings, setBookings] = useState([]);
     const [availability, setAvailability] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [timeSlots, setTimeSlots] = useState([]);
     const [message, setMessage] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -133,10 +132,6 @@ const AdminTourBookings = () => {
             }
         };
     
-    
-    useEffect(() => {
-        fetchBookings(); // Call fetchBookings to load bookings
-    }, []);
     
     const handleDateChange = (date) => {
         setSelectedDate(date);
