@@ -129,6 +129,7 @@
   
   .modal-content {
     background: #fff;
+    background-color: #fff;
     padding: 2rem;
     border-radius: 8px;
     width: 90%;
