@@ -93,7 +93,6 @@ const Units = () => {
 
   return (
     <div className="Units fade-in">
-      <div className="filter-bar fade-in">
         <div className="search-section">
           <h1 className="sea-gold-heading">
             <span className="unit-text">Unit</span>
@@ -102,7 +101,6 @@ const Units = () => {
             </span>
           </h1>
         </div>
-      </div>
 
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
       {loading ? (
