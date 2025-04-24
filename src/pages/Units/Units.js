@@ -12,7 +12,6 @@ const Units = () => {
   const [fullscreenImages, setFullscreenImages] = useState([]);
   const [fullscreenIndex, setFullscreenIndex] = useState(0);
   const [animateContainer, setAnimateContainer] = useState(false);
-  const [filters, setFilters] = useState({ availability: "" });
   const [showPriceModal, setShowPriceModal] = useState(false);
   const [modalUnit, setModalUnit] = useState(null);
   const [loading, setLoading] = useState(true);
