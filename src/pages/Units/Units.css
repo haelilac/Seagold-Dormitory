@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;500&display=swap');
+
 /* General Styles */
 body {
   font-family: Arial, sans-serif;
@@ -7,9 +9,11 @@ body {
   color: #333;
 }
 
-html, body {
-  height: 100vh;
-  font-family: 'Segoe UI', Arial, sans-serif;
+h1, h2, h3 {
+  font-family: 'Montserrat', sans-serif;
+}
+body {
+  font-family: 'Open Sans', sans-serif;
 }
 
 .Units {
