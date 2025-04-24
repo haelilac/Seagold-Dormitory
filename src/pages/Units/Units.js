@@ -51,23 +51,6 @@ const Units = () => {
     }
   }, []);
   
-  const handleFilterClick = (type, value) => {
-    if (type === "availability") {
-      const newFilters = { ...filters, availability: value };
-      setFilters(newFilters);
-    }
-  };
-
-  const filteredUnits = units.filter((unit) => {
-    const availability = unit.capacity - (unit.users_count || 0);
-  
-    const matchesAvailability =
-      filters.availability === "" ||
-      parseInt(filters.availability) <= availability;
-  
-    return matchesAvailability;
-  });
-
   
   useEffect(() => {
     setAnimateContainer(true);
@@ -119,42 +102,7 @@ const Units = () => {
               The Room that starts your dream
             </span>
           </h1>
-
-          <div
-            className="search-input"
-            style={{ display: "flex", alignItems: "center" }}
-          >
-            <img
-              src="search-icon.png"
-              alt="Search Icon"
-              className="search-icon"
-              onClick={() =>
-                handleFilterClick("availability", capacityInput.trim())
-              }
-              style={{
-                width: "20px",
-                height: "20px",
-                marginRight: "8px",
-                cursor: "pointer",
-              }}
-            />
-            <input
-              type="number"
-              placeholder="Insert the quantity of people"
-              value={capacityInput}
-              onChange={(e) => setCapacityInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleFilterClick("availability", capacityInput.trim());
-                }
-              }}
-              min="1"
-              max="14"
-              style={{ flex: 1 }}
-            />
-          </div>
         </div>
-
       </div>
 
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
