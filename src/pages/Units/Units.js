@@ -55,7 +55,7 @@ const Units = () => {
     setAnimateContainer(true);
     const timer = setTimeout(() => setAnimateContainer(false), 600);
     return () => clearTimeout(timer);
-  }, [filters]);
+  },);
 
   const handleCarousel = (unitId, direction, totalImages) => {
     setCarouselIndices((prev) => {
@@ -108,7 +108,7 @@ const Units = () => {
           <img src="/images/loading.gif" alt="Loading..." style={{ width: "80px" }} />
           <p>Loading rooms, please wait...</p>
         </div>
-      ) : filteredUnits.length > 0 ? (
+      ) : (
         filteredUnits.map((unit) => (
       <div key={unit.id} className="rental-card">
         <div className="rental-header">
@@ -145,8 +145,6 @@ const Units = () => {
                     onClick={() => openFullscreen(unit.images.map(i => i.image_path), i)}
                   />
                 ))}
-
-
                     </div>
                     <button
                       className="carousel-btn next"
@@ -188,12 +186,7 @@ const Units = () => {
               </div>
             </div>
           ))
-        ) : (
-          <div className="no-availability">
-              <p>Oops! It looks like no rooms are available for your selected filters.</p>
-              <img src="sad.svg" alt="Room Not Available" style={{ maxWidth: "200px", width: "100%" }} />
-            </div>
-          )}
+        ) }
       </div>
 
       {fullscreenImage && (
