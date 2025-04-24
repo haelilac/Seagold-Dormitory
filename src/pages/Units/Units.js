@@ -109,7 +109,7 @@ const Units = () => {
           <p>Loading rooms, please wait...</p>
         </div>
       ) : (
-        filteredUnits.map((unit) => (
+
       <div key={unit.id} className="rental-card">
         <div className="rental-header">
           <span className="verified-badge">{unit.unit_code}</span>
@@ -185,7 +185,6 @@ const Units = () => {
                 </p>
               </div>
             </div>
-          ))
         ) }
       </div>
 
