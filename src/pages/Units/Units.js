@@ -109,83 +109,73 @@ const Units = () => {
           <p>Loading rooms, please wait...</p>
         </div>
       ) : (
-
-      <div key={unit.id} className="rental-card">
-        <div className="rental-header">
-          <span className="verified-badge">{unit.unit_code}</span>
-          {Array.isArray(unit.images) && unit.images.length > 0 && (
-            <div className="carousel-container">
-              <button
-                className="carousel-btn prev"
-                onClick={() =>
-                  handleCarousel(unit.id, "prev", unit.images.length)
-                }
-              >
-                &#8592;
-              </button>
-              <div
-                className="carousel-images"
-                      style={{
-                        transform: `translateX(-${
-                          (carouselIndices[unit.id] || 0) * 100
-                        }%)`,
-                      }}
-                    >
-                {unit.images.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img.image_path}
-                    alt={`Room ${unit.unit_code}`}
-                    className="rental-image"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/images/fallback.jpg";
+        <>
+          {units.map((unit) => (
+          <div key={unit.id} className="rental-card">
+            <div className="rental-header">
+              <span className="verified-badge">{unit.unit_code}</span>
+        
+              {Array.isArray(unit.images) && unit.images.length > 0 && (
+                <div className="carousel-container">
+                  <button
+                    className="carousel-btn prev"
+                    onClick={() => handleCarousel(unit.id, "prev", unit.images.length)}
+                  >
+                    &#8592;
+                  </button>
+                  <div
+                    className="carousel-images"
+                    style={{
+                      transform: `translateX(-${
+                        (carouselIndices[unit.id] || 0) * 100
+                      }%)`,
                     }}
-                    onClick={() => openFullscreen(unit.images.map(i => i.image_path), i)}
-                  />
-                ))}
-                    </div>
-                    <button
-                      className="carousel-btn next"
-                      onClick={() =>
-                        handleCarousel(unit.id, "next", unit.images.length)
-                      }
-                    >
-                      &#8594;
-                    </button>
+                  >
+                    {unit.images.map((img, i) => (
+                      <img
+                        key={i}
+                        src={img.image_path}
+                        alt={`Room ${unit.unit_code}`}
+                        className="rental-image"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/images/fallback.jpg";
+                        }}
+                        onClick={() =>
+                          openFullscreen(unit.images.map((i) => i.image_path), i)
+                        }
+                      />
+                    ))}
                   </div>
-                )}
-              </div>
-
-              {showPriceModal && (
-                <div className="price-modal-overlay" onClick={() => setShowPriceModal(false)}>
-                  <div className="price-modal" onClick={(e) => e.stopPropagation()}>
-                    <h2>Room Pricing</h2>
-                    <img
-                      src="/images/sample-pricing.jpg"
-                      alt="Pricing Info"
-                      style={{ width: "100%", borderRadius: "8px" }}
-                    />
-                    <button onClick={() => setShowPriceModal(false)} className="close-modal-btn">
-                      Close
-                    </button>
-                  </div>
+                  <button
+                    className="carousel-btn next"
+                    onClick={() => handleCarousel(unit.id, "next", unit.images.length)}
+                  >
+                    &#8594;
+                  </button>
                 </div>
               )}
-
-              <div className="rental-content">
-              <h3 className="rental-title">{unit.unit_code}</h3>
-                <button className="view-price-btn" onClick={() => setShowPriceModal(true)}>
-                  View Price
-                </button>
-                <p className="rental-availability">
-                Slots Available: {unit.max_capacity - (unit.monthly_users_count || 0)} / {unit.max_capacity}
-
-                </p>
-              </div>
             </div>
-        ) }
+        
+            <div className="rental-content">
+              <h3 className="rental-title">{unit.unit_code}</h3>
+              <button
+                className="view-price-btn"
+                onClick={() => openPriceModal(unit)}
+              >
+                View Price
+              </button>
+              <p className="rental-availability">
+                Slots Available:{" "}
+                {unit.max_capacity - (unit.monthly_users_count || 0)} /{" "}
+                {unit.max_capacity}
+              </p>
+            </div>
+          </div>
+            ))}
+          </>
+        )}
       </div>
 
       {fullscreenImage && (
