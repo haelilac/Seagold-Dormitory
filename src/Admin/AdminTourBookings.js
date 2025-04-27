@@ -54,7 +54,6 @@ const AdminTourBookings = () => {
         } finally {
             setLoading(false);
         }
-    };
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -339,5 +338,5 @@ const AdminTourBookings = () => {
         </div>
     );
 };
-
+}
 export default AdminTourBookings;
