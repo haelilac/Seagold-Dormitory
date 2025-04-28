@@ -288,7 +288,7 @@ const ContactUs = () => {
         formDataUpload.append("id_type", formData.id_type);
     
         try {
-            const response = await fetch("https://seagold-python-production.up.railway.app/api/upload-id", { 
+            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id", { 
                 method: 'POST',
                 body: formDataUpload,
                 headers: { 
