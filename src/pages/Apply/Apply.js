@@ -279,15 +279,15 @@ const ContactUs = () => {
         try {
             // Step 1: Upload to Cloudinary
             const uploadedUrl = await uploadToCloudinary(file);
-            setReceiptUrl(uploadedUrl);  // ✅ Now your form can submit the URL!
+            setReceiptUrl(uploadedUrl);  // ✅ save for later form submission
     
-            // Step 2: Validate receipt (backend expects 3 fields)
+            // Step 2: Validate receipt
             const formDataUpload = new FormData();
             formDataUpload.append("receipt", file);
             formDataUpload.append("user_reference", paymentData.reference_number);
             formDataUpload.append("user_amount", paymentData.amount);
     
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt/", {
+            const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt/", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -301,7 +301,7 @@ const ContactUs = () => {
             }
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error during receipt validation.");
+            alert("❌ Server error while validating receipt.");
         }
     };
     
