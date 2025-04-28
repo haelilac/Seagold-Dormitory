@@ -278,7 +278,7 @@ const ContactUs = () => {
         }
     
         try {
-            // Step 1: Upload receipt to backend directly (no reference/amount yet)
+            // Step 1: Upload receipt directly to backend for OCR
             const formDataUpload = new FormData();
             formDataUpload.append("receipt", file);
     
@@ -306,7 +306,10 @@ const ContactUs = () => {
                     amount: result.amount,
                 });
     
-                setReceiptUrl(uploadedUrl); // Save uploaded receipt URL too
+                // Step 3: Save scanned values for display
+                setExtractedReference(result.reference);
+                setExtractedAmount(result.amount);
+    
             } else {
                 alert(result.message || "❌ Error scanning receipt.");
             }
@@ -316,6 +319,7 @@ const ContactUs = () => {
             alert("❌ Error processing receipt. Please try again later.");
         }
     };
+    
     
     
     
@@ -864,6 +868,14 @@ const ContactUs = () => {
                                 accept="image/*,video/*,application/*"
                                 required={true}
                             />
+                                            {/* New display area */}
+                                    {extractedReference && extractedAmount && (
+                                        <div style={{ marginTop: "10px", padding: "10px", backgroundColor: "#f0f0f0", borderRadius: "8px" }}>
+                                            <p><strong>📄 Extracted Reference Number:</strong> {extractedReference}</p>
+                                            <p><strong>💵 Extracted Amount:</strong> ₱{extractedAmount}</p>
+                                        </div>
+                                    )}
+                            
                         </div>
                     )}
                     {paymentData.reference_number && (
