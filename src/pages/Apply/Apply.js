@@ -244,6 +244,30 @@ const ContactUs = () => {
         // Handle other inputs
         setFormData({ ...formData, [name]: value });
     };
+        // Cloudinary Upload Helper
+    const uploadToCloudinary = async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "unsigned_upload"); // 🔥 Must match your Cloudinary unsigned preset name!
+
+        const response = await fetch("https://api.cloudinary.com/v1_1/dxhthya7z/image/upload", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            console.error(await response.text()); // 🧠 print detailed error if Cloudinary still rejects
+            throw new Error("❌ Failed to upload image to Cloudinary.");
+            console.error(await response.text());
+
+        }
+
+        const data = await response.json();
+        console.log("✅ Uploaded to Cloudinary:", data.secure_url); // optional for debugging
+        return data.secure_url;  // 🎯 Return the hosted URL
+    };
+
+    
 
     const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
@@ -255,15 +279,16 @@ const ContactUs = () => {
         try {
             // Step 1: Upload to Cloudinary
             const uploadedUrl = await uploadToCloudinary(file);
-            setReceiptUrl(uploadedUrl);  // ✅ Now your form can submit the URL!
+            setReceiptUrl(uploadedUrl);  // ✅ save for later form submission
     
-            // Step 2: Validate receipt (backend expects 3 fields)
+            // Step 2: Validate receipt
             const formDataUpload = new FormData();
-            formDataUpload.append("receipt", file);
-            formDataUpload.append("user_reference", paymentData.reference_number);
-            formDataUpload.append("user_amount", paymentData.amount);
+            formDataUpload.append("receipt", file); // ✅ file upload
+            formDataUpload.append("user_reference", paymentData.reference_number); // ✅ reference number
+            formDataUpload.append("user_amount", String(paymentData.amount)); // ✅ must be string
+
     
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt/", {
+            const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt/", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -277,7 +302,7 @@ const ContactUs = () => {
             }
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error during receipt validation.");
+            alert("❌ Server error while validating receipt.");
         }
     };
     
