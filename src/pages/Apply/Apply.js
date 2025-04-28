@@ -939,7 +939,7 @@ const ContactUs = () => {
                     <div className="form-row">
                         <div className="form-group">
                             <label>Upload {formData.id_type}</label>
-                            <input type="file" name="valid_id" onChange={handleFileChange} required />
+                            <input type="file" name="valid_id" onChange={handleIdUpload} required />
                         </div>
                         </div>
 )}
