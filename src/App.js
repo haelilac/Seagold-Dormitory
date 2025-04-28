@@ -35,6 +35,8 @@ import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
 import { getAuthToken } from "./utils/auth";
 import { DataProvider } from './contexts/DataContext';
+import AmenityRequestsAdmin from './Admin/AmenityRequestsAdmin';
+
 
 const clientId = "758551378674-8t930isecldottudrarf724h6jlgdcji.apps.googleusercontent.com";
 
@@ -171,6 +173,8 @@ const App = () => {
               <Route path="tour-bookings" element={<AdminTourBookings />} />
               <Route path="gallery-admin" element={<GalleryAdmin />} />
               <Route path="feedback-admin" element={<FeedbackAdmin />} />
+              <Route path="amenity-requests" element={<AmenityRequestsAdmin />} />
+
             </Route>
 
             {/* Tenant-only routes */}
