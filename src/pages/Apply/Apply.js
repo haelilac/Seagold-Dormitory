@@ -252,11 +252,18 @@ const ContactUs = () => {
             return;
         }
     
-        const formDataUpload = new FormData();
-        formDataUpload.append("receipt", file);
-    
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt", {
+            // Step 1: Upload to Cloudinary
+            const uploadedUrl = await uploadToCloudinary(file);
+            setReceiptUrl(uploadedUrl);  // ✅ Now your form can submit the URL!
+    
+            // Step 2: Validate receipt (backend expects 3 fields)
+            const formDataUpload = new FormData();
+            formDataUpload.append("receipt", file);
+            formDataUpload.append("user_reference", paymentData.reference_number);
+            formDataUpload.append("user_amount", paymentData.amount);
+    
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt/", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -266,13 +273,14 @@ const ContactUs = () => {
             if (response.ok && result.match) {
                 alert("✅ Receipt validated successfully!");
             } else {
-                alert(result.message || "❌ Error processing receipt.");
+                alert(result.message || "❌ Error validating receipt.");
             }
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error while validating receipt.");
+            alert("❌ Server error during receipt validation.");
         }
     };
+    
     
     
     // ID validation
