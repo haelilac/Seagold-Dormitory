@@ -371,7 +371,7 @@ const filteredData = selectedStatus === 'All'
                                                     <p>Payment Method: {tenant.payment_method}</p>
                                                     <p>Payment Date: {formatDate(tenant.payment_date)}</p>
                                                     <p>Reference Number: {tenant.reference_number}</p>
-                                                    console.log("Receipt Path:", tenant.receipt_path);
+                                                    {console.log("Receipt Path:", tenant.receipt_path)}
                                                     {tenant.receipt_path && (
                                                         <img src={tenant.receipt_path} alt="Receipt" className="receipt-preview" />
                                                     )}
