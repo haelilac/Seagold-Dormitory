@@ -360,6 +360,25 @@ const ContactUs = () => {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
+    
+    // ID Upload Handler (without validation)
+    const handleIdUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            alert("❌ Please select an ID file.");
+            return;
+        }
+
+        try {
+            // Upload the file to Cloudinary (no validation)
+            const uploadedUrl = await uploadToCloudinary(file);
+            setUploadedValidIdPath(uploadedUrl); // Save the URL for previewing
+        } catch (error) {
+            console.error("❌ Error uploading ID:", error);
+            alert("❌ Error uploading the ID.");
+        }
+    };
+
     const handleGoogleSignIn = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
@@ -861,20 +880,19 @@ const ContactUs = () => {
                         </select>
                     </div>
                 </div>
-                {formData.id_type && (
                     <div className="form-row">
-                        <div className="form-group">
-                            <label>Upload {formData.id_type}</label>
-                            <input type="file" name="valid_id" onChange={handleIdUpload} required />
-                        </div>
-                        </div>
-)}
+                    <div className="form-group">
+                        <label>Upload ID</label>
+                        <input type="file" name="valid_id" onChange={handleIdUpload} />
+                    </div>
+                </div>
+
                 {uploadedValidIdPath && (
-                <img 
-                    src={uploadedValidIdPath} 
-                    alt="Uploaded Valid ID" 
-                    style={{ width: '250px', marginTop: '10px', border: '1px solid #ccc' }} 
-                />
+                    <img 
+                        src={uploadedValidIdPath} 
+                        alt="Uploaded ID" 
+                        style={{ width: '250px', marginTop: '10px', border: '1px solid #ccc' }} 
+                    />
                 )}
 
                 {/* Privacy Checkbox */}
@@ -903,7 +921,6 @@ const ContactUs = () => {
                 <button 
                     type="submit" 
                     className={`send-message-button ${loading ? "loading" : ""}`} 
-                    disabled={!isVerified || !isIdVerified || loading}
                 >
                     {loading ? (
                         <div className="loading-spinner"></div>
