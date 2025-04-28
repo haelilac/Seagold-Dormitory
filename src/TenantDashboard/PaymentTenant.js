@@ -11,8 +11,8 @@ window.Pusher = Pusher;
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
-    key: 'fea5d607d4b38ea09320', // Replace with your Pusher app key
-    cluster: 'ap1', // Replace with your cluster, e.g., 'mt1'
+    key: '865f456f0873a587bc36', // Replace with your Pusher app key
+    cluster: 'ap3', // Replace with your cluster, e.g., 'mt1'
     forceTLS: true, // Use secure connection
     encrypted: true,     // To ensure WebSocket connection is encrypted
 });
