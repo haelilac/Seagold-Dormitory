@@ -39,7 +39,7 @@ const ContactUs = () => {
     const [reservationFee, setReservationFee] = useState(0);
     const [receipt, setReceipt] = useState(null);
     const [receiptUrl, setReceiptUrl] = useState('');
-    
+    const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
     // Address Data
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
@@ -880,6 +880,7 @@ const ContactUs = () => {
                         </select>
                     </div>
                 </div>
+
                     <div className="form-row">
                     <div className="form-group">
                         <label>Upload ID</label>
