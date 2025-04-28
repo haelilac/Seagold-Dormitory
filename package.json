@@ -69,5 +69,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "build": "GENERATE_SOURCEMAP=false DISABLE_ESLINT_PLUGIN=true react-scripts --max_old_space_size=4096 build",
+  "build:debug": "BROWSER=none react-scripts --inspect build"
+
 }
