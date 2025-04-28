@@ -252,11 +252,18 @@ const ContactUs = () => {
             return;
         }
     
-        const formDataUpload = new FormData();
-        formDataUpload.append("receipt", file);
-    
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt", {
+            // Step 1: Upload to Cloudinary
+            const uploadedUrl = await uploadToCloudinary(file);
+            setReceiptUrl(uploadedUrl);  // ✅ Now your form can submit the URL!
+    
+            // Step 2: Validate receipt (backend expects 3 fields)
+            const formDataUpload = new FormData();
+            formDataUpload.append("receipt", file);
+            formDataUpload.append("user_reference", paymentData.reference_number);
+            formDataUpload.append("user_amount", paymentData.amount);
+    
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt/", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -266,13 +273,14 @@ const ContactUs = () => {
             if (response.ok && result.match) {
                 alert("✅ Receipt validated successfully!");
             } else {
-                alert(result.message || "❌ Error processing receipt.");
+                alert(result.message || "❌ Error validating receipt.");
             }
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error while validating receipt.");
+            alert("❌ Server error during receipt validation.");
         }
     };
+    
     
     
     // ID validation
@@ -342,55 +350,55 @@ const ContactUs = () => {
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", file);
-        formDataUpload.append("id_type", formData.id_type);  // ✅ Append 'id_type' to FormData
-        
+        if (!file) {
+            alert("❌ Please select an ID file.");
+            return;
+        }
+    
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/upload-id", { 
+            // Step 1: Upload to Cloudinary first
+            const uploadedUrl = await uploadToCloudinary(file);
+    
+            // Step 2: Validate ID using uploaded image URL
+            const formDataUpload = new FormData();
+            formDataUpload.append("id_type", formData.id_type);
+            formDataUpload.append("image_url", uploadedUrl);
+    
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/upload-id/", {
                 method: 'POST',
                 body: formDataUpload,
-                headers: { 
-                    Accept: 'application/json'
-                }
             });
-        
+    
             if (!response.ok) {
                 const text = await response.text();
                 throw new Error(`Server Error: ${response.status} - ${text}`);
             }
-        
+    
             const data = await response.json();
-            console.log("Returned file path from backend:", data.file_path);
-        
-            // ✅ Set formData.valid_id here, now that data is available
-            setFormData((prev) => ({
-                ...prev,
-                valid_id: data.file_path,             // (optional: keep if you want to preview)
-                valid_id_url: data.file_path          // ✅ this makes it part of formData!
-              }));
-        
-            setUploadedValidIdPath(data.file_path);
-            console.log("Image Preview URL", data.file_path);
-        
-            if (data.error) {
-                alert(`❌ ID Processing Error: ${data.error}`);
-                setIsIdVerified(false);
-            } else if (data.id_verified) {
-                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.ocr_text}`);
+            console.log("OCR Extracted:", data);
+    
+            if (data.id_type_matched) {
+                alert(`✅ ID Verified Successfully!`);
                 setIsIdVerified(true);
             } else {
-                alert(`❌ ID Mismatch!\nExtracted Text: ${data.ocr_text}`);
+                alert(`❌ ID Verification Failed!`);
                 setIsIdVerified(false);
             }
+    
+            setUploadedValidIdPath(uploadedUrl); // preview the image
+            setFormData(prev => ({
+                ...prev,
+                valid_id: uploadedUrl,
+                valid_id_url: uploadedUrl
+            }));
+    
         } catch (error) {
-            console.error('Error uploading ID:', error);
-            alert("Error processing the ID. Please check the console.");
+            console.error("Error processing ID:", error);
+            alert("❌ Error processing ID.");
             setIsIdVerified(false);
         }
-        
     };
+    
 
     const formatDateTime = (date) => {
         if (!date) return null;
