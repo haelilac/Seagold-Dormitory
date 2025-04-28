@@ -5,6 +5,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { auth, provider } from "../../firebase/firebase";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+const [extractedReference, setExtractedReference] = useState("");
+const [extractedAmount, setExtractedAmount] = useState("");
+
 
 const ContactUs = () => {
     const [formData, setFormData] = useState({
