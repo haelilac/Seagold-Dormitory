@@ -245,68 +245,9 @@ const ContactUs = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleReceiptUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) {
-            alert("❌ Please select a receipt file.");
-            return;
-        }
+    // Removed duplicate declaration of handleReceiptUpload
     
-        const formDataUpload = new FormData();
-        formDataUpload.append("receipt", file);
-    
-        try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt", {
-                method: "POST",
-                body: formDataUpload,
-            });
-    
-            const result = await response.json();
-    
-            if (response.ok && result.match) {
-                alert("✅ Receipt validated successfully!");
-            } else {
-                alert(result.message || "❌ Error processing receipt.");
-            }
-        } catch (error) {
-            console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error while validating receipt.");
-        }
-    };
-    
-    
-    // ID validation
-    const handleIdUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) {
-            alert("❌ Please select an ID file.");
-            return;
-        }
-    
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", file);
-        formDataUpload.append("id_type", formData.id_type);
-    
-        try {
-            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id", { 
-                method: 'POST',
-                body: formDataUpload,
-                headers: { 
-                    Accept: 'application/json'
-                }
-            });
-    
-            if (response.ok) {
-                const data = await response.json();
-                alert(`✅ ID Verified: ${data.id_type_matched ? "Yes" : "No"}`);
-            } else {
-                alert("❌ Error processing ID.");
-            }
-        } catch (error) {
-            console.error('Error uploading ID:', error);
-            alert("❌ Error processing the ID.");
-        }
-    };
+  
     
 
     const formatDateTimeReadable = (date) => {
@@ -340,57 +281,42 @@ const ContactUs = () => {
     };
     
 
-    const handleFileChange = async (e) => {
+    const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
-
+        if (!file) {
+            alert("❌ Please select a receipt file.");
+            return;
+        }
+    
+        // Step 1: Upload to Cloudinary
+        const uploadedUrl = await uploadToCloudinary(file);
+        setReceiptUrl(uploadedUrl); // Save it so form can submit it!
+    
         const formDataUpload = new FormData();
-        formDataUpload.append("file", file);
-        formDataUpload.append("id_type", formData.id_type);  // ✅ Append 'id_type' to FormData
-        
+        formDataUpload.append("receipt", file);
+        formDataUpload.append("user_reference", paymentData.reference_number);
+        formDataUpload.append("user_amount", paymentData.amount);
+    
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/upload-id", { 
-                method: 'POST',
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt/", {
+                method: "POST",
                 body: formDataUpload,
-                headers: { 
-                    Accept: 'application/json'
-                }
             });
-        
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(`Server Error: ${response.status} - ${text}`);
-            }
-        
-            const data = await response.json();
-            console.log("Returned file path from backend:", data.file_path);
-        
-            // ✅ Set formData.valid_id here, now that data is available
-            setFormData((prev) => ({
-                ...prev,
-                valid_id: data.file_path,             // (optional: keep if you want to preview)
-                valid_id_url: data.file_path          // ✅ this makes it part of formData!
-              }));
-        
-            setUploadedValidIdPath(data.file_path);
-            console.log("Image Preview URL", data.file_path);
-        
-            if (data.error) {
-                alert(`❌ ID Processing Error: ${data.error}`);
-                setIsIdVerified(false);
-            } else if (data.id_verified) {
-                alert(`✅ ID Verified Successfully!\nExtracted Text: ${data.ocr_text}`);
-                setIsIdVerified(true);
+    
+            const result = await response.json();
+    
+            if (response.ok && result.match) {
+                alert("✅ Receipt validated successfully!");
             } else {
-                alert(`❌ ID Mismatch!\nExtracted Text: ${data.ocr_text}`);
-                setIsIdVerified(false);
+                alert(result.message || "❌ Error processing receipt.");
             }
         } catch (error) {
-            console.error('Error uploading ID:', error);
-            alert("Error processing the ID. Please check the console.");
-            setIsIdVerified(false);
+            console.error("❌ Error validating receipt:", error);
+            alert("❌ Server error while validating receipt.");
         }
-        
     };
+    
+    
 
     const formatDateTime = (date) => {
         if (!date) return null;
