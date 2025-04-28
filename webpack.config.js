@@ -15,6 +15,9 @@ module.exports = {
       buffer: require.resolve('buffer/'),
     },
   },
+  optimization: {
+    portableRecords: true,
+  },
   plugins: [
     new webpack.ProvidePlugin({
       process: 'process/browser',
