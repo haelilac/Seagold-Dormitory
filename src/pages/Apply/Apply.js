@@ -269,6 +269,7 @@ const ContactUs = () => {
 
     
 
+    // Receipt Upload
     const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) {
@@ -276,17 +277,19 @@ const ContactUs = () => {
             return;
         }
     
-        try {
-            // Step 1: Upload to Cloudinary
-            const uploadedUrl = await uploadToCloudinary(file);
-            setReceiptUrl(uploadedUrl);  // ✅ save for later form submission
+        if (!paymentData.reference_number || !paymentData.amount) {
+            alert("❗ Please input reference number and amount first.");
+            return;
+        }
     
-            // Step 2: Validate receipt
+        try {
+            const uploadedUrl = await uploadToCloudinary(file);
+            setReceiptUrl(uploadedUrl);
+    
             const formDataUpload = new FormData();
-            formDataUpload.append("receipt", file); // ✅ file upload
-            formDataUpload.append("user_reference", paymentData.reference_number); // ✅ reference number
-            formDataUpload.append("user_amount", String(paymentData.amount)); // ✅ must be string
-
+            formDataUpload.append("receipt", file); // 🔥 FILE
+            formDataUpload.append("user_reference", String(paymentData.reference_number)); // 🔥 STRING
+            formDataUpload.append("user_amount", String(paymentData.amount)); // 🔥 STRING
     
             const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt/", {
                 method: "POST",
@@ -294,6 +297,7 @@ const ContactUs = () => {
             });
     
             const result = await response.json();
+            console.log(result);
     
             if (response.ok && result.match) {
                 alert("✅ Receipt validated successfully!");
@@ -302,7 +306,7 @@ const ContactUs = () => {
             }
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error while validating receipt.");
+            alert("❌ Server error validating receipt.");
         }
     };
     
