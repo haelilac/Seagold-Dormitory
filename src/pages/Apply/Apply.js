@@ -280,7 +280,7 @@ const ContactUs = () => {
         try {
             // Step 1: Upload to Cloudinary
             const uploadedUrl = await uploadToCloudinary(file);
-            setReceiptUrl(uploadedUrl);  // Save uploaded Cloudinary URL
+            setReceiptUrl(uploadedUrl);
     
             // Step 2: OCR Validate the receipt
             const formDataUpload = new FormData();
@@ -292,29 +292,28 @@ const ContactUs = () => {
             });
     
             if (!response.ok) {
-                const text = await response.text();
-                console.error("❌ Server validation error:", text);
-                throw new Error(`Server Error: ${response.status}`);
+                const errorData = await response.json();
+                console.error("❌ Server validation error:", errorData);
+                throw new Error(errorData.detail || `Server Error: ${response.status}`);
             }
     
             const result = await response.json();
             console.log("✅ Receipt OCR Result:", result);
     
-            if (result.match) {
+            if (result.reference && result.amount) {
                 alert("✅ Receipt scanned successfully!");
                 setPaymentData({
                     reference_number: result.reference,
                     amount: result.amount,
                 });
             } else {
-                alert(result.message || "❌ Error scanning receipt.");
+                alert(result.message || "❌ Could not extract payment details from receipt.");
             }
         } catch (error) {
             console.error("❌ Error processing receipt:", error);
-            alert("❌ Server error while validating receipt.");
+            alert(`❌ Error processing receipt: ${error.message}`);
         }
     };
-    
     
 
     const formatDateTimeReadable = (date) => {
