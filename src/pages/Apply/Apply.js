@@ -244,6 +244,24 @@ const ContactUs = () => {
         // Handle other inputs
         setFormData({ ...formData, [name]: value });
     };
+    const uploadToCloudinary = async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "unsigned_upload"); // 🔥 Create this preset in your Cloudinary account (unsigned)
+    
+        const response = await fetch("https://api.cloudinary.com/v1_1/dxhthya7z/image/upload", {
+            method: "POST",
+            body: formData,
+        });
+    
+        if (!response.ok) {
+            throw new Error("❌ Failed to upload image to Cloudinary.");
+        }
+    
+        const data = await response.json();
+        return data.secure_url;  // ✅ returns the hosted URL
+    };
+    
 
     const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
