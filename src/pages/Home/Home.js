@@ -14,8 +14,8 @@ import laundryShop from '../../assets/laundry-shop.jpg';
 import ustCampus from '../../assets/ust-campus.jpg';
 import ueMnlCampus from '../../assets/ue-mnl-campus.jpg';
 import feuTech from '../../assets/feu-tech.jpg';
-import exactTrainingImage from "../../assets/ust-campus.jpg";  // Replace with the actual image path for EXACT Training Center
-import seamacTrainingImage from "../../assets/ust-campus.jpg"; 
+import exactTrainingImage from "../../assets/exacttraining.jpg"; 
+import seamacTrainingImage from "../../assets/seamactraining.jpg"; 
 
 const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);

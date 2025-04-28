@@ -372,7 +372,7 @@ body,
   }
 }
 .application-details {
-  /* set initial state for transform/opacity */
+  /* set initial state for transform,opacity */
   opacity: 0;
   transform: translateY(-20px) scale(0.95);
   /* run the pop-in animation */
