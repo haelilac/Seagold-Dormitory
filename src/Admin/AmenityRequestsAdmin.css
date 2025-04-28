@@ -1,0 +1,21 @@
+.amenity-requests-admin {
+    padding: 20px;
+  }
+  
+  .amenity-requests-admin table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .amenity-requests-admin th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .amenity-requests-admin button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
