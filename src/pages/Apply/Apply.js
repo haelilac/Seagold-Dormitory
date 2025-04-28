@@ -389,7 +389,7 @@ const ContactUs = () => {
             formDataUpload.append("id_type", formData.id_type);
             formDataUpload.append("image_url", uploadedUrl);
     
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/upload-id/", {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/upload-id/", {
                 method: 'POST',
                 body: formDataUpload,
             });
