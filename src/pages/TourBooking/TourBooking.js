@@ -204,7 +204,7 @@ const TourBooking = () => {
         <div className="input-group">
           <label>Phone Number (Philippines)</label>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ marginRight: '8px', fontWeight: 'bold' }}>+63</span>
+            <span style={{ marginRight: '8px', fontWeight: 'bold' }}></span>
             <input
               value={phoneNumber}
               onChange={(e) => {
