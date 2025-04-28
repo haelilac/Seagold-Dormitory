@@ -256,7 +256,7 @@ const ContactUs = () => {
         formDataUpload.append("receipt", file);
     
         try {
-            const response = await fetch("http://localhost:9090/validate-receipt", {
+            const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -287,7 +287,7 @@ const ContactUs = () => {
         formDataUpload.append("id_type", formData.id_type);
     
         try {
-            const response = await fetch("http://localhost:9090/upload-id", { 
+            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id", { 
                 method: 'POST',
                 body: formDataUpload,
                 headers: { 
