@@ -11,18 +11,14 @@
 }
 
 .mapUi {
-  right: 385px;
   position: relative;
-  top: -315px;
 }
-
 /* === Sidebar === */
 .mapSidebar {
   background: #ffffff;
   position: relative;
-  top: 545px;
-  left: 380px;
-  height: 315px;
+  top: 200px;
+  left: -130px;
   width: 250px;
   max-width: 300px;
   min-width: 250px;
@@ -34,10 +30,6 @@
   transform: translateX(-370px);
 }
 
-.mapSidebar.collapsed {
-  transform: translateX(-750px);
-}
-
 .mapSidebar h2,
 .mapSidebar h3 {
   font-size: 15px;
@@ -46,10 +38,11 @@
 }
 
 .mapContainer {
-  flex: 1;
-  width: 105%;
+  width: 120%;
   height: 100vh;
-  position: relative;
+  right: 35%;
+  top:13%;
+  position: absolute;
   transition: right 0.3s ease-in-out;
   overflow: hidden;
 }
@@ -95,7 +88,7 @@
 .toggleSidebar {
   position: absolute;
   top: 300px;
-  left: -110px;
+  left: -250px;
   transform: translateY(-50%);
   z-index: 20;
   background-color: #366e39;
@@ -236,19 +229,20 @@
   padding: 10px;
   border: none;
   border-radius: 5px;
-  margin-top: 10px;
-  width: 78%;
+  margin-top: -14px;
+  width: 100%;
   left: -9px;
   position: relative;
   cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto; /* Select takes more space, Button is fixed */
+  gap: 10px;
 }
 
-.routeSelect:hover {
-  background-color: #e0e0e0;
-}
 
 .routeSelect select {
   flex: 1;
+  width: 100%;
 }
 
 .routeSelect button {

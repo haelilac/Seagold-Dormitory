@@ -6,25 +6,34 @@ import { useDataCache } from '../contexts/DataContext';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
+// Initialize Pusher and Echo
 window.Pusher = Pusher;
 window.Echo = new Echo({
-  broadcaster: 'pusher',
-  key: 'fea5d607d4b38ea09320',
-  cluster: 'ap1',
-  forceTLS: true,
+    broadcaster: 'pusher',
+    key: 'fea5d607d4b38ea09320',
+    cluster: 'ap1',
+    forceTLS: true,
 });
 
 const MaintenanceRequests = () => {
     const [maintenanceRequests, setMaintenanceRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
-    const [schedule, setSchedule] = useState(''); // Schedule date and time
-
+    const [schedule, setSchedule] = useState('');
+    const [filterCategory, setFilterCategory] = useState('');
+    const [filterStatus, setFilterStatus] = useState('');
+    const [filterUnitCode, setFilterUnitCode] = useState('');
     const { getCachedData, updateCache } = useDataCache();
-
+    const categories = [
+        'Water Leak / Plumbing', 'Electrical Issue', 'Bathroom Problem', 'Flooring / Tiles',
+        'Appliances', 'Furniture', 'Air Conditioning / Ventilation', 'Internet / WiFi',
+        'Door / Window', 'Lighting', 'Others'
+    ];
+    
+    const statuses = ['pending', 'scheduled', 'completed', 'cancelled'];
+    // Fetch Maintenance Requests
     useEffect(() => {
         const cached = getCachedData('maintenance_requests');
         if (cached?.length > 0) {
@@ -32,7 +41,7 @@ const MaintenanceRequests = () => {
             setLoading(false);
             return;
         }
-    
+
         const fetchMaintenanceRequests = async () => {
             try {
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
@@ -41,12 +50,12 @@ const MaintenanceRequests = () => {
                         Authorization: `Bearer ${getAuthToken()}`,
                     },
                 });
-    
+
                 if (!response.ok) throw new Error('Failed to fetch maintenance requests.');
-    
+
                 const data = await response.json();
                 setMaintenanceRequests(data);
-                updateCache('maintenance_requests', data); // ✅ Cache the data
+                updateCache('maintenance_requests', data);
             } catch (err) {
                 console.error(err.message);
                 setError('Failed to load maintenance requests. Please try again.');
@@ -54,29 +63,42 @@ const MaintenanceRequests = () => {
                 setLoading(false);
             }
         };
-    
+
         fetchMaintenanceRequests();
     }, []);
-      useEffect(() => {
-        document.body.style.overflow = "auto"; // force scroll back on
-      }, []);
+
+    // Real-time Listeners
     useEffect(() => {
-        const channel = window.Echo.channel('admin.maintenance');
-    
-        channel.listen('.new.maintenance', (e) => {
+        document.body.style.overflow = "auto";
+
+        const maintenanceChannel = window.Echo.channel('admin.maintenance');
+        maintenanceChannel.listen('.new.maintenance', (e) => {
             console.log('🔧 New maintenance request received:', e.request);
             const updated = [...(getCachedData('maintenance_requests') || []), e.request];
             setMaintenanceRequests(updated);
             updateCache('maintenance_requests', updated);
         });
-    
+
+        const notificationChannel = window.Echo.channel('admin.notifications');
+        notificationChannel.listen('.admin.notification', (e) => {
+            console.log("📢 Notification Received:", e);
+        
+            if (e.type === 'maintenance_follow_up') {
+                alert(`🚨 Follow-Up Alert: ${e.message}`);
+            } else if (e.type === 'maintenance_request') {
+                alert(`🛠️ New Maintenance Request: ${e.message}`);
+            }
+        });
+
         return () => {
             window.Echo.leave('admin.maintenance');
+            window.Echo.leave('admin.notifications');
         };
     }, []);
-    
-    // Handle Row Click to Open Modal
+
+    // Modal Handlers
     const handleRowClick = (request) => {
+        console.log("Selected Request:", request);
         setSelectedRequest(request);
         setIsModalOpen(true);
     };
@@ -87,7 +109,7 @@ const MaintenanceRequests = () => {
         setSchedule('');
     };
 
-    // Update Maintenance Request Status
+    // API Actions
     const updateStatus = async (id, status) => {
         try {
             const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/update`, {
@@ -98,13 +120,16 @@ const MaintenanceRequests = () => {
                 },
                 body: JSON.stringify({ status }),
             });
-
+    
             if (!response.ok) throw new Error('Failed to update status.');
-
-            setMaintenanceRequests((prev) =>
-                prev.map((req) => (req.id === id ? { ...req, status } : req))
+    
+            const updatedRequests = maintenanceRequests.map((req) =>
+                req.id === id ? { ...req, status } : req
             );
-
+    
+            setMaintenanceRequests(updatedRequests);
+            updateCache('maintenance_requests', updatedRequests);  // ✅ Update cache
+    
             alert(`Status updated to "${status}" successfully.`);
             closeModal();
         } catch (error) {
@@ -112,34 +137,35 @@ const MaintenanceRequests = () => {
             alert('Error updating status.');
         }
     };
-    // Update Maintenance Request Status
+    
+
     const handleRemove = async (id) => {
-        if (window.confirm('Are you sure you want to delete this maintenance request?')) {
-            try {
-                const response = await fetch(`http://127.0.0.1:8000/api/maintenance-requests/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Accept': 'application/json',
-                    },
-                });
+        if (!window.confirm('Are you sure you want to delete this maintenance request?')) return;
     
-                if (!response.ok) throw new Error('Failed to delete maintenance request.');
+        try {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Accept': 'application/json',
+                },
+            });
     
-                // Remove the deleted request from the state
-                setMaintenanceRequests((prev) => prev.filter((req) => req.id !== id));
-                alert('Maintenance request deleted successfully.');
-            } catch (error) {
-                console.error('Error:', error.message);
-                alert('Failed to delete the maintenance request.');
-            }
+            if (!response.ok) throw new Error('Failed to delete maintenance request.');
+    
+            const updatedRequests = maintenanceRequests.filter((req) => req.id !== id);
+            setMaintenanceRequests(updatedRequests);
+            updateCache('maintenance_requests', updatedRequests);  // ✅ Update cache
+    
+            alert('Maintenance request deleted successfully.');
+        } catch (error) {
+            console.error('Error:', error.message);
+            alert('Failed to delete the maintenance request.');
         }
     };
     
-    // Schedule Maintenance
-    const scheduleMaintenance = async () => {
-        const formattedSchedule = schedule; // Use the datetime-local format directly
 
+    const scheduleMaintenance = async () => {
         try {
             const response = await fetch(
                 `https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${selectedRequest.id}/schedule`,
@@ -149,19 +175,20 @@ const MaintenanceRequests = () => {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${getAuthToken()}`,
                     },
-                    body: JSON.stringify({ schedule: formattedSchedule }),
+                    body: JSON.stringify({ schedule }),
                 }
             );
     
             if (!response.ok) throw new Error('Failed to schedule maintenance.');
     
-            setMaintenanceRequests((prev) =>
-                prev.map((req) =>
-                    req.id === selectedRequest.id
-                        ? { ...req, schedule: formattedSchedule, status: 'scheduled' }
-                        : req
-                )
+            const updatedRequests = maintenanceRequests.map((req) =>
+                req.id === selectedRequest.id
+                    ? { ...req, schedule, status: 'scheduled' }
+                    : req
             );
+    
+            setMaintenanceRequests(updatedRequests);
+            updateCache('maintenance_requests', updatedRequests);  // ✅ Update cache
     
             alert('Maintenance scheduled successfully.');
             closeModal();
@@ -171,48 +198,108 @@ const MaintenanceRequests = () => {
         }
     };
     
+
+    // Render File Preview
+    const renderFilePreview = () => {
+        if (!selectedRequest?.files || selectedRequest.files.length === 0) return null;
+    
+        return (
+            <div className="file-preview">
+                <strong>Attached Files:</strong>
+                {selectedRequest.files.map((file, index) => {
+                    const fileSrc = file.file_path;
+    
+                    if (fileSrc.match(/\.(jpeg|jpg|png|png)$/i)) {
+                        return <img key={index} src={fileSrc} alt={`Uploaded ${index}`} className="file-image" />;
+                    } else if (fileSrc.match(/\.(mp4|mov)$/i)) {
+                        return (
+                            <video key={index} controls className="file-video">
+                                <source src={fileSrc} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        );
+                    } else {
+                        return (
+                            <a key={index} href={fileSrc} target="_blank" rel="noopener noreferrer">
+                                <button className="open-file-button">Open File {index + 1}</button>
+                            </a>
+                        );
+                    }
+                })}
+            </div>
+        );
+    };
+    
+    
     return (
-        <div>
+        <div className="filters">
+            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                    <option key={cat} value={cat}>{cat}</option>
+                ))}
+            </select>
+
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                <option value="">All Statuses</option>
+                {statuses.map((status) => (
+                    <option key={status} value={status}>{status}</option>
+                ))}
+            </select>
+
+            <input
+                type="text"
+                placeholder="Filter by Unit Code"
+                value={filterUnitCode}
+                onChange={(e) => setFilterUnitCode(e.target.value)}
+            />
+
+
+        <div className="maintenance-requests">
             <h2>Maintenance Requests</h2>
             {loading ? (
-                <p>Loading...</p>
+                <div className="maintenancerequests-spinner"></div>
             ) : error ? (
                 <p className="error">{error}</p>
             ) : (
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>User Name</th>
                             <th>Unit Code</th>
+                            <th>Category</th>
                             <th>Description</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {maintenanceRequests.map((request) => (
-                            <tr 
-                                key={request.id} 
-                                onClick={() => handleRowClick(request)} // Attach the function here
-                                style={{ cursor: 'pointer' }} // Change cursor to indicate interactivity
+                    {maintenanceRequests
+                        .filter((req) => 
+                            (filterCategory ? req.category === filterCategory : true) &&
+                            (filterStatus ? req.status === filterStatus : true) &&
+                            (filterUnitCode ? req.unit_code?.toLowerCase().includes(filterUnitCode.toLowerCase()) : true)
+                        )
+                        .map((request) => (
+                            <tr
+                                key={request.id}
+                                onClick={() => handleRowClick(request)}
+                                style={{ cursor: 'pointer' }}
                             >
-                                <td>{request.id}</td>
                                 <td>{request.user.name}</td>
                                 <td>{request.unit_code || 'N/A'}</td>
+                                <td>{request.category}</td>
                                 <td>{request.description}</td>
                                 <td style={{ color: request.status === 'cancelled' ? 'red' : 'black' }}>
                                     {request.status}
                                 </td>
                                 <td>
-                                    {/* Show Remove Button only for canceled requests */}
-                                    {request.status === 'canceled' && (
+                                    {request.status === 'cancelled' && (
                                         <button
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Prevent triggering row click event
+                                                e.stopPropagation();
                                                 handleRemove(request.id);
                                             }}
                                             className="remove-button"
-                                            style={{ backgroundColor: 'red', color: 'white', border: 'none' }}
                                         >
                                             Remove
                                         </button>
@@ -223,90 +310,56 @@ const MaintenanceRequests = () => {
                     </tbody>
                 </table>
             )}
-
-            {/* Modal Component */}
+    
             <Modal
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 ariaHideApp={false}
                 className="custom-modal"
                 overlayClassName="custom-overlay"
-                shouldCloseOnOverlayClick={true}
             >
                 {selectedRequest && (
                     <div className="modal-content">
                         <h2>Maintenance Request Details</h2>
                         <div className="modal-body">
-                            <p><strong>ID:</strong> {selectedRequest.id}</p>
                             <p><strong>User Name:</strong> {selectedRequest.user.name}</p>
-                            <p><strong>Unit Code:</strong> {selectedRequest.user.unit_code}</p>
+                            <p><strong>Unit Code:</strong> {selectedRequest.unit_code || 'N/A'}</p>
+                            <p><strong>Category:</strong> {selectedRequest.category}</p>
                             <p><strong>Description:</strong> {selectedRequest.description}</p>
                             <p><strong>Status:</strong> {selectedRequest.status}</p>
                             <p><strong>Schedule:</strong> {selectedRequest.schedule || 'N/A'}</p>
-
-                            {/* Display Uploaded File */}
-                            {selectedRequest.file_path && (
-                                <div className="file-preview">
-                                    <strong>Attached File:</strong>
-                                    {selectedRequest.file_path.match(/\.(jpeg|jpg|png)$/i) ? (
-                                        <img
-                                            src={`https://seagold-laravel-production.up.railway.app/storage/${selectedRequest.file_path}`}
-                                            alt="Uploaded"
-                                            className="file-image"
-                                        />
-                                    ) : selectedRequest.file_path.match(/\.(mp4|mov)$/i) ? (
-                                        <video controls className="file-video">
-                                            <source
-                                                src={`https://seagold-laravel-production.up.railway.app/storage/${selectedRequest.file_path}`}
-                                                type="video/mp4"
-                                            />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    ) : (
-                                        <a
-                                            href={`https://seagold-laravel-production.up.railway.app/storage/${selectedRequest.file_path}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <button className="open-file-button">Open File</button>
-                                        </a>
-                                    )}
-                                </div>
-                            )}
-
-                            {selectedRequest.status === 'canceled' && (
+    
+                            {renderFilePreview()}
+    
+                            {selectedRequest.status === 'cancelled' && (
                                 <p style={{ color: 'red', fontWeight: 'bold' }}>
-                                    This maintenance request was canceled by the tenant.
+                                    This maintenance request was cancelled by the tenant.
                                 </p>
                             )}
-
-                            {/* Schedule Input */}
+    
                             <label>
                                 <strong>Schedule Maintenance:</strong>
                                 <input
                                     type="datetime-local"
                                     value={schedule}
                                     onChange={(e) => setSchedule(e.target.value)}
-                                    
                                 />
                             </label>
-                            
                         </div>
                         <div className="modal-buttons">
                             <button onClick={() => updateStatus(selectedRequest.id, 'completed')}>
                                 Mark as Completed
                             </button>
-                            <button onClick={() => updateStatus(selectedRequest.id, 'canceled')}>
+                            <button onClick={() => updateStatus(selectedRequest.id, 'cancelled')}>
                                 Cancel Report
                             </button>
                             <button onClick={scheduleMaintenance}>Schedule</button>
-                            <button className="close-button" onClick={closeModal}>
-                                Close
-                            </button>
+                            <button className="close-button" onClick={closeModal}>Close</button>
                         </div>
                     </div>
                 )}
             </Modal>
+        </div>
         </div>
     );
 };

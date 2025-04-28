@@ -1,350 +1,371 @@
 /* === Global Variables for Themes === */
 :root {
-  --color-background: #f2ede3;
-  --color-text: #333;
-  --color-sidebar: #366e39;
-  --color-sidebar-text: #ffffff;
-  --color-topbar: #366e39;
-  --color-button: #00bf63;
-  --color-hover: #f2ede3;
-  --color-hover-text: #000000;
-  --color-profile-bg: #ffffff;
-  --color-notification-bg: #ffffff;
-  --color-profile-text: #000;
-  --color-notification-header: #366e39;
-  --color-notification-btn: #4a954e;
-}
-
-[data-theme='dark'] {
-  --color-background: #394540;
-  --color-text: #ffffff;
-  --color-sidebar: #1f2d2b;
-  --color-sidebar-text: #ffffff;
-  --color-topbar: #1f2d2b;
-  --color-button: #bf9e1b;
-  --color-hover-text: #000000;
-  --color-hover: #f2ede3;
-  --color-profile-bg: #1c1c1c;
-  --color-notification-bg: #1c1c1c;
-  --color-profile-text: #ffffff;
-  --color-notification-header: #1f2d2b;
-  --color-notification-btn: #bf9e1b;
-}
+    --color-background: #f2ede3;
+    --color-text: #333;
+    --color-sidebar: #366e39;
+    --color-sidebar-text: #ffffff;
+    --color-topbar: #366e39;
+    --color-button: #00bf63;
+    --color-hover: #f2ede3;
+    --color-hover-text: #000000;
+    --color-profile-bg: #ffffff;
+    --color-notification-bg: #ffffff;
+    --color-profile-text: #000;
+    --color-notification-header: #366e39;
+    --color-notification-btn: #4a954e;
+  }
+  
+  [data-theme='dark'] {
+    --color-background: #394540;
+    --color-text: #ffffff;
+    --color-sidebar: #1f2d2b;
+    --color-sidebar-text: #ffffff;
+    --color-topbar: #1f2d2b;
+    --color-button: #bf9e1b;
+    --color-hover-text: #000000;
+    --color-hover: #f2ede3;
+    --color-profile-bg: #1c1c1c;
+    --color-notification-bg: #1c1c1c;
+    --color-profile-text: #ffffff;
+    --color-notification-header: #1f2d2b;
+    --color-notification-btn: #bf9e1b;
+  }
 
 /* === Dashboard Container -=== */
 .dashboardContainer {
-  display: flex;
-  background-color: white;
-  margin: 0;
-  min-height: 1050px;
-  width: 100%;
+    display: flex;
+    background-color: white;
+    margin: 0;
+    min-height: 1050px;
+    width: 100%;
 }
 
 /* === Sidebar === */
 .sidebar {
-position: fixed;  
-background-color: #366e39; /* adjust based on your theme */
-height: 100vh;
-width: 90px;
-display: flex;
-flex-direction: column;
-z-index: 1500;
-padding-left: 14px;
-padding-right: 10px;
+  position: fixed;  
+  background-color: #366e39; /* adjust based on your theme */
+  height: 100vh;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1500;
+  padding-left: 14px;
+  padding-right: 10px;
 }
 
 .sidebar.open {
-width: 240px;
-min-width: 240px;
-max-width: 240px;
+  width: 180px;
 }
 
+/* === Logo === */
+.clickableLogo {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: -5px;
+    margin-bottom: 2px;
+    align-self: center;
+  }
+  
+  .clickableLogo:hover {
+    transform: scale(1.05);
+  }
+  
+  .logoExpanded {
+    position: relative;
+    width: 105px;
+    height: auto;
+    left: 30px;
+    top: 20px;
+    margin-bottom: 27px;
+  }
+  
+  .settingsButton{
+    background-color: #366e39;
+  }
 
-/* Logo Styles */
-.seagold-logo {
-position: relative;
-cursor: pointer;
-transition: all 0.3s ease;
-margin-top: -5px;
-margin-bottom: 2px;
-left: 10px;
-align-self: center;
-}
+  .settingsButton:hover{
+    background-color: #366e39;
+  }
 
-.seagold-logo.small {
-width: 20px;
-left: 10px;
-align-self: center;
+  .settingsIcon:hover {
+    transform: rotate(15deg) scale(1.1); /* Slight rotation and zoom */
+    color: #f1c40f; /* Change color to gold on hover */
 }
+  
+  .logoCollapsed {
+    position: relative;
+    width: 50px;
+    left: -6px;
+    height: auto;
+    top: 5px;
+  }
 
 /* Sidebar Links */
 .sidebar ul {
-list-style: none;
-padding: 0;
-width: 100%;
-}
-
-.sidebar ul li a {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* spacing between icon and text */
-  padding: 18px 20px;
-  text-decoration: none;
-  color: #ffffff;
-  font-weight:600;
-  border-radius: 5px;
-
-}
-
-
-.sidebar.closed ul li a span {
-  display: none; /* hide labels in collapsed mode */
-}
-
-.sidebar.closed ul li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.sidebar.closed ul li a {
-  justify-content: center;
-  align-items: center;
-  padding: 18px; /* remove horizontal padding to center icon perfectly */
+  list-style: none;
+  padding: 0;
   width: 100%;
 }
 
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* spacing between icon and text */
+    padding: 18px 20px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight:600;
+    border-radius: 5px;
+
+  }
+  
+  
+  .sidebar.closed ul li a span {
+    display: none; /* hide labels in collapsed mode */
+  }
+
+  .sidebar.closed ul li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sidebar.closed ul li a {
+    justify-content: center;
+    align-items: center;
+    padding: 18px; /* remove horizontal padding to center icon perfectly */
+    width: 100%;
+  }
+  
 
 
 .sidebar ul li a:hover {
-  background-color: #f2ede3; /* slightly darker yellow */
-  color: #000;
-}
+    background-color: #f2ede3; /* slightly darker yellow */
+    color: #000;
+  }
 
-.sidebar ul li a:hover svg {
-  transform: scale(1.1); /* subtle hover scale effect */
-}
+  .sidebar ul li a:hover svg {
+    transform: scale(1.1); /* subtle hover scale effect */
+  }
 
-
+ 
 
 
 .closeButton {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  color: var(--color-sidebar-text);
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, color 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: var(--color-sidebar-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .closeButton:hover {
-  color: var(--color-button);
-  transform: scale(1.1);
+    color: var(--color-button);
+    transform: scale(1.1);
 }
 
 
 /* === Logout Button === */
 
 .logoutButton:hover {
-  background-color: #145a32;
-  transform: scale(1.1);
+    background-color: #145a32;
+    transform: scale(1.1);
 }
 
 /* === Top Bar === */
 .topBar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color:#366e39; /* blue similar to image */
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  z-index: 1000;
-  height: 70px;
-  transition: left 0.3s ease;
-  border-bottom: 5px solid #f6c143; /* gold border line */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color:#366e39; /* blue similar to image */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    z-index: 1000;
+    height: 70px;
+    transition: left 0.3s ease;
+    border-bottom: 5px solid #f6c143; /* gold border line */
 
 }
 
 .branding {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: margin-left 0.3s ease;
-  margin-left: 80px; /* when collapsed */
-}
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: margin-left 0.3s ease;
+    margin-left: 80px; /* when collapsed */
+  }
+  
+  .shifted {
+    margin-left: 225px !important;
+    position: relative;
+    top: 4px;
+    transition: margin-left 0.3s ease;
+  }
+  
+.branding h1 {
+    font-style: oblique;
+    font-size: 150%;
+    color: #f2ede3;
+    margin: 0;
 
-.shifted {
-  margin-left: 225px !important;
-  position: relative;
-  top: 4px;
-  transition: margin-left 0.3s ease;
-}
-
-branding h1 {
-  font-style: oblique;
-  font-size: 150%;
-  color: #f2ede3;
-  margin: 0;
-
-}
-
+  }
+  
 
 .dashboardTitle {
-  font-size: 1.5rem;
+    font-size: 1.5rem;
 }
-
-
 
 /* === Notifications === */
 .notificationContainer {
-  position: absolute;
-  top: 11px;
-  right: 230px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  border-radius: 50%;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    top: 11px;
+    right: 230px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .notificationContainer:hover {
-  transform: scale(1.1); /* Slightly enlarge on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
 }
 
 .notificationBadge {
-  position: absolute;
-  top: 0px;
-  right: -1px;
-  background-color: #e74c3c; /* Red color for notifications */
-  color: white;
-  font-size: 0.8rem;
-  font-weight: bold;
-  border-radius: 50%;
-  padding: 2px 6px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a shadow for better visibility */
+    position: absolute;
+    top: 0px;
+    right: -1px;
+    background-color: #e74c3c; /* Red color for notifications */
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a shadow for better visibility */
 }
 
 /* Notification Bell Icon */
 .notificationIcon {
-  font-size: 1.5rem;
-  color: var(--color-sidebar-text);
-  transition: color 0.3s ease, transform 0.3s ease;
+    font-size: 1.5rem;
+    color: var(--color-sidebar-text);
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .notificationIcon {
-  font-size: 1.6rem;
-  color: white;
-  margin-left: 50px;
-  /* Add animation */
-  transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+    font-size: 1.6rem;
+    color: white;
+    margin-left: 50px;
+    /* Add animation */
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .notificationIcon:hover {
-  transform: rotate(15deg) scale(1.1); /* Slight rotation and zoom */
-  color: #f1c40f; /* Change color to gold on hover */
+    transform: rotate(15deg) scale(1.1); /* Slight rotation and zoom */
+    color: #f1c40f; /* Change color to gold on hover */
 }
 
 
 .notificationContainer:hover .notificationIcon {
-  color: #f1c40f; /* Change color on hover */
+    color: #f1c40f; /* Change color on hover */
 }
 
 .notificationDropdown {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  background-color: var(--color-background);
-  color: var(--color-text);
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  width: 300px;
-  z-index: 1100;
-  max-height: 400px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 300px;
+    z-index: 1100;
+    max-height: 400px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .notificationDropdown.show {
-  visibility: visible;
-  opacity: 1;
+    visibility: visible;
+    opacity: 1;
 }
 
 .notificationHeader {
-  padding: 10px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-  background-color:  #366e39;
-  color: var(--color-sidebar-text);
+    padding: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    background-color:  #366e39;
+    color: var(--color-sidebar-text);
 }
 
 .notificationList {
-  flex-grow: 1;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow-y: auto;
+    flex-grow: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
 }
 
 .notificationList li {
-  padding: 10px;
-  border-bottom: 1px solid #f1f1f1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color 0.3s ease;
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
 }
 
 .notificationList li:hover {
-  background-color: rgba(0, 0, 0, 0.05); /* Subtle hover effect */
+    background-color: rgba(0, 0, 0, 0.05); /* Subtle hover effect */
 }
 
 .notificationList li.read {
-  color: #7f8c8d;
+    color: #7f8c8d;
 }
 
 /* Empty Notification Message */
 .noNotifications {
-  padding: 20px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #7f8c8d;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #7f8c8d;
 }
 
 /* Notification Actions */
 .notificationActions {
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid #ddd;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #ddd;
 }
 
 .notificationActions button {
-  background-color: #4a954e;
-  color: var(--color-sidebar-text);
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: #4a954e;
+    color: var(--color-sidebar-text);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .notificationActions button:hover {
-  background-color: #145a32; /* Darker green for hover */
-  transform: scale(1.05); /* Slight scaling effect */
+    background-color: #145a32; /* Darker green for hover */
+    transform: scale(1.05); /* Slight scaling effect */
 }
 
 
@@ -352,156 +373,156 @@ branding h1 {
 /* === Main Content === */
 /* Default (when sidebar is closed) */
 .mainContent {
-  background-color: #f2ede3;
-  margin-top: 80px;
-  margin-left:10px; /* Match closed sidebar */
-  padding: 20px;
-  width: calc(96.7% - 60px);
-  transition: margin-left 0.3s ease, width 0.3s ease;
+    background-color: #f2ede3;
+    margin-top: 80px;
+    margin-left:10px; /* Match closed sidebar */
+    padding: 20px;
+    width: calc(96.7% - 60px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 /* When sidebar is open */
 .mainContent.shifted {
-  margin-left: 10px; /* Match open sidebar */
-  width: calc(111% - 450px);
+    margin-left: 10px; /* Match open sidebar */
+    width: calc(111% - 450px);
 }
 
 
 /* Profile Section */
 
 .topBarProfile {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
 }
 
 
 .profileContainer {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 5px;
 }
 
 .profileDropdown {
-  position: absolute;
-  width: 250px; /* Fixed width */
-  height: 290px; /* Fixed height */
-  top: 50px; /* Positioned below the profile */
-  right: 5px;
-  background: rgb(255, 255, 255);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  border-radius: 5px;
-  z-index: 100;
+    position: absolute;
+    width: 250px; /* Fixed width */
+    height: 290px; /* Fixed height */
+    top: 50px; /* Positioned below the profile */
+    right: 5px;
+    background: rgb(255, 255, 255);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 100;
 }
 
 .profileDropdown ul {
-  list-style-type: none; /* Remove default bullet points */
-  padding-left: 0;       /* Remove default padding */
-  margin: 0;
+    list-style-type: none; /* Remove default bullet points */
+    padding-left: 0;       /* Remove default padding */
+    margin: 0;
 }
 
 .profileDropdown li {
-  margin-bottom: 10px; /* Space between items */
+    margin-bottom: 10px; /* Space between items */
 }
 
 .profileDropdown span {
-  display: block;  /* Ensure each item is on a new line */
-  font-size: 1rem; /* Adjust size */
-  color: #555;     /* Adjust color */
-  text-align: center; /* Center the text */
+    display: block;  /* Ensure each item is on a new line */
+    font-size: 1rem; /* Adjust size */
+    color: #555;     /* Adjust color */
+    text-align: center; /* Center the text */
 }
 
 .profileDropdown .userName {
-  font-weight: bold; /* Make the name bold */
-  color: #000000;
-  margin-left: 50px;
-  margin-bottom: 5px; /* Space between name and email */
+    font-weight: bold; /* Make the name bold */
+    color: #000000;
+    margin-left: 50px;
+    margin-bottom: 5px; /* Space between name and email */
 }
 
 .dropdownProfilePicture {
-  align-items: center;
-  width: 80px; /* or any desired size */
-  height: 80px;
-  margin-left: 78px;
-  margin-top: 10px;
-  border-radius: 50%; /* Make it circular */
-  object-fit: cover;
-  border: 3px solid #f1c40f; /* Gold border, customize color as needed */
-  transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
-  animation: popIn 0.5s ease;
+    align-items: center;
+    width: 80px; /* or any desired size */
+    height: 80px;
+    margin-left: 78px;
+    margin-top: 10px;
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover;
+    border: 3px solid #f1c40f; /* Gold border, customize color as needed */
+    transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    animation: popIn 0.5s ease;
 }
 
 /* Animation for when the profile picture appears */
 @keyframes popIn {
-  from {
-      transform: scale(0.8);
-      opacity: 0;
-  }
-  to {
-      transform: scale(1);
-      opacity: 1;
-  }
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .profileEmail {
-  font-size: 0.9rem;
-  color: #000000;
-  display: block;
-  margin-top: 0px;
-  text-align: center; /* ✅ This centers the email text */
-}
-
+    font-size: 0.9rem;
+    color: #000000;
+    display: block;
+    margin-top: 0px;
+    text-align: center; /* ✅ This centers the email text */
+  }
+  
 
 .profileDropdown button {
-  width: 100%; /* Make logout button span the full width */
-  padding: 8px;
-  background-color: #f44336; /* Red color */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
+    width: 100%; /* Make logout button span the full width */
+    padding: 8px;
+    background-color: #f44336; /* Red color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
 }
 
 .profileDropdown button:hover {
-  background-color: #d32f2f; /* Darker red on hover */
+    background-color: #d32f2f; /* Darker red on hover */
 }
 
 
 .profileContainer span {
-  margin-left: 10px;
+    margin-left: 10px;
 }
 
 
 .profilePicture {
-  width: 40px; /* or any desired size */
-  height: 40px;
-  border-radius: 50%; /* Make it circular */
-  object-fit: cover;
-  border: 3px solid #f1c40f; /* Gold border, customize color as needed */
-  transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
-  animation: popIn 0.5s ease;
+    width: 40px; /* or any desired size */
+    height: 40px;
+    border-radius: 50%; /* Make it circular */
+    object-fit: cover;
+    border: 3px solid #f1c40f; /* Gold border, customize color as needed */
+    transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    animation: popIn 0.5s ease;
 }
 
 /* Hover effect: scale up slightly and change border color */
 .profilePicture:hover {
-  transform: scale(1.1); /* Slight zoom on hover */
-  border-color: #f2ede3; /* Change border color to blue */
+    transform: scale(1.1); /* Slight zoom on hover */
+    border-color: #f2ede3; /* Change border color to blue */
 }
 
 /* Animation for when the profile picture appears */
 @keyframes popIn {
-  from {
-      transform: scale(0.8);
-      opacity: 0;
-  }
-  to {
-      transform: scale(1);
-      opacity: 1;
-  }
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 
@@ -509,54 +530,249 @@ branding h1 {
 
 /* Dark Mode Toggle Styling */
 .profileDropdown .darkModeToggle {
-  padding: 8px;
-  border-radius: 5px;
-  background-color: transparent;
-  border: 1px solid #555;
-  color: #555;
-  cursor: pointer;
+    padding: 8px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid #555;
+    color: #555;
+    cursor: pointer;
 }
 
 .profileDropdown .darkModeToggle:hover {
-  background-color: #f0f0f0;
-  color: black;
+    background-color: #f0f0f0;
+    color: black;
 }
 
 
 /* Animation for Dropdown Appearance */
 .profileDropdown.show {
-  animation: dropdownAppear 0.3s ease forwards;
+    animation: dropdownAppear 0.3s ease forwards;
 }
 
 @keyframes dropdownAppear {
-  from {
-      transform: scale(0.9);
-      opacity: 0;
-  }
-  to {
-      transform: scale(1);
-      opacity: 1;
-  }
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* === Responsive Layout for Mobile (phones) === */
 /* Default visibility control */
 .desktop-only {
-  display: block;
-}
-.mobile-only {
-  display: none;
+    display: block;
+  }
+  .mobile-only {
+    display: none;
+  }
+  
+  /* Topbar Logo */
+  .topbarLogo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: contain;
+    position: absolute;
+    left: 10px;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .desktop-only {
+      display: none !important;
+    }
+  
+    .mobile-only {
+      display: flex;
+    }
+
+    .branding h1 {
+        font-style: oblique;
+        font-size: 20px;
+        color: #f2ede3;
+        position: absolute;
+        top: 20px;
+        left: 60px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #4a954e; /* green background */
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+      z-index: 2000;
+      border-top: 4px solid #f6c971; /* gold border */
+      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2);
+    }
+  
+    .bottom-nav a {
+      color: #fff;
+      font-size: 1.5rem;
+      padding: 6px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+  
+    .bottom-nav a.active {
+      color: #f6c971; /* gold highlight on active */
+    }
+  
+    .bottom-nav a:hover {
+      transform: scale(1.1);
+    }
+  
+    .bottom-nav a svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    
+  }
+  
+/* === Dashboard Container === */
+.dashboardContainer {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+  
+  .sidebar {
+    background-color: var(--color-sidebar);
+    color: var(--color-sidebar-text);
+  }
+  
+  .sidebar ul li a {
+    color: var(--color-sidebar-text);
+  }
+  
+  .sidebar ul li a:hover {
+    background-color: var(--color-hover);
+    color: black;
+  }
+  
+  .topBar {
+    background-color: var(--color-topbar);
+    color: var(--color-sidebar-text);
+  }
+  
+  .profileDropdown {
+    background-color: var(--color-profile-bg);
+    color: var(--color-profile-text);
+  }
+  
+  .profileDropdown .userName,
+  .profileDropdown .profileEmail {
+    color: var(--color-profile-text);
+  }
+  
+  .profileDropdown .darkModeToggle {
+    border: 1px solid var(--color-profile-text);
+    color: var(--color-profile-text);
+    background-color: transparent;
+  }
+  
+  .profileDropdown .darkModeToggle:hover {
+    background-color: var(--color-hover-text);
+    color: var(--color-hover-text);
+  }
+  
+  .notificationDropdown {
+    background-color: var(--color-notification-bg);
+    color: var(--color-text);
+  }
+  
+  .notificationHeader {
+    background-color: var(--color-notification-header);
+    color: var(--color-sidebar-text);
+  }
+  
+  .notificationActions button {
+    background-color: var(--color-notification-btn);
+    color: #fff;
+  }
+  
+  .notificationActions button:hover {
+    background-color: #145a32;
+    transform: scale(1.05);
+  }
+  
+  .mainContent {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+  
+  /* Ensure text visibility for content */
+  .topBarProfile span,
+  .notificationList li,
+  .notificationList li.read,
+  .noNotifications,
+  .profileDropdown span {
+    color: var(--color-text);
+  }
+  
+  /* Add other dark-mode-safe styles here as needed */
+  
+
+  /* === Notification Content Text === */
+[data-theme='dark'] .notificationContent span {
+    color: #ffffff !important;
+  }
+  
+  [data-theme='dark'] .notificationHeader {
+    background-color: var(--color-notification-header);
+    color: #ffffff;
+  }
+  
+  [data-theme='dark'] .notificationActions button {
+    background-color: var(--color-notification-btn);
+    color: #ffffff;
+  }
+  
+  [data-theme='dark'] .notificationDropdown {
+    background-color: var(--color-notification-bg);
+    color: #ffffff;
+  }
+  
+  /* === TopBar Profile Span Text === */
+[data-theme='dark'] .topBarProfile span {
+    color: #ffffff !important;
+  }
+
+/* === LIGHT MODE Hover === */
+[data-theme='light'] .profileDropdown .darkModeToggle:hover {
+  background-color: #000000; /* black background */
+  color: #ffffff;            /* white text */
 }
 
-/* Topbar Logo */
-.topbarLogo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: contain;
-  position: absolute;
-  left: 10px;
+/* === DARK MODE Hover === */
+[data-theme='dark'] .profileDropdown .darkModeToggle:hover {
+  background-color: #ffffff; /* white background */
+  color: #000000;            /* black text */
 }
+
+
+  .topBarProfile span {
+    color: var(--color-profile-span);
+  }
+
+
+[data-theme='dark'] h1,
+[data-theme='dark'] h5,
+[data-theme='dark'] h6,
+[data-theme='dark'] p{
+  color: var(--color-text) !important;
+}
+  
+
 
 @media screen and (max-width: 767px) {
   .desktop-only {
@@ -565,15 +781,6 @@ branding h1 {
 
   .mobile-only {
     display: flex;
-  }
-
-  .branding h1 {
-      font-style: oblique;
-      font-size: 20px;
-      color: #f2ede3;
-      position: absolute;
-      top: 20px;
-      left: 60px;
   }
 
   .bottom-nav {
@@ -613,205 +820,18 @@ branding h1 {
   .bottom-nav a svg {
     width: 24px;
     height: 24px;
+
   }
-
-  
-}
-
-/* === Dashboard Container === */
-.dashboardContainer {
-  background-color: var(--color-background);
-  color: var(--color-text);
-}
-
-.sidebar {
-  background-color: var(--color-sidebar);
-  color: var(--color-sidebar-text);
-}
-
-.sidebar ul li a {
-  color: var(--color-sidebar-text);
-}
-
-.sidebar ul li a:hover {
-  background-color: var(--color-hover);
-  color: black;
-}
-
-.topBar {
-  background-color: var(--color-topbar);
-  color: var(--color-sidebar-text);
-}
-
-.profileDropdown {
-  background-color: var(--color-profile-bg);
-  color: var(--color-profile-text);
-}
-
-.profileDropdown .userName,
-.profileDropdown .profileEmail {
-  color: var(--color-profile-text);
-}
-
-.profileDropdown .darkModeToggle {
-  border: 1px solid var(--color-profile-text);
-  color: var(--color-profile-text);
-  background-color: transparent;
-}
-
-.profileDropdown .darkModeToggle:hover {
-  background-color: var(--color-hover-text);
-  color: var(--color-hover-text);
-}
-
-.notificationDropdown {
-  background-color: var(--color-notification-bg);
-  color: var(--color-text);
-}
-
-.notificationHeader {
-  background-color: var(--color-notification-header);
-  color: var(--color-sidebar-text);
-}
-
-.notificationActions button {
-  background-color: var(--color-notification-btn);
-  color: #fff;
-}
-
-.notificationActions button:hover {
-  background-color: #145a32;
-  transform: scale(1.05);
-}
-
-.mainContent {
-  background-color: var(--color-background);
-  color: var(--color-text);
-}
-
-/* Ensure text visibility for content */
-.topBarProfile span,
-.notificationList li,
-.notificationList li.read,
-.noNotifications,
-.profileDropdown span {
-  color: var(--color-text);
-}
-
-/* Add other dark-mode-safe styles here as needed */
-
-
-/* === Notification Content Text === */
-[data-theme='dark'] .notificationContent span {
-  color: #ffffff !important;
-}
-
-[data-theme='dark'] .notificationHeader {
-  background-color: var(--color-notification-header);
-  color: #ffffff;
-}
-
-[data-theme='dark'] .notificationActions button {
-  background-color: var(--color-notification-btn);
-  color: #ffffff;
-}
-
-[data-theme='dark'] .notificationDropdown {
-  background-color: var(--color-notification-bg);
-  color: #ffffff;
-}
-
-/* === TopBar Profile Span Text === */
-[data-theme='dark'] .topBarProfile span {
-  color: #ffffff !important;
-}
-
-/* === LIGHT MODE Hover === */
-[data-theme='light'] .profileDropdown .darkModeToggle:hover {
-background-color: #000000; /* black background */
-color: #ffffff;            /* white text */
-}
-
-/* === DARK MODE Hover === */
-[data-theme='dark'] .profileDropdown .darkModeToggle:hover {
-background-color: #ffffff; /* white background */
-color: #000000;            /* black text */
-}
-
-
-.topBarProfile span {
-  color: var(--color-profile-span);
-}
-
-
-[data-theme='dark'] h1,
-[data-theme='dark'] h5,
-[data-theme='dark'] h6,
-[data-theme='dark'] p{
-color: var(--color-text) !important;
-}
-
-
-
-@media screen and (max-width: 767px) {
-.desktop-only {
-  display: none !important;
-}
-
-.mobile-only {
-  display: flex;
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #4a954e; /* green background */
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 0;
-  z-index: 2000;
-  border-top: 4px solid #f6c971; /* gold border */
-  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.2);
-}
-
-.bottom-nav a {
-  color: #fff;
-  font-size: 1.5rem;
-  padding: 6px;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease;
-}
-
-.bottom-nav a.active {
-  color: #f6c971; /* gold highlight on active */
-}
-
-.bottom-nav a:hover {
-  transform: scale(1.1);
-}
-
-.bottom-nav a svg {
-  width: 24px;
-  height: 24px;
-
-}
 }
 
 
 @media screen and (max-width: 768px) {
-.topBarProfile span {
-  display: none !important;
-}
+  .topBarProfile span {
+    display: none !important;
+  }
 
-.notificationContainer {
-  right: 16%;
+  .notificationContainer {
+    right: 16%;
 
+  }
 }
-}
-

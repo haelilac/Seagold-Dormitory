@@ -1,259 +1,227 @@
 import React, { useState, useEffect } from "react";
-import "./TourBooking.css";
+import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import LoginModal from "../LoginModal/LoginModal";
 import { getAuthToken } from "../../utils/auth";
+import tourBg from "../../assets/Background.png";
+import "./TourBooking.css";
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April",
+  "May", "June", "July", "August",
+  "September", "October", "November", "December"
+];
+
 const TourBooking = () => {
-  const [calendarDates, setCalendarDates] = useState([]); // Calendar for the selected month
-  const [availableSlots, setAvailableSlots] = useState([]); // Time slots for the selected date
-  const [selectedDate, setSelectedDate] = useState(""); // Currently selected date
-  const [selectedTime, setSelectedTime] = useState(""); // Currently selected time
+  const [calendarDates, setCalendarDates] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
   const [message, setMessage] = useState("");
-  const [month, setMonth] = useState(new Date().getMonth() + 1); // Current month
-  const [year, setYear] = useState(new Date().getFullYear()); // Current year
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token")); // Check login status
-  const [showLoginModal, setShowLoginModal] = useState(!isLoggedIn); // Force login if not logged in
+
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [showLoginModal, setShowLoginModal] = useState(!isLoggedIn);
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [numVisitors, setNumVisitors] = useState("");
 
+  // Set background on mount
   useEffect(() => {
-    if (!isLoggedIn) return; // Skip fetching if user is not logged in
+    document.body.style.overflow = "auto";
+    document.body.style.backgroundImage = `url(${tourBg})`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundPosition = "center";
+    return () => { document.body.style.backgroundImage = ""; };
+  }, []);
 
-    // Fetch calendar data for the selected month and year
+  // Fetch Calendar Data
+  useEffect(() => {
+    if (!isLoggedIn) return;
     fetch(`https://seagold-laravel-production.up.railway.app/api/tour-calendar?month=${month}&year=${year}`)
-      .then((response) => response.json())
-      .then((data) => setCalendarDates(generateAlignedCalendar(data.calendar)))
-      .catch((error) => console.error("Error fetching calendar:", error));
+      .then(res => res.json())
+      .then(data => setCalendarDates(padCalendar(data.calendar)))
+      .catch(err => console.error("Calendar Fetch Error:", err));
   }, [month, year, isLoggedIn]);
 
-  // Fetch available slots for the selected date
+  // Fetch Available Slots
   useEffect(() => {
     if (!isLoggedIn || !selectedDate) {
-      setAvailableSlots([]); // Clear slots when no date is selected or user is not logged in
+      setAvailableSlots([]);
       return;
     }
-
     fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${selectedDate}`)
-      .then((response) => response.json())
-      .then((data) => setAvailableSlots(data.slots))
-      .catch((error) => console.error("Error fetching slots:", error));
+      .then(res => res.json())
+      .then(data => setAvailableSlots(data.slots))
+      .catch(err => console.error("Slots Fetch Error:", err));
   }, [selectedDate, isLoggedIn]);
 
-  const generateAlignedCalendar = (calendarData) => {
-    const firstDayOfMonth = new Date(year, month - 1, 1);
-    const firstWeekday = firstDayOfMonth.getDay(); // 0 = Sunday, 6 = Saturday
-
-    const alignedCalendar = [];
-
-    // Fill in empty days before the first day of the month
-    for (let i = 0; i < (firstWeekday === 0 ? 6 : firstWeekday - 1); i++) {
-      alignedCalendar.push({ date: null, status: "empty" });
-    }
-
-    // Add the actual dates from the API data
-    calendarData.forEach((day) => alignedCalendar.push(day));
-
-    return alignedCalendar;
+  // Pad Calendar Helper
+  const padCalendar = (days) => {
+    const firstDay = new Date(year, month - 1, 1).getDay();
+    const lead = firstDay === 0 ? 6 : firstDay - 1;
+    const result = Array(lead).fill({ date: null, status: "empty" });
+    result.push(...days);
+    const rem = result.length % 7;
+    if (rem) result.push(...Array(7 - rem).fill({ date: null, status: "empty" }));
+    return result;
   };
 
-  const handleBooking = () => {
+  // Month Navigation
+  const changeMonth = (dir) => {
+    setSelectedDate("");
+    setSelectedTime("");
+    setAvailableSlots([]);
+    if (dir === "next") {
+      if (month === 12) { setMonth(1); setYear(y => y + 1); }
+      else { setMonth(m => m + 1); }
+    } else {
+      if (month === 1) { setMonth(12); setYear(y => y - 1); }
+      else { setMonth(m => m - 1); }
+    }
+  };
+
+  // Handle Booking
+  const handleBooking = async () => {
     if (!selectedDate || !selectedTime || !name || !phoneNumber || !numVisitors) {
       setMessage("Please fill out all fields and select a date and time.");
       return;
     }
-  
-    const bookingData = {
-      date_booked: selectedDate,
-      time_slot: selectedTime, // Directly use the 12-hour format
-      name,
-      phone_number: phoneNumber,
-      num_visitors: numVisitors,
-    };
-  
-    fetch("https://seagold-laravel-production.up.railway.app/api/book-tour", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: isLoggedIn
-          ? `Bearer ${getAuthToken()}`
-          : null,
-      },
-      body: JSON.stringify(bookingData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((err) => Promise.reject(err));
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          setMessage("Your tour has been successfully booked!");
-          setAvailableSlots((prev) =>
-            prev.map((slot) =>
-              slot.time === selectedTime ? { ...slot, status: "booked" } : slot
-            )
-          );
-          setSelectedTime("");
-          setName("");
-          setPhoneNumber("");
-          setNumVisitors("");
-        } else {
-          setMessage(data.error || "Failed to book the tour.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error booking tour:", error);
-        setMessage("An error occurred. Please try again.");
-      });
-  };
-  
-  
-  const changeMonth = (direction) => {
-    // Reset the selected date and available slots
-    setSelectedDate("");
-    setSelectedTime("");
-    setAvailableSlots([]);
 
-    if (direction === "next") {
-      if (month === 12) {
-        setMonth(1);
-        setYear((prev) => prev + 1);
+    const headers = { "Content-Type": "application/json" };
+    if (isLoggedIn) headers.Authorization = `Bearer ${getAuthToken()}`;
+
+    try {
+      const res = await fetch("https://seagold-laravel-production.up.railway.app/api/book-tour", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          date_booked: selectedDate,
+          time_slot: selectedTime,
+          name,
+          phone_number: phoneNumber,
+          num_visitors: numVisitors,
+        }),
+      });
+
+      let data;
+      const contentType = res.headers.get("content-type") || "";
+      
+      if (contentType.includes("application/json")) {
+        data = await res.json();
       } else {
-        setMonth((prev) => prev + 1);
+        const text = await res.text();
+        console.error("Non-JSON response:", text);
+        throw new Error(`Server error ${res.status}`);
       }
-    } else if (direction === "previous") {
-      if (month === 1) {
-        setMonth(12);
-        setYear((prev) => prev - 1);
-      } else {
-        setMonth((prev) => prev - 1);
-      }
+      
+      if (!res.ok) throw new Error(data.error || "Booking failed.");
+
+      setMessage("Your tour has been successfully booked!");
+      setAvailableSlots(slots => slots.map(s => s.time === selectedTime ? { ...s, status: "booked" } : s));
+      setSelectedTime("");
+      setName("");
+      setPhoneNumber("");
+      setNumVisitors("");
+    } catch (err) {
+      console.error("Booking Error:", err);
+      setMessage(err.message);
     }
   };
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
+  // Render
   return (
     <div className="client-tour-booking">
-      {showLoginModal && (
+      {showLoginModal ? (
         <LoginModal
+          mandatory
+          onLogin={() => { setIsLoggedIn(true); setShowLoginModal(false); }}
           onClose={() => setShowLoginModal(false)}
-          onLogin={() => {
-            setIsLoggedIn(true);
-            setShowLoginModal(false);
-          }}
-          mandatory={true}
         />
-      )}
+      ) : (
+        <div className="booking-container">
+          <div className="book-a-tour-title">
+            <svg width="400" height="120" viewBox="0 0 400 120">
+              <path id="arcPath" d="M20,90 Q200,10 380,90" fill="transparent" />
+              <text fill="#036600" fontSize="50" fontWeight="900" fontFamily="Cooper Black, Georgia, serif">
+                <textPath href="#arcPath" startOffset="50%" textAnchor="middle">Book a Tour</textPath>
+              </text>
+            </svg>
+          </div>
+          <p className="intro-tagline">Select a date and time for your dormitory tour:</p>
 
-      {!showLoginModal && (
-        <>
-          <h2>Book a Tour</h2>
-          <p>Select a date and time for your dormitory tour:</p>
+   {/* Calendar Navigation */}
+<div className="calendar-nav">
+  <button onClick={() => changeMonth("previous")} className="calendar-nav-button">
+    &larr; {/* Left Arrow Symbol */}
+  </button>
+  <span>{MONTH_NAMES[month - 1]} {year}</span>
+  <button onClick={() => changeMonth("next")} className="calendar-nav-button">
+    &rarr; {/* Right Arrow Symbol */}
+  </button>
+</div>
 
-          {/* Calendar Section */}
-          <div className="calendar">
-            <h3>
-              <button onClick={() => changeMonth("previous")}>Previous</button>{" "}
-              {new Date(year, month - 1).toLocaleString("default", {
-                month: "long",
-              })}{" "}
-              {year}{" "}
-              <button onClick={() => changeMonth("next")}>Next</button>
-            </h3>
-            <div className="days-of-week">
-              {daysOfWeek.map((day) => (
-                <div key={day} className="day-label">
-                  {day}
-                </div>
-              ))}
-            </div>
-            <div className="date-grid">
-              {calendarDates.map((day, index) => (
+
+          {/* Calendar Grid */}
+          <div className="date-grid">
+            {calendarDates.map((day, i) => (
+              <button
+                key={i}
+                className={`date-button ${day.status} ${selectedDate === day.date ? "selected" : ""}`}
+                disabled={day.status !== "available"}
+                onClick={() => setSelectedDate(day.date)}
+              >
+                {day.date ? new Date(day.date).getDate() : ""}
+              </button>
+            ))}
+          </div>
+
+          {/* Time Slots */}
+          {selectedDate && (
+            <div className="time-slot-grid">
+              {availableSlots.map(slot => (
                 <button
-                  key={index}
-                  className={`date-button ${day.status} ${selectedDate === day.date ? "selected" : ""}`}
-                  disabled={day.status !== "available"}
-                  onClick={() => day.date && setSelectedDate(day.date)}
+                  key={slot.time}
+                  className={`time-slot ${slot.status} ${selectedTime === slot.time ? "selected" : ""}`}
+                  disabled={slot.status !== "available"}
+                  onClick={() => setSelectedTime(slot.time)}
                 >
-                  {day.date ? new Date(day.date).getDate() : ""}
+                  {slot.time}
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* Time Slots Section */}
-          {selectedDate && (
-            <div className="time-slots-section">
-              <h3>Select Time</h3>
-              <div className="time-slot-grid">
-                {availableSlots.map((slot) => (
-                  <button
-                    key={slot.time}
-                    className={`time-slot ${slot.status} ${
-                      selectedTime === slot.time ? "selected" : ""
-                    }`}
-                    disabled={slot.status !== "available"}
-                    onClick={() => setSelectedTime(slot.time)}
-                  >
-                    {slot.time}
-                  </button>
-                ))}
-              </div>
-            </div>
           )}
 
-          {/* Additional Booking Information */}
+          {/* Booking Form */}
           <div className="booking-form">
             <h3>Provide Your Details</h3>
             <div className="input-group">
-              <label htmlFor="name">Name</label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your Full Name"
-                required
-              />
+              <label>Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} placeholder="Your Full Name" />
             </div>
             <div className="input-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                type="tel"
-                id="phone"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Your Phone Number"
-                required
-              />
+              <label>Phone Number</label>
+              <input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="Your Phone Number" />
             </div>
             <div className="input-group">
-              <label htmlFor="num-visitors">Number of Visitors</label>
-              <input
-                type="number"
-                id="num-visitors"
-                value={numVisitors}
-                onChange={(e) => setNumVisitors(e.target.value)}
-                placeholder="How Many People?"
-                min="1"
-                required
-              />
+              <label>Number of Visitors</label>
+              <input type="number" min="1" value={numVisitors} onChange={e => setNumVisitors(e.target.value)} placeholder="How Many People?" />
             </div>
           </div>
 
+          {/* Submit */}
           <button
+            className="book-button"
             onClick={handleBooking}
             disabled={!selectedDate || !selectedTime || !name || !phoneNumber || !numVisitors}
-            className="book-button"
           >
             Book Tour
           </button>
 
           {message && <p className="message">{message}</p>}
-        </>
+        </div>
       )}
     </div>
   );

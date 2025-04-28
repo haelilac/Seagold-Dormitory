@@ -1,33 +1,34 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import styles from './sidebar-admin.module.css';
-import { FaUsers, FaClipboardList, FaBuilding, FaCalendarCheck, FaMoneyBillWave, FaTools, FaCamera, FaCommentDots, FaMapMarkedAlt } from "react-icons/fa";
+import { 
+  FaUsers, FaClipboardList, FaBuilding, FaCalendarCheck, 
+  FaMoneyBillWave, FaTools, FaCamera, FaCommentDots, 
+  FaMapMarkedAlt, FaConciergeBell 
+} from "react-icons/fa";
 import logo from "../assets/seagoldlogo.png";
 
-const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
+const Sidebar = ({ sidebarOpen }) => {
   const location = useLocation();
 
   return (
     <>
       {/* Sidebar for desktop */}
-      <div className={`${styles.sidebar} ${sidebarOpen ? styles.open : styles.collapsed} desktop-only`}>
+      <div className={`${styles.sidebar} desktop-only`}>
         <img
           src={logo}
           alt="Seagold Logo"
-          onClick={() => {
-            if (window.innerWidth > 768) toggleSidebar();
-          }}
           className={`${styles.clickableLogo} ${sidebarOpen ? styles.logoExpanded : styles.logoCollapsed}`}
         />
         <nav>
           <ul>
-          <li>
+            <li>
               <NavLink
                 to="tour-bookings"
                 className={`nav-link ${location.pathname === '/admin/tour-bookings' ? 'active' : ''}`}
               >
                 <FaMapMarkedAlt />
-                {sidebarOpen && <span>Tour Bookings</span>}
+                {sidebarOpen && <span>Bookings</span>}
               </NavLink>
             </li>
             <li>
@@ -36,7 +37,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 className={`nav-link ${location.pathname === '/admin/pending-applications' ? 'active' : ''}`}
               >
                 <FaClipboardList />
-                {sidebarOpen && <span>Pending Applications</span>}
+                {sidebarOpen && <span>Applications</span>}
               </NavLink>
             </li>
             <li>
@@ -45,7 +46,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 className={`nav-link ${location.pathname === '/admin/unit-management' ? 'active' : ''}`}
               >
                 <FaBuilding />
-                {sidebarOpen && <span>Unit Management</span>}
+                {sidebarOpen && <span>Unit</span>}
               </NavLink>
             </li>
             <li>
@@ -54,7 +55,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 className={`nav-link ${location.pathname === '/admin/manage-tenants' ? 'active' : ''}`}
               >
                 <FaUsers />
-                {sidebarOpen && <span>Manage Tenants</span>}
+                {sidebarOpen && <span>Tenants</span>}
               </NavLink>
             </li>
             <li>
@@ -63,7 +64,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 className={`nav-link ${location.pathname === '/admin/events-board' ? 'active' : ''}`}
               >
                 <FaCalendarCheck />
-                {sidebarOpen && <span>Events Board</span>}
+                {sidebarOpen && <span>Events</span>}
               </NavLink>
             </li>
             <li>
@@ -72,7 +73,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 className={`nav-link ${location.pathname === '/admin/payment-dashboard' ? 'active' : ''}`}
               >
                 <FaMoneyBillWave />
-                {sidebarOpen && <span>Payment Dashboard</span>}
+                {sidebarOpen && <span>Payments</span>}
               </NavLink>
             </li>
             <li>
@@ -81,7 +82,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 className={`nav-link ${location.pathname === '/admin/maintenance-requests' ? 'active' : ''}`}
               >
                 <FaTools />
-                {sidebarOpen && <span>Maintenance Requests</span>}
+                {sidebarOpen && <span>Maintenance</span>}
               </NavLink>
             </li>
             <li>
@@ -90,7 +91,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 className={`nav-link ${location.pathname === '/admin/gallery-admin' ? 'active' : ''}`}
               >
                 <FaCamera />
-                {sidebarOpen && <span>Gallery Management</span>}
+                {sidebarOpen && <span>Gallery</span>}
               </NavLink>
             </li>
             <li>
@@ -102,13 +103,24 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
                 {sidebarOpen && <span>Feedback</span>}
               </NavLink>
             </li>
+
+            {/* ⭐ New Amenity Requests Link */}
+            <li>
+              <NavLink
+                to="amenity-requests"
+                className={`nav-link ${location.pathname === '/admin/amenity-requests' ? 'active' : ''}`}
+              >
+                <FaConciergeBell />
+                {sidebarOpen && <span>Amenity Requests</span>}
+              </NavLink>
+            </li>
           </ul>
         </nav>
       </div>
 
       {/* Bottom nav for mobile */}
       <div className="bottom-nav mobile-only">
-      <NavLink to="tour-bookings" className={location.pathname === '/admin/tour-bookings' ? 'active' : ''}>
+        <NavLink to="tour-bookings" className={location.pathname === '/admin/tour-bookings' ? 'active' : ''}>
           <FaMapMarkedAlt />
         </NavLink>
         <NavLink to="pending-applications" className={location.pathname === '/admin/pending-applications' ? 'active' : ''}>
@@ -134,6 +146,11 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
         </NavLink>
         <NavLink to="feedback-admin" className={location.pathname === '/admin/feedback-admin' ? 'active' : ''}>
           <FaCommentDots />
+        </NavLink>
+
+        {/* ⭐ Mobile Amenity Requests Link */}
+        <NavLink to="amenity-requests" className={location.pathname === '/admin/amenity-requests' ? 'active' : ''}>
+          <FaConciergeBell />
         </NavLink>
       </div>
     </>

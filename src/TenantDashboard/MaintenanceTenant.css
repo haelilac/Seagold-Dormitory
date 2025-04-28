@@ -430,6 +430,11 @@ table td {
   transform: scale(1.03);
 }
 
+.preview-container img,
+.preview-container video {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
 /* Improved remove button */
 .remove-file-button {
   position: absolute;
@@ -449,6 +454,21 @@ table td {
   justify-content: center;
   line-height: 1;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.followup-button {
+  margin-left: 8px;
+  padding: 5px 10px;
+  background-color: #f6c971;  /* Or your theme color */
+  border: none;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.followup-button:hover {
+  background-color: #e0b85c;
 }
 
 /* 🌐 RESPONSIVE: Tablets & Below (max 768px) */

@@ -17,7 +17,7 @@ const TenantDashboard = ({ onLogout }) => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
 
     const navigate = useNavigate();
     const dropdownRef = useRef(null);

@@ -124,7 +124,7 @@ const PaymentTenant = () => {
         const originalRemainingBalance = calculateRemainingBalance(formData.stay_type, duration, unitPrice);
     
         // 💥 Prevent partial payments for non-monthly tenants
-        if (formData.stay_type !== 'monthly' && enteredAmount < originalRemainingBalance) {
+        if (formData.stay_type && formData.stay_type !== 'monthly' && enteredAmount < originalRemainingBalance) {
             setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
             setFormData((prevData) => ({
                 ...prevData,
@@ -229,7 +229,7 @@ const PaymentTenant = () => {
       }, []);
     
     
-    const applyPaymentData = (data) => {
+      const applyPaymentData = (data) => {
         setUnitPrice(data.unit_price || 0);
         setPaymentHistory(data.payments || []);
         setDueDate(data.due_date);
@@ -237,6 +237,12 @@ const PaymentTenant = () => {
         setDuration(data.duration);
         setBalanceDue(data.unpaid_balances || {});
         generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
+    
+        // 🛠️ FIX: Set stay_type in formData also!
+        setFormData((prev) => ({
+            ...prev,
+            stay_type: data.stay_type || 'monthly', // fallback if missing
+        }));
     };
     
     const generatePaymentPeriods = (startDate, duration, stayType, payments) => {
@@ -417,7 +423,7 @@ const PaymentTenant = () => {
         requestData.append('payment_for', formData.payment_for);
         requestData.append('receipt', formData.receipt);
         requestData.append('duration', duration); // Pass the duration here
-    
+        requestData.append('stay_type', formData.stay_type);
         try {
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
                 method: 'POST',
@@ -449,7 +455,7 @@ const PaymentTenant = () => {
     };
     
     if (loading) {
-        return <div className="spinner"></div>;
+        return <div className="paymenttenantspinner"></div>;
       }
     
     return (
@@ -710,7 +716,31 @@ const PaymentTenant = () => {
                                             <td>{payment.payment_method}</td> {/* ✅ "E-Wallet" or "Bank Transfer" */}
                                             <td>{payment.payment_type}</td> {/* ✅ "Partially Paid" or "Fully Paid" */}
                                             <td>{payment.reference_number}</td>
-                                            <td>{payment.status}</td>
+                                            <td>
+                                                {payment.status.toLowerCase() === "pending" ? ( // 🔥 convert to lowercase
+                                                    <span style={{ 
+                                                    backgroundColor: "orange", 
+                                                    color: "white", 
+                                                    padding: "4px 8px", 
+                                                    borderRadius: "12px", 
+                                                    fontWeight: "bold",
+                                                    fontSize: "0.9rem"
+                                                    }}>
+                                                    Pending
+                                                    </span>
+                                                ) : (
+                                                    <span style={{ 
+                                                    backgroundColor: "green", 
+                                                    color: "white", 
+                                                    padding: "4px 8px", 
+                                                    borderRadius: "12px", 
+                                                    fontWeight: "bold",
+                                                    fontSize: "0.9rem"
+                                                    }}>
+                                                    Confirmed
+                                                    </span>
+                                                )}
+                                                </td>
                                         </tr>
                                     ))}
                                 </tbody>

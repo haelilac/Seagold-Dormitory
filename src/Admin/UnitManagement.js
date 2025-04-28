@@ -23,7 +23,7 @@ const UnitManagement = () => {
     const [pricingDetails, setPricingDetails] = useState([]);
     const [unitImages, setUnitImages] = useState([]);
     const [unitImageFiles, setUnitImageFiles] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); 
     const [formData, setFormData] = useState({
         name: '',
         capacity: '',
@@ -32,7 +32,7 @@ const UnitManagement = () => {
         price: '',
       });
 
-      useEffect(() => {
+    useEffect(() => {
         document.body.style.overflow = "auto";
     
         if (cachedUnits?.length) {
@@ -66,6 +66,16 @@ const UnitManagement = () => {
     }
 };
 
+  // ✅ On load: use cache or fetch
+  useEffect(() => {
+    if (cachedUnits?.length) {
+      setUnits(cachedUnits);
+      setAvailableUnits(cachedUnits.filter(unit => unit.overall_status === 'available').length);
+      setUnavailableUnits(cachedUnits.filter(unit => unit.overall_status === 'unavailable').length);
+    } else {
+      fetchUnits();
+    }
+  }, []);
 
   // ✅ Pusher Realtime
   useEffect(() => {
@@ -192,7 +202,7 @@ const UnitManagement = () => {
         }
       };
       
-      if (loading) return <div className="unitm-spinner"></div>;
+      if (loading) return <div className="unitmanagement-spinner"></div>;
         return (
             <section id="unit-management" className="dashboard-section">
                 <div className="unit-section">

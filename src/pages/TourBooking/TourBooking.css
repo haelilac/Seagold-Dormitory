@@ -5,391 +5,550 @@ html, body {
     height: 100%;
     background-color: #f0f0f0; /* Page background */
     font-family: Arial, sans-serif;
-}
-
-/* 2) Main container spanning full page height */
-.client-tour-booking {
+  }
+  
+  /* 2) Main container spanning full page height */
+  .client-tour-booking {
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    min-height: 100vh;
     box-sizing: border-box;
     padding: 2rem;
-}
-
-/* 3) Booking container with comfortable sizing & spacing */
+  }
+  
+ /* 🎨 Booking Container */
 .booking-container {
-    width: 450px; /* Container width */
-    min-height: 600px; /* Increased vertical space for content */
-    margin-top: 1rem; /* Smaller margin raises container higher */
-    margin-left: 2rem; /* Space from the left side */
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.4) 100%);
-    -webkit-backdrop-filter: blur(12px) saturate(150%);
-    backdrop-filter: blur(12px) saturate(150%);
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    margin: 2rem auto;
+    background: linear-gradient(135deg, #f2ede3 0%, rgba(255, 255, 255, 0.5) 100%);
+    backdrop-filter: blur(10px) saturate(140%);
     border-radius: 16px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     box-sizing: border-box;
+    position: relative;
 }
 
-/* SVG Title Container */
+/* 🖋️ Title Styling */
 .book-a-tour-title {
     text-align: center;
     margin-bottom: 1rem;
 }
-
-/* Tagline Wrapper */
-.tagline-wrapper {
-    margin-bottom: 1rem;
-}
-
-/* Fixed-height tagline */
+/* ✨ Tagline */
 .intro-tagline {
-    text-align: center;
-    height: 3rem;
-    line-height: 3rem;
-    font-size: 1.1rem;
-    color: #036600;
-    margin: 0;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #2c6e2f; /* Modern dark green */
+  margin-top: 1px;
 }
 
-/* Paragraph text inside .booking-container */
-.booking-container p {
-    font-size: 1.1rem;
-    color: #036600;
-    margin-bottom: 0.8rem;
-    line-height: 1.3;
-}
-
-/* Section headings */
+/* 📑 Section Headings */
 .booking-container h3 {
-    font-size: 1.2rem;
-    color: #036600;
-    margin: 0.5rem 0;
-    font-weight: 700;
+  font-size: 1.3rem;
+  color: #2c6e2f; /* Darker shade for contrast */
+  margin: 1rem 0;
+  font-weight: bold;
 }
 
-/* Input group labels */
-.booking-container .input-group label {
-    display: block;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #036600;
-    margin-bottom: 0.3rem;
+/* 🏷️ Labels */
+.input-group label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c6e2f; /* Dark green for consistency */
+  margin-bottom: 0.4rem;
 }
 
-/* Text inputs */
-.booking-container .input-group input[type="text"],
-.booking-container .input-group input[type="tel"],
-.booking-container .input-group input[type="number"] {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 0.95rem;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    box-sizing: border-box;
-    margin-bottom: 0.8rem;
+/* 🔲 Inputs */
+.input-group input {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px; /* More rounded for modern look */
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  background-color: #f7f7f7; /* Light background for inputs */
+  transition: border-color 0.3s ease;
 }
 
-/* Booking Button */
-.book-button {
-    margin-top: 1rem;
-    padding: 0.6rem 1rem;
-    font-size: 1rem;
-    font-weight: 700;
-    background-color: #f0c36d;
-    color: #036600;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.input-group input:focus {
+  border-color: #00bf63; /* Focused border color */
+  outline: none;
 }
 
-.book-button:hover:not(:disabled) {
-    background-color: #f5d08d;
+/* 📅 Calendar Navigation */
+/* Calendar Navigation Buttons */
+.calendar-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.book-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+/* Calendar Navigation Buttons */
+.calendar-nav-button {
+  color: #036600; /* Dark green arrow color */
+  padding: 0; /* Remove padding to eliminate background square */
+  border: none;
+  background: transparent; /* Make background transparent */
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  width: 40px; /* Consistent size for circular buttons */
+  height: 40px; /* Consistent size for circular buttons */
+  border-radius: 50%; /* Circular shape */
+  box-shadow: none; /* Remove shadow to keep it clean */
 }
 
-/* Booking Message */
-.message {
-    margin-top: 1rem;
-    text-align: center;
-    color: #036600;
-    font-weight: 600;
+.calendar-nav-button:hover {
+  color: #bae8bc; /* Change arrow color on hover */
+  transform: scale(1.1); /* Slight grow effect */
 }
 
-/* Calendar Section */
-.calendar {
-    margin-bottom: 1rem;
+/* Center the span text */
+.calendar-nav span {
+  font-size: 1.2rem;
+  color: #036600; /* Dark green */
+  font-weight: 700;
 }
 
-/* Days of Week Header (for main calendar, if used) */
-.days-of-week {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #036600;
-    background-color: #f0f0f0;
-    padding: 10px;
-    border-radius: 6px;
-}
 
-/* Date Grid (for main calendar, if used) */
+/* 🗓️ Date Grid */
 .date-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    justify-items: center;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
-/* Date Buttons */
 .date-button {
-    padding: 0.5rem;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-}
-
-.date-button:hover {
-    background-color: #f0f0f0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 10px; /* Rounded buttons */
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
 }
 
 .date-button.available {
-    background-color: #ccffcc;
-    color: #008000;
+  background-color: #ccffcc;
+  color: #008000;
 }
 
 .date-button.booked {
-    background-color: #ffcccc;
-    color: #ff0000;
-    cursor: not-allowed;
+  background-color: #ffcccc;
+  color: #ff0000;
+  cursor: not-allowed;
 }
 
 .date-button.unavailable {
-    background-color: #f0f0f0;
-    color: #808080;
-    cursor: not-allowed;
+  background-color: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
 }
 
 .date-button.selected {
-    background-color: #ffeb3b;
-    color: #000;
-    font-weight: bold;
+  background-color: #f6c971;
+  color: #fff; /* Contrast for selected */
+  font-weight: bold;
+  transform: scale(1.1); /* Slight scale effect */
 }
 
-/* Time Slots Section */
+/* ⏰ Time Slots Grid (if applicable) */
 .time-slot-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
 .time-slot {
-    padding: 0.5rem;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.time-slot.unavailable,
-.time-slot.booked {
-    background-color: #f0f0f0;
-    color: #808080;
-    cursor: not-allowed;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .time-slot.available {
-    background-color: #ccffcc;
-    color: #008000;
+  background-color: #ccffcc;
+}
+
+.time-slot.booked {
+  background-color: #ffcccc;
+  cursor: not-allowed;
 }
 
 .time-slot.selected {
-    background-color: #ffeb3b;
-    color: #000;
-    font-weight: bold;
+  background-color: #f6c971;
+  color: #fff;
 }
 
-/* DateTimeBar and Input Styles */
-.date-time-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: #fff;
-    padding: 0.8rem 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    position: relative;
-    margin-bottom: 1rem;
+/* ✅ Book Button */
+.book-button {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background-color: #f6c971; /* Soft yellow */
+  color: #2c6e2f; /* Dark green */
+  border: none;
+  border-radius: 30px; /* Rounded button */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for modern touch */
 }
 
-.date-input-section,
-.time-input-section {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+.book-button:hover:not(:disabled) {
+  background-color: #f6c971; /* Light green on hover */
+  transform: translateY(-3px); /* Slight lift effect */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
 }
 
-.date-input {
+.book-button:disabled {
+  background-color: #c9c913; /* Disabled light brown */
+  color: #f2ede3; /* Dirty white text */
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+
+
+  /* -----------------------------------
+   Modal Calendar: fixed & responsive
+  ------------------------------------*/
+  
+  /* 1) Outer container */
+  .calendar-popup {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 1000;
+  width: auto;
+  max-width: 360px;
+  box-sizing: border-box;
+  }
+  
+  /* 2) Inner card */
+  .calendar-popup-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  }
+  
+  /* 3) Close button */
+  .close-popup {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
+  
+  /* 4) Header bar */
+  .calendar-header {
+  background-color: #d32f2f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 2.5rem;
+  position: relative;
+  }
+  
+  .calendar-header h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  }
+  
+  /* 5) Nav buttons */
+  .prev-month,
+  .next-month {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
+  
+  .prev-month { left: 0.5rem; }
+  .next-month { right: 0.5rem; }
+  
+  /* 6) Month/Year selects */
+  .calendar-selectors {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  }
+  
+  .calendar-selectors select {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background: #fff;
+  }
+  
+  /* 7) Weekday labels */
+  .calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #f0f0f0;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  }
+  
+  .weekday-cell {
+  font-size: 0.85rem;
+  }
+  
+  /* 8) The 7×N grid of days */
+  .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  }
+  
+  /* 9) Day cells */
+  .calendar-day {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #333;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  }
+  
+  .calendar-day:hover {
+  background-color: #f1f1f1;
+  }
+  
+  /* Empty slots */
+  .empty-day {
+  visibility: hidden;
+  cursor: default;
+  }
+  
+  /* 10) Mobile tweaks */
+  @media (max-width: 480px) {
+  .calendar-popup {
+    max-width: 90vw;
+  }
+  .calendar-day {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+  }
+  .prev-month,
+  .next-month {
+    width: 2rem;
+    height: 2rem;
     font-size: 1rem;
-    padding: 0.3rem 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100px;
-}
+  }
+  .calendar-selectors select {
+    font-size: 0.8rem;
+  }
+  }
+  
+  /* ─────────────────────────────────────────────
+   FIX: Force 7-column layout for popup calendar
+  ─────────────────────────────────────────────*/
+  
+  /* If you’re still using the old “datepicker-calendar” class: */
+  .datepicker-calendar {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 0.25rem !important;
+    padding: 0.75rem !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* And for the React “calendar-popup” version: */
+  .calendar-popup-inner .calendar-grid {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 0.25rem !important;
+    padding: 0.75rem !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* Make sure each cell doesn’t stretch full width */
+  .calendar-popup-inner .calendar-day,
+  .calendar-popup-inner .empty-day,
+  .datepicker-calendar .date {
+    width: 5rem;
+    height: 2.25rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  
+  /* ─────────────────────────────────────────────
+   Align header and grid paddings
+  ─────────────────────────────────────────────*/
+  
+  /* Make the weekday header row use the same left/right padding as the grid */
+  .calendar-popup-inner .calendar-weekdays {
+  padding: 0.5rem 0.75rem;    /* top/bottom 0.5rem, left/right 0.75rem */
+  box-sizing: border-box;
+  }
+  
+  /* Restore full left/right padding on the grid, matching the header */
+  .calendar-popup-inner .calendar-grid {
+  padding: 0.75rem;          /* uniform padding all around */
+  box-sizing: border-box;
+  }
+  
+  /* Optional: if you still have .datepicker-calendar */
+  .datepicker-calendar {
+  padding: 0.75rem !important;
+  box-sizing: border-box;
+  }
+  
+  /* ─────────────────────────────────────────────
+   Extra Responsive Tweaks for Mobile (up to 480px)
+  ─────────────────────────────────────────────*/
+  @media (max-width: 480px) {
+    /* Adjust the booking container to fit smaller screens */
+    .booking-container {
+      width: 90%;
+      height: auto;
+      margin: 1rem auto;
+      padding: 1.5rem;
+      right: 0;
+      left: 0;
+      position: relative;
+    }
+  
+    /* Adjust the booking button position */
+    .book-button {
+      position: relative;
+      right: 0;
+      width: 100%;
+      margin-top: 2rem;
+      padding: 0.8rem;
+      font-size: 1.1rem;
+    }
+  
+    /* Adjust DateTime bar */
+    .date-time-bar {
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1rem;
+    }
+  
+    .date-input-section,
+    .time-input-section {
+      flex-direction: column;
+      width: 100%;
+      gap: 0.5rem;
+    }
+  
+    .date-input,
+    .time-input {
+      width: 100%;
+      min-width: unset;
+    }
+  
+    /* Tagline and titles */
+    .intro-tagline,
+    .book-a-tour-title {
+      font-size: 1rem;
+    }
+  
+    /* Input fields */
+    .booking-container .input-group input[type="text"],
+    .booking-container .input-group input[type="tel"],
+    .booking-container .input-group input[type="number"] {
+      font-size: 1rem;
+      padding: 0.75rem;
+    }
+  
+    /* Calendar tweaks (already partially done, here are minor fine-tunes) */
+    .calendar-day {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.8rem;
+    }
+  
+    .prev-month,
+    .next-month {
+      width: 2rem;
+      height: 2rem;
+      font-size: 1rem;
+    }
+  
+    .calendar-selectors select {
+      font-size: 0.85rem;
+    }
+  
+    /* Message text */
+    .message {
+      font-size: 0.95rem;
+    }
+  }
+  
+  .book-a-tour-title svg,
+  .book-a-tour-title img {
+    max-width: 100%;
+    height: auto;
 
-.time-input {
-    font-size: 1rem;
-    padding: 0.3rem 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100px;
-}
-
-.calendar-icon,
-.clock-icon {
-    font-size: 1.2rem;
-    color: #036600;
-    cursor: pointer;
-}
-
-.apply-date-btn {
-    font-size: 0.9rem;
-    padding: 0.3rem 0.6rem;
-    border: none;
-    background-color: #036600;
-    color: #fff;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* -------------------------
-   Updated Popup Calendar Layout
---------------------------*/
-
-/* Calendar Popup */
-.calendar-popup {
-    position: absolute;
-    top: 3rem;
-    left: 0;
-    z-index: 999;
-    width: 300px;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.calendar-popup-inner {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    overflow: hidden;
-
-    /* NEW: Container background (pick any color or gradient) */
-    background: linear-gradient(135deg, #ffffff 0%, #fdfdfd 100%);
-
-    /* Optional: add padding for space at the bottom so 
-       the background remains visible behind the grid */
-    padding-bottom: 1rem;
-}
-
-
-/* Calendar Header with Navigation (Green Background) */
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #4CAF50; /* Green header */
-    color: #fff;
-    padding: 0.5rem 1rem;
-}
-
-.calendar-header h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    text-transform: uppercase;
-}
-
-.prev-month, .next-month {
-    background: none;
-    border: none;
-    color: #fff;
+  }
+  
+  .book-a-tour-title h1,
+  .book-a-tour-title h2,
+  .book-a-tour-title h3 {
     font-size: 1.5rem;
-    cursor: pointer;
-}
-
-/* Dropdown selectors for Month and Year */
-.calendar-selectors {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: #e9e9e9;
-}
-.calendar-selectors select {
-    padding: 0.3rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-/* Weekdays Row */
-.calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background: #f0f0f0;
-    padding: 0.5rem 0;
-    text-align: center;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
-}
-.weekday-cell {
-    padding: 0.25rem;
-}
-
-/* Calendar Grid for Days */
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    padding: 1rem;
-}
-
-/* Calendar Day Cells with Background */
-.calendar-day {
-    /* Remove or reduce background so the container's background shows through */
-    background: none; /* or background: rgba(255,255,255,0.7); for a semi-transparent effect */
-    
-    text-align: center;
-    padding: 0.5rem 0;
-    font-size: 1rem;
-    color: #333;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.calendar-day:hover {
-    background-color: #f1f1f1; /* Slight hover effect */
-}
-
-
-.empty-day {
-    background: none;
-    border: none;
-    cursor: default;
-}
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  

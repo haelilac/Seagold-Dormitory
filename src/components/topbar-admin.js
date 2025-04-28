@@ -5,15 +5,11 @@ import {
   FaEllipsisV,
   FaCheckCircle,
   FaTrash,
-  FaInfoCircle,
   FaSun,
   FaMoon,
-  FaBars,
 } from "react-icons/fa";
 import styles from "./topbar-admin.module.css";
-import logo from '../assets/seagoldlogo.png';
 import ProfileUploader from './ProfileUploader';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const TopBarAdmin = ({
   admin,
@@ -71,7 +67,7 @@ const TopBarAdmin = ({
   return (
     <div className={`${styles.topBar} ${isSidebarCollapsed ? styles.shifted : ""}`}>
       <div className={`${styles.branding} ${isSidebarCollapsed ? styles.shifted : ""}`}>
-        <h1>Seagold Dormitory</h1>
+        <h1>Seagold Dormitory Management System</h1>
       </div>
 
       <div className={styles.topBarRight}>
@@ -90,9 +86,7 @@ const TopBarAdmin = ({
           {showNotifications && (
               <div
                 ref={dropdownRef}
-                className={styles.notificationDropdown}
-                onClick={(e) => e.stopPropagation()}
-              >
+                className={styles.notificationDropdown} onClick={(e) => e.stopPropagation()}>
               <h4 className={styles.notificationHeader}>
                 Notifications
                 <button
@@ -102,7 +96,7 @@ const TopBarAdmin = ({
                     setShowSettingsDropdown((prev) => !prev);
                   }}
                 >
-                  <FaCog />
+                  <FaCog className={styles.settingsIcon}/>
                 </button>
               </h4>
               <ul className={styles.notificationList}>
@@ -128,7 +122,7 @@ const TopBarAdmin = ({
                               toggleDropdown(e, index);
                             }}
                           >
-                            <FaEllipsisV />
+                            <FaEllipsisV className={styles.menuIcon}/>
                           </button>
                           {activeDropdown === index && (
                             <div className={styles.dropdownMenu}>
@@ -328,7 +322,7 @@ const TopBarAdmin = ({
           }
 
           try {
-            const res = await fetch('https://seagold-laravel-production.up.railway.app/api/change-password', {
+            const res = await fetch('http://localhost:8000/api/change-password', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

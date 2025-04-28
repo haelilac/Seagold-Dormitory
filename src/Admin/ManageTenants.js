@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './ManageTenants.css';
+import { useDataCache } from '../contexts/DataContext';
 
 const ManageTenants = () => {
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     const [tenants, setTenants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -11,149 +11,191 @@ const ManageTenants = () => {
     const [duration, setDuration] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
     const [units, setUnits] = useState([]);
+    const { getCachedData, updateCache } = useDataCache();
     const [showNewContractForm, setShowNewContractForm] = useState(false);
     const [terminatedTenants, setTerminatedTenants] = useState([]);
     const [loadingTerminated, setLoadingTerminated] = useState(true);
-    const [formData, setFormData] = useState({
-        stay_type: '',
-    });
+    const [formData, setFormData] = useState({ stay_type: '' });
 
-      useEffect(() => {
-        document.body.style.overflow = "auto"; // force scroll back on
-      }, []);
+    // Search States
+    const [searchActive, setSearchActive] = useState('');
+    const [filteredActiveTenants, setFilteredActiveTenants] = useState([]);
+
+    const [searchTerminated, setSearchTerminated] = useState('');
+    const [filteredTerminatedTenants, setFilteredTerminatedTenants] = useState([]);
+    const [entriesPerPage, setEntriesPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [terminatedEntriesPerPage, setTerminatedEntriesPerPage] = useState(10);
+    const [terminatedCurrentPage, setTerminatedCurrentPage] = useState(1);
+
+
+
+    useEffect(() => { document.body.style.overflow = "auto"; }, []);
+
+    // Fetch Terminated Tenants
     useEffect(() => {
-        const fetchTerminatedTenants = async () => {
+        const cached = getCachedData('terminated_tenants');
+        if (cached) {
+            setTerminatedTenants(cached);
+            setLoadingTerminated(false);
+            return;
+        }
+        const fetchData = async () => {
             try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/terminated-tenants');
-                if (!response.ok) throw new Error('Failed to fetch terminated tenants');
-                
-                const data = await response.json();
-                console.log('Terminated Tenants:', data); // Check if data is received
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/terminated-tenants');
+                const data = await res.json();
                 setTerminatedTenants(data);
-            } catch (error) {
-                console.error('Error fetching terminated tenants:', error.message);
-            } finally {
-                setLoadingTerminated(false);
-            }
+                updateCache('terminated_tenants', data);
+            } catch (e) { console.error(e); }
+            finally { setLoadingTerminated(false); }
         };
-    
-        fetchTerminatedTenants();
+        fetchData();
     }, []);
-    
-    
 
+    // Fetch Units
     useEffect(() => {
+        const cached = getCachedData('available_units');
+        if (cached) { setUnits(cached); return; }
         const fetchUnits = async () => {
             try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
-                if (!response.ok) throw new Error('Failed to fetch units');
-    
-                const data = await response.json();
-                console.log('Fetched Units:', data); // Debugging
-                setUnits(data.filter(unit => unit.status === 'available')); // Filter only available units
-            } catch (error) {
-                console.error('Error fetching units:', error.message);
-            }
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
+                const data = await res.json();
+                const available = data.filter(unit => unit.status === 'available');
+                setUnits(available);
+                updateCache('available_units', available);
+            } catch (e) { console.error(e); }
         };
-    
         fetchUnits();
     }, []);
-    
-    
-    // Fetch tenants from the backend API
+
+
+        // Function to terminate tenant contract
+        const handleTerminateContract = async (action) => {
+            if (action === 'terminate') {
+                try {
+                    const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/terminate`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+        
+                    if (!response.ok) throw new Error('Failed to terminate contract');
+        
+                    alert('Tenant contract terminated and removed successfully!');
+                    handleCloseModal();
+                    window.location.reload();
+                } catch (error) {
+                    alert('Error terminating contract.');
+                }
+            } else if (action === 'newContract') {
+                setShowNewContractForm(true);
+            }
+        };
+
+
+        const handleUpdateTenant = async (e) => {
+            e.preventDefault();
+            setIsUpdating(true);
+        
+            try {
+                const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/change-unit`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        unit_id: unitId, 
+                        duration, 
+                        stay_type: formData.stay_type,
+                        set_price: formData.set_price // Adding set_price to the request
+                    }),
+                });
+        
+                if (!response.ok) throw new Error('Failed to update tenant details');
+        
+                alert('Tenant unit updated successfully!');
+                handleCloseModal();
+                window.location.reload();
+            } catch (error) {
+                alert('Error updating tenant details.');
+            } finally {
+                setIsUpdating(false);
+            }
+        };
+        
+
+    // Fetch Active Tenants
     useEffect(() => {
+        const cached = getCachedData('tenants');
+        if (cached) {
+            setTenants(cached);
+            setLoading(false);
+            return;
+        }
         const fetchTenants = async () => {
             try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tenants');
-                if (!response.ok) throw new Error('Failed to fetch tenant data');
-        
-                const data = await response.json();
-                const formattedData = data.map((tenant) => ({
-                    id: tenant.id,
-                    name: tenant.full_name,
-                    email: tenant.email,
-                    address: tenant.address,
-                    contact_number: tenant.contact_number || 'N/A',
-                    check_in_date: tenant.check_in_date,
-                    duration: tenant.duration || 'N/A',
-                    occupation: tenant.occupation || 'N/A',
-                    unit_code: tenant.unit_id || 'Not Assigned',
-                    valid_id_url: tenant.valid_id_url || null,
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/tenants');
+                const data = await res.json();
+                const formatted = data.map(t => ({
+                    id: t.id,
+                    name: t.full_name,
+                    email: t.email,
+                    address: t.address,
+                    contact_number: t.contact_number || 'N/A',
+                    check_in_date: t.check_in_date,
+                    duration: t.duration || 'N/A',
+                    occupation: t.occupation || 'N/A',
+                    unit_code: t.unit_id || 'Not Assigned',
+                    valid_id_url: t.valid_id_url || null,
                 }));
-        
-                setTenants(formattedData);
+                setTenants(formatted);
+                updateCache('tenants', formatted);
             } catch (err) {
                 setError('Unable to load tenant data');
             } finally {
                 setLoading(false);
             }
         };
-        
-    
         fetchTenants();
     }, []);
-  
-    const handleUpdateTenant = async (e) => {
-        e.preventDefault();
-        setIsUpdating(true);
+
+    // Sync Filtered Lists Initially
+    useEffect(() => { setFilteredActiveTenants(tenants); }, [tenants]);
+    useEffect(() => { setFilteredTerminatedTenants(terminatedTenants); }, [terminatedTenants]);
+
+    const filteredActiveTenantsList = tenants.filter(t => 
+        (t.name || '').toLowerCase().includes(searchActive.toLowerCase())
+    );
     
-        try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/change-unit`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    unit_id: unitId, 
-                    duration, 
-                    stay_type: formData.stay_type,
-                    set_price: formData.set_price // Adding set_price to the request
-                }),
-            });
+    // Pagination logic
+    const indexOfLastEntry = currentPage * entriesPerPage;
+    const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+    const currentActiveTenants = filteredActiveTenantsList.slice(indexOfFirstEntry, indexOfLastEntry);
+    const totalPages = Math.ceil(filteredActiveTenantsList.length / entriesPerPage);    
+
+    const filteredTerminatedList = terminatedTenants.filter(t => 
+        (t.full_name || '').toLowerCase().includes(searchTerminated.toLowerCase())
+    );
     
-            if (!response.ok) throw new Error('Failed to update tenant details');
-    
-            alert('Tenant unit updated successfully!');
-            handleCloseModal();
-            window.location.reload();
-        } catch (error) {
-            alert('Error updating tenant details.');
-        } finally {
-            setIsUpdating(false);
-        }
+    const indexOfLastTerminated = terminatedCurrentPage * terminatedEntriesPerPage;
+    const indexOfFirstTerminated = indexOfLastTerminated - terminatedEntriesPerPage;
+    const currentTerminatedTenants = filteredTerminatedList.slice(indexOfFirstTerminated, indexOfLastTerminated);
+    const totalTerminatedPages = Math.ceil(filteredTerminatedList.length / terminatedEntriesPerPage);    
+
+    // Search Handlers
+    const handleActiveSearchChange = (e) => {
+        const query = e.target.value;
+        setSearchActive(query);
+        const filtered = tenants.filter(t => (t.name || '').toLowerCase().includes(query.toLowerCase()));
+        setFilteredActiveTenants(filtered);
     };
-    
 
-    // Function to terminate tenant contract
-    const handleTerminateContract = async (action) => {
-        if (action === 'terminate') {
-            try {
-                const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/terminate`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-    
-                if (!response.ok) throw new Error('Failed to terminate contract');
-    
-                alert('Tenant contract terminated and removed successfully!');
-                handleCloseModal();
-                window.location.reload();
-            } catch (error) {
-                alert('Error terminating contract.');
-            }
-        } else if (action === 'newContract') {
-            setShowNewContractForm(true);
-        }
-    };
-    
-
-    // Function to open modal with tenant details
-
-    const handleRowClick = (tenant) => {
-        setSelectedTenant(tenant);
-        setShowNewContractForm(false);
+    const handleTerminatedSearchChange = (e) => {
+        const query = e.target.value;
+        setSearchTerminated(query);
+        const filtered = terminatedTenants.filter(t => (t.full_name || '').toLowerCase().includes(query.toLowerCase()));
+        setFilteredTerminatedTenants(filtered);
     };
 
     const handleCloseModal = () => {
@@ -161,73 +203,121 @@ const ManageTenants = () => {
         setShowNewContractForm(false);
     };
 
+    const handleRowClick = (tenant) => {
+        setSelectedTenant(tenant);
+        setShowNewContractForm(false);
+    };
+
+    if (loading) return <div className="managetenant-spinner"></div>;
     return (
-        <>
-            {/* Active Tenants Section */}
-        <section className="manage-tenants">
-            <h2>Manage Tenants</h2>
-            {loading ? (
-                <p>Loading tenants...</p>
-            ) : error ? (
-                <p className="error">{error}</p>
-            ) : (
-                <table className="tenants-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Address</th>
-                            <th>Contact Number</th>
-                            <th>Check-in Date</th>
-                            <th>Duration</th>
-                            <th>Occupation</th>
-                            <th>Unit</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tenants.map((tenant) => (
-                            <tr key={tenant.id} className="clickable-row" onClick={() => handleRowClick(tenant)}>
-                                <td>{tenant.name}</td>
-                                <td>{tenant.email}</td>
-                                <td>{tenant.address}</td>
-                                <td>{tenant.contact_number}</td>
-                                <td>{tenant.check_in_date ? new Date(tenant.check_in_date).toLocaleString() : 'N/A'}</td>
-                                <td>{tenant.duration} months</td>
-                                <td>{tenant.occupation}</td>
-                                <td>{tenant.unit_code}</td>
-                            </tr>
+            <>
+                {/* Active Tenants Section */}
+                <section className="manage-tenants">
+                    <h2>Manage Tenants</h2>
+
+                        {/* Filter Container for Entries Per Page */}
+                        <div className="search-container">
+            <div className="filter-container">
+                <label className="entries-label">
+                    Show 
+                    <select 
+                        value={entriesPerPage} 
+                        onChange={(e) => { 
+                            setEntriesPerPage(Number(e.target.value)); 
+                            setCurrentPage(1);  // Reset page on change
+                        }} 
+                        className="entries-select"
+                    >
+                        {[10, 30, 45, 60, 75, 100].map(num => (
+                            <option key={num} value={num}>{num}</option>
                         ))}
-                    </tbody>
-                </table>
-            )}
-
-            {/* Modal for Tenant Details */}
-            {selectedTenant && (
-                <div className="modal-overlay" onClick={handleCloseModal}>
-                    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                        <h3 className="modal-header">Tenant Details</h3>
-                        <div className="modal-content">
-                            <p><strong>ID:</strong> {selectedTenant.id}</p>
-                            <p><strong>Name:</strong> {selectedTenant.name}</p>
-                            <p><strong>Email:</strong> {selectedTenant.email}</p>
-                            <p><strong>Address:</strong> {selectedTenant.address}</p>
-
-                            <div className="termination-buttons">
-                                <button 
-                                    onClick={() => handleTerminateContract('terminate')} 
-                                    className="terminate-button"
-                                >
-                                    Terminate Contract
-                                </button>
-                                <button 
-                                    onClick={() => handleTerminateContract('newContract')} 
-                                    className="new-contract-button"
-                                >
-                                    Terminate & Make New Contract
-                                </button>
+                    </select>
+                    entries
+                </label>
+            </div>
+                                    <input
+                                        type="text"
+                                        placeholder="🔍 Search Tenant"
+                                        value={searchActive}
+                                        onChange={handleActiveSearchChange}
+                                        className="search-tenant"
+                                    />
                             </div>
+        
+                            <table className="tenants-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Check-in Date</th>
+                                        <th>Duration</th>
+                                        <th>Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+    {currentActiveTenants.map((tenant) => (
+        <tr key={tenant.id} className="clickable-row" onClick={() => handleRowClick(tenant)}>
+            <td>{tenant.name}</td>
+            <td>{tenant.email}</td>
+            <td>{tenant.check_in_date ? new Date(tenant.check_in_date).toLocaleString() : 'N/A'}</td>
+            <td>{tenant.duration} months</td>
+            <td>{tenant.unit_code}</td>
+        </tr>
+    ))}
+</tbody>
+                            </table>
+                        
+                    
 
-                            {showNewContractForm && (
+<div className="pagination">
+    <button disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+    {[...Array(totalPages)].map((_, index) => (
+        <button 
+            key={index + 1} 
+            className={currentPage === index + 1 ? "active" : ""} 
+            onClick={() => setCurrentPage(index + 1)}
+        >
+            {index + 1}
+        </button>
+    ))}
+    <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+</div>
+        
+                    {/* Modal for Tenant Details */}
+                    {selectedTenant && (
+                        <div className="modal-overlay" onClick={handleCloseModal}>
+                            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                            <button onClick={handleCloseModal} className="close-modal-button">&times;
+                             </button>
+                                <h3 className="modal-header">Tenant Details</h3>
+                                    <p><strong>Name:</strong> {selectedTenant.name}</p>
+                                    <p><strong>Email:</strong> {selectedTenant.email}</p>
+                                    <p><strong>Address:</strong> {selectedTenant.address}</p>
+
+
+                                    {selectedTenant.valid_id_url && (
+                                <div className="modal-valid-id">
+                                    <p><strong>Valid ID:</strong></p>
+                                    <img src={selectedTenant.valid_id_url} alt="Valid ID" className="valid-id-image" />
+                                </div>
+                            )}
+        
+                                    <div className="termination-buttons">
+                                        <button 
+                                            onClick={() => handleTerminateContract('terminate')} 
+                                            className="terminate-button"
+                                        >
+                                            Terminate Contract
+                                        </button>
+                                        <button 
+                                            onClick={() => handleTerminateContract('newContract')} 
+                                            className="new-contract-button"
+                                        >
+                                            Terminate & Make New Contract
+                                        </button>
+                                    </div>
+        
+                                    {showNewContractForm && (
     <form onSubmit={handleUpdateTenant} className="update-form">
         <label>
             Stay Type:
@@ -291,73 +381,117 @@ const ManageTenants = () => {
             />
         </label>
 
-        <button type="submit" disabled={isUpdating}>
+        <button className="update-button" type="submit" disabled={isUpdating}>
             {isUpdating ? 'Updating...' : 'Update Tenant'}
         </button>
     </form>
 )}
 
+                        </div>
+                        </div>
 
-                            {selectedTenant.valid_id_url && (
-                                <div className="modal-valid-id">
-                                    <p><strong>Valid ID:</strong></p>
-                                    <img src={selectedTenant.valid_id_url} alt="Valid ID" className="valid-id-image" />
-                                </div>
-                            )}
-
-                            <button onClick={handleCloseModal} className="close-modal-button">
-                                Close
-                            </button>
-                        </div>
-                        </div>
-                        </div>
             )}
         </section>
 
-            {/* Terminated Tenants Section */}
-            <section className="manage-terminated-tenants">
-                <h2>Terminated Tenants</h2>
-                {loadingTerminated ? (
-                    <p>Loading terminated tenants...</p>
-                ) : terminatedTenants.length > 0 ? (
-                    <table className="tenants-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Address</th>
-                                <th>Contact Number</th>
-                                <th>Check-in Date</th>
-                                <th>Duration</th>
-                                <th>Occupation</th>
-                                <th>Unit</th>
-                                <th>Terminated At</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {terminatedTenants.map(tenant => (
-                                <tr key={tenant.id}>
-                                    <td>{tenant.id}</td>
-                                    <td>{tenant.full_name}</td>
-                                    <td>{tenant.email}</td>
-                                    <td>{tenant.address}</td>
-                                    <td>{tenant.contact_number || 'N/A'}</td>
-                                    <td>{tenant.check_in_date || 'N/A'}</td>
-                                    <td>{tenant.duration || 'N/A'} months</td>
-                                    <td>{tenant.occupation || 'N/A'}</td>
-                                    <td>{tenant.unit_id || 'N/A'}</td>
-                                    <td>{tenant.terminated_at}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p>No terminated tenants found.</p>
-                )}
-            </section>
-        </>
-    );
+        
+                {/* Terminated Tenants Section */}
+                <section className="manage-terminated-tenants">
+                    <h2>Terminated Tenants</h2>
+                    {loadingTerminated ? (
+                        <p>Loading terminated tenants...</p>
+                    ) : (
+                        <>
+{/* Filter Container for Entries Per Page */}
+<div className="search-container">
+    <div className="filter-container">
+        <label className="entries-label">
+            Show 
+            <select 
+                value={terminatedEntriesPerPage} 
+                onChange={(e) => { 
+                    setTerminatedEntriesPerPage(Number(e.target.value)); 
+                    setTerminatedCurrentPage(1);  // Reset page on change
+                }} 
+                className="entries-select"
+            >
+                {[10, 30, 45, 60, 75, 100].map(num => (
+                    <option key={num} value={num}>{num}</option>
+                ))}
+            </select>
+            entries
+        </label>
+    </div>
+
+    <input
+        type="text"
+        placeholder="🔍 Search Tenant"
+        value={searchTerminated}
+        onChange={handleTerminatedSearchChange}
+        className="search-tenant"
+    />
+</div>                      
+
+                            <table className="tenants-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Address</th>
+                                        <th>Contact Number</th>
+                                        <th>Check-in Date</th>
+                                        <th>Duration</th>
+                                        <th>Occupation</th>
+                                        <th>Unit</th>
+                                        <th>Terminated At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+    {currentTerminatedTenants.map((tenant) => (
+        <tr key={tenant.id}>
+            <td>{tenant.full_name}</td>
+            <td>{tenant.email}</td>
+            <td>{tenant.address}</td>
+            <td>{tenant.contact_number || 'N/A'}</td>
+            <td>{tenant.check_in_date || 'N/A'}</td>
+            <td>{tenant.duration || 'N/A'} months</td>
+            <td>{tenant.occupation || 'N/A'}</td>
+            <td>{tenant.unit_id || 'N/A'}</td>
+            <td>{tenant.terminated_at}</td>
+        </tr>
+    ))}
+</tbody>
+                            </table>
+                        </>
+                    )}
+
+<div className="pagination">
+    <button 
+        disabled={terminatedCurrentPage === 1} 
+        onClick={() => setTerminatedCurrentPage(terminatedCurrentPage - 1)}
+    >
+        Previous
+    </button>
+    {[...Array(totalTerminatedPages)].map((_, index) => (
+        <button 
+            key={index + 1} 
+            className={terminatedCurrentPage === index + 1 ? "active" : ""} 
+            onClick={() => setTerminatedCurrentPage(index + 1)}
+        >
+            {index + 1}
+        </button>
+    ))}
+    <button 
+        disabled={terminatedCurrentPage === totalTerminatedPages} 
+        onClick={() => setTerminatedCurrentPage(terminatedCurrentPage + 1)}
+    >
+        Next
+    </button>
+</div>
+                </section>
+            </>
+        );
+        
+    
 };
 
 export default ManageTenants;

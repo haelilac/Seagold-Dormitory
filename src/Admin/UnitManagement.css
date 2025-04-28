@@ -26,6 +26,9 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin: 20px 0;
+    position: relative;
+    top: 3%;
+    right: 2%;
     font-family: 'Libre Baskerville', serif;
 }
 
@@ -255,7 +258,11 @@ body {
 }
 
 .available {
-    background-color: #20af00 !important;
+    background-color: #366e39!important;
+}
+
+.available:hover{
+  background-color: #4a954e !important;
 }
 
 .unit-card-grid {
@@ -302,7 +309,6 @@ body {
   .unit-card.unavailable {
     border-left: 6px solid #cc0000;
   }
-  
 
   .modal {
     background-color: #fff;
@@ -379,7 +385,7 @@ body {
     padding: 2px 6px;
   }
   
-  .unitm-spinner {
+  .unitmanagement-spinner {
     border: 6px solid #f3f3f3;
     border-top: 6px solid #366e39;  /* SEAGOLD green */
     border-radius: 50%;
@@ -393,7 +399,6 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
   
 /*************************************
  * RESPONSIVE MEDIA QUERIES

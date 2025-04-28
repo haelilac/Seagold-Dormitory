@@ -6,6 +6,10 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      top: 5%;
+      right:2.5%;
+      position: relative;
+      width: 130%;
     }
     
     .header-bar {

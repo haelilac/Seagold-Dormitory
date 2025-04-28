@@ -267,152 +267,153 @@ const PendingApplications = () => {
         }
     };
 
-    if (loading) {
-        return (
-          <div className="spinner"></div>
-        );
-      }
-    if (error) return <p>Error: {error}</p>;
+    if (loading) return <div className="application-spinner"></div>;
 
     return (
         <div className="pending-applications">
-            <h2>Pending Applications</h2>
-            <table className="applications-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Contact Number</th>
-                        <th>Check-in Date</th>
-                        <th>Duration</th>
-                        <th>Unit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {applications.map((application) => (
-                        <tr key={application.id} onClick={() => handleSelectApplication(application)}>
-                            <td>{`${application.first_name} ${application.middle_name || ''} ${application.last_name}`}</td>
-                            <td>{application.email}</td>
-                            <td>{application.contact_number}</td>
-                            <td>{application.check_in_date || 'N/A'}</td>
-                            <td>
-                                {application.duration}{' '}
-                                {application.stay_type === 'monthly' && 'month(s)'}
-                                {application.stay_type === 'half-month' && 'half month'}
-                                {application.stay_type === 'weekly' && 'week(s)'}
-                                {application.stay_type === 'daily' && 'day(s)'}
-                                </td>
-                            <td>{application.reservation_details || 'N/A'}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            {selectedApplication && (
-                <div className="modal-overlay" onClick={handleCloseDetails}>
-                    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                        <h3>Application Details</h3>
-                        {!editMode ? (
-                        <>
-                            <p><strong>Name:</strong> {`${selectedApplication.first_name} ${selectedApplication.middle_name || ''} ${selectedApplication.last_name}`}</p>
-                            <p><strong>Email:</strong> {selectedApplication.email}</p>
-                            <p><strong>Contact Number:</strong> {selectedApplication.contact_number}</p>
-                            <p><strong>Duration:</strong> 
-                                {selectedApplication.duration} 
-                                {selectedApplication.stay_type === "monthly" && "month(s)"}
-                                {selectedApplication.stay_type === "half-month" && "half month"}
-                                {selectedApplication.stay_type === "weekly" && "week(s)"}
-                                {selectedApplication.stay_type === "daily" && "day(s)"}
-                                </p>
-                            <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
-                            <p><strong>Auto Price:</strong> ₱
-                                {matchingUnit ? parseFloat(matchingUnit.price).toLocaleString() : 'No matching price'}
-                                </p>
-                                <p><strong>Rent Price:</strong> ₱
-                                    {selectedApplication.set_price && selectedApplication.set_price > 0
-                                        ? parseFloat(selectedApplication.set_price).toLocaleString()  // Use the manually edited price if available
-                                        : (
-                                            matchingUnit ? (
-                                                matchingUnit.stay_type === 'weekly' ? 
-                                                    parseFloat(matchingUnit.price).toLocaleString() // Use the weekly price
-                                                    : matchingUnit.stay_type === 'monthly' ?
-                                                    parseFloat(matchingUnit.price).toLocaleString() // Use the monthly price
-                                                    : 'Not set'  // Default case (if needed)
-                                            ) : 'Not set'
-                                        )}
-                                </p>
-
-                                {!matchingUnit && (
-                                <p style={{ color: 'red' }}>
-                                    No available pricing. Room may be full or not suitable for current group size.
-                                </p>
-                                )}
-
-                            {/* Display Valid ID if available */}
-                            
-                            {selectedApplication.valid_id && (
-                                <div>
-                                    <p><strong>Valid ID:</strong></p>
-                                    {console.log("Cloudinary URL for valid_id:", selectedApplication.valid_id)}
-                                    <img 
-                                    src={selectedApplication.valid_id}
-                                        alt="Valid ID" 
-                                        style={{
-                                            width: '300px',
-                                            height: 'auto',
-                                            marginTop: '10px',
-                                            border: '1px solid #ccc',
-                                            padding: '5px'
-                                        }}
-                                        />
-                                    </div>
-                                    )}
-
-                            
-                            <button onClick={() => setEditMode(true)}>Edit</button>
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    handleAccept(
-                                    selectedApplication.id,
-                                    selectedApplication.first_name,
-                                    selectedApplication.email,
-                                    selectedApplication.reservation_details
-                                    )
-                                }
-                                >
-                                Accept
-                                </button>
-                            <button onClick={() => handleDecline(selectedApplication.id)}>Decline</button>
-                            <button onClick={handleCloseDetails}>Close</button>
-                        </>
-                    ) : (
-                        <>
-                            <label>Duration:</label>
-                            <input type="number" name="duration" value={formData.duration} onChange={handleInputChange} />
-                            
-                            <label>Unit:</label>
-                            
-                            <select name="reservation_details" value={formData.reservation_details} onChange={handleInputChange}>
-                                {units.map((unit) => (
-                                    <option key={unit.id} value={unit.unit_code}>{unit.unit_code}</option>
-                                ))}
-                            </select>
-
-
-                            <label>Set Price:</label>
-                            <input type="number" name="set_price" value={formData.set_price} onChange={handleInputChange} />
-
-                            <button onClick={() => handleUpdateApplication(selectedApplication.id)}>Save</button>
-                            <button onClick={handleCloseDetails}>Cancel</button>
-                        </>
-                    )}
-
+          <h2 className="pending-title">Pending Applications</h2>
+          <table className="applications-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Contact Number</th>
+                <th>Check-in Date</th><th>Duration</th><th>Unit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {applications.map(app => (
+                <tr key={app.id} onClick={() => handleSelectApplication(app)}>
+                  <td>{`${app.first_name} ${app.middle_name || ''} ${app.last_name}`}</td>
+                  <td>{app.email}</td>
+                  <td>{app.contact_number}</td>
+                  <td>{app.check_in_date || 'N/A'}</td>
+                  <td>
+                    {app.duration}
+                    {app.stay_type === 'monthly' && ' month(s)'}
+                    {app.stay_type === 'half-month' && ' half month'}
+                    {app.stay_type === 'weekly' && ' week(s)'}
+                    {app.stay_type === 'daily' && ' day(s)'}
+                  </td>
+                  <td>{app.reservation_details || 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+    
+          {selectedApplication && (
+            <div className="modal-overlay" onClick={handleCloseDetails}>
+              <div className="application-details" onClick={e => e.stopPropagation()}>
+              <button onClick={handleCloseDetails} className="close-details">&times; </button>
+                {/* Header */}
+                <div className="details-header">Application Details</div>
+    
+                {/* Body */}
+                {!editMode ? (
+                  <>
+                    <div className="details-body">
+                      <div className="details-left">
+                        <p><strong>Name:</strong> {`${selectedApplication.first_name} ${selectedApplication.middle_name || ''} ${selectedApplication.last_name}`}</p>
+                        <p><strong>Email:</strong> {selectedApplication.email}</p>
+                        <p><strong>Contact Number:</strong> {selectedApplication.contact_number}</p>
+                        <p><strong>Duration:</strong> {selectedApplication.duration}
+                          {selectedApplication.stay_type === 'monthly' && ' month(s)'}
+                          {selectedApplication.stay_type === 'half-month' && ' half month'}
+                          {selectedApplication.stay_type === 'weekly' && ' week(s)'}
+                          {selectedApplication.stay_type === 'daily' && ' day(s)'}
+                        </p>
+                        <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
+                      </div>
+    
+                      {selectedApplication.valid_id && (
+                        <div className="details-right">
+                          <p>Valid ID</p>
+                          <img src={selectedApplication.valid_id} alt="Valid ID" />
+                        </div>
+                      )}
                     </div>
-                </div>
-            )}
+    
+                    {/* Footer Prices */}
+                    <div className="details-footer">
+                      <p>
+                        <strong>Auto Price:</strong> ₱{matchingUnit
+                          ? parseFloat(matchingUnit.price).toLocaleString()
+                          : '—'}
+                      </p>
+                      <p>
+                        <strong>Rent Price:</strong> ₱{selectedApplication.set_price > 0
+                          ? parseFloat(selectedApplication.set_price).toLocaleString()
+                          : matchingUnit
+                            ? parseFloat(matchingUnit.price).toLocaleString()
+                            : '—'}
+                      </p>
+                    </div>
+    
+                    {/* Actions */}
+                    <div className="action-buttons">
+                      <button className="accept-button"
+                              onClick={() => handleAccept(
+                                selectedApplication.id,
+                                selectedApplication.first_name,
+                                selectedApplication.email,
+                                selectedApplication.reservation_details
+                              )}>
+                        Accept
+                      </button>
+                      <button className="decline-button"
+                              onClick={() => handleDecline(selectedApplication.id)}>
+                        Decline
+                      </button>
+                      <button className="edit-button"
+                              onClick={() => setEditMode(true)}>
+                        Edit
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  /* Edit Mode */
+                  <div className="details-body">
+                    <div className="details-left">
+                      <label>Duration:</label>
+                      <input
+                        type="number"
+                        name="duration"
+                        value={formData.duration}
+                        onChange={handleInputChange}
+                      />
+    
+                      <label>Reservation:</label>
+                      <select
+                        name="reservation_details"
+                        value={formData.reservation_details}
+                        onChange={handleInputChange}
+                      >
+                        {units.map(u => (
+                          <option key={u.id} value={u.unit_code}>
+                            {u.unit_code}
+                          </option>
+                        ))}
+                      </select>
+    
+                      <label>Set Price:</label>
+                      <input
+                        type="number"
+                        name="set_price"
+                        value={formData.set_price}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+    
+                    <div className="save-button">
+                      <button onClick={() => handleUpdateApplication(selectedApplication.id)}>
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-    );
-};
-
-export default PendingApplications;
+      );
+    };
+    
+    export default PendingApplications;

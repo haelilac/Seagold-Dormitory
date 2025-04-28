@@ -17,10 +17,17 @@ const libraries = ["places"];
 const containerStyle = { width: "100%", height: "100vh" };
 const dormPosition = { lat: 14.6036, lng: 120.9889 };
 
+// Existing universities data
 const universities = [
   { id: 1, name: "TUP Manila", position: { lat: 14.5872, lng: 120.9842 } },
   { id: 2, name: "UST", position: { lat: 14.6096, lng: 120.9893 } },
   { id: 3, name: "FEU", position: { lat: 14.6036, lng: 120.9861 } },
+];
+
+// ⭐ New: Training Centers Data (Approximate Coordinates)
+const trainingCenters = [
+  { id: 1, name: "EXACT Training Center", position: { lat: 14.60667, lng: 120.98972 } },
+  { id: 2, name: "SEAMAC International Training Institute", position: { lat: 14.60583, lng: 120.98889 } },
 ];
 
 const GoogleMapComponent = () => {
@@ -50,7 +57,6 @@ const GoogleMapComponent = () => {
       document.body.style.overflow = "auto";
     };
   }, []);
-
   const handleGetUserLocation = () => {
     if (isRouteShown) {
       setSelectedRoute(null);
@@ -60,7 +66,7 @@ const GoogleMapComponent = () => {
       setIsRouteShown(false);
       return;
     }
-  
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -71,12 +77,12 @@ const GoogleMapComponent = () => {
           setUserLocation(location);
           setHasClickedLocation(true);
           setIsRouteShown(true);
-  
+
           if (mapRef.current) {
             mapRef.current.panTo(location);
             mapRef.current.setZoom(15);
           }
-  
+
           handleGetRoute(location);
         },
         () => alert("⚠️ Location access denied.")
@@ -85,13 +91,21 @@ const GoogleMapComponent = () => {
       alert("⚠️ Geolocation not supported.");
     }
   };
-  
-  
+
+  // ⭐ Updated to handle 'training' category
   const handleFindNearbyPlaces = (category) => {
     if (!mapRef.current) return;
-    setSelectedNearbyPlace(null); // clear old selection
+    setSelectedNearbyPlace(null);
+
+    if (category === "training") {
+      setNearbyPlaces(trainingCenters);
+      mapRef.current.panTo(dormPosition);
+      mapRef.current.setZoom(15);
+      return;
+    }
+
     const service = new window.google.maps.places.PlacesService(mapRef.current);
-  
+
     service.nearbySearch(
       {
         location: dormPosition,
@@ -101,7 +115,6 @@ const GoogleMapComponent = () => {
       (results, status) => {
         if (status === window.google.maps.places.PlacesServiceStatus.OK) {
           setNearbyPlaces(results);
-          // Zoom and center to dorm after placing markers
           mapRef.current.panTo(dormPosition);
           mapRef.current.setZoom(15);
         } else {
@@ -111,21 +124,19 @@ const GoogleMapComponent = () => {
       }
     );
   };
-  
-
   const handleGetRoute = (destination) => {
     if (!destination) return;
-  
+
     const travelModes = {
       DRIVING: window.google.maps.TravelMode.DRIVING,
       WALKING: window.google.maps.TravelMode.WALKING,
       BICYCLING: window.google.maps.TravelMode.BICYCLING,
     };
-  
+
     const service = new window.google.maps.DirectionsService();
     service.route(
       {
-        origin: dormPosition, // 🔥 always start from the dorm
+        origin: dormPosition,
         destination,
         travelMode: travelModes[travelMode],
       },
@@ -150,36 +161,34 @@ const GoogleMapComponent = () => {
       }
     );
   };
-  
 
   const onLoadMap = (map) => {
     mapRef.current = map;
-  
+
     setUserMarkerIcon({
       url: userPinGif,
       scaledSize: new window.google.maps.Size(130, 70),
     });
-  
+
     setDormMarkerIcon({
       url: seagoldPinGif,
       scaledSize: new window.google.maps.Size(120, 70),
     });
-  
+
     setAmenityMarkerIcon({
       url: amenityPinGif,
       scaledSize: new window.google.maps.Size(120, 70),
     });
-  
+
     const streetView = map.getStreetView();
     streetView.addListener("visible_changed", () => {
       setIsStreetView(streetView.getVisible());
     });
   };
-
   return (
     <LoadScriptNext googleMapsApiKey="AIzaSyBzwv-dcl79XmHM4O-7_zGSI-Bp9LEen7s" libraries={libraries}>
       <div className="location-page">
-      <button
+        <button
           className={`toggle-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
@@ -187,45 +196,45 @@ const GoogleMapComponent = () => {
         </button>
 
         <div className={`map-sidebar ${!isSidebarOpen ? "collapsed" : ""}`}>
-            <h2>📍 Get Directions</h2>
+          <h2>📍 Get Directions</h2>
 
-            <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
-              <option value="DRIVING">🚗 Driving</option>
-              <option value="WALKING">🚶 Walking</option>
-              <option value="BICYCLING">🚴 Biking</option>
-            </select>
+          <select value={travelMode} onChange={(e) => setTravelMode(e.target.value)} className="travel-mode-selector">
+            <option value="DRIVING">🚗 Driving</option>
+            <option value="WALKING">🚶 Walking</option>
+            <option value="BICYCLING">🚴 Biking</option>
+          </select>
 
-            <div className="route-info">
-              <div className="route-info-inner">
-                {distance && <p>📏 {distance}</p>}
-                {duration && <p>⏱️ {duration}</p>}
-              </div>
+          <div className="route-info">
+            <div className="route-info-inner">
+              {distance && <p>📏 {distance}</p>}
+              {duration && <p>⏱️ {duration}</p>}
             </div>
-
-            <button onClick={handleGetUserLocation} className="map-btn">
-              {isRouteShown ? "❌ Exit Route" : hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
-            </button>
-
-            <button onClick={() => setShowTraffic(!showTraffic)} className="traffic-btn">
-             {showTraffic ? "🚦" : "🚦"}
-            </button>
-
-            <h3>🔍 Find Nearby:</h3>
-            <div className="route-select">
-              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-                <option value="school">🏫 Schools</option>
-                <option value="laundry">🧺 Laundry</option>
-                <option value="restaurant">🍛 Carinderias</option>
-                <option value="gas_station">⛽ Gas Stations</option>
-              </select>
-            </div>
-            <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="nearby-btn">
-                🔎
-              </button>
           </div>
-        <div className="map-ui">
 
-        {isStreetView && (
+          <button onClick={handleGetUserLocation} className="map-btn">
+            {isRouteShown ? "❌ Exit Route" : hasClickedLocation ? "🧭 Get Route" : "📌 Get My Location"}
+          </button>
+
+          <button onClick={() => setShowTraffic(!showTraffic)} className="traffic-btn">
+            🚦
+          </button>
+
+          <h3>🔍 Find Nearby:</h3>
+          <div className="route-select">
+            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+              <option value="school">🏫 Schools</option>
+              <option value="laundry">🧺 Laundry</option>
+              <option value="restaurant">🍛 Carinderias</option>
+              <option value="gas_station">⛽ Gas Stations</option>
+              <option value="training">🏢 Training Centers</option> {/* ⭐ New Option */}
+            </select>
+          </div>
+          <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className="nearby-btn">
+            🔎
+          </button>
+        </div>
+        <div className="map-ui">
+          {isStreetView && (
             <button className="exit-street-view-btn" onClick={() => mapRef.current.getStreetView().setVisible(false)}>
               🔙 Back to Map
             </button>
@@ -258,7 +267,7 @@ const GoogleMapComponent = () => {
               </button>
             </div>
 
-          <GoogleMap
+            <GoogleMap
               mapContainerStyle={containerStyle}
               center={dormPosition}
               zoom={15}
@@ -270,58 +279,47 @@ const GoogleMapComponent = () => {
                 mapTypeControl: true
               }}
             >
-        {dormMarkerIcon && (
-          <Marker position={dormPosition} icon={dormMarkerIcon} />
-        )}
+              {dormMarkerIcon && <Marker position={dormPosition} icon={dormMarkerIcon} />}
 
-        {userLocation && userMarkerIcon && (
-          <Marker position={userLocation} icon={userMarkerIcon} />
-        )}
+              {userLocation && userMarkerIcon && <Marker position={userLocation} icon={userMarkerIcon} />}
 
-        {amenityMarkerIcon &&
-          nearbyPlaces.map((place) => (
-            <Marker
-              key={place.place_id}
-              position={{
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng(),
-              }}
-              icon={amenityMarkerIcon}
-            />
-        ))}
+              {amenityMarkerIcon &&
+                nearbyPlaces.map((place) => (
+                  <Marker
+                    key={place.id || place.place_id}
+                    position={place.position || {
+                      lat: place.geometry.location.lat(),
+                      lng: place.geometry.location.lng(),
+                    }}
+                    icon={amenityMarkerIcon}
+                  />
+              ))}
 
-        {selectedRoute && (
-          <>
-            <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
-            <Marker
-              position={selectedRoute.routes[0].legs[0].start_location}
-              icon={{
-                url: "/assets/startingpoint.svg",
-                scaledSize: new window.google.maps.Size(60, 60),
-              }}
-            />
-            <Marker
-              position={selectedRoute.routes[0].legs[0].end_location}
-              icon={{
-                url: "/assets/endpoint.svg",
-                scaledSize: new window.google.maps.Size(40, 40),
-              }}
-            />
-          </>
-        )}
+              {selectedRoute && (
+                <>
+                  <DirectionsRenderer directions={selectedRoute} options={{ suppressMarkers: true }} />
+                  <Marker
+                    position={selectedRoute.routes[0].legs[0].start_location}
+                    icon={{ url: "/assets/startingpoint.svg", scaledSize: new window.google.maps.Size(60, 60) }}
+                  />
+                  <Marker
+                    position={selectedRoute.routes[0].legs[0].end_location}
+                    icon={{ url: "/assets/endpoint.svg", scaledSize: new window.google.maps.Size(40, 40) }}
+                  />
+                </>
+              )}
 
-        {walkingPath && (
-          <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />
-        )}
+              {walkingPath && (
+                <Polyline path={walkingPath} options={{ strokeColor: "#34A853", strokeWeight: 2 }} />
+              )}
 
-        {showTraffic && <TrafficLayer />}
-      </GoogleMap>
-                </div>
-              </div>
-            </div>
-          </LoadScriptNext>
-        );
-      
+              {showTraffic && <TrafficLayer />}
+            </GoogleMap>
+          </div>
+        </div>
+      </div>
+    </LoadScriptNext>
+  );
 };
 
 export default GoogleMapComponent;

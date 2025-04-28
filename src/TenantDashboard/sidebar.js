@@ -6,22 +6,21 @@ import { MdOutlineBedroomParent, MdOutlinePayment } from "react-icons/md";
 import { GrHostMaintenance } from "react-icons/gr";
 import logo from "../assets/seagoldlogo.png";
 
-const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
+const Sidebar = ({ sidebarOpen }) => {
   const location = useLocation(); // ✅ NOW correctly inside the component
 
   return (
     <>
       {/* Sidebar for desktop */}
-      <div className={`${styles.sidebar} ${sidebarOpen ? styles.open : 'collapsed'} desktop-only`}>
-        <img 
-          src={logo} 
-          alt="Seagold Logo"  
-          onClick={toggleSidebar}
-          className={sidebarOpen ? "seagold-logo" : "seagold-logo small"} 
-          style={{ cursor: "pointer" }}
-          title="Toggle Sidebar"
+      <div className={`${styles.sidebar} desktop-only`}>
+      <img
+          src={logo}
+          alt="Seagold Logo"
+          onClick={() => {
+            if (window.innerWidth > 768);
+          }}
+          className={`${styles.clickableLogo} ${sidebarOpen ? styles.logoExpanded : styles.logoCollapsed}`}
         />
-
         <nav>
           <ul>
             <li>
@@ -33,7 +32,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }) => {
             <li>
               <NavLink to="room-info" className={`nav-link ${location.pathname === '/tenant/room-info' ? 'active' : ''}`}>
                 <MdOutlineBedroomParent />
-                {sidebarOpen && <span>Room Info</span>}
+                {sidebarOpen && <span>Room</span>}
               </NavLink>
             </li>
             <li>

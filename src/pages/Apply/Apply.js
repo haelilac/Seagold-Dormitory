@@ -38,13 +38,20 @@ const ContactUs = () => {
     const [showTermsModal, setShowTermsModal] = useState(false);
     const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
     const [unitPrice, setUnitPrice] = useState(null);
-
+    const [reservationFee, setReservationFee] = useState(0);
+    const [receipt, setReceipt] = useState(null);
+    const [receiptUrl, setReceiptUrl] = useState('');
     // Address Data
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
     const [barangays, setBarangays] = useState([]);
     const [municipalities, setMunicipalities] = useState([]);
-
+    const [loading, setLoading] = useState(false);
+    const [paymentData, setPaymentData] = useState({
+        reference_number: '',
+        amount: '',
+    });
+    
 
     // Fetch provinces on mount
     useEffect(() => {
@@ -189,17 +196,18 @@ const ContactUs = () => {
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units-only');
                 if (!response.ok) throw new Error('Failed to fetch units');
                 const data = await response.json();
-                console.log('✅ Units fetched:', data); // ✅ Debug here
-                setUnits(data);
+                console.log('✅ Units fetched:', data);
+                setUnits(Array.isArray(data.units) ? data.units : []);   // ✅ Only set the array part
             } catch (err) {
                 console.error('Error fetching units:', err);
             }
         };
         fetchUnits();
     }, []);
+    
     
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -214,21 +222,101 @@ const ContactUs = () => {
     
         if (name === "stay_type") {
             let autoDuration = "";
-            if (value === "half-month") autoDuration = 15;
-            else if (value === "weekly") autoDuration = 7;
-            else if (value === "daily") autoDuration = formData.duration || ""; // Allow custom duration for daily
-            else if (value === "monthly") autoDuration = "";
+            let fee = 0;
+    
+            if (value === "monthly") {
+                autoDuration = "";
+                fee = 1000; // Monthly stay requires 1000 pesos
+            } else if (value === "half-month" || value === "weekly" || value === "daily") {
+                autoDuration = value === "half-month" ? 15 : value === "weekly" ? 7 : formData.duration;
+                fee = 500; // Half-month, weekly, or daily stay requires 500 pesos
+            }
     
             setFormData(prev => ({
                 ...prev,
                 [name]: value,
-                duration: autoDuration
+                duration: autoDuration,
             }));
-            return;
+            
+            setReservationFee(fee); // Set the reservation fee based on stay type
         }
     
         // Handle other inputs
         setFormData({ ...formData, [name]: value });
+    };
+
+    const handleReceiptUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            alert("❌ Please select a receipt file.");
+            return;
+        }
+    
+        const formDataUpload = new FormData();
+        formDataUpload.append("receipt", file);
+    
+        try {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
+                method: "POST",
+                body: formDataUpload,
+            });
+    
+            const result = await response.json();
+    
+            if (response.ok && result.match === true) {
+                const extractedAmount = parseFloat(result.ocr_data.extracted_amount);
+                const expectedAmount = formData.stay_type === "monthly" ? 1000 : 500;
+    
+                    if (extractedAmount !== expectedAmount) {
+                        alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
+                        return;
+                    }
+                
+                    setPaymentData({
+                        reference_number: result.ocr_data.extracted_reference,
+                        amount: extractedAmount,
+                    });
+                
+                    setReceiptUrl(result.receipt_url);
+                    alert("✅ Receipt validated successfully!");
+                } else {
+                    alert(result.message || "❌ Error processing receipt.");
+                }
+                
+        } catch (error) {
+            console.error("❌ Error validating receipt:", error);
+            alert("❌ Server error while validating receipt.");
+        }
+    };
+
+    const formatDateTimeReadable = (date) => {
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: true 
+        };
+        return new Date(date).toLocaleString('en-US', options);
+    };
+    
+    
+     
+    const sendToApplication = (applicationId, referenceNumber, amount, dateTime) => {
+        fetch("https://seagold-laravel-production.up.railway.app/api/applications/payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                application_id: applicationId,
+                reference_number: referenceNumber,
+                amount: amount,
+                date_time: dateTime,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => console.log("✅ Payment data linked to application:", data))
+        .catch(error => console.error("❌ Error linking payment data:", error));
     };
     
 
@@ -327,76 +415,81 @@ const ContactUs = () => {
             alert("Failed to verify email. Please try again.");
           }
         }
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-    
-        if (!isVerified) {
-            alert('Please verify your email using Google Sign-In before submitting.');
-            return;
-        }
-    
-        if (!formData.accept_privacy) {
-            alert('You must accept the privacy terms.');
-            return;
-        }
-    
-        try {
-            const requestData = new FormData();
-    
-            // Append all form fields
-            Object.keys(formData).forEach((key) => {
-                if (key === 'check_in_date') {
-                    requestData.append(key, formatDateTime(formData[key]));
-                } else if (key === 'valid_id') {
-                    return; // Skip raw file field
-                } else {
-                    requestData.append(key, formData[key]);
-                }
-            });
-    
-            // ✅ Add unit price after FormData is created
-            requestData.append("set_price", unitPrice || 0);
-    
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
-                method: 'POST',
-                body: requestData,
-                headers: { Accept: 'application/json' },
-            });
-    
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Server Error: ${response.status} - ${errorText}`);
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            if (!isVerified) {
+                alert('Please verify your email using Google Sign-In before submitting.');
+                return;
             }
-    
-            alert('Application submitted successfully!');
-            setFormData({
-                last_name: '',
-                first_name: '',
-                middle_name: '',
-                birthdate: null,
-                email: '',
-                facebook_profile: '',
-                house_number: '',
-                street: '',
-                barangay: '',
-                city: '',
-                province: '',
-                zip_code: '',
-                contact_number: '',
-                occupation: '',
-                check_in_date: null,
-                duration: '',
-                reservation_details: '',
-                stay_type: '', 
-                valid_id: null,
-                accept_privacy: false,
-            });
-            setIsVerified(false);
-        } catch (error) {
-            console.error('Error submitting application:', error.message);
-            alert(`An error occurred: ${error.message}`);
-        }
-    };
+            if (!formData.accept_privacy) {
+                alert('You must accept the privacy terms.');
+                return;
+            }
+            if (!receiptUrl) {
+                alert('Please upload your payment receipt.');
+                return;
+            }
+        
+            setLoading(true); // 🔥 Start loading
+        
+            try {
+                const requestData = new FormData();
+                Object.keys(formData).forEach((key) => {
+                    if (key === 'check_in_date') {
+                        requestData.append(key, formatDateTime(formData[key]));
+                    } else if (key === 'valid_id') {
+                        return;
+                    } else {
+                        requestData.append(key, formData[key]);
+                    }
+                });
+                requestData.append("reservation_fee", reservationFee);
+                requestData.append("receipt_url", receiptUrl);
+                requestData.append("reference_number", paymentData.reference_number);
+                requestData.append("payment_amount", paymentData.amount);
+        
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
+                    method: 'POST',
+                    body: requestData,
+                });
+        
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server Error: ${response.status} - ${errorText}`);
+                }
+        
+                alert('Application submitted successfully!');
+                setFormData({
+                    last_name: '',
+                    first_name: '',
+                    middle_name: '',
+                    birthdate: null,
+                    email: '',
+                    facebook_profile: '',
+                    house_number: '',
+                    street: '',
+                    barangay: '',
+                    city: '',
+                    province: '',
+                    zip_code: '',
+                    contact_number: '',
+                    occupation: '',
+                    check_in_date: null,
+                    duration: '',
+                    reservation_details: '',
+                    stay_type: '',
+                    valid_id: null,
+                    accept_privacy: false,
+                });
+                setIsVerified(false);
+            } catch (error) {
+                console.error('Error submitting application:', error.message);
+                alert(`An error occurred: ${error.message}`);
+            } finally {
+                setLoading(false); // 🔥 Stop loading after done (success or error)
+            }
+        };
+          
     
     const duration = Number(formData.duration);
 
@@ -698,48 +791,75 @@ const ContactUs = () => {
                         </div>
                     )}
 
-
+                    {reservationFee > 0 && (
+                        <div className="form-group">
+                            <label>Upload Payment Receipt (₱{reservationFee})</label>
+                            <input 
+                                type="file" 
+                                onChange={handleReceiptUpload} 
+                                accept="image/*,video/*,application/*"
+                                required={true}
+                            />
+                        </div>
+                    )}
+                    {paymentData.reference_number && (
+                        <div className="payment-preview">
+                            <h4>📄 Payment Details Preview</h4>
+                            <p><strong>Reference Number:</strong> {paymentData.reference_number}</p>
+                            <p><strong>Amount:</strong> ₱{paymentData.amount}</p>
+                        </div>
+                    )}
 
                 {/* Reservation */}
                 <div className="form-group">
-                    <label>Reservation</label>
-                    <select
-                        name="reservation_details"
-                        value={formData.reservation_details}
-                        onChange={handleInputChange}
-                        required
-                        disabled={!formData.stay_type || !formData.duration} // Disable if stay type & duration are not selected
-                    >
-                        <option value="">Select a Unit</option>
+                <label>Reservation</label>
+                <select
+                    name="reservation_details"
+                    value={formData.reservation_details}
+                    onChange={handleInputChange}
+                    required
+                    disabled={!formData.stay_type || !formData.duration}
+                >
+                    <option value="">Select a Unit</option>
 
-                        {formData.stay_type && (
-                            <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
-                                {Object.entries(
-                                units
-                                .filter(unit => unit.monthly_users_count < unit.max_capacity) // changed this line
-                                .reduce((acc, unit) => {
-                                if (!acc[unit.unit_code]) {
-                                    acc[unit.unit_code] = unit;
-                                } else if (
-                                    (unit.max_capacity - unit.monthly_users_count) >
-                                    (acc[unit.unit_code].max_capacity - acc[unit.unit_code].monthly_users_count)
-                                ) {
-                                    acc[unit.unit_code] = unit;
-                                }
-                                return acc;
-                                }, {})
+                    {units.length > 0 && formData.stay_type && (() => {
+                    // Step 1: Filter units based on stay_type and available slots
+                    const filteredUnits = units
+                        .filter(unit => {
+                        if (!unit.stay_type || !formData.stay_type) return false;
+                        return unit.stay_type.toLowerCase() === formData.stay_type.toLowerCase();
+                        })
+                        .filter(unit => {
+                        const currentUsers = unit.same_staytype_users_count || 0;
+                        return currentUsers < unit.max_capacity;
+                        });
 
-                                ).map(([unitCode, unit]) => (
-                                    <option key={unitCode} value={unit.unit_code}>
-                                    {unit.unit_code} - ({unit.max_capacity - unit.monthly_users_count} slots available)
-                                    </option>
+                    // Step 2: Group by unit_code and keep unit with most slots available
+                    const groupedUnits = {};
+                    filteredUnits.forEach(unit => {
+                        const availableSlots = unit.max_capacity - (unit.same_staytype_users_count || 0);
+                        if (!groupedUnits[unit.unit_code] || availableSlots > groupedUnits[unit.unit_code].availableSlots) {
+                        groupedUnits[unit.unit_code] = { ...unit, availableSlots };
+                        }
+                    });
 
-                                ))}
+                    const uniqueUnits = Object.values(groupedUnits);
 
-                            </optgroup>
-                            )}
-                    </select>
+                    if (uniqueUnits.length === 0) return null;
+
+                    return (
+                        <optgroup label={`${formData.stay_type.charAt(0).toUpperCase() + formData.stay_type.slice(1)} Stay`}>
+                        {uniqueUnits.map(unit => (
+                            <option key={`${unit.unit_code}-${unit.stay_type}`} value={unit.unit_code}>
+                            {unit.unit_code} - ({unit.availableSlots} slots available)
+                            </option>
+                        ))}
+                        </optgroup>
+                    );
+                    })()}
+                </select>
                 </div>
+
 
                 {/* ID Type Selection and File Upload */}
                 <div className="form-row">
@@ -803,8 +923,17 @@ const ContactUs = () => {
                         </label>
                     </div>
                 </div>
-
-                <button type="submit" className="send-message-button" disabled={!isVerified || !isIdVerified}>Submit</button>
+                <button 
+                    type="submit" 
+                    className={`send-message-button ${loading ? "loading" : ""}`} 
+                    disabled={!isVerified || !isIdVerified || loading}
+                >
+                    {loading ? (
+                        <div className="loading-spinner"></div>
+                    ) : (
+                        "Submit"
+                    )}
+                </button>
             </form> 
             </div>
             

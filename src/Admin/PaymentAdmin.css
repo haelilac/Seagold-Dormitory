@@ -1,7 +1,9 @@
 .admin-payment-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    width: 80%;
+    position:absolute;
+    right:5%;
+    top: 13%;
+    padding: 10px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;

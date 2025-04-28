@@ -21,6 +21,40 @@ body {
   align-items: flex-start;
 }
 
+.send-message-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* 🔥 When loading state */
+.send-message-button.loading {
+  background-color: #b0c4de; /* Light steel blue (disabled look) */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Spinner inside */
+.loading-spinner {
+width: 20px;
+height: 20px;
+border: 3px solid #f3f3f3;
+border-top: 3px solid #3498db;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin: 0 auto;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
 /* Left Section: Get in Touch Form */
 .get-in-touch {
   flex: 1.5;
@@ -87,6 +121,7 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
+  z-index: 9999;
 }
 
 .react-datepicker__header {

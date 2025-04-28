@@ -1,240 +1,276 @@
-.admin-tour-booking .fixed-calendar {
-    position: relative;
-    top: 10px;
-    background: #f9f9f9;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
+.booking-spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #366e39;  /* SEAGOLD green */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 100px auto;
+}
+
+.admin-tour-bookings {
+  top: 7%;
+  position: relative;
+}
+
+.admin-tour-bookings h2 {
+  font-size: 1.8rem;
+  text-align: left;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #bf9e1b;
+}
+
+.admin-tour-bookings .fixed-calendar {
+  position: sticky; /* Keeps it fixed when scrolling */
+  top: 10px;
+  background: #f9f9f9;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  font-family: 'Inter', sans-serif; /* Same as tenants */
 }
 
 .admin-tour-booking .fixed-calendar h3 {
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.calendar-availability-section h3 {
+  font-size: 1.8rem;
+  text-align: left;
+  padding-bottom: 10px;
 }
 
 .admin-tour-booking .fixed-calendar input[type="date"] {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .admin-tour-booking .time-slot {
-    padding: 1rem;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .admin-tour-booking .time-slot.booked {
-    background-color: #ffcccc;
-    color: #ff0000;
-    cursor: not-allowed;
+  background-color: #ffcccc;
+  color: #000000;
+  cursor: not-allowed;
 }
 
 .admin-tour-booking .time-slot.available {
-    background-color: #28a745; /* Green */
-    color: #fff;
+  background-color: #366e39; /* Green */
+  color: #fff;
 }
 
 .admin-tour-booking .time-slot.unavailable {
-    background-color: #a2a2a2; /* Light grey */
-    color: #fff;
+  background-color: #a2a2a2; /* Light grey */
+  color: #fff;
 }
 
 .admin-tour-booking .time-slot:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
+/* Active state for available time slot */
+.admin-tour-booking .time-slot.available:active {
+  background-color: #366e39;  /* Darker green */
+  color: #fff;
+}
+.unavailable {
+  background-color: #bf9e1b !important;
+}
+
+.unavailable:hover{
+  background-color: #d4ba4f !important;
+}
+
+
 .admin-tour-booking .make-all-unavailable {
-    background-color: #ff4d4d;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-bottom: 1rem;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
 .admin-tour-booking .make-all-unavailable:hover {
-    background-color: #cc0000;
+  background-color: #cc0000;
 }
 
 .calendar-availability-section {
-    margin-top: 2rem;
-  }
-  
-  .time-slots-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 1rem;
-  }
-  
-  .time-slot-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .toggle-btn.available {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .toggle-btn.unavailable {
-    background-color: #f44336;
-    color: white;
-  }
-
-  .bulk-buttons {
-    display: flex;
-    gap: 1rem;
-    margin: 1rem 0;
-  }
-  
-  .bulk-buttons button {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 6px;
-    background-color: #4a954e;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .bulk-buttons button:hover {
-    background-color: #36743a;
-  }
-
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    margin: 0 10px;
-  }
-  
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    background-color: #ccc;
-    border-radius: 34px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: 0.4s;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-  }
-  
-  input:checked + .slider {
-    background-color: #00ff88;
-  }
-  
-  input:checked + .slider:before {
-    transform: translateX(26px);
-  }
-
-  .time-slot-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0.5rem 0;
-  }
-
-  .react-datepicker {
-    border: 1px solid #cfd8dc;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px #0000001a;
-    font-family: Roboto, sans-serif;
-    overflow: hidden;
-  }
-
-  .react-datepicker__day--disabled {
-    color: #ccc !important;
-    pointer-events: none;
-  }
-
-/* 🔴 Unavailable Dates */
-.react-datepicker__day.unavailable-date {
-    background-color: #f8d7da;
-    color: #721c24;
-    border-radius: 50%;
-}
-
-/* 🟢 Available Dates */
-.react-datepicker__day.available-date {
-    background-color: #d4edda;
-    color: #155724;
-    border-radius: 50%;
-}
-
-/* 🟡 Has Booking Dates */
-.react-datepicker__day.has-booking {
-    background-color: #fff3cd;
-    color: #856404;
-    border-radius: 50%;
-}
-.bulk-toggle-switch {
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
+  margin-top: 2rem;
 }
 
 .time-slots-container {
-    margin-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  border-radius: 10px;
 }
 
+.time-slot-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+}
+
+/* ===== Toggle Button Styling ===== */
 .toggle-btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  border-radius: 5px;
+  font-weight: 600;
 }
 
+/* Green when status is available */
 .toggle-btn.available {
-    background-color: #d4edda;
-    color: #155724;
+  background-color: #366e39;
+  color: #fff;
 }
 
-.toggle-btn.unavailable {
-    background-color: #f8d7da;
-    color: #721c24;
+.toggle-btn.available:hover {
+  background-color: #4a954e;
+  color: #fff;
 }
-  
-  .spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-    font-size: 1.5rem;
-    color: #333;
-  }
+
+/* Red when status is unavailable */
+.toggle-btn.unavailable {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+
+/* Hover effect for both */
+.toggle-btn:hover {
+  transform: scale(1.02);
+}
+
+/* Active click effect */
+.toggle-btn:active {
+  transform: scale(0.98);
+}
+
+.bulk-buttons {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.bulk-buttons button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  background-color: #366e39;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.bulk-buttons button:hover {
+  background-color: #4a954e;
+}
+
+
+
+.bookings-table {
+  width: 100%;
+  border-collapse: separate; /* Important: use 'separate' to allow border-radius */
+  border-spacing: 0; /* Remove extra spacing between cells */
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.bookings-container h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  text-align: left;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #bf9e1b;
+}
+
+.bookings-table {
+  width: 100%;
+  position: relative;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;  /* Ensure rounded corners apply */
+}
+
+.bookings-table thead {
+  background-color: #366e39;  /* SEAGOLD green */
+  color: #ffffff;
+}
+
+.bookings-table th,
+.bookings-table td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.bookings-table th {
+  background-color: #366e39;
+  color: #ffffff;
+}
+
+
+.bookings-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.bookings-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Styling for Action Buttons */
+.bookings-table button {
+  padding: 6px 12px;
+  margin: 0 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+/* Confirm Button */
+.bookings-table button:nth-child(1) {
+  background-color: #366e39;  /* Green */
+  color: #fff;
+}
+
+.bookings-table button:nth-child(1):hover {
+  background-color:#4a954e;
+}
+
+/* Cancel Button */
+.bookings-table button:nth-child(2) {
+  background-color: #bf9e1b;  /* Red */
+  color: #fff;
+}
+
+.bookings-table button:nth-child(2):hover {
+  background-color: #d4ba4f;
+}
