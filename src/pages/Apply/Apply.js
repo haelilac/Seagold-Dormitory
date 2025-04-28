@@ -270,47 +270,57 @@ const ContactUs = () => {
     
 
     // Receipt Upload
+    // Receipt Upload
     const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) {
             alert("❌ Please select a receipt file.");
             return;
         }
-    
+
         if (!paymentData.reference_number || !paymentData.amount) {
-            alert("❗ Please input reference number and amount first.");
+            alert("❗ Please input both reference number and amount before uploading receipt.");
             return;
         }
-    
+
         try {
+            // Step 1: Upload to Cloudinary
             const uploadedUrl = await uploadToCloudinary(file);
+            console.log("✅ Uploaded to Cloudinary:", uploadedUrl);
             setReceiptUrl(uploadedUrl);
-    
+
+            // Step 2: Validate receipt against backend
             const formDataUpload = new FormData();
-            formDataUpload.append("receipt", file); // 🔥 FILE
-            formDataUpload.append("user_reference", String(paymentData.reference_number)); // 🔥 STRING
-            formDataUpload.append("user_amount", String(paymentData.amount)); // 🔥 STRING
-    
+            formDataUpload.append("receipt", file); // 🧠 Original image file
+            formDataUpload.append("user_reference", paymentData.reference_number.trim()); // 🧠 Always trim spaces
+            formDataUpload.append("user_amount", String(paymentData.amount)); // 🧠 Must be string
+
             const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt/", {
                 method: "POST",
                 body: formDataUpload,
             });
-    
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("❌ Server validation error:", text);
+                throw new Error(`Server Error: ${response.status}`);
+            }
+
             const result = await response.json();
-            console.log(result);
-    
-            if (response.ok && result.match) {
+            console.log("✅ Receipt Validation Result:", result);
+
+            if (result.match) {
                 alert("✅ Receipt validated successfully!");
             } else {
-                alert(result.message || "❌ Error validating receipt.");
+                alert(`❌ Validation failed: ${result.message || "Unknown error"}`);
             }
+
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error validating receipt.");
+            alert("❌ Failed to validate receipt. Please try again later.");
         }
     };
-    
-    
+
     
     // ID validation
     const handleIdUpload = async (e) => {
