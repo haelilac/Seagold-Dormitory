@@ -13,17 +13,17 @@ module.exports = {
       assert: require.resolve('assert/'),
       process: require.resolve('process'),
       buffer: require.resolve('buffer/'),
+      path: require.resolve('path-browserify'),
     },
   },
-  optimization: {
-    portableRecords: true,
-  },
+  
   plugins: [
     new webpack.ProvidePlugin({
       process: 'process/browser',
       Buffer: ['buffer', 'Buffer'],
     }),
   ],
+  
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
