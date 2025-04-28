@@ -273,6 +273,40 @@ const ContactUs = () => {
 
     
 
+
+    
+    const handleIdUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            alert("❌ Please select an ID file.");
+            return;
+        }
+    
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file);
+        formDataUpload.append("id_type", formData.id_type);
+    
+        try {
+            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id", { 
+                method: 'POST',
+                body: formDataUpload,
+                headers: { 
+                    Accept: 'application/json'
+                }
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                alert(`✅ ID Verified: ${data.id_type_matched ? "Yes" : "No"}`);
+            } else {
+                alert("❌ Error processing ID.");
+            }
+        } catch (error) {
+            console.error('Error uploading ID:', error);
+            alert("❌ Error processing the ID.");
+        }
+    };
+    
     const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) {
@@ -305,7 +339,6 @@ const ContactUs = () => {
     
             if (result.match) {
                 alert("✅ Receipt scanned successfully!");
-    
                 setPaymentData({
                     reference_number: result.reference,
                     amount: result.amount,
@@ -313,48 +346,12 @@ const ContactUs = () => {
             } else {
                 alert(result.message || "❌ Error scanning receipt.");
             }
-    
         } catch (error) {
             console.error("❌ Error processing receipt:", error);
             alert("❌ Server error while validating receipt.");
         }
     };
     
-    
-    
-    
-    // ID validation
-    const handleIdUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) {
-            alert("❌ Please select an ID file.");
-            return;
-        }
-    
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", file);
-        formDataUpload.append("id_type", formData.id_type);
-    
-        try {
-            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id", { 
-                method: 'POST',
-                body: formDataUpload,
-                headers: { 
-                    Accept: 'application/json'
-                }
-            });
-    
-            if (response.ok) {
-                const data = await response.json();
-                alert(`✅ ID Verified: ${data.id_type_matched ? "Yes" : "No"}`);
-            } else {
-                alert("❌ Error processing ID.");
-            }
-        } catch (error) {
-            console.error('Error uploading ID:', error);
-            alert("❌ Error processing the ID.");
-        }
-    };
     
 
     const formatDateTimeReadable = (date) => {
