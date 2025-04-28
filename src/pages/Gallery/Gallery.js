@@ -52,8 +52,8 @@ const Gallery = () => {
       window.Pusher = Pusher;
       window.Echo = new Echo({
         broadcaster: 'pusher',
-        key: 'fea5d607d4b38ea09320',
-        cluster: 'ap1',
+        key: '865f456f0873a587bc36',
+        cluster: 'ap3',
         forceTLS: true,
       });
     }

@@ -72,8 +72,8 @@ const AdminDashboard = () => {
     }, []);
 
     useEffect(() => {
-      const pusher = new Pusher("fea5d607d4b38ea09320", {
-        cluster: "ap1",
+      const pusher = new Pusher("865f456f0873a587bc36", {
+        cluster: "ap3",
         encrypted: true,
       });
     
