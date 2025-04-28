@@ -251,12 +251,12 @@ const ContactUs = () => {
             alert("❌ Please select a receipt file.");
             return;
         }
-        
+    
         const formDataUpload = new FormData();
         formDataUpload.append("receipt", file);
     
         try {
-            const response = await fetch("https://seagold-python-production.up.railway.app/api/validate-receipt", {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -273,6 +273,7 @@ const ContactUs = () => {
             alert("❌ Server error while validating receipt.");
         }
     };
+    
     
     // ID validation
     const handleIdUpload = async (e) => {
