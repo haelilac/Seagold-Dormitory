@@ -8,9 +8,15 @@ const RoomInfoTenant = () => {
   const { getCachedData, updateCache } = useDataCache();
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // ⭐ New States for Amenity Requests
+  const [amenityType, setAmenityType] = useState('');
+  const [requests, setRequests] = useState([]);
+
   useEffect(() => {
-    document.body.style.overflow = "auto"; // force scroll back on
+    document.body.style.overflow = "auto";
   }, []);
+
   useEffect(() => {
     const fetchRoomInfo = async () => {
       try {
@@ -18,7 +24,7 @@ const RoomInfoTenant = () => {
         if (cached) {
           setInfo(cached);
         } else {
-          const res = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant-room-info", {
+          const res = await fetch("http://localhost:8000/api/tenant-room-info", {
             headers: {
               Authorization: `Bearer ${getAuthToken()}`,
               Accept: "application/json"
@@ -34,8 +40,48 @@ const RoomInfoTenant = () => {
         setLoading(false);
       }
     };
+
     fetchRoomInfo();
+    fetchRequests();  // ⭐ Fetch existing amenity requests on load
+
   }, []);
+
+  // ⭐ Fetch Amenity Requests
+  const fetchRequests = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/api/amenities/requests", {
+        headers: { Authorization: `Bearer ${getAuthToken()}` }
+      });
+      const data = await res.json();
+      setRequests(data);
+    } catch (err) {
+      console.error("Error fetching amenity requests:", err);
+    }
+  };
+
+  // ⭐ Handle Amenity Request Submission
+  const handleRequestAmenity = async () => {
+    if (!amenityType) return alert("Please select an amenity!");
+    try {
+      const res = await fetch("http://localhost:8000/api/amenities/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getAuthToken()}`
+        },
+        body: JSON.stringify({ amenity_type: amenityType })
+      });
+      if (res.ok) {
+        alert("Amenity request submitted!");
+        setAmenityType('');
+        fetchRequests();
+      } else {
+        alert("Failed to submit request.");
+      }
+    } catch (err) {
+      console.error("Request error:", err);
+    }
+  };
 
   if (loading || !info) return <div className="spinner"></div>;
 
@@ -57,7 +103,7 @@ const RoomInfoTenant = () => {
             ))
           ) : (
             <img
-              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg"
+              src="http://localhost:8000/Dorm.jpg"
               alt="Default Room"
               className="thumbnail"
             />
@@ -65,7 +111,7 @@ const RoomInfoTenant = () => {
         </div>
 
         <div className="roomDetails">
-        <div className="infoBlock"><span className="infoLabel">UNIT TYPE:</span> {info.stay_types?.join(", ") || "N/A"}</div>
+          <div className="infoBlock"><span className="infoLabel">UNIT TYPE:</span> {info.stay_types?.join(", ") || "N/A"}</div>
           <div className="infoBlock"><span className="infoLabel">CAPACITY:</span> {info.max_capacity} occupants</div>
           <div className="infoBlock"><span className="infoLabel">MONTHLY RENT:</span> ₱{info.base_price?.toLocaleString()}</div>
           <div className="infoBlock"><span className="infoLabel">RENT DUE DATE:</span> 15th of every month</div>
@@ -74,20 +120,42 @@ const RoomInfoTenant = () => {
         <div className="amenitiesSection">
           <h3>AMENITIES:</h3>
           <div className="amenitiesList">
-          {Array.isArray(info.amenities) && info.amenities.length > 0 ? (
-                info.amenities.map((a, i) => (
-                  <div key={i} className="amenityContainer">
-                    <span>{a}</span>
-                  </div>
-                ))
-              ) : (
-                <p>No amenities listed.</p>
-              )}
+            {Array.isArray(info.amenities) && info.amenities.length > 0 ? (
+              info.amenities.map((a, i) => (
+                <div key={i} className="amenityContainer">
+                  <span>{a}</span>
+                </div>
+              ))
+            ) : (
+              <p>No amenities listed.</p>
+            )}
           </div>
+        </div>
+
+        {/* ⭐ Amenity Request Section */}
+        <div className="amenityRequestSection">
+          <h3>Request Additional Amenities</h3>
+          <select value={amenityType} onChange={(e) => setAmenityType(e.target.value)}>
+            <option value="">-- Select Amenity --</option>
+            <option value="Mini Fridge">Mini Fridge</option>
+            <option value="Electric Fan">Electric Fan</option>
+            <option value="Extra Chair">Extra Chair</option>
+          </select>
+          <button onClick={handleRequestAmenity}>Request Amenity</button>
+
+          <h4>My Requests</h4>
+          <ul>
+            {requests.length > 0 ? (
+              requests.map(req => (
+                <li key={req.id}>{req.amenity_type} - <strong>{req.status}</strong></li>
+              ))
+            ) : (
+              <p>No amenity requests yet.</p>
+            )}
+          </ul>
         </div>
       </div>
 
-      {/* Image Preview Modal */}
       {selectedImage && (
         <div className="imageModalOverlay" onClick={() => setSelectedImage(null)}>
           <div className="imageModalContent" onClick={(e) => e.stopPropagation()}>
