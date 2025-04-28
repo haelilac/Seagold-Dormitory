@@ -269,6 +269,7 @@ const ContactUs = () => {
 
     
 
+    // Receipt Upload
     const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) {
@@ -277,32 +278,42 @@ const ContactUs = () => {
         }
     
         try {
-            // Step 1: Upload to Cloudinary
-            const uploadedUrl = await uploadToCloudinary(file);
-            setReceiptUrl(uploadedUrl);  // ✅ save for later form submission
-    
-            // Step 2: Validate receipt
+            // Step 1: Upload receipt to backend directly (no reference/amount yet)
             const formDataUpload = new FormData();
-            formDataUpload.append("receipt", file); // ✅ file upload
-            formDataUpload.append("user_reference", paymentData.reference_number); // ✅ reference number
-            formDataUpload.append("user_amount", String(paymentData.amount)); // ✅ must be string
-
+            formDataUpload.append("receipt", file);
     
             const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt/", {
                 method: "POST",
                 body: formDataUpload,
             });
     
-            const result = await response.json();
-    
-            if (response.ok && result.match) {
-                alert("✅ Receipt validated successfully!");
-            } else {
-                alert(result.message || "❌ Error validating receipt.");
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("❌ Server validation error:", text);
+                throw new Error(`Server Error: ${response.status}`);
             }
+    
+            const result = await response.json();
+            console.log("✅ Receipt OCR Result:", result);
+    
+            if (result.match) {
+                alert("✅ Receipt scanned successfully!");
+    
+                // Step 2: Autofill the form
+                setPaymentData({
+                    ...paymentData,
+                    reference_number: result.reference,
+                    amount: result.amount,
+                });
+    
+                setReceiptUrl(uploadedUrl); // Save uploaded receipt URL too
+            } else {
+                alert(result.message || "❌ Error scanning receipt.");
+            }
+    
         } catch (error) {
-            console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error while validating receipt.");
+            console.error("❌ Error processing receipt:", error);
+            alert("❌ Error processing receipt. Please try again later.");
         }
     };
     
