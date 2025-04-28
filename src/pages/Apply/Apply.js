@@ -380,49 +380,32 @@ const ContactUs = () => {
             return;
         }
     
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file); // Make sure it's "file" and not "valid_id" or another field
+        formDataUpload.append("id_type", formData.id_type); // Append other fields as needed
+    
         try {
-            // Step 1: Upload to Cloudinary first
-            const uploadedUrl = await uploadToCloudinary(file);
-    
-            // Step 2: Validate ID using uploaded image URL
-            const formDataUpload = new FormData();
-            formDataUpload.append("id_type", formData.id_type);
-            formDataUpload.append("image_url", uploadedUrl);
-    
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/upload-id/", {
-                method: 'POST',
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/upload-id", {
+                method: "POST",
                 body: formDataUpload,
+                headers: { 
+                    Accept: "application/json",
+                }
             });
     
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(`Server Error: ${response.status} - ${text}`);
-            }
-    
-            const data = await response.json();
-            console.log("OCR Extracted:", data);
-    
-            if (data.id_type_matched) {
-                alert(`✅ ID Verified Successfully!`);
-                setIsIdVerified(true);
+            if (response.ok) {
+                const data = await response.json();
+                alert(`✅ ID Verified: ${data.id_type_matched ? "Yes" : "No"}`);
+                setUploadedValidIdPath(data.file_url); // Store the uploaded URL if needed
             } else {
-                alert(`❌ ID Verification Failed!`);
-                setIsIdVerified(false);
+                alert("❌ Error processing ID.");
             }
-    
-            setUploadedValidIdPath(uploadedUrl); // preview the image
-            setFormData(prev => ({
-                ...prev,
-                valid_id: uploadedUrl,
-                valid_id_url: uploadedUrl
-            }));
-    
         } catch (error) {
-            console.error("Error processing ID:", error);
-            alert("❌ Error processing ID.");
-            setIsIdVerified(false);
+            console.error("Error uploading ID:", error);
+            alert("❌ Error processing the ID.");
         }
     };
+    
     
 
     const formatDateTime = (date) => {
