@@ -247,7 +247,7 @@ const ContactUs = () => {
     const uploadToCloudinary = async (file) => {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", "ml_default"); // 🔥 Create this preset in your Cloudinary account (unsigned)
+        formData.append("upload_preset", "unsigned_upload"); // 🔥 Create this preset in your Cloudinary account (unsigned)
     
         const response = await fetch("https://api.cloudinary.com/v1_1/dxhthya7z/image/upload", {
             method: "POST",
