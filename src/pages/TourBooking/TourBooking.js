@@ -201,10 +201,25 @@ const TourBooking = () => {
               <label>Name</label>
               <input value={name} onChange={e => setName(e.target.value)} placeholder="Your Full Name" />
             </div>
-            <div className="input-group">
-              <label>Phone Number</label>
-              <input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="Your Phone Number" />
-            </div>
+        <div className="input-group">
+          <label>Phone Number (Philippines)</label>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ marginRight: '8px', fontWeight: 'bold' }}></span>
+            <input
+              value={phoneNumber}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                if (value.length <= 10) { // 10 digits (since +63 is already included)
+                  setPhoneNumber(value);
+                }
+              }}
+              placeholder="9123456789"
+              type="tel"
+              maxLength={10} // 10 digits (total 13 with +63)
+              style={{ flex: 1 }}
+            />
+        </div>
+</div>
             <div className="input-group">
               <label>Number of Visitors</label>
               <input type="number" min="1" value={numVisitors} onChange={e => setNumVisitors(e.target.value)} placeholder="How Many People?" />
