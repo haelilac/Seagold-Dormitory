@@ -245,9 +245,68 @@ const ContactUs = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    // Removed duplicate declaration of handleReceiptUpload
+    const handleReceiptUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            alert("❌ Please select a receipt file.");
+            return;
+        }
     
-  
+        const formDataUpload = new FormData();
+        formDataUpload.append("receipt", file);
+    
+        try {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt", {
+                method: "POST",
+                body: formDataUpload,
+            });
+    
+            const result = await response.json();
+    
+            if (response.ok && result.match) {
+                alert("✅ Receipt validated successfully!");
+            } else {
+                alert(result.message || "❌ Error processing receipt.");
+            }
+        } catch (error) {
+            console.error("❌ Error validating receipt:", error);
+            alert("❌ Server error while validating receipt.");
+        }
+    };
+    
+    
+    // ID validation
+    const handleIdUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            alert("❌ Please select an ID file.");
+            return;
+        }
+    
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file);
+        formDataUpload.append("id_type", formData.id_type);
+    
+        try {
+            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id", { 
+                method: 'POST',
+                body: formDataUpload,
+                headers: { 
+                    Accept: 'application/json'
+                }
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                alert(`✅ ID Verified: ${data.id_type_matched ? "Yes" : "No"}`);
+            } else {
+                alert("❌ Error processing ID.");
+            }
+        } catch (error) {
+            console.error('Error uploading ID:', error);
+            alert("❌ Error processing the ID.");
+        }
+    };
     
 
     const formatDateTimeReadable = (date) => {
@@ -281,41 +340,56 @@ const ContactUs = () => {
     };
     
 
-    const handleReceiptUpload = async (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) {
-            alert("❌ Please select a receipt file.");
+            alert("❌ Please select an ID file.");
             return;
         }
     
-        // Step 1: Upload to Cloudinary
-        const uploadedUrl = await uploadToCloudinary(file);
-        setReceiptUrl(uploadedUrl); // Save it so form can submit it!
-    
-        const formDataUpload = new FormData();
-        formDataUpload.append("receipt", file);
-        formDataUpload.append("user_reference", paymentData.reference_number);
-        formDataUpload.append("user_amount", paymentData.amount);
-    
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt/", {
-                method: "POST",
+            // Step 1: Upload to Cloudinary first
+            const uploadedUrl = await uploadToCloudinary(file);
+    
+            // Step 2: Validate ID using uploaded image URL
+            const formDataUpload = new FormData();
+            formDataUpload.append("id_type", formData.id_type);
+            formDataUpload.append("image_url", uploadedUrl);
+    
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/upload-id/", {
+                method: 'POST',
                 body: formDataUpload,
             });
     
-            const result = await response.json();
-    
-            if (response.ok && result.match) {
-                alert("✅ Receipt validated successfully!");
-            } else {
-                alert(result.message || "❌ Error processing receipt.");
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Server Error: ${response.status} - ${text}`);
             }
+    
+            const data = await response.json();
+            console.log("OCR Extracted:", data);
+    
+            if (data.id_type_matched) {
+                alert(`✅ ID Verified Successfully!`);
+                setIsIdVerified(true);
+            } else {
+                alert(`❌ ID Verification Failed!`);
+                setIsIdVerified(false);
+            }
+    
+            setUploadedValidIdPath(uploadedUrl); // preview the image
+            setFormData(prev => ({
+                ...prev,
+                valid_id: uploadedUrl,
+                valid_id_url: uploadedUrl
+            }));
+    
         } catch (error) {
-            console.error("❌ Error validating receipt:", error);
-            alert("❌ Server error while validating receipt.");
+            console.error("Error processing ID:", error);
+            alert("❌ Error processing ID.");
+            setIsIdVerified(false);
         }
     };
-    
     
 
     const formatDateTime = (date) => {
