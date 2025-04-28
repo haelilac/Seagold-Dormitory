@@ -384,7 +384,13 @@ const ContactUs = () => {
             const user = result.user;
             
             const idToken = await user.getIdToken();
-            
+            console.log("ID Token:", idToken);  // Log token for debugging
+   
+            if (!idToken) {
+                alert("❌ No ID Token received");
+                return;
+            }
+   
             const verifyResponse = await fetch("https://seagold-laravel-production.up.railway.app/api/google-verify-email", {
                 method: "POST",
                 headers: { 
@@ -396,9 +402,10 @@ const ContactUs = () => {
                     provider: 'google'  // Add provider info
                 }),
             });
-    
+            
             if (!verifyResponse.ok) {
                 const errorData = await verifyResponse.json();
+                console.error("Error Response Data:", errorData); // Log the error response
                 throw new Error(errorData.message || 'Failed to verify email');
             }
             
@@ -420,7 +427,8 @@ const ContactUs = () => {
             console.error("Google Sign-In Error:", error);
             alert(`Failed to verify email: ${error.message}`);
         }
-    }
+    };
+   
 
         const handleSubmit = async (e) => {
             e.preventDefault();
