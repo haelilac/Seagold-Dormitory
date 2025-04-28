@@ -283,9 +283,10 @@ const ContactUs = () => {
     
             // Step 2: Validate receipt
             const formDataUpload = new FormData();
-            formDataUpload.append("receipt", file);
-            formDataUpload.append("user_reference", paymentData.reference_number);
-            formDataUpload.append("user_amount", paymentData.amount);
+            formDataUpload.append("receipt", file); // ✅ file upload
+            formDataUpload.append("user_reference", paymentData.reference_number); // ✅ reference number
+            formDataUpload.append("user_amount", String(paymentData.amount)); // ✅ must be string
+
     
             const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt/", {
                 method: "POST",
