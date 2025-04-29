@@ -68,7 +68,7 @@ const RoomInfoTenant = () => {
     }
 
     try {
-      const res = await fetch("https://seagold-laravel-production.up.railway.app/aapi/amenities/request", {
+      const res = await fetch("https://seagold-laravel-production.up.railway.app/api/amenities/request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
