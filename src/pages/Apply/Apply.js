@@ -33,13 +33,14 @@ const ContactUs = () => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
     const [isVerified, setIsVerified] = useState(false); // Google Verification
+    const [isIdVerified, setIsIdVerified] = useState(false); // ID Verification
     const [units, setUnits] = useState([]);
     const [showTermsModal, setShowTermsModal] = useState(false);
+    const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
     const [unitPrice, setUnitPrice] = useState(null);
     const [reservationFee, setReservationFee] = useState(0);
     const [receipt, setReceipt] = useState(null);
     const [receiptUrl, setReceiptUrl] = useState('');
-    const [uploadedValidIdPath, setUploadedValidIdPath] = useState('');
     // Address Data
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
@@ -49,11 +50,8 @@ const ContactUs = () => {
     const [paymentData, setPaymentData] = useState({
         reference_number: '',
         amount: '',
-    
     });
-    const [extractedReference, setExtractedReference] = useState('');
-    const [extractedAmount, setExtractedAmount] = useState('');
-
+    
 
     // Fetch provinces on mount
     useEffect(() => {
@@ -246,30 +244,7 @@ const ContactUs = () => {
         // Handle other inputs
         setFormData({ ...formData, [name]: value });
     };
-        // Cloudinary Upload Helper
-    const uploadToCloudinary = async (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "unsigned_upload"); // 🔥 Must match your Cloudinary unsigned preset name!
 
-        const response = await fetch("https://api.cloudinary.com/v1_1/dxhthya7z/image/upload", {
-            method: "POST",
-            body: formData,
-        });
-
-        if (!response.ok) {
-            console.error(await response.text()); // 🧠 print detailed error if Cloudinary still rejects
-            throw new Error("❌ Failed to upload image to Cloudinary.");
-            console.error(await response.text());
-
-        }
-
-        const data = await response.json();
-        console.log("✅ Uploaded to Cloudinary:", data.secure_url); // optional for debugging
-        return data.secure_url;  // 🎯 Return the hosted URL
-    };
-
-    
     const handleReceiptUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) {
@@ -277,44 +252,42 @@ const ContactUs = () => {
             return;
         }
     
+        const formDataUpload = new FormData();
+        formDataUpload.append("receipt", file);
+    
         try {
-            // Step 1: Upload to Cloudinary
-            const uploadedUrl = await uploadToCloudinary(file);
-            setReceiptUrl(uploadedUrl);
-    
-            // Step 2: OCR Validate the receipt
-            const formDataUpload = new FormData();
-            formDataUpload.append("receipt", file);
-    
-            const response = await fetch("https://seagold-python-production.up.railway.app/validate-receipt/", {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
     
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("❌ Server validation error:", errorData);
-                throw new Error(errorData.detail || `Server Error: ${response.status}`);
-            }
-    
             const result = await response.json();
-            console.log("✅ Receipt OCR Result:", result);
     
-            if (result.reference && result.amount) {
-                alert("✅ Receipt scanned successfully!");
-                setPaymentData({
-                    reference_number: result.reference,
-                    amount: result.amount,
-                });
-            } else {
-                alert(result.message || "❌ Could not extract payment details from receipt.");
-            }
+            if (response.ok && result.match === true) {
+                const extractedAmount = parseFloat(result.ocr_data.extracted_amount);
+                const expectedAmount = formData.stay_type === "monthly" ? 1000 : 500;
+    
+                    if (extractedAmount !== expectedAmount) {
+                        alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
+                        return;
+                    }
+                
+                    setPaymentData({
+                        reference_number: result.ocr_data.extracted_reference,
+                        amount: extractedAmount,
+                    });
+                
+                    setReceiptUrl(result.receipt_url);
+                    alert("✅ Receipt validated successfully!");
+                } else {
+                    alert(result.message || "❌ Error processing receipt.");
+                }
+                
         } catch (error) {
-            console.error("❌ Error processing receipt:", error);
-            alert(`❌ Error processing receipt: ${error.message}`);
+            console.error("❌ Error validating receipt:", error);
+            alert("❌ Server error while validating receipt.");
         }
     };
-    
 
     const formatDateTimeReadable = (date) => {
         const options = { 
@@ -346,6 +319,58 @@ const ContactUs = () => {
         .catch(error => console.error("❌ Error linking payment data:", error));
     };
     
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            alert("❌ Please select a file.");
+            return;
+        }
+    
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file);
+        formDataUpload.append("id_type", formData.id_type); 
+    
+        try {
+            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id/", { // <<== FIXED HERE
+                method: 'POST',
+                body: formDataUpload,
+                headers: { 
+                    Accept: 'application/json',
+                },
+            });
+    
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`Server Error: ${response.status} - ${text}`);
+            }
+    
+            const data = await response.json();
+            console.log("✅ Upload ID OCR Response:", data);
+    
+            setUploadedValidIdPath(data.file_path);
+    
+            setFormData(prev => ({
+                ...prev,
+                valid_id: data.file_path,
+                valid_id_url: data.file_path
+            }));
+    
+            if (data.id_type_matched) {
+
+                alert(`✅ ID Verified Successfully!`);
+                setIsIdVerified(true);
+            } else {
+                alert(`❌ ID Mismatch detected!`);
+                setIsIdVerified(false);
+            }
+        } catch (error) {
+            console.error("❌ Error uploading ID:", error);
+            alert("❌ Failed to upload ID. Check console.");
+            setIsIdVerified(false);
+        }
+    };
+    
     
 
     const formatDateTime = (date) => {
@@ -359,69 +384,38 @@ const ContactUs = () => {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
-    
-    // ID Upload Handler (without validation)
-    const handleIdUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) {
-            alert("❌ Please select an ID file.");
-            return;
-        }
-
-        try {
-            // Upload the file to Cloudinary (no validation)
-            const uploadedUrl = await uploadToCloudinary(file);
-            setUploadedValidIdPath(uploadedUrl); // Save the URL for previewing
-        } catch (error) {
-            console.error("❌ Error uploading ID:", error);
-            alert("❌ Error uploading the ID.");
-        }
-    };
-
     const handleGoogleSignIn = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            const idToken = await user.getIdToken(); // ✅ Get Firebase ID Token
+            
+            const idToken = await user.getIdToken(); // ✅ get actual ID token
             
             const verifyResponse = await fetch("https://seagold-laravel-production.up.railway.app/api/google-verify-email", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                  token: idToken,
-                  provider: 'google' // ✅ Important!
-                }),
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: idToken }),
             });
-    
-            if (!verifyResponse.ok) {
-              const errorData = await verifyResponse.json();
-              console.error("❌ Error verifying token:", errorData);
-              throw new Error(errorData.message || 'Failed to verify email');
-            }
             
             const verifyData = await verifyResponse.json();
-    
+            
             if (verifyData.email) {
-                setFormData((prev) => ({
-                    ...prev,
-                    email: verifyData.email,
-                    first_name: verifyData.name ? verifyData.name.split(" ")[0] : '',
-                    last_name: verifyData.name ? verifyData.name.split(" ").slice(-1)[0] : '',
-                }));
-                setIsVerified(true);
-                alert(`✅ Email verified: ${verifyData.email}`);
+              setFormData((prev) => ({
+                ...prev,
+                email: verifyData.email,
+                first_name: verifyData.name.split(" ")[0],
+                last_name: verifyData.name.split(" ").slice(-1)[0],
+              }));
+              setIsVerified(true);
+              alert(`Email verified: ${verifyData.email}`);
             } else {
-                throw new Error('No email returned from backend.');
+              alert("Failed to verify Google account.");
             }
-    
         } catch (error) {
             console.error("Google Sign-In Error:", error);
-            alert(`Failed to verify email. Reason: ${error.message}`);
+            alert("Failed to verify email. Please try again.");
+          }
         }
-    };
-    
-    
-
         const handleSubmit = async (e) => {
             e.preventDefault();
             if (!isVerified) {
@@ -891,20 +885,20 @@ const ContactUs = () => {
                         </select>
                     </div>
                 </div>
-
+                {formData.id_type && (
                     <div className="form-row">
-                    <div className="form-group">
-                        <label>Upload ID</label>
-                        <input type="file" name="valid_id" onChange={handleIdUpload} />
-                    </div>
-                </div>
-
+                        <div className="form-group">
+                            <label>Upload {formData.id_type}</label>
+                            <input type="file" name="valid_id" onChange={handleFileChange} required />
+                        </div>
+                        </div>
+)}
                 {uploadedValidIdPath && (
-                    <img 
-                        src={uploadedValidIdPath} 
-                        alt="Uploaded ID" 
-                        style={{ width: '250px', marginTop: '10px', border: '1px solid #ccc' }} 
-                    />
+                <img 
+                    src={uploadedValidIdPath} 
+                    alt="Uploaded Valid ID" 
+                    style={{ width: '250px', marginTop: '10px', border: '1px solid #ccc' }} 
+                />
                 )}
 
                 {/* Privacy Checkbox */}
@@ -933,6 +927,7 @@ const ContactUs = () => {
                 <button 
                     type="submit" 
                     className={`send-message-button ${loading ? "loading" : ""}`} 
+                    disabled={!isVerified || !isIdVerified || loading}
                 >
                     {loading ? (
                         <div className="loading-spinner"></div>
