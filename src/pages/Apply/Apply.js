@@ -385,7 +385,7 @@ const ContactUs = () => {
             
             const idToken = await user.getIdToken(); // ✅ get actual ID token
             
-            const verifyResponse = await fetch("http://localhost:8000/api/google-verify-email", {
+            const verifyResponse = await fetch("https://seagold-laravel-production.up.railway.app/api/google-verify-email", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ token: idToken }),
