@@ -25,7 +25,7 @@ const RoomInfoTenant = () => {
         if (cached) {
           setInfo(cached);
         } else {
-          const res = await fetch("http://localhost:8000/api/tenant-room-info", {
+          const res = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant-room-info", {
             headers: {
               Authorization: `Bearer ${getAuthToken()}`,
               Accept: "application/json"
@@ -49,7 +49,7 @@ const RoomInfoTenant = () => {
   // ⭐ Fetch Amenity Requests
   const fetchRequests = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/amenities/requests", {
+      const res = await fetch("https://seagold-laravel-production.up.railway.app/api/amenities/requests", {
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
       const data = await res.json();
@@ -68,7 +68,7 @@ const RoomInfoTenant = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/amenities/request", {
+      const res = await fetch("https://seagold-laravel-production.up.railway.app/aapi/amenities/request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +109,7 @@ const RoomInfoTenant = () => {
             ))
           ) : (
             <img
-              src="http://localhost:8000/Dorm.jpg"
+              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg"
               alt="Default Room"
               className="thumbnail"
             />
