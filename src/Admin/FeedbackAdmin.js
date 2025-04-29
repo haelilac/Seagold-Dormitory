@@ -67,8 +67,7 @@ const FeedbackAdmin = () => {
         fetchFeedbacks();
     }, []);
 
-    if (loading) return <p>Loading feedbacks...</p>;
-
+    if (loading) return <div className="feedbackadmin-spinner"></div>;
     return (
         <div className="feedback-container">
             <h2 className="feedback-header">User Feedback</h2>

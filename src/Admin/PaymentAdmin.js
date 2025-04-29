@@ -289,7 +289,7 @@ const filteredData = selectedStatus === 'All'
         : {};
 
     const years = getYearsFromData(mergedData);
-
+    if (loading) return <div className="paymentadmin-spinner"></div>;
     return (
         <div className="admin-payment-container">
             <h2>Admin Payment Dashboard</h2>

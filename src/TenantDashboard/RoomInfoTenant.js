@@ -89,7 +89,7 @@ const RoomInfoTenant = () => {
     }
   };
 
-  if (loading || !info) return <div className="spinner"></div>;
+  if (loading || !info) return <div className="roominfo-spinner"></div>;
 
   return (
     <div className="roomCard-wrapper">

@@ -53,7 +53,7 @@ const Home = ({ userName, darkMode }) => {
         fetchEvents();
     }, []);
     
-  if (loading) return <div className="spinner"></div>;
+  if (loading) return <div className="hometenant-spinner"></div>;
     // Filter events based on the selected date
     const filteredEvents = events
     .filter((event) => event && event.date) // Exclude null or undefined events

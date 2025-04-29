@@ -202,7 +202,7 @@ const EventsBoard = () => {
    * Generate unique year options from events
    */
   const uniqueYears = Array.from(new Set(events.map((e) => e.date.split("-")[2]))).sort();
-
+  if (loading) return <div className="eventsboard-spinner"></div>;
   return (
     <div className="events-page">
       {/* Header Bar */}
