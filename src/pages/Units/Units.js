@@ -160,6 +160,7 @@ const Units = () => {
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
       {loading ? (
         <div className="loading-spinner">
+          <img src="/images/loading.gif" alt="Loading..." style={{ width: "80px" }} />
           <p>Loading rooms, please wait...</p>
         </div>
       ) : filteredUnits.length > 0 ? (
