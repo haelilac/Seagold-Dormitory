@@ -61,7 +61,12 @@ const RoomInfoTenant = () => {
 
   // ⭐ Handle Amenity Request Submission
   const handleRequestAmenity = async () => {
-    if (!amenityType) return alert("Please select an amenity!");
+    let finalAmenity = amenityType === "Others" ? otherAmenity : amenityType;
+  
+    if (!finalAmenity.trim()) {
+      return alert("Please select or specify an amenity!");
+    }
+  
     try {
       const res = await fetch("https://seagold-laravel-production.up.railway.app/api/amenities/request", {
         method: "POST",
@@ -69,19 +74,23 @@ const RoomInfoTenant = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getAuthToken()}`
         },
-        body: JSON.stringify({ amenity_type: amenityType })
+        body: JSON.stringify({ amenity_type: finalAmenity })
       });
+  
       if (res.ok) {
-        alert("Amenity request submitted!");
+        alert("✅ Amenity request submitted!");
         setAmenityType('');
-        fetchRequests();
+        setOtherAmenity('');
+        fetchRequests(); // Refresh the list
       } else {
-        alert("Failed to submit request.");
+        alert("❌ Failed to submit request.");
       }
     } catch (err) {
       console.error("Request error:", err);
+      alert("❌ An error occurred during the request.");
     }
   };
+  
 
   if (loading || !info) return <div className="spinner"></div>;
 
@@ -133,27 +142,46 @@ const RoomInfoTenant = () => {
         </div>
 
         {/* ⭐ Amenity Request Section */}
-        <div className="amenityRequestSection">
-          <h3>Request Additional Amenities</h3>
-          <select value={amenityType} onChange={(e) => setAmenityType(e.target.value)}>
-            <option value="">-- Select Amenity --</option>
-            <option value="Mini Fridge">Mini Fridge</option>
-            <option value="Electric Fan">Electric Fan</option>
-            <option value="Extra Chair">Extra Chair</option>
-          </select>
-          <button onClick={handleRequestAmenity}>Request Amenity</button>
+<div className="amenityRequestSection">
+  <h3>Request Additional Amenities</h3>
 
-          <h4>My Requests</h4>
-          <ul>
-            {requests.length > 0 ? (
-              requests.map(req => (
-                <li key={req.id}>{req.amenity_type} - <strong>{req.status}</strong></li>
-              ))
-            ) : (
-              <p>No amenity requests yet.</p>
+  <select value={amenityType} onChange={(e) => setAmenityType(e.target.value)}>
+    <option value="">-- Select Amenity --</option>
+    <option value="Electric Fan">Electric Fan</option>
+    <option value="Extra Mattress">Extra Mattress</option>
+    <option value="Extra Bedsheet">Extra Bedsheet</option>
+    <option value="Extension Cord">Extension Cord</option>
+    <option value="Extra Chair">Extra Chair</option>
+    <option value="Others">Others (Specify)</option> {/* ✅ New Option */}
+  </select>
+
+            {/* ✅ Show input only if "Others" selected */}
+            {amenityType === "Others" && (
+              <input
+                type="text"
+                placeholder="Specify the amenity you need"
+                value={otherAmenity}
+                onChange={(e) => setOtherAmenity(e.target.value)}
+                className="otherAmenityInput"
+                style={{ marginTop: "10px", padding: "8px", width: "100%" }}
+              />
             )}
-          </ul>
-        </div>
+
+            <button onClick={handleRequestAmenity}>Request Amenity</button>
+
+            <h4>My Requests</h4>
+            <ul>
+              {requests.length > 0 ? (
+                requests.map(req => (
+                  <li key={req.id}>
+                    {req.amenity_type} - <strong>{req.status}</strong>
+                  </li>
+                ))
+              ) : (
+                <p>No amenity requests yet.</p>
+              )}
+            </ul>
+          </div>
       </div>
 
       {selectedImage && (
