@@ -427,7 +427,8 @@ const ContactUs = () => {
         }
     }
     
-
+    console.log('receiptUrl:', receiptUrl);
+    console.log('paymentData:', paymentData);
         const handleSubmit = async (e) => {
             e.preventDefault();
             if (!isVerified) {
@@ -438,8 +439,8 @@ const ContactUs = () => {
                 alert('You must accept the privacy terms.');
                 return;
             }
-            if (!receiptUrl) {
-                alert('Please upload your payment receipt.');
+            if (!result.ocr_data.extracted_reference || !result.ocr_data.extracted_amount) {
+                alert("❌ Receipt validation failed. Please upload a clearer image.");
                 return;
             }
         
