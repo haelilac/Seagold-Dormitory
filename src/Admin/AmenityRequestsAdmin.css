@@ -1,5 +1,8 @@
 .amenity-requests-admin {
     padding: 20px;
+    position: absolute;
+    top: 12%;
+    left: 37%;
   }
   
   .amenity-requests-admin table {
@@ -18,4 +21,29 @@
     padding: 5px 10px;
     cursor: pointer;
   }
+
+  /* ⭐ Responsive adjustment for mobile screens */
+@media (max-width: 768px) {
+  .amenity-requests-admin {
+    padding: 10px;
+    position: static; /* Remove absolute positioning */
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  .amenity-requests-admin table {
+    width: 100%;
+    font-size: 14px; /* Make text slightly smaller for mobile */
+  }
+
+  .amenity-requests-admin th,
+  .amenity-requests-admin td {
+    padding: 6px;
+  }
+
+  .amenity-requests-admin button {
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+}
   
