@@ -8,9 +8,10 @@
   }
   
   .amenity-requests-admin th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
+    left: 37%;
+    padding: 20px;
+    position: absolute;
+    top: 19%;
   }
   
   .amenity-requests-admin button {
