@@ -260,7 +260,7 @@ const ContactUs = () => {
         formDataUpload.append("receipt", file);
     
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt", {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -268,31 +268,31 @@ const ContactUs = () => {
             const result = await response.json();
     
             if (response.ok && result.match === true) {
-                setReceiptUrl(result.receipt_url); // ✅ SET IMMEDIATELY
-    
                 const extractedAmount = parseFloat(result.ocr_data.extracted_amount);
                 const expectedAmount = formData.stay_type === "monthly" ? 1000 : 500;
     
-                if (extractedAmount !== expectedAmount) {
-                    alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
-                    return;
+                    if (extractedAmount !== expectedAmount) {
+                        alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
+                        return;
+                    }
+                
+                    setPaymentData({
+                        reference_number: result.ocr_data.extracted_reference,
+                        amount: extractedAmount,
+                    });
+                
+                    setReceiptUrl(result.receipt_url);
+                    alert("✅ Receipt validated successfully!");
+                } else {
+                    alert(result.message || "❌ Error processing receipt.");
                 }
-    
-                setPaymentData({
-                    reference_number: result.ocr_data.extracted_reference,
-                    amount: extractedAmount,
-                });
-    
-                alert("✅ Receipt validated successfully!");
-            } else {
-                alert(result.message || "❌ Error processing receipt.");
-            }
+                
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
             alert("❌ Server error while validating receipt.");
         }
     };
-    
+
     const formatDateTimeReadable = (date) => {
         const options = { 
             year: 'numeric', 
