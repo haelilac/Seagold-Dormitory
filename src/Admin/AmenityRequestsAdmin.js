@@ -40,7 +40,7 @@ const AmenityRequestsAdmin = () => {
 
   return (
     <div className="amenity-requests-admin">
-      <h2>Amenity Requests Management</h2>
+      <h2>Amenity Requests</h2>
       {requests.length === 0 ? (
         <p>No amenity requests found.</p>
       ) : (

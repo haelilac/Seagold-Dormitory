@@ -1,5 +1,8 @@
 .amenity-requests-admin {
     padding: 20px;
+    position: absolute;
+    top: 12%;
+    left: 37%;
   }
   
   .amenity-requests-admin table {
