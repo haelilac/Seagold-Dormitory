@@ -469,28 +469,7 @@ body {
 .fullscreen-nav.next {
   right: 10px;
 }
-.loading-spinner {
-  display: flex;
-  flex-direction: column; /* ⭐ Stack spinner and text vertically */
-  justify-content: center;
-  align-items: center;
-  height: 150px; /* Adjust based on your page layout */
-}
 
-.spinner-circle {
-  width: 50px;
-  height: 50px;
-  border: 6px solid #ccc;
-  border-top: 6px solid #074622; /* Theme color */
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-/* Animation for spinner */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 
 /* Additional Animations */
 @keyframes fadeSlideUp {
