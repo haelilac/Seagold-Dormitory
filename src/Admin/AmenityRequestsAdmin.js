@@ -16,6 +16,7 @@ const AmenityRequestsAdmin = () => {
   }, []);
 
   const fetchRequests = async () => {
+    setLoading(true); // ⬅️ start loading
     try {
       const res = await fetch(`${BASE_URL}/api/amenities/requests`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` }
@@ -24,6 +25,8 @@ const AmenityRequestsAdmin = () => {
       setRequests(data);
     } catch (err) {
       console.error("Error fetching requests:", err);
+    } finally {
+      setLoading(false); // ⬅️ stop loading even on error
     }
   };
 
