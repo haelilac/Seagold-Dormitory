@@ -160,9 +160,10 @@ const Units = () => {
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
       {loading ? (
         <div className="loading-spinner">
-          <img src="/images/loading.gif" alt="Loading..." style={{ width: "80px" }} />
-          <p>Loading rooms, please wait...</p>
+          <div className="spinner-circle"></div> {/* 🔵 The spinning circle */}
+          <p style={{ marginTop: "10px" }}>Loading rooms, please wait...</p> {/* 📝 Your message */}
         </div>
+        
       ) : filteredUnits.length > 0 ? (
         filteredUnits.map((unit) => (
       <div key={unit.id} className="rental-card">
