@@ -260,7 +260,7 @@ const ContactUs = () => {
         formDataUpload.append("receipt", file);
     
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/validate-receipt", {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
