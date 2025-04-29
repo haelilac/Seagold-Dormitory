@@ -383,52 +383,33 @@ const ContactUs = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
             
-            const idToken = await user.getIdToken();  // Get Firebase ID token
-            console.log("ID Token:", idToken);  // Log the token for debugging
-    
-            if (!idToken) {
-                alert("❌ No ID Token received");
-                return;
-            }
-    
-            // Send the token to the server for verification
-            const verifyResponse = await fetch("https://seagold-laravel-production.up.railway.app/api/google-verify-email", {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify({ 
-                    token: idToken,
-                    provider: 'google'  // Specify the provider as 'google'
-                }),
+            const idToken = await user.getIdToken(); // ✅ get actual ID token
+            
+            const verifyResponse = await fetch("http://localhost:8000/api/google-verify-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: idToken }),
             });
-    
-            if (!verifyResponse.ok) {
-                const errorData = await verifyResponse.json();
-                console.error("Error Response Data:", errorData);  // Log the error response for debugging
-                throw new Error(errorData.message || 'Failed to verify email');
-            }
             
             const verifyData = await verifyResponse.json();
             
             if (verifyData.email) {
-                setFormData((prev) => ({
-                    ...prev,
-                    email: verifyData.email,
-                    first_name: verifyData.given_name || verifyData.name?.split(" ")[0] || '',
-                    last_name: verifyData.family_name || verifyData.name?.split(" ").slice(-1)[0] || '',
-                }));
-                setIsVerified(true);
-                alert(`Email verified: ${verifyData.email}`);
+              setFormData((prev) => ({
+                ...prev,
+                email: verifyData.email,
+                first_name: verifyData.name.split(" ")[0],
+                last_name: verifyData.name.split(" ").slice(-1)[0],
+              }));
+              setIsVerified(true);
+              alert(`Email verified: ${verifyData.email}`);
             } else {
-                throw new Error("No email returned from verification");
+              alert("Failed to verify Google account.");
             }
         } catch (error) {
             console.error("Google Sign-In Error:", error);
-            alert(`Failed to verify email: ${error.message}`);
+            alert("Failed to verify email. Please try again.");
+          }
         }
-    }
     
 
         const handleSubmit = async (e) => {
