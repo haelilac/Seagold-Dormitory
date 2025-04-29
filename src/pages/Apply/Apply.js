@@ -268,30 +268,34 @@ const ContactUs = () => {
             const result = await response.json();
     
             if (response.ok && result.match === true) {
-                const extractedAmount = parseFloat(result.ocr_data.extracted_amount);
+                const extractedAmount = parseFloat(result.amount); // <- FIXED
                 const expectedAmount = formData.stay_type === "monthly" ? 1000 : 500;
     
-                    if (extractedAmount !== expectedAmount) {
-                        alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
-                        return;
-                    }
-                
-                    setPaymentData({
-                        reference_number: result.ocr_data.extracted_reference,
-                        amount: extractedAmount,
-                    });
-                
-                    setReceiptUrl(result.receipt_url);
-                    alert("✅ Receipt validated successfully!");
-                } else {
-                    alert(result.message || "❌ Error processing receipt.");
+                if (extractedAmount !== expectedAmount) {
+                    alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
+                    return;
                 }
-                
+    
+                // ✅ Fixed: correct reference and receipt_url
+                setPaymentData({
+                    reference_number: result.reference,
+                    amount: extractedAmount,
+                });
+    
+                setReceiptUrl(result.receipt_url); // <- ✅ THE MISSING PART
+    
+                console.log("✅ Receipt URL set:", result.receipt_url);
+                alert("✅ Receipt validated successfully!");
+            } else {
+                alert(result.message || "❌ Error processing receipt.");
+            }
+    
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
             alert("❌ Server error while validating receipt.");
         }
     };
+    
 
     const formatDateTimeReadable = (date) => {
         const options = { 
@@ -429,6 +433,8 @@ const ContactUs = () => {
     
     console.log('receiptUrl:', receiptUrl);
     console.log('paymentData:', paymentData);
+    console.log("✅ Submitting data with receipt URL:", receiptUrl);
+    console.log("💸 Payment:", paymentData);
         const handleSubmit = async (e) => {
             e.preventDefault();
             if (!isVerified) {
