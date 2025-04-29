@@ -390,8 +390,13 @@ const ContactUs = () => {
             const user = result.user;
             
             const idToken = await user.getIdToken(); // ✅ get actual ID token
-            
-            const verifyResponse = await fetch("https://seagold-laravel-production.up.railway.app/api/google-verify-email", {
+    
+            // 🌟 Dynamic API URL based on environment
+            const baseUrl = window.location.hostname.includes('localhost')
+              ? 'http://localhost:8000'
+              : 'https://seagold-laravel-production.up.railway.app';
+    
+            const verifyResponse = await fetch(`${baseUrl}/api/google-verify-email`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ token: idToken }),
@@ -414,8 +419,10 @@ const ContactUs = () => {
         } catch (error) {
             console.error("Google Sign-In Error:", error);
             alert("Failed to verify email. Please try again.");
-          }
         }
+    }
+    
+
         const handleSubmit = async (e) => {
             e.preventDefault();
             if (!isVerified) {
