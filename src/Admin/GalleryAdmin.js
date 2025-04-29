@@ -130,7 +130,7 @@ const handleImageEdit = async (id) => {
     setCategory('');
     setEditMode(null);
   };
-
+  if (loading) return <div className="galleryadmin-spinner"></div>;
   return (
     <div className="admin-gallery">
       <h2>Manage Gallery</h2>

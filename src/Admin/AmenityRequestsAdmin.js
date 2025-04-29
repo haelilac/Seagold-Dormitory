@@ -42,7 +42,7 @@ const AmenityRequestsAdmin = () => {
       console.error("Action error:", err);
     }
   };
-
+  if (loading) return <div className="amenity-spinner"></div>;
   return (
     <div className="amenity-requests-admin">
       <h2>Amenity Requests</h2>

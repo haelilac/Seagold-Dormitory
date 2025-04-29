@@ -6,7 +6,19 @@ body {
   background-attachment: fixed;
   font-family: 'Inter', sans-serif;
 }
-
+.hometenant-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #366e39;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  z-index: 1000; 
+}
 /* General Container Styling */
 .main-content {
   display: flex;

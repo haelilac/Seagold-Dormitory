@@ -231,7 +231,7 @@ const MaintenanceTenant = () => {
         );
     };
 
-    if (loading) return <div className="spinner"></div>;
+    if (loading) return <div className="maintenancetenant-spinner"></div>;
 
     return (
         <div className={`maintenance-container`}>

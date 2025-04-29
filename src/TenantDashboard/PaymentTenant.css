@@ -7,6 +7,20 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.paymenttenant-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #366e39;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    z-index: 1000; 
+}
+
 .payment-background {
     background-image: url('https://seagold-dormitory.vercel.app/Background/pay.png');
     background-size: cover;
