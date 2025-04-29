@@ -234,11 +234,11 @@ const MaintenanceTenant = () => {
     if (loading) return <div className="spinner"></div>;
 
     return (
-        <div className={`maintenance-container ${sidebarOpen ? 'shifted' : ''}`}>
-            <h1 className="maintenance-header">Maintenance Requests</h1>
-            <p className="maintenance-description">Submit your maintenance concerns here.</p>
+        <div className={`maintenance-container`}>
+            <h1>Maintenance Requests</h1>
 
             <form onSubmit={handleSubmit} className="maintenance-form">
+            <p>Submit your maintenance concerns here</p>
                 <label>Select Category:</label>
                 <select value={category} onChange={(e) => setCategory(e.target.value)} required>
                     <option value="">-- Select Category --</option>
@@ -296,7 +296,6 @@ const MaintenanceTenant = () => {
             <table className="history-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Category</th>
                         <th>Description</th>
                         <th>File</th>
@@ -308,7 +307,6 @@ const MaintenanceTenant = () => {
                 <tbody>
                     {submittedRequests.map((req) => (
                         <tr key={req.id}>
-                            <td>{req.id}</td>
                             <td>{req.category}</td>
                             <td>{req.description}</td>
                             <td>

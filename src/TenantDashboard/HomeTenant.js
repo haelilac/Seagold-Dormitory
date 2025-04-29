@@ -5,12 +5,13 @@ import './HomeTenant.css'; // Your custom styles
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from "../contexts/DataContext";
 
+
 const Home = ({ userName, darkMode }) => {
     const [date, setDate] = useState(new Date()); // State for selected date
     const [events, setEvents] = useState([]); // Initialize events as an empty array
     const { getCachedData, updateCache } = useDataCache();
     const [loading, setLoading] = useState(true);
-
+      
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
@@ -72,7 +73,7 @@ const Home = ({ userName, darkMode }) => {
                     className="custom-calendar"
                 />
                 <p className="
-selected-date">
+                    selected-date">
                     Selected Date: {date.toLocaleDateString()}
                 </p>
             </section>
@@ -94,6 +95,7 @@ selected-date">
                 )}
             </section>
         </>
+        
     );
 };
 
