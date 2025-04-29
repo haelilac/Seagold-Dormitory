@@ -9,8 +9,9 @@ const RoomInfoTenant = () => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // ⭐ New States for Amenity Requests
+  // ⭐ States for Amenity Requests
   const [amenityType, setAmenityType] = useState('');
+  const [otherAmenity, setOtherAmenity] = useState(''); // ⭐ NEW
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
@@ -43,7 +44,6 @@ const RoomInfoTenant = () => {
 
     fetchRoomInfo();
     fetchRequests();  // ⭐ Fetch existing amenity requests on load
-
   }, []);
 
   // ⭐ Fetch Amenity Requests
@@ -61,7 +61,12 @@ const RoomInfoTenant = () => {
 
   // ⭐ Handle Amenity Request Submission
   const handleRequestAmenity = async () => {
-    if (!amenityType) return alert("Please select an amenity!");
+    const finalAmenity = amenityType === "Others" ? otherAmenity : amenityType;
+
+    if (!finalAmenity.trim()) {
+      return alert("Please select or specify an amenity!");
+    }
+
     try {
       const res = await fetch("https://seagold-laravel-production.up.railway.app/api/amenities/request", {
         method: "POST",
@@ -69,14 +74,15 @@ const RoomInfoTenant = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getAuthToken()}`
         },
-        body: JSON.stringify({ amenity_type: amenityType })
+        body: JSON.stringify({ amenity_type: finalAmenity })
       });
       if (res.ok) {
-        alert("Amenity request submitted!");
+        alert("✅ Amenity request submitted!");
         setAmenityType('');
+        setOtherAmenity('');
         fetchRequests();
       } else {
-        alert("Failed to submit request.");
+        alert("❌ Failed to submit request.");
       }
     } catch (err) {
       console.error("Request error:", err);
@@ -135,19 +141,43 @@ const RoomInfoTenant = () => {
         {/* ⭐ Amenity Request Section */}
         <div className="amenityRequestSection">
           <h3>Request Additional Amenities</h3>
+
           <select value={amenityType} onChange={(e) => setAmenityType(e.target.value)}>
             <option value="">-- Select Amenity --</option>
             <option value="Mini Fridge">Mini Fridge</option>
             <option value="Electric Fan">Electric Fan</option>
             <option value="Extra Chair">Extra Chair</option>
+            <option value="Extra Mattress">Extra Mattress</option>
+            <option value="Air Conditioner">Air Conditioner</option>
+            <option value="Microwave">Microwave</option>
+            <option value="Water Dispenser">Water Dispenser</option>
+            <option value="TV">TV</option>
+            
+            <option value="Others">Others (Specify)</option> {/* ⭐ Added "Others" option */}
           </select>
-          <button onClick={handleRequestAmenity}>Request Amenity</button>
+
+          {/* ⭐ Show text input only if "Others" selected */}
+          {amenityType === "Others" && (
+            <input
+              type="text"
+              placeholder="Specify other amenity"
+              value={otherAmenity}
+              onChange={(e) => setOtherAmenity(e.target.value)}
+              style={{ marginTop: "10px", padding: "8px", width: "100%" }}
+            />
+          )}
+
+          <button onClick={handleRequestAmenity} style={{ marginTop: "10px" }}>
+            Request Amenity
+          </button>
 
           <h4>My Requests</h4>
           <ul>
             {requests.length > 0 ? (
               requests.map(req => (
-                <li key={req.id}>{req.amenity_type} - <strong>{req.status}</strong></li>
+                <li key={req.id}>
+                  {req.amenity_type} - <strong>{req.status}</strong>
+                </li>
               ))
             ) : (
               <p>No amenity requests yet.</p>
