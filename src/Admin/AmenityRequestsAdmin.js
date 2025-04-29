@@ -5,13 +5,18 @@ import './AmenityRequestsAdmin.css';
 const AmenityRequestsAdmin = () => {
   const [requests, setRequests] = useState([]);
 
+  // 🌐 Use dynamic base URL
+  const BASE_URL = window.location.hostname.includes('localhost')
+    ? 'http://localhost:8000'
+    : 'https://seagold-laravel-production.up.railway.app';
+
   useEffect(() => {
     fetchRequests();
   }, []);
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch("https://seagold-laravel-production.up.railway.app/api/amenities/requests", {
+      const res = await fetch(`${BASE_URL}/api/amenities/requests`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
       const data = await res.json();
@@ -23,7 +28,7 @@ const AmenityRequestsAdmin = () => {
 
   const handleAction = async (id, action) => {
     try {
-      const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/amenities/${action}/${id}`, {
+      const res = await fetch(`${BASE_URL}/api/amenities/${action}/${id}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });

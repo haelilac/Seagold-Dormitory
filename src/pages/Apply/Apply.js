@@ -754,7 +754,7 @@ const ContactUs = () => {
                             <input
                                 type="text"
                                 name="duration"
-                                value="15 days"
+                                value={`${formData.duration} days`}
                                 readOnly
                             />
                         </div>

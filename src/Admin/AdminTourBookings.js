@@ -190,100 +190,101 @@ const AdminTourBookings = () => {
     const filteredBookings = bookings.filter((booking) =>
         booking.name ? booking.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
     );
+
     if (loading) return <div className="booking-spinner"></div>;
     return (
         <div className="admin-tour-bookings">
             <h2>Tour Bookings</h2>
-<div className="calendar-availability-section">
-  <h3>Set Availability</h3>
-  <p>Choose a date and toggle available time slots:</p>
+    <div className="calendar-availability-section">
+      <h3>Set Availability</h3>
+      <p>Choose a date and toggle available time slots:</p>
 
-  {/* Simple date input (or replace with a fancier calendar later) */}
-  <input
-    type="date"
-    value={selectedDate.toISOString().split("T")[0]}
-    onChange={(e) => {
-      const date = new Date(e.target.value);
-      setSelectedDate(date);
-      fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${e.target.value}`)
-        .then((res) => res.json())
-        .then((data) => setAvailability(data.slots))
-        .catch((err) => {
-          console.error("Error fetching availability:", err);
-          setAvailability([]);
-        });
-    }}
-  />
-<div className="bulk-buttons">
-  <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
-  <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
-</div>
-  {/* Render time slots with toggle buttons */}
-  <div className="time-slots-container">
-    {predefinedTimes.map((time) => {
-      const slot = availability.find((s) => s.time === time);
-      const currentStatus = slot ? slot.status : "unavailable";
+      {/* Simple date input (or replace with a fancier calendar later) */}
+      <input
+        type="date"
+        value={selectedDate.toISOString().split("T")[0]}
+        onChange={(e) => {
+          const date = new Date(e.target.value);
+          setSelectedDate(date);
+          fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${e.target.value}`)
+            .then((res) => res.json())
+            .then((data) => setAvailability(data.slots))
+            .catch((err) => {
+              console.error("Error fetching availability:", err);
+              setAvailability([]);
+            });
+        }}
+      />
+    <div className="bulk-buttons">
+      <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
+      <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
+    </div>
+      {/* Render time slots with toggle buttons */}
+      <div className="time-slots-container">
+        {predefinedTimes.map((time) => {
+          const slot = availability.find((s) => s.time === time);
+          const currentStatus = slot ? slot.status : "unavailable";
 
-      if (loading) return <div className="booking-spinner"></div>;
-      return (
-        <div key={time} className="time-slot-item">
-          <span>{time}</span>
-          <button
-            className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
-            onClick={() =>
-              handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
-            }
-          >
-            {currentStatus === "available" ? "Mark Unavailable" : "Mark Available"}
-          </button>
-        </div>
-      );
-    })}
-  </div>
-</div>
-<div className="calendar-availability-section">
-            <h3>Existing Bookings </h3>
-            <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearch}
-                placeholder="Search by guest name"
-            />
-            <table className="bookings-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredBookings.length > 0 ? (
-                        filteredBookings.map((booking) => (
-                            <tr key={booking.id}>
-                                <td>{booking.date || 'N/A'}</td>
-                                <td>{booking.time || 'N/A'}</td>
-                                <td>{booking.name || 'Unknown'}</td>
-                                <td>{booking.status || 'Pending'}</td>
-                                <td>
-                                    <button onClick={() => handleConfirmBooking(booking.id)}>Confirm</button>
-                                    <button onClick={() => handleCancelBooking(booking.id)}>Cancel</button>
-                                </td>
-
-                            </tr>
-                        ))
-                    ) : (
+          if (loading) return <div className="booking-spinner"></div>;
+          return (
+            <div key={time} className="time-slot-item">
+              <span>{time}</span>
+              <button
+                className={`toggle-btn ${currentStatus === "available" ? "available" : "unavailable"}`}
+                onClick={() =>
+                  handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
+                }
+              >
+                {currentStatus === "available" ? "Mark Unavailable" : "Mark Available"}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+    <div className="calendar-availability-section">
+                <h3>Existing Bookings </h3>
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    placeholder="Search by guest name"
+                />
+                <table className="bookings-table">
+                    <thead>
                         <tr>
-                            <td colSpan="6">No bookings found</td>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
-        </div>
-    );
-};
+                    </thead>
+                    <tbody>
+                        {filteredBookings.length > 0 ? (
+                            filteredBookings.map((booking) => (
+                                <tr key={booking.id}>
+                                    <td>{booking.date || 'N/A'}</td>
+                                    <td>{booking.time || 'N/A'}</td>
+                                    <td>{booking.name || 'Unknown'}</td>
+                                    <td>{booking.status || 'Pending'}</td>
+                                    <td>
+                                        <button onClick={() => handleConfirmBooking(booking.id)}>Confirm</button>
+                                        <button onClick={() => handleCancelBooking(booking.id)}>Cancel</button>
+                                    </td>
 
-export default AdminTourBookings;
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="6">No bookings found</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+            </div>
+        );
+    };
+
+    export default AdminTourBookings;
