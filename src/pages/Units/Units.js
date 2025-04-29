@@ -216,27 +216,11 @@ const Units = () => {
                 )}
               </div>
 
-              {showPriceModal && (
-                <div className="price-modal-overlay" onClick={() => setShowPriceModal(false)}>
-                  <div className="price-modal" onClick={(e) => e.stopPropagation()}>
-                    <h2>Room Pricing</h2>
-                    <img
-                      src="/images/sample-pricing.jpg"
-                      alt="Pricing Info"
-                      style={{ width: "100%", borderRadius: "8px" }}
-                    />
-                    <button onClick={() => setShowPriceModal(false)} className="close-modal-btn">
-                      Close
-                    </button>
-                  </div>
-                </div>
-              )}
-
               <div className="rental-content">
               <h3 className="rental-title">{unit.unit_code}</h3>
-                <button className="view-price-btn" onClick={() => setShowPriceModal(true)}>
-                  View Price
-                </button>
+              <button className="view-price-btn" onClick={() => openPriceModal(unit)}>
+                View Price
+              </button>
                 <p className="rental-availability">
                     {unit.is_force_occupied
                       ? "FULLY OCCUPIED"
@@ -269,6 +253,25 @@ const Units = () => {
           <button className="fullscreen-nav next" onClick={nextFullscreen}>
             ⟶
           </button>
+        </div>
+      )}
+      {showPriceModal && modalUnit && (
+        <div className="price-modal-overlay" onClick={closePriceModal}>
+          <div className="price-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Room Pricing - {modalUnit.unit_code}</h2>
+            {modalUnit?.images?.find(img => img.is_pricing) ? (
+                <img
+                  src={modalUnit.images.find(img => img.is_pricing).image_path}
+                  alt="Pricing Info"
+                  style={{ width: "100%", borderRadius: "8px" }}
+                />
+              ) : (
+                <p>No pricing image uploaded.</p>
+              )}
+            <button onClick={closePriceModal} className="close-modal-btn">
+              Close
+            </button>
+          </div>
         </div>
       )}
     </div>

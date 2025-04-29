@@ -317,7 +317,27 @@ const UnitManagement = () => {
   
                 {/* Close Modal */}
                 <button onClick={() => setShowModal(false)} className="close-button">X</button>
-  
+                  {/* Upload Pricing Image */}
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!unitImageFiles.length) return;
+                  for (let file of unitImageFiles) {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('unit_code', selectedUnit.unit_code);
+
+                    await fetch('https://seagold-laravel-production.up.railway.app/api/unit-images/pricing-upload', {
+                      method: 'POST',
+                      body: formData,
+                    });
+                  }
+                  alert('Pricing image uploaded!');
+                  setUnitImageFiles([]);
+                  fetchUnitImages();
+                }}>
+                  <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
+                  <button type="submit">Upload Pricing Image</button>
+                </form>
                 {/* Pricing Summary */}
                 <div style={{ fontWeight: 'bold', marginTop: '20px' }}>
                   {(() => {
