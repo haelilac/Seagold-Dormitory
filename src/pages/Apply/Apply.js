@@ -439,7 +439,7 @@ const ContactUs = () => {
                 alert('You must accept the privacy terms.');
                 return;
             }
-            if (!result.ocr_data.extracted_reference || !result.ocr_data.extracted_amount) {
+            if (!paymentData.reference_number || !paymentData.amount) {
                 alert("❌ Receipt validation failed. Please upload a clearer image.");
                 return;
             }
