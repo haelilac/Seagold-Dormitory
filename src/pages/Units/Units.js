@@ -162,7 +162,6 @@ const Units = () => {
         <div className="loading-spinner">
           <p>Loading rooms, please wait...</p>
         </div>
-        
       ) : filteredUnits.length > 0 ? (
         filteredUnits.map((unit) => (
       <div key={unit.id} className="rental-card">
