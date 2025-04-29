@@ -267,8 +267,10 @@ const ContactUs = () => {
     
             const result = await response.json();
     
+            console.log("🔍 Receipt Upload Full Response:", result); // <-- ADD THIS
+    
             if (response.ok && result.match === true) {
-                const extractedAmount = parseFloat(result.amount); // <- FIXED
+                const extractedAmount = parseFloat(result.amount);
                 const expectedAmount = formData.stay_type === "monthly" ? 1000 : 500;
     
                 if (extractedAmount !== expectedAmount) {
@@ -276,15 +278,13 @@ const ContactUs = () => {
                     return;
                 }
     
-                // ✅ Fixed: correct reference and receipt_url
                 setPaymentData({
                     reference_number: result.reference,
                     amount: extractedAmount,
                 });
     
-                setReceiptUrl(result.receipt_url); // <- ✅ THE MISSING PART
-    
-                console.log("✅ Receipt URL set:", result.receipt_url);
+                setReceiptUrl(result.receipt_url); // ✅ SET HERE
+                console.log("✅ receiptUrl set:", result.receipt_url); // <-- VERIFY SETTING
                 alert("✅ Receipt validated successfully!");
             } else {
                 alert(result.message || "❌ Error processing receipt.");
