@@ -404,7 +404,7 @@ const ContactUs = () => {
             });
             
             const verifyData = await verifyResponse.json();
-            
+            console.log("✅ Google Verify API response:", verifyData);
             if (verifyData.email) {
               setFormData((prev) => ({
                 ...prev,
