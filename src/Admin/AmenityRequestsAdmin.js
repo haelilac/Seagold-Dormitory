@@ -4,6 +4,7 @@ import './AmenityRequestsAdmin.css';
 
 const AmenityRequestsAdmin = () => {
   const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(false); // <-- 🔥 Added loading state
 
   // 🌐 Use dynamic base URL
   const BASE_URL = window.location.hostname.includes('localhost')

@@ -11,6 +11,7 @@ const AdminGallery = () => {
   const [category, setCategory] = useState('');
   const [editMode, setEditMode] = useState(null); // Holds the ID of the image being edited
   const [activeCategory, setActiveCategory] = useState('ALL');
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
