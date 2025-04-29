@@ -87,7 +87,7 @@ const TopBar = ({
   return (
     <div className={`${styles.topBar} ${isSidebarCollapsed ? styles.shifted : ""}`}>
       <div className={`${styles.branding} ${sidebarOpen ? styles.shifted : ""}`}>
-        <h1>Seagold Dormitory</h1>
+        <h1>Welcome, {userData?.name?.split(' ')[0] || 'User'}</h1>
       </div>
 
       <div className={styles.topBarRight}>
