@@ -382,34 +382,44 @@ const ContactUs = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            
-            const idToken = await user.getIdToken(); // ✅ get actual ID token
+            const idToken = await user.getIdToken(); // ✅ Get Firebase ID Token
             
             const verifyResponse = await fetch("https://seagold-laravel-production.up.railway.app/api/google-verify-email", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token: idToken }),
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                  token: idToken,
+                  provider: 'google' // ✅ Important!
+                }),
             });
+    
+            if (!verifyResponse.ok) {
+              const errorData = await verifyResponse.json();
+              console.error("❌ Error verifying token:", errorData);
+              throw new Error(errorData.message || 'Failed to verify email');
+            }
             
             const verifyData = await verifyResponse.json();
-            
+    
             if (verifyData.email) {
-              setFormData((prev) => ({
-                ...prev,
-                email: verifyData.email,
-                first_name: verifyData.name.split(" ")[0],
-                last_name: verifyData.name.split(" ").slice(-1)[0],
-              }));
-              setIsVerified(true);
-              alert(`Email verified: ${verifyData.email}`);
+                setFormData((prev) => ({
+                    ...prev,
+                    email: verifyData.email,
+                    first_name: verifyData.name ? verifyData.name.split(" ")[0] : '',
+                    last_name: verifyData.name ? verifyData.name.split(" ").slice(-1)[0] : '',
+                }));
+                setIsVerified(true);
+                alert(`✅ Email verified: ${verifyData.email}`);
             } else {
-              alert("Failed to verify Google account.");
+                throw new Error('No email returned from backend.');
             }
+    
         } catch (error) {
             console.error("Google Sign-In Error:", error);
-            alert("Failed to verify email. Please try again.");
-          }
+            alert(`Failed to verify email. Reason: ${error.message}`);
         }
+    };
+    
     
 
         const handleSubmit = async (e) => {
