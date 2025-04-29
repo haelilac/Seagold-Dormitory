@@ -143,7 +143,7 @@ const App = () => {
     <GoogleOAuthProvider clientId={clientId}>
       <DataProvider>
         <Router>
-        <div className="app-content">
+        <div className="app-container">
           {console.log("Current Role State:", role)}
 
           {(!isLoggedIn || (role !== 'admin' && role !== 'tenant')) && <Navbar onLogout={handleLogout} />}
