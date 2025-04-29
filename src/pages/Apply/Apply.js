@@ -223,24 +223,28 @@ const ContactUs = () => {
         if (name === "stay_type") {
             let autoDuration = "";
             let fee = 0;
-    
+          
             if (value === "monthly") {
-                autoDuration = "";
-                fee = 1000; // Monthly stay requires 1000 pesos
-            } else if (value === "half-month" || value === "weekly" || value === "daily") {
-                autoDuration = value === "half-month" ? 15 : value === "weekly" ? 7 : formData.duration;
-                fee = 500; // Half-month, weekly, or daily stay requires 500 pesos
+              autoDuration = "";
+              fee = 1000;
+            } else if (value === "half-month") {
+              autoDuration = 15;
+              fee = 500;
+            } else if (value === "weekly") {
+              autoDuration = 7;
+              fee = 500;
             }
-    
+          
             setFormData(prev => ({
-                ...prev,
-                [name]: value,
-                duration: autoDuration,
+              ...prev,
+              [name]: value,
+              duration: autoDuration,
             }));
-            
-            setReservationFee(fee); // Set the reservation fee based on stay type
-        }
-    
+          
+            setReservationFee(fee);
+            return; // ✅ stop here so it doesn’t override duration below
+          }
+
         // Handle other inputs
         setFormData({ ...formData, [name]: value });
     };
@@ -748,17 +752,17 @@ const ContactUs = () => {
                 )}
 
 
-                    {formData.stay_type === "half-month" && (
-                        <div className="form-group">
-                            <label>Duration</label>
-                            <input
-                                type="text"
-                                name="duration"
-                                value={`${formData.duration} days`}
-                                readOnly
-                            />
-                        </div>
-                    )}
+                {formData.stay_type === "half-month" && (
+                <div className="form-group">
+                    <label>Duration</label>
+                    <input
+                    type="text"
+                    name="duration"
+                    value={formData.duration ? `${formData.duration} days` : ''}
+                    readOnly
+                    />
+                </div>
+                )}
 
 
                     {formData.stay_type === "weekly" && (
@@ -827,7 +831,8 @@ const ContactUs = () => {
                     value={formData.reservation_details}
                     onChange={handleInputChange}
                     required
-                    disabled={!formData.stay_type || !formData.duration}
+                    disabled={!formData.stay_type || (formData.duration === "" || formData.duration === null)}
+
                 >
                     <option value="">Select a Unit</option>
 
