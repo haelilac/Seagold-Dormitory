@@ -28,15 +28,6 @@ const AdminTourBookings = () => {
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
-    useEffect(() => {
-        fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings')
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('Fetched Bookings:', data.bookings);
-                setBookings(data.bookings || []);
-            })
-            .catch((error) => console.error('Error fetching bookings:', error));
-    }, []);
 
     const handleToggleSlot = async (time, status) => {
       try {
@@ -118,6 +109,7 @@ const AdminTourBookings = () => {
         const cachedBookings = getCachedData('tour_bookings');
         if (cachedBookings) {
             setBookings(cachedBookings);
+            setLoading(false); // ✅ Add this
             return;
         }
     
@@ -129,15 +121,16 @@ const AdminTourBookings = () => {
     
             console.log('Fetched Bookings:', data.bookings);
             setBookings(data.bookings || []);
-            updateCache('tour_bookings', data.bookings || []);  // ✅ Cache the bookings
+            updateCache('tour_bookings', data.bookings || []);
         } catch (error) {
             console.error('Error fetching bookings:', error);
+        } finally {
+            setLoading(false); // ✅ Always stop loading regardless of success or error
         }
     };
-    
     useEffect(() => {
-        fetchBookings();
-    }, []);
+      fetchBookings();
+  }, []);
 
     const handleConfirmBooking = async (id) => {
         try {
