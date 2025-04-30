@@ -105,10 +105,10 @@ const ContactUs = () => {
             setMunicipalities([]);
         } else {
             try {
-                const citiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/cities.json`);
+                const citiesResponse = await axios.get("https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/cities.json");
                 setCities(citiesResponse.data);
     
-                const municipalitiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/municipalities.json`);
+                const municipalitiesResponse = await axios.get("https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/municipalities.json");
                 setMunicipalities(municipalitiesResponse.data);
             } catch (error) {
                 console.error("Error fetching cities or municipalities:", error);
@@ -138,9 +138,9 @@ const ContactUs = () => {
         try {
             let barangayResponse;
             if (cities.some(c => c.name === cityMunName)) {
-                barangayResponse = await axios.get(`https://psgc.gitlab.io/api/cities/${selectedCity.code}/barangays.json`);
+                barangayResponse = await axios.get("https://psgc.gitlab.io/api/cities/${selectedCity.code}/barangays.json");
             } else {
-                barangayResponse = await axios.get(`https://psgc.gitlab.io/api/municipalities/${selectedCity.code}/barangays.json`);
+                barangayResponse = await axios.get("https://psgc.gitlab.io/api/municipalities/${selectedCity.code}/barangays.json");
             }
     
             setBarangays(barangayResponse ? barangayResponse.data : []);
@@ -169,7 +169,7 @@ const ContactUs = () => {
         if (!formData.reservation_details || !formData.stay_type) return;
 
         try {
-            const response = await axios.get(`https://seagold-laravel-production.up.railway.app/api/room-pricing`, {
+            const response = await axios.get("https://seagold-laravel-production.up.railway.app/api/room-pricing", {
                 params: {
                     unit_code: formData.reservation_details,
                     stay_type: formData.stay_type
@@ -368,10 +368,10 @@ const ContactUs = () => {
               setUploadedValidIdPath(data.file_url); // still useful for fallback
               
               if (data.id_type_matched) {
-                alert(`✅ ID Verified Successfully!`);
+                alert('✅ ID Verified Successfully!');
                 setIsIdVerified(true);
               } else {
-                alert(`❌ ID Mismatch detected!`);
+                alert('❌ ID Mismatch detected!');
                 setIsIdVerified(false);
               }
         } catch (error) {
@@ -437,16 +437,13 @@ const ContactUs = () => {
     console.log('paymentData:', paymentData);
     console.log("✅ Submitting data with receipt URL:", receiptUrl);
     console.log("💸 Payment:", paymentData);
+    console.log("✅ ID URL used:", formData.valid_id_url || uploadedValidIdPath || receiptUrl);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const idUrl = formData.valid_id_url || uploadedValidIdPath || receiptUrl;
-        console.log("✅ ID URL used:", idUrl);
-        console.log("🧾 Receipt URL:", receiptUrl);
-        if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
-            alert("❌ valid_id_url is missing or invalid.");
-            setLoading(false);
-            return;
+        if (!formData.valid_id_url && !uploadedValidIdPath && receiptUrl) {
+            setFormData(prev => ({ ...prev, valid_id_url: receiptUrl }));
         }
         if (!isVerified) {
             alert('Please verify your email using Google Sign-In before submitting.');
@@ -972,7 +969,8 @@ const ContactUs = () => {
                 </div>
                 <button 
                     type="submit" 
-                    className={`send-message-button ${loading ? "loading" : ""}`} 
+                    className={`send-message-button ${loading ? "loading" : ""}`}
+
                     disabled={!isVerified || !isIdVerified || loading}
                 >
                     {loading ? (
