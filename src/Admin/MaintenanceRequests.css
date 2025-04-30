@@ -187,10 +187,45 @@
 }
 
 
-/* Responsive modal adjustment */
-@media (max-width: 768px) {
+/* ================================================
+   ✅ Media Query: Standard Smartphones (375px – 767px)
+   ================================================ */
+   @media (min-width: 375px) and (max-width: 767px) {
+    .maintenance-requests {
+        position: static;
+        width: 90%;
+        margin: 15px auto;
+        padding: 18px;
+    }
+
+    .filters {
+        flex-direction: column;
+        position: static;
+        width: 100%;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .filters select,
+    .filters input {
+        width: 100%;
+        font-size: 13px;
+    }
+
     .custom-modal {
-        width: 95%;
+        width: 90%;
+        max-height: 88vh;
         padding: 10px;
+    }
+
+    .modal-buttons button {
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .close-button {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
     }
 }
