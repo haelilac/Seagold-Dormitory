@@ -442,7 +442,7 @@ const ContactUs = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!formData.valid_id_url && !uploadedValidIdPath && receiptUrl) {
             setFormData(prev => ({ ...prev, valid_id_url: receiptUrl }));
         }
@@ -468,28 +468,18 @@ const ContactUs = () => {
                 if (key === 'check_in_date') {
                     requestData.append(key, formatDateTime(formData[key]));
                 } else if (key === 'valid_id') {
-                    return;
+                    // Send valid_id as the same URL you're using for valid_id_url
+                    requestData.append("valid_id", formData.valid_id_url || uploadedValidIdPath || receiptUrl); // Use valid_id here
                 } else {
                     requestData.append(key, formData[key]);
                 }
             });
     
-            // ✅ Safely add fallback for valid_id_url here
-            const idUrl = formData.valid_id_url || uploadedValidIdPath || receiptUrl; // ✅ fallback
-            if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
-                alert("❌ valid_id_url is missing or invalid.");
-                setLoading(false);
-                return;
-            }
-            requestData.append("valid_id_url", idUrl);
-    
+            // Add other necessary fields for the application
             requestData.append("reservation_fee", reservationFee);
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
-    
-            console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
-            console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
     
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
@@ -534,6 +524,7 @@ const ContactUs = () => {
             setLoading(false); // 🔥 Stop loading after done
         }
     };
+    
     
           
     
