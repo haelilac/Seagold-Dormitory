@@ -437,9 +437,14 @@ const ContactUs = () => {
     console.log('paymentData:', paymentData);
     console.log("✅ Submitting data with receipt URL:", receiptUrl);
     console.log("💸 Payment:", paymentData);
+    console.log("✅ ID URL used:", formData.valid_id_url || uploadedValidIdPath || receiptUrl);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!formData.valid_id_url && !uploadedValidIdPath && receiptUrl) {
+            setFormData(prev => ({ ...prev, valid_id_url: receiptUrl }));
+        }
         if (!isVerified) {
             alert('Please verify your email using Google Sign-In before submitting.');
             return;
