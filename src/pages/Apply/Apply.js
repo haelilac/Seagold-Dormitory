@@ -492,6 +492,9 @@ const ContactUs = () => {
                 setLoading(false);
                 return;
             }
+            console.log("Submitting form data: ", formData);
+            console.log("Valid ID URL being used:", formData.valid_id_url);
+
             requestData.append("valid_id_url", idUrl);
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reservation_fee", reservationFee);
