@@ -4,6 +4,7 @@ import { getAuthToken } from "../utils/auth";
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+
 // Helper functions to convert between formats
 const convertDateToISO = (mmddyyyy) => {
   const [month, day, year] = mmddyyyy.split("-");
@@ -59,7 +60,7 @@ const EventsBoard = () => {
    */
   const fetchEvents = async (token) => {
     try {
-      const response = await fetch("https://seagold-laravel-production.up.railway.app/api/events", {
+      const response = await fetch("http://localhost:8000/api/events", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 401) {
@@ -88,8 +89,8 @@ const EventsBoard = () => {
     e.preventDefault();
     const method = editMode ? "PUT" : "POST";
     const url = editMode
-      ? `https://seagold-laravel-production.up.railway.app/api/events/${editingEventId}`
-      : "https://seagold-laravel-production.up.railway.app/api/events";
+      ? `http://localhost:8000/api/events/${editingEventId}`
+      : "http://localhost:8000/api/events";
 
     // Convert the date to ISO before sending
     const bodyData = { ...formData, date: convertDateToISO(formData.date) };
@@ -125,7 +126,7 @@ const EventsBoard = () => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     console.log("[handleDelete] Deleting event id:", id);
 
-    await fetch(`https://seagold-laravel-production.up.railway.app/api/events/${id}`, {
+    await fetch(`http://localhost:8000/api/events/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${getAuthToken()}` },
     });
@@ -202,9 +203,9 @@ const EventsBoard = () => {
    * Generate unique year options from events
    */
   const uniqueYears = Array.from(new Set(events.map((e) => e.date.split("-")[2]))).sort();
-  if (loading) return <div className="eventsboard-spinner"></div>;
+
   return (
-    <div className="events-page">
+    <div className="admin-events-page">
       {/* Header Bar */}
       <header className="header-bar">
         <h1>Events Board</h1>
@@ -247,79 +248,65 @@ const EventsBoard = () => {
           </form>
         </div>
 
-        {/* Right Column: Search & Filter + Ongoing, Upcoming & Past Events */}
-        <div className="events-lists">
-          {/* Controls Row: Search and Filter */}
-          <div className="controls-row">
-            {/* Search Container (Left) */}
-            <div className="search-container">
-              <label>
-                Search by Title:
-                <input
-                  type="text"
-                  placeholder="Search events..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </label>
-            </div>
+        <div className="controls-row">
+  <label className="control-label-search">
+    Search by Title:
+    <input
+      type="text"
+      placeholder="Search events..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="control-input"
+    />
+  </label>
 
-            {/* Filter Wrapper (Right) */}
-            <div className="filter-wrapper">
-              <h3>Filter Events</h3>
-              <div className="filter-container">
-                {/* Month Filter */}
-                <label>
-                  Month:
-                  <select
-                    className="filter-select"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                  >
-                    <option value="All">All</option>
-                    <option value="01">January</option>
-                    <option value="02">February</option>
-                    <option value="03">March</option>
-                    <option value="04">April</option>
-                    <option value="05">May</option>
-                    <option value="06">June</option>
-                    <option value="07">July</option>
-                    <option value="08">August</option>
-                    <option value="09">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                  </select>
-                </label>
+  <label className="control-label">
+    Month:
+    <select
+      value={selectedMonth}
+      onChange={(e) => {
+        setSelectedMonth(e.target.value);
+        applyFilters();
+      }}
+      className="control-select"
+    >
+      <option value="All">All</option>
+      <option value="01">January</option>
+      <option value="02">February</option>
+      <option value="03">March</option>
+      <option value="04">April</option>
+      <option value="05">May</option>
+      <option value="06">June</option>
+      <option value="07">July</option>
+      <option value="08">August</option>
+      <option value="09">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+    </select>
+  </label>
 
-                {/* Year Filter */}
-                <label>
-                  Year:
-                  <select
-                    className="filter-select"
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                  >
-                    <option value="All">All</option>
-                    {uniqueYears.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+  <label className="control-label">
+    Year:
+    <select
+      value={selectedYear}
+      onChange={(e) => {
+        setSelectedYear(e.target.value);
+        applyFilters();
+      }}
+      className="control-select"
+    >
+      <option value="All">All</option>
+      {uniqueYears.map((year) => (
+        <option key={year} value={year}>
+          {year}
+        </option>
+      ))}
+    </select>
+  </label>
+</div>
+</div>
 
-                {/* Filter Button */}
-                <button
-                  type="button"
-                  className="filter-btn"
-                  onClick={applyFilters}
-                >
-                  Filter
-                </button>
-              </div>
-            </div>
-          </div>
 
           {/* Ongoing Events Container */}
           <div className="ongoing-events-container">
@@ -399,8 +386,6 @@ const EventsBoard = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
   );
 };
 
