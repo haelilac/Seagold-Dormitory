@@ -454,18 +454,19 @@ const ContactUs = () => {
             }
         
             setLoading(true); // 🔥 Start loading
-        
+            console.log("✅ valid_id_url:", formData.valid_id_url);
             try {
                 const requestData = new FormData();
                 Object.keys(formData).forEach((key) => {
                     if (key === 'check_in_date') {
                         requestData.append(key, formatDateTime(formData[key]));
                     } else if (key === 'valid_id') {
-                        return;
+                        return; // skip the non-URL field
                     } else {
                         requestData.append(key, formData[key]);
                     }
                 });
+                console.log("✅ valid_id_url:", formData.valid_id_url);
                 requestData.append("reservation_fee", reservationFee);
                 requestData.append("receipt_url", receiptUrl);
                 requestData.append("reference_number", paymentData.reference_number);
