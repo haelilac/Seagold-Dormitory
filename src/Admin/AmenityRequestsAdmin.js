@@ -35,9 +35,18 @@ const AmenityRequestsAdmin = () => {
         method: "PUT",
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
+
       if (res.ok) {
         alert(`Request ${action}d successfully!`);
-        fetchRequests();
+        // Update the request state to reflect the approved date
+        const updatedRequests = requests.map(req => {
+          if (req.id === id && action === 'approve') {
+            req.status = 'approved';
+            req.approved_at = new Date().toLocaleDateString(); // Set approved_at when approved
+          }
+          return req;
+        });
+        setRequests(updatedRequests); // Update local state
       } else {
         alert("Action failed.");
       }
