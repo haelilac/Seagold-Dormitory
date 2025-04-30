@@ -108,7 +108,7 @@ const Units = () => {
     setFullscreenIndex(prevIndex);
     setFullscreenImage(fullscreenImages[prevIndex]);
   };
-
+  if (loading) return <div className="units-spinner"></div>;
   return (
     <div className="Units fade-in">
       <div className="filter-bar fade-in">
