@@ -3,6 +3,7 @@ import './UnitManagement.css';
 import { useDataCache } from '../contexts/DataContext';
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
+import { FaTrash } from 'react-icons/fa';
 
 window.Pusher = Pusher;
 window.Echo = new Echo({
@@ -168,7 +169,7 @@ const UnitManagement = () => {
                     imageForm.append('image', file);
                     imageForm.append('unit_code', newUnit.unit_code);
 
-                    await fetch('https://seagold-laravel-production.up.railway.app/unit-images/upload', {
+                    await fetch('https://seagold-laravel-production.up.railway.app/api/unit-images/upload', {
                         method: 'POST',
                         body: imageForm,
                     });
@@ -209,24 +210,27 @@ const UnitManagement = () => {
     return (
         <section id="unit-management" className="dashboard-section">
           <div className="unit-section">
-            <header className="header-bar">My Unit Management Dashboard</header>
+            <h2>My Unit Management Dashboard</h2>
   
             <div className="unit-layout">
               <form onSubmit={handleSubmit} className="unit-form">
-                <h3>Add New Unit</h3>
+              <h3>Add New Unit</h3>
+              <div className="unit-grid">
                 <label>Unit Code:<input type="text" name="unit_code" required /></label>
                 <label>Capacity:<input type="number" name="capacity" required /></label>
-                <label>Price:<input type="number" name="price" required /></label>
-                <label>Max Occupancy (All Stay Types):</label>
+                <label>Max Occupancy (All Stay Types):
                 <input
                   type="number"
                   name="occupancy"
                   value={formData.occupancy}
                   onChange={handleInputChange}
                 />
+                </label>
+                <label>Price:<input type="number" name="price" required /></label>
                 <label>Upload Room Images:
                   <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
                 </label>
+                </div>
                 <button type="submit">Add Unit</button>
               </form>
   
@@ -268,9 +272,9 @@ const UnitManagement = () => {
   
           {/* Modal */}
           {showModal && (
-            <div className="modal-overlay">
-              <div className="modal">
-                <h2>Details for {selectedUnit?.unit_code}</h2>
+            <div className="unit-modal-overlay">
+              <div className="unit-modal">
+                <h5>Details for {selectedUnit?.unit_code}</h5>
   
                 {/* Upload Section */}
                 <div className="image-upload-section">
@@ -291,34 +295,38 @@ const UnitManagement = () => {
                     setUnitImageFiles([]);
                     fetchUnitImages();
                   }}>
-                    <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
-                    <button type="submit">Upload</button>
+                    <div className="file-input-wrapper">
+    <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
+    <button type="submit">Upload</button>
+  </div>
                   </form>
   
-                  {/* Preview Images */}
-                  <div className="image-preview-grid">
-                    {unitImages.map((img) => (
-                      <div key={img.id} className="image-preview-wrapper">
-                        <img src={img.image_path} alt="Room" className="room-image-preview" />
-                        <button onClick={handleUpdateUnit} className="save-button">Save Unit Info</button>
-                        <button onClick={async () => {
-                          if (!window.confirm('Delete this image?')) return;
-                          await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${img.id}`, {
-                            method: 'DELETE',
-                          });
-                          fetchUnitImages();
-                        }}>
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+{/* Preview Images */}
+<div className="image-preview-grid">
+  {unitImages.map((img) => (
+    <div key={img.id} className="image-preview-wrapper">
+      <img src={img.image_path} alt="Room" className="room-image-preview" />
+      <button 
+        onClick={async () => {
+          if (!window.confirm('Delete this image?')) return;
+          await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${img.id}`, {
+            method: 'DELETE',
+          });
+          fetchUnitImages();
+        }}
+        className="delete-icon-button"
+      >
+          <FaTrash className="delete-icon" />
+      </button>
+    </div>
+  ))}
+</div>
   
                 {/* Close Modal */}
-                <button onClick={() => setShowModal(false)} className="close-button">X</button>
+                <button onClick={() => setShowModal(false)} className="unit-close-button">X</button>
+
                   {/* Upload Pricing Image */}
-                <form onSubmit={async (e) => {
+                  <form onSubmit={async (e) => {
                   e.preventDefault();
                   if (!unitImageFiles.length) return;
                   for (let file of unitImageFiles) {
@@ -335,9 +343,18 @@ const UnitManagement = () => {
                   setUnitImageFiles([]);
                   fetchUnitImages();
                 }}>
+                  <div className="file-input-wrapper">
                   <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
                   <button type="submit">Upload Pricing Image</button>
+                  </div>
                 </form>
+                
+
+                {/* Single Save Button for Updating the Unit */}
+                <div className="save-button-container">
+                  <button onClick={handleUpdateUnit} className="save-button">Save Unit Info</button>
+                </div>
+                
                 {/* Pricing Summary */}
                 <div style={{ fontWeight: 'bold', marginTop: '20px' }}>
                   {(() => {
@@ -349,9 +366,9 @@ const UnitManagement = () => {
                     const basePrice = matched?.price || fallback;
   
                     return <>
-                      🧑 Total Occupants (all types): {totalUsers} <br />
-                      🧑‍💼 Monthly Occupants: {monthlyUsers} <br />
-                      📌 Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'}
+                      Total Occupants (all types): {totalUsers} <br />
+                      Monthly Occupants: {monthlyUsers} <br />
+                      Base Monthly Price: {basePrice ? `₱${parseFloat(basePrice).toLocaleString()}` : 'N/A'}
                     </>;
                   })()}
                 </div>
@@ -379,6 +396,7 @@ const UnitManagement = () => {
                 </table>
   
               </div>
+            </div>
             </div>
           )}
         </section>

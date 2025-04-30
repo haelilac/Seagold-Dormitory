@@ -1,281 +1,196 @@
-/* Import Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
 
-
-html, body {
-    height: 100%;
-    overflow: auto;
+.dashboard-section{
+  padding: 20px;
+  width: 100%;
+  right:2%;
+  top: 5%;
+  position: relative;
 }
 
-#root {
-    min-height: 100vh;
+.unitmanagement-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #366e39;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  z-index: 1000; 
 }
 
-.app-content {
-    min-height: 100vh;
-    overflow: auto;
+.dashboard-section h2 {
+  font-size: 1.8rem;
+  text-align: left;
+  padding-bottom: 10px;
+  border-bottom: 2px solid#bf9e1b;
+  font-family: 'Montserrat', sans-serif;
 }
-/* Apply Font Globally */
-body {
-    font-family: 'Libre Baskerville', serif;
+.dashboard-section h4 {
+  font-size: 1.8rem;
+  text-align: left;
+  padding-bottom: 10px;
+  border-bottom: 2px solid#bf9e1b;
+  font-family: 'Montserrat', sans-serif;
 }
-
-#unit-management {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
-    position: relative;
-    top: 3%;
-    right: 2%;
-    font-family: 'Libre Baskerville', serif;
-}
-
-#unit-management h2, #unit-management p, #unit-management form, #unit-management table {
-    font-family: 'Libre Baskerville', serif;
+.dashboard-section h5{
+  font-size: 1.8rem;
+  text-align: center;
+  padding-bottom: 10px;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.unit-layout, .unit-form, .unit-management-container, .unit-statistics, .unit-box {
-    font-family: 'Libre Baskerville', serif;
-}
-
-.unit-box span {
-    font-family: 'Libre Baskerville', serif;
-}
-
-/* Unit Header */
-.unit-header {
-    background-color: #00bf63; /* Dark Blue Background */
-    color: white;
-    padding: 15px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-/* Container for the section */
-#unit-management {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
-}
-
-/* Section heading */
-#unit-management h2 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-/* Unit count */
-#unit-management p {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 20px;
-}
-
-/* Form container */
-#unit-management form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-/* Form labels and inputs */
-#unit-management form label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-
-#unit-management form input {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-top: 5px;
-    box-sizing: border-box;
-}
-
-#unit-management form button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    align-self: flex-start;
-    transition: background-color 0.3s ease;
-}
-
-#unit-management form button:hover {
-    background-color: #0056b3;
-}
-
-/* Table styles */
-#unit-management table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-#unit-management table th,
-#unit-management table td {
-    padding: 10px 15px;
-    text-align: left;
-    font-size: 14px;
-    color: #333;
-    border-bottom: 1px solid #ddd;
-}
-
-#unit-management table th {
-    background-color: #f0f0f0;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-#unit-management table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.make-available {
-    background-color: #28a745; /* Green */
-}
-
-.make-unavailable {
-    background-color: #dc3545; /* Red */
+.unit-layout{
+  position: relative;
+  top: 10%;
 }
 
 
-/* Hover effect on rows */
-#unit-management table tbody tr:hover {
-    background-color: #f7f7f7;
+.unit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* Two columns for input fields */
+  gap: 10px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: lighter;
 }
 
-/* Unit Management Title Styling */
-.unit-layout {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 90%;
-    max-width: 1200px;
-    background: #f2ede3;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
+/* Form Styling */
 .unit-form {
-    flex: 1;
-    padding-right: 20px;
+  grid-column: span 2;  /* The form will span across both columns */
+  background-color: #ffffff; /* White background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Open Sans', sans-serif;
+  font-weight: lighter;
 }
 
+/* Form Title */
+.unit-form h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+
+.unit-section h3 {
+  margin-top: 1%;
+  font-size: 1.8rem;
+  text-align: center;
+  padding-bottom: 5px;
+}
+
+
+/* Input Label Styling */
 .unit-form label {
-    display: block;
-    font-size: 16px;
-    margin-bottom: 5px;
-    font-weight: bold;
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #555;
 }
 
-.unit-form input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+/* Input Fields Styling */
+.unit-form input,
+.unit-form select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease-in-out;
 }
 
-.unit-form button {
-    background-color: #6699cc;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+/* Focus State for Inputs */
+.unit-form input:focus,
+.unit-form select:focus {
+  border-color: #3498db;  /* Blue border on focus */
+  outline: none;
+  background-color: #ffffff;  /* White background on focus */
 }
 
+/* Submit Button Styling */
+.unit-form button[type="submit"] {
+  background-color: #366e39;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s;
+}
+
+/* Submit Button Hover Effect */
+.unit-form button[type="submit"]:hover {
+  background-color: #4a954e;  /* Darker green on hover */
+}
+
+/* Unit Management Container */
 .unit-management-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* Create 3 equal columns */
+  gap: 20px; /* Space between the boxes */
+  align-items: center; /* Center items vertically */
+  padding: 20px;
 }
 
+/* Unit Statistics Box Styling */
 .unit-statistics {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 2fr); /* Create 3 columns inside the statistics */
+  gap: 20px; /* Space between the unit boxes */
+  width: 100%; /* Make the container width 100% */
 }
 
 .unit-box {
-    background-color: #2383e4;
-    color: white;
-    padding: 25px;
-    border-radius: 12px;
-    text-align: left;
-    font-size: 22px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 85px;
-    position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.unit-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  height: 70px;
 }
 
 .unit-box span {
-    position: absolute;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
+  align-items: center;
+  color: #ffffff; /* Make the count color blue */
 }
 
-.unavailable {
-    background-color: #cc0000 !important;
+.unit-box.total {
+  background-color: rgb(245, 158, 11);
+  color: white;
 }
 
-.available {
-    background-color: #366e39!important;
+.unit-box.available {
+  background-color: #366e39; /* Green background for available units */
+  color: white;
 }
 
-.available:hover{
-  background-color: #4a954e !important;
+.unit-box.unavailable {
+  background-color: #e74c3c; /* Red background for unavailable units */
+  color: white;
 }
+
 
 .unit-card-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 30px;
   }
   
   .unit-card {
     background-color: #ffffff;
     border-radius: 12px;
     padding: 20px;
-    width: 300px;
+    width:332px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
     font-size: 14px;
@@ -284,11 +199,12 @@ body {
   .unit-card h4 {
     font-size: 18px;
     margin-bottom: 10px;
-    color: #28319a;
+    color: #366e39;
   }
   
   .unit-card p {
     margin: 4px 0;
+    
   }
   
   .unit-card-actions {
@@ -296,6 +212,13 @@ body {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    
+  }
+
+  .unit-card-actions button{
+    border-radius: 5px;
+    background-color: #366e39;
+    
   }
   
   .unit-card:hover {
@@ -309,25 +232,44 @@ body {
   .unit-card.unavailable {
     border-left: 6px solid #cc0000;
   }
-
-  .modal {
+  .unit-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+}
+  .unit-modal {
     background-color: #fff;
     padding: 30px;
     border-radius: 12px;
     width: 90%;
-    max-width: 800px;
-    max-height: 80vh;
+    max-width: 900px;
+    max-height: 85vh;
     overflow-y: auto;
-    position: relative;
+    left: 25%;
+    top: 10%;
+    position: absolute;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      /* Hide scrollbar */
+      -ms-overflow-style: none;  /* Hide scrollbar in Internet Explorer */
+      scrollbar-width: none;     /* Hide scrollbar in Firefox */
   }
   
-  .close-button {
+  .unit-modal::-webkit-scrollbar {
+      display: none; /* Hide scrollbar in Webkit browsers (Chrome, Safari) */
+  }
+  .unit-close-button {
     position: absolute;
     top: 15px;
     right: 20px;
-    background: #dc3545;
-    color: white;
+    background-color: white;
+    color: rgb(0, 0, 0);
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
@@ -335,68 +277,177 @@ body {
     cursor: pointer;
   }
   
-  .pricing-table th {
-    background: #f2f2f2;
-  }
-  
-  .pricing-table td, .pricing-table th {
-    padding: 10px;
-    text-align: left;
-  }
+/* Table Row Hover Effect */
+.unit-close-button:hover {
+  background-color: #ffffff; /* Light grey background on hover */
+  color: rgb(58, 58, 58);
+}
 
-  .image-upload-section {
-    margin-top: 1rem;
-  }
-  
-  .image-preview-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .room-image-preview {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .image-preview-wrapper {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .room-image-preview {
-    width: 100px;
-    margin: 5px;
-    border-radius: 4px;
-  }
-  
-  .delete-image-btn {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    background: red;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 0.7rem;
-    padding: 2px 6px;
-  }
+
+/* Pricing Table */
+.pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Header */
+.pricing-table th {
+  background-color:#366e39; /* Blue background */
+  color: #ffffff;
+  padding: 12px 15px;
+  font-weight: bold;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Table Body */
+.pricing-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  color: #555;
+}
+
+/* Table Row Hover Effect */
+.pricing-table tr:hover {
+  background-color: #f1f1f1; /* Light grey background on hover */
+}
+
+/* Row Alternate Background */
+.pricing-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alternate row background */
+}
+
+/* Table Data Color */
+.pricing-table td {
+  color: #333;
+}
+
+/* Pricing Table Rows */
+.pricing-table td, .pricing-table th {
+  text-align: left;
+  padding: 12px 15px;
+}
+
+/* Last Row Border */
+.pricing-table tr:last-child td {
+  border-bottom: none;
+}
+/* File Input Wrapper */
+.file-input-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;  /* Adds space between file input and the upload button */
+  margin-bottom: 20px;
+}
+
+/* File Input Styles */
+.file-input-wrapper input[type="file"] {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #fafafa;
+  font-size: 1rem;
+  width: auto;
+  flex-grow: 1;  /* Ensures input fills available space */
+}
+
+/* Upload Button Styles */
+.file-input-wrapper button {
+  background-color: #bf9e1b;
+  color: white;
+  border: none;
+  padding: 12px 30px;  /* Increased padding for bigger height */
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  height: 30%;
+}
+
+/* Upload Button Hover Effect */
+.file-input-wrapper button:hover {
+  background-color: #d4ba4f;
+
+}
+/* General Save Button */
+.save-button-container {
+  margin-top: 20px;
+  text-align: center; /* Center the button */
+}
+
+.save-button {
+  background-color: #366e39;
+  color: white;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 25%;
+  text-align: center;
+}
+
+/* Hover Effect for Save Button */
+.save-button:hover {
+  background-color: #4a954e;
+}
+
+/* Delete Icon Button */
+.delete-icon-button {
+  position: absolute; /* Position the icon inside the image */
+  bottom: 5px; /* Place the icon at the bottom of the image */
+  left: 50%; /* Center it horizontally */
+  transform: translateX(-50%); /* Adjust for proper centering */
+  background-color: white;
+  border-radius: 5px;
+  padding: 1px;
+  padding-left: 2px;
+  padding-right: 2px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px; /* Adjust size of the icon */
+  color: #bf9e1b; /* Red color for delete */
+  transition: color 0.3s;
+  margin: 5px;
+}
+
+/* Hover Effect for Delete Icon */
+.delete-icon-button:hover {
+  background-color: rgb(224, 224, 224);
+  color: #d4ba4f;/* Darker red on hover */
+}
+/* Image Preview Wrapper */
+.image-preview-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.room-image-preview {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 5px;
+}
+
+/* For icon size adjustments */
+.fas {
+  font-size: 5px; /* Adjust size of the icon if needed */
+}
+
   
   .unitmanagement-spinner {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #366e39;
+    border-top: 6px solid #366e39;  /* SEAGOLD green */
     border-radius: 50%;
     width: 50px;
     height: 50px;
     animation: spin 1s linear infinite;
-    z-index: 1000; 
+    margin: 100px auto;
 }
 
 @keyframes spin {
