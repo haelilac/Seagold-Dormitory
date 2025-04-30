@@ -521,7 +521,7 @@ const ContactUs = () => {
                 reservation_details: '',
                 stay_type: '', 
                 valid_id: null,
-                valid_id: '',
+                receipt_url: null,
                 accept_privacy: false,
             });
             setIsVerified(false);
