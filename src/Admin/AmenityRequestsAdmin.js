@@ -4,9 +4,8 @@ import './AmenityRequestsAdmin.css';
 
 const AmenityRequestsAdmin = () => {
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(false); // <-- 🔥 Added loading state
+  const [loading, setLoading] = useState(false);
 
-  // 🌐 Use dynamic base URL
   const BASE_URL = window.location.hostname.includes('localhost')
     ? 'http://localhost:8000'
     : 'https://seagold-laravel-production.up.railway.app';
@@ -16,7 +15,7 @@ const AmenityRequestsAdmin = () => {
   }, []);
 
   const fetchRequests = async () => {
-    setLoading(true); // ⬅️ start loading
+    setLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/api/amenities/requests`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` }
@@ -26,7 +25,7 @@ const AmenityRequestsAdmin = () => {
     } catch (err) {
       console.error("Error fetching requests:", err);
     } finally {
-      setLoading(false); // ⬅️ stop loading even on error
+      setLoading(false);
     }
   };
 
@@ -46,7 +45,9 @@ const AmenityRequestsAdmin = () => {
       console.error("Action error:", err);
     }
   };
+
   if (loading) return <div className="amenity-spinner"></div>;
+
   return (
     <div className="amenity-requests-admin">
       <h2>Amenity Requests</h2>
@@ -59,6 +60,8 @@ const AmenityRequestsAdmin = () => {
               <th>Tenant</th>
               <th>Amenity</th>
               <th>Status</th>
+              <th>Date Requested</th> {/* ✅ NEW */}
+              <th>Date Approved</th>  {/* ✅ NEW */}
               <th>Actions</th>
             </tr>
           </thead>
@@ -68,6 +71,8 @@ const AmenityRequestsAdmin = () => {
                 <td>{req.tenant?.name || 'N/A'}</td>
                 <td>{req.amenity_type}</td>
                 <td>{req.status}</td>
+                <td>{req.created_at || '—'}</td> {/* 🟢 Formatted from backend */}
+                <td>{req.approved_at || '—'}</td> {/* 🟢 Null-safe */}
                 <td>
                   {req.status === 'pending' ? (
                     <>
