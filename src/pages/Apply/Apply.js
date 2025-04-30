@@ -27,6 +27,7 @@ const ContactUs = () => {
         reservation_details: '',
         stay_type: '', 
         valid_id: null,
+        valid_id_url: '',
         accept_privacy: false,
     });
   useEffect(() => {
