@@ -439,93 +439,91 @@ const ContactUs = () => {
     console.log("✅ Submitting data with receipt URL:", receiptUrl);
     console.log("💸 Payment:", paymentData);
 
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-            if (!isVerified) {
-                alert('Please verify your email using Google Sign-In before submitting.');
-                return;
-            }
-            if (!formData.accept_privacy) {
-                alert('You must accept the privacy terms.');
-                return;
-            }
-            if (!paymentData.reference_number || !paymentData.amount) {
-                alert("❌ Receipt validation failed. Please upload a clearer image.");
-                return;
-            }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!isVerified) {
+            alert('Please verify your email using Google Sign-In before submitting.');
+            return;
+        }
+        if (!formData.accept_privacy) {
+            alert('You must accept the privacy terms.');
+            return;
+        }
+        if (!paymentData.reference_number || !paymentData.amount) {
+            alert("❌ Receipt validation failed. Please upload a clearer image.");
+            return;
+        }
+    
+        setLoading(true); // 🔥 Start loading
+    
+        try {
+            const requestData = new FormData();
+    
+            Object.keys(formData).forEach((key) => {
+                if (key === 'check_in_date') {
+                    requestData.append(key, formatDateTime(formData[key]));
+                } else if (key === 'valid_id') {
+                    return;
+                } else {
+                    requestData.append(key, formData[key]);
+                }
+            });
+    
+            // ✅ Safely add fallback for valid_id_url here
             if (!formData.valid_id_url && uploadedValidIdPath) {
                 requestData.append("valid_id_url", uploadedValidIdPath);
-              }
-        
-            setLoading(true); // 🔥 Start loading
-            console.log("✅ valid_id_url:", formData.valid_id_url);
-            try {
-                const requestData = new FormData();
-
-                Object.keys(formData).forEach((key) => {
-                  if (key === 'check_in_date') {
-                    requestData.append(key, formatDateTime(formData[key]));
-                  } else if (key === 'valid_id') {
-                    return;
-                  } else {
-                    requestData.append(key, formData[key]);
-                  }
-                });
-                
-                // ✅ Safely add fallback for valid_id_url here
-                if (!formData.valid_id_url && uploadedValidIdPath) {
-                  requestData.append("valid_id_url", uploadedValidIdPath);
-                }
-                
-                requestData.append("reservation_fee", reservationFee);
-                requestData.append("receipt_url", receiptUrl);
-                requestData.append("reference_number", paymentData.reference_number);
-                requestData.append("payment_amount", paymentData.amount);
-                
-                console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
-                console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
-                
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
-                    method: 'POST',
-                    body: requestData,
-                });
-        
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Server Error: ${response.status} - ${errorText}`);
-                }
-        
-                alert('Application submitted successfully!');
-                setFormData({
-                    last_name: '',
-                    first_name: '',
-                    middle_name: '',
-                    birthdate: null,
-                    email: '',
-                    facebook_profile: '',
-                    house_number: '',
-                    street: '',
-                    barangay: '',
-                    city: '',
-                    province: '',
-                    zip_code: '',
-                    contact_number: '',
-                    occupation: '',
-                    check_in_date: null,
-                    duration: '',
-                    reservation_details: '',
-                    stay_type: '',
-                    valid_id: null,
-                    accept_privacy: false,
-                });
-                setIsVerified(false);
-            } catch (error) {
-                console.error('Error submitting application:', error.message);
-                alert(`An error occurred: ${error.message}`);
-            } finally {
-                setLoading(false); // 🔥 Stop loading after done (success or error)
             }
-        };
+    
+            requestData.append("reservation_fee", reservationFee);
+            requestData.append("receipt_url", receiptUrl);
+            requestData.append("reference_number", paymentData.reference_number);
+            requestData.append("payment_amount", paymentData.amount);
+    
+            console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
+            console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
+    
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
+                method: 'POST',
+                body: requestData,
+            });
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server Error: ${response.status} - ${errorText}`);
+            }
+    
+            alert('Application submitted successfully!');
+            setFormData({
+                last_name: '',
+                first_name: '',
+                middle_name: '',
+                birthdate: null,
+                email: '',
+                facebook_profile: '',
+                house_number: '',
+                street: '',
+                barangay: '',
+                city: '',
+                province: '',
+                zip_code: '',
+                contact_number: '',
+                occupation: '',
+                check_in_date: null,
+                duration: '',
+                reservation_details: '',
+                stay_type: '',
+                valid_id: null,
+                accept_privacy: false,
+            });
+            setIsVerified(false);
+        } catch (error) {
+            console.error('Error submitting application:', error.message);
+            alert(`An error occurred: ${error.message}`);
+        } finally {
+            setLoading(false); // 🔥 Stop loading after done
+        }
+    };
+    
           
     
     const duration = Number(formData.duration);
