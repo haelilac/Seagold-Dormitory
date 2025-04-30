@@ -268,32 +268,30 @@ const ContactUs = () => {
     
             const result = await response.json();
             console.log("🔍 Receipt Upload Full Response:", result);
-            
+    
             if (response.ok && result.match === true) {
                 const extractedAmount = parseFloat(result.amount || result.ocr_data?.extracted_amount);
                 const reference = result.reference || result.ocr_data?.extracted_reference;
                 const receiptURL = result.receipt_url || result.ocr_data?.receipt_url;
-            
+    
                 const expectedAmount = formData.stay_type === "monthly" ? 1000 : 500;
-            
+    
                 if (extractedAmount !== expectedAmount) {
                     alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
                     return;
                 }
-            
+    
                 setPaymentData({
                     reference_number: reference,
                     amount: extractedAmount,
                 });
-            
-                setReceiptUrl(receiptURL);
+    
+                setReceiptUrl(receiptURL); // Set the correct receipt URL here.
                 console.log("✅ receiptUrl set:", receiptURL);
                 alert("✅ Receipt validated successfully!");
             } else {
                 alert(result.message || "❌ Error processing receipt.");
             }
-            
-    
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
             alert("❌ Server error while validating receipt.");
@@ -344,7 +342,7 @@ const ContactUs = () => {
         formDataUpload.append("id_type", formData.id_type); 
     
         try {
-            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id/", { // <<== FIXED HERE
+            const response = await fetch("https://seagold-python-production.up.railway.app/upload-id/", { // Ensure this URL is correct
                 method: 'POST',
                 body: formDataUpload,
                 headers: { 
@@ -360,26 +358,27 @@ const ContactUs = () => {
             const data = await response.json();
             console.log("✅ Upload ID OCR Response:", data);
     
+            // Set the valid ID URL to the ID's URL
             setFormData(prev => ({
                 ...prev,
-                valid_id_url: data.file_url, // ✅ always set this
-                valid_id: data.file_url,     // optional if you still use this
-              }));
-              setUploadedValidIdPath(data.file_url); // still useful for fallback
-              
-              if (data.id_type_matched) {
+                valid_id_url: data.file_url, // This should be the URL of the uploaded ID
+            }));
+            setUploadedValidIdPath(data.file_url); // For fallback if needed
+    
+            if (data.id_type_matched) {
                 alert('✅ ID Verified Successfully!');
                 setIsIdVerified(true);
-              } else {
+            } else {
                 alert('❌ ID Mismatch detected!');
                 setIsIdVerified(false);
-              }
+            }
         } catch (error) {
             console.error("❌ Error uploading ID:", error);
             alert("❌ Failed to upload ID. Check console.");
             setIsIdVerified(false);
         }
     };
+    
     
     
 
@@ -441,10 +440,7 @@ const ContactUs = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!formData.valid_id_url && !uploadedValidIdPath && receiptUrl) {
-            setFormData(prev => ({ ...prev, valid_id_url: receiptUrl }));
-        }
+        
         if (!isVerified) {
             alert('Please verify your email using Google Sign-In before submitting.');
             return;
@@ -453,17 +449,20 @@ const ContactUs = () => {
             alert('You must accept the privacy terms.');
             return;
         }
+    
         if (!paymentData.reference_number || !paymentData.amount) {
             alert("❌ Receipt validation failed. Please upload a clearer image.");
             return;
         }
-
-        if (!formData.valid_id_url && !uploadedValidIdPath) {
-            alert("❌ Please upload a valid ID.");
+    
+        // Ensure the correct URL is assigned
+        const idUrl = formData.valid_id_url || uploadedValidIdPath;
+        if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
+            alert("❌ Valid ID URL is missing or invalid.");
             setLoading(false);
             return;
         }
-        
+    
         if (!receiptUrl || !/^https?:\/\//i.test(receiptUrl)) {
             alert("❌ Receipt URL is missing or invalid.");
             setLoading(false);
@@ -471,10 +470,9 @@ const ContactUs = () => {
         }
     
         setLoading(true); // 🔥 Start loading
-    
+        
         try {
             const requestData = new FormData();
-    
             Object.keys(formData).forEach((key) => {
                 if (key === 'check_in_date') {
                     requestData.append(key, formatDateTime(formData[key]));
@@ -485,25 +483,9 @@ const ContactUs = () => {
                 }
             });
     
-            // ✅ Safely add fallback for valid_id_url here
-            const idUrl = formData.valid_id_url || uploadedValidIdPath;
-            if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
-                alert("❌ valid_id_url is missing or invalid.");
-                setLoading(false);
-                return;
-            }
-            console.log("Submitting form data: ", formData);
-            console.log("Valid ID URL being used:", formData.valid_id_url);
-
             requestData.append("valid_id_url", idUrl);
-            requestData.append("receipt_url", receiptUrl);
-            requestData.append("reservation_fee", reservationFee);
-            requestData.append("reference_number", paymentData.reference_number);
-            requestData.append("payment_amount", paymentData.amount);
-    
-            console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
-            console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
-    
+            requestData.append("receipt_url", receiptUrl); // Ensure receipt URL is used here
+        
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
@@ -515,12 +497,14 @@ const ContactUs = () => {
             }
     
             alert('Application submitted successfully!');
+            
+            // Reset the form data
             setFormData({
                 last_name: '',
                 first_name: '',
                 middle_name: '',
-                birthdate: null,
                 email: '',
+                birthdate: null,
                 facebook_profile: '',
                 house_number: '',
                 street: '',
@@ -533,8 +517,9 @@ const ContactUs = () => {
                 check_in_date: null,
                 duration: '',
                 reservation_details: '',
-                stay_type: '',
+                stay_type: '', 
                 valid_id: null,
+                valid_id_url: '',
                 accept_privacy: false,
             });
             setIsVerified(false);
