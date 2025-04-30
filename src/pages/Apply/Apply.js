@@ -266,29 +266,32 @@ const ContactUs = () => {
             });
     
             const result = await response.json();
-    
-            console.log("🔍 Receipt Upload Full Response:", result); // <-- ADD THIS
-    
+            console.log("🔍 Receipt Upload Full Response:", result);
+            
             if (response.ok && result.match === true) {
-                const extractedAmount = parseFloat(result.amount);
+                const extractedAmount = parseFloat(result.amount || result.ocr_data?.extracted_amount);
+                const reference = result.reference || result.ocr_data?.extracted_reference;
+                const receiptURL = result.receipt_url || result.ocr_data?.receipt_url;
+            
                 const expectedAmount = formData.stay_type === "monthly" ? 1000 : 500;
-    
+            
                 if (extractedAmount !== expectedAmount) {
                     alert(`❌ Amount mismatch. Expected ${expectedAmount}, but got ${extractedAmount}`);
                     return;
                 }
-    
+            
                 setPaymentData({
-                    reference_number: result.reference,
+                    reference_number: reference,
                     amount: extractedAmount,
                 });
-    
-                setReceiptUrl(result.receipt_url); // ✅ SET HERE
-                console.log("✅ receiptUrl set:", result.receipt_url); // <-- VERIFY SETTING
+            
+                setReceiptUrl(receiptURL);
+                console.log("✅ receiptUrl set:", receiptURL);
                 alert("✅ Receipt validated successfully!");
             } else {
                 alert(result.message || "❌ Error processing receipt.");
             }
+            
     
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
