@@ -469,7 +469,7 @@ const ContactUs = () => {
             });
     
             // ✅ Safely add fallback for valid_id_url here
-            const idUrl = formData.valid_id_url || uploadedValidIdPath;
+            const idUrl = formData.valid_id_url || uploadedValidIdPath || receiptUrl; // ✅ fallback
             if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
                 alert("❌ valid_id_url is missing or invalid.");
                 setLoading(false);
