@@ -359,14 +359,14 @@ const ContactUs = () => {
             const data = await response.json();
             console.log("✅ Upload ID OCR Response:", data);
     
-            setUploadedValidIdPath(data.file_path);
-    
+            setUploadedValidIdPath(data.file_url);
+
             setFormData(prev => ({
-                ...prev,
-                valid_id: data.file_path,
-                valid_id_url: data.file_path
+              ...prev,
+              valid_id: data.file_url,
+              valid_id_url: data.file_url
             }));
-    
+            
             if (data.id_type_matched) {
 
                 alert(`✅ ID Verified Successfully!`);
