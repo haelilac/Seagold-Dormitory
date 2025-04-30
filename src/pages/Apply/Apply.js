@@ -59,11 +59,11 @@ const ContactUs = () => {
         const fetchProvincesAndNCR = async () => {
             try {
                 // Fetch Provinces
-                const provincesResponse = await axios.get("https://psgc.gitlab.io/api/provinces.json");
+                const provincesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces.json`);
                 const provinces = provincesResponse.data;
     
                 // Fetch NCR (National Capital Region)
-                const ncrResponse = await axios.get("https://psgc.gitlab.io/api/regions/130000000/cities-municipalities.json");
+                const ncrResponse = await axios.get(`https://psgc.gitlab.io/api/regions/130000000/cities-municipalities.json`);
                 const ncrCities = ncrResponse.data;
     
                 // Add NCR as a province with its cities
@@ -105,10 +105,10 @@ const ContactUs = () => {
             setMunicipalities([]);
         } else {
             try {
-                const citiesResponse = await axios.get("https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/cities.json");
+                const citiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/cities.json`);
                 setCities(citiesResponse.data);
     
-                const municipalitiesResponse = await axios.get("https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/municipalities.json");
+                const municipalitiesResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/municipalities.json`);
                 setMunicipalities(municipalitiesResponse.data);
             } catch (error) {
                 console.error("Error fetching cities or municipalities:", error);
@@ -138,9 +138,9 @@ const ContactUs = () => {
         try {
             let barangayResponse;
             if (cities.some(c => c.name === cityMunName)) {
-                barangayResponse = await axios.get("https://psgc.gitlab.io/api/cities/${selectedCity.code}/barangays.json");
+                barangayResponse = await axios.get(`https://psgc.gitlab.io/api/cities/${selectedCity.code}/barangays.json`);
             } else {
-                barangayResponse = await axios.get("https://psgc.gitlab.io/api/municipalities/${selectedCity.code}/barangays.json");
+                barangayResponse = await axios.get(`https://psgc.gitlab.io/api/municipalities/${selectedCity.code}/barangays.json`);
             }
     
             setBarangays(barangayResponse ? barangayResponse.data : []);
