@@ -152,11 +152,9 @@ const RoomInfoTenant = () => {
             <option value="Microwave">Microwave</option>
             <option value="Water Dispenser">Water Dispenser</option>
             <option value="TV">TV</option>
-            
-            <option value="Others">Others (Specify)</option> {/* ⭐ Added "Others" option */}
+            <option value="Others">Others (Specify)</option>
           </select>
 
-          {/* ⭐ Show text input only if "Others" selected */}
           {amenityType === "Others" && (
             <input
               type="text"
@@ -176,7 +174,11 @@ const RoomInfoTenant = () => {
             {requests.length > 0 ? (
               requests.map(req => (
                 <li key={req.id}>
-                  {req.amenity_type} - <strong>{req.status}</strong>
+                  {req.amenity_type} - <strong>{req.status}</strong><br />
+                  Requested: {req.created_at || '—'}<br />
+                  {req.status === 'approved' && req.approved_at && (
+                    <>Approved: {req.approved_at}</>
+                  )}
                 </li>
               ))
             ) : (
