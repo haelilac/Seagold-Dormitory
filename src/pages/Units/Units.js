@@ -158,14 +158,7 @@ const Units = () => {
       </div>
 
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
-      {loading ? (
-        <div className="loading-spinner">
-          <div className="spinner-circle"></div> {/* 🔵 The spinning circle */}
-          <p style={{ marginTop: "10px" }}>Loading rooms, please wait...</p> {/* 📝 Your message */}
-        </div>
         
-      ) : filteredUnits.length > 0 ? (
-        filteredUnits.map((unit) => (
       <div key={unit.id} className="rental-card">
         <div className="rental-header">
           <span className="verified-badge">{unit.unit_code}</span>
@@ -229,12 +222,10 @@ const Units = () => {
               </div>
             </div>
           ))
-        ) : (
           <div className="no-availability">
               <p>Oops! It looks like no rooms are available for your selected filters.</p>
               <img src="sad.svg" alt="Room Not Available" style={{ maxWidth: "200px", width: "100%" }} />
             </div>
-          )}
       </div>
 
       {fullscreenImage && (
