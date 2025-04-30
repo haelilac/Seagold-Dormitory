@@ -461,21 +461,27 @@ const ContactUs = () => {
             console.log("✅ valid_id_url:", formData.valid_id_url);
             try {
                 const requestData = new FormData();
+
                 Object.keys(formData).forEach((key) => {
-                    if (key === 'check_in_date') {
-                      requestData.append(key, formatDateTime(formData[key]));
-                    } else if (key === 'valid_id') {
-                      return; // you're skipping only 'valid_id'
-                    } else {
-                      requestData.append(key, formData[key]);
-                    }
-                  });
-                  
-                console.log("✅ valid_id_url:", formData.valid_id_url);
+                  if (key === 'check_in_date') {
+                    requestData.append(key, formatDateTime(formData[key]));
+                  } else if (key === 'valid_id') {
+                    return;
+                  } else {
+                    requestData.append(key, formData[key]);
+                  }
+                });
+                
+                // ✅ Safely add fallback for valid_id_url here
+                if (!formData.valid_id_url && uploadedValidIdPath) {
+                  requestData.append("valid_id_url", uploadedValidIdPath);
+                }
+                
                 requestData.append("reservation_fee", reservationFee);
                 requestData.append("receipt_url", receiptUrl);
                 requestData.append("reference_number", paymentData.reference_number);
                 requestData.append("payment_amount", paymentData.amount);
+                
                 console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
                 console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
                 
