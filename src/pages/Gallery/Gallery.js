@@ -89,7 +89,7 @@ const Gallery = () => {
     if (cached) {
       setFacilityImagesByCategory(cached);
     } else {
-      fetch("http://localhost:8000/api/gallery")
+      fetch("https://seagold-laravel-production.up.railway.app/api/gallery")
         .then((res) => res.json())
         .then((data) => {
           const grouped = {};

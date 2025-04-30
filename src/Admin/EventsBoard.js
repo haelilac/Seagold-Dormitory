@@ -60,7 +60,7 @@ const EventsBoard = () => {
    */
   const fetchEvents = async (token) => {
     try {
-      const response = await fetch("http://localhost:8000/api/events", {
+      const response = await fetch("https://seagold-laravel-production.up.railway.app/api/events", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 401) {
@@ -90,7 +90,7 @@ const EventsBoard = () => {
     const method = editMode ? "PUT" : "POST";
     const url = editMode
       ? `http://localhost:8000/api/events/${editingEventId}`
-      : "http://localhost:8000/api/events";
+      : "https://seagold-laravel-production.up.railway.app/api/events";
 
     // Convert the date to ISO before sending
     const bodyData = { ...formData, date: convertDateToISO(formData.date) };

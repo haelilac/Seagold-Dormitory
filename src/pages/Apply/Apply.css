@@ -1,7 +1,7 @@
 /* General Styling */
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #eceff1;
+  background-color: #f2ede3;
   margin: 0;
   padding: 0;
 }
@@ -9,112 +9,168 @@ body {
 /* Page Container */
 .contact-page-container {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   width: 85%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 30px auto;
   background: #ffffff;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 12px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  gap: 15px;
-  align-items: flex-start;
+  gap: 20px;
 }
 
-.send-message-button {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* 🔥 When loading state */
-.send-message-button.loading {
-  background-color: #b0c4de; /* Light steel blue (disabled look) */
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* Spinner inside */
-.loading-spinner {
-width: 20px;
-height: 20px;
-border: 3px solid #f3f3f3;
-border-top: 3px solid #3498db;
-border-radius: 50%;
-animation: spin 1s linear infinite;
-margin: 0 auto;
-}
-
-@keyframes spin {
-0% { transform: rotate(0deg); }
-100% { transform: rotate(360deg); }
-}
-
-/* Left Section: Get in Touch Form */
+/* Left Section: Form */
 .get-in-touch {
-  flex: 1.5;
-  padding: 30px;
+  flex: 2;
+  padding: 35px 50px;
   background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
 }
 
 .get-in-touch h2 {
-  font-size: 20px;
-  color: #455a64;
+  font-size: 24px;
+  color: #e5a62a;
   text-transform: uppercase;
-  font-weight: 600;
-  border-bottom: 2px solid #607d8b;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
+  font-weight: 700;
+  border-bottom: 4px solid #f6c971;
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
 }
 
+/* Contact Form Layout */
 .contact-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 20px;
+  width: 100%;
+  align-items: start;
 }
 
-.contact-form .form-group {
+.form-group {
   display: flex;
   flex-direction: column;
 }
 
-.contact-form label {
-  font-size: 12px;
-  color: #546e7a;
-  margin-bottom: 5px;
-  font-weight: 500;
+.form-group label {
+  font-size: 14px;
+  color: #4a954e;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
-.contact-form input,
-.contact-form select,
+.form-group input,
+.form-group select,
+.form-group textarea,
 .react-datepicker-wrapper input {
-  padding: 8px;
-  font-size: 12px;
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 14px;
   border: 1px solid #cfd8dc;
-  border-radius: 5px;
-  transition: all 0.3s ease;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
-.contact-form input:focus,
-.contact-form select:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
 .react-datepicker-wrapper input:focus {
   outline: none;
-  border-color: #607d8b;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #00bf63;
+  box-shadow: 0 0 8px rgba(0, 191, 99, 0.2);
 }
 
-.contact-form select {
-  appearance: none;
+.form-row {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Email Verify Button */
+.email-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.verify-email-button {
+  background-color: #4a954e;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
-  background-color: #ffffff;
+  transition: 0.3s ease;
 }
 
-/* Date Picker Custom Styling */
+.verify-email-button:hover {
+  background-color: #00bf63;
+}
+
+.verify-email-button:disabled {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+}
+
+/* Country Code Input */
+.contact-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.country-code {
+  background: #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* Submit Button */
+.send-message-button {
+  grid-column: span 2;
+  background-color: #00bf63;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.4s ease, transform 0.2s ease;
+}
+
+.send-message-button:hover {
+  background-color: #4a954e;
+  transform: scale(1.03);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4a954e;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 📅 Date Picker */
 .react-datepicker {
   font-family: 'Roboto', sans-serif;
   border: 1px solid #cfd8dc;
@@ -125,251 +181,236 @@ margin: 0 auto;
 }
 
 .react-datepicker__header {
-  background-color: #607d8b; /* Match original theme */
+  background-color: #4a954e;
   color: white;
+  padding: 12px;
   border-bottom: 1px solid #cfd8dc;
-  padding: 10px;
 }
 
 .react-datepicker__current-month {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 .react-datepicker__day-name,
 .react-datepicker__day {
   color: #455a64;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .react-datepicker__day:hover {
-  background-color: #607d8b;
+  background-color: #00bf63;
   color: white;
   border-radius: 50%;
 }
 
 .react-datepicker__day--selected {
-  background-color: #455a64;
+  background-color: #4a954e;
   color: white;
   border-radius: 50%;
 }
 
+/* 📅 Dropdowns */
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  background-color: #ffffff;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.react-datepicker__month-dropdown-container,
+.react-datepicker__year-dropdown-container {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.react-datepicker__month-option--selected,
+.react-datepicker__year-option--selected {
+  background-color: #00bf63;
+  color: white;
+  font-weight: bold;
+}
+
+.react-datepicker__month-option:hover,
+.react-datepicker__year-option:hover {
+  background-color: #4a954e;
+  color: white;
+}
+
 .react-datepicker__navigation {
-  top: 10px; /* Fixes alignment for navigation arrows */
+  top: 16px;
 }
 
-.react-datepicker__time-container {
-  border-left: 1px solid #cfd8dc;
-}
-
-.react-datepicker__time-list {
-  padding: 10px;
-  background: white;
-}
-
-.react-datepicker__time-list-item {
-  font-size: 12px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.react-datepicker__time-list-item:hover,
-.react-datepicker__time-list-item--selected {
-  background-color: #607d8b;
-  color: white;
-}
-
-.react-datepicker__triangle {
-  display: none; /* Remove unnecessary triangle */
-}
-
-/* Prevent clipping and overflow issues */
-.react-datepicker-wrapper {
-  width: 100%;
-}
-
-.react-datepicker-popper {
-  z-index: 1001 !important; /* Ensures it appears above other components */
-}
-
-/* Modal Styling */
-.modal {
-  display: flex !important; /* Ensure it displays */
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-}
-
-.modal-content {
-  display: flex;
-  flex-direction: column; /* Stack content vertically */
-  justify-content: space-between; /* Push close button to the bottom */
-  align-items: center;
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 500px;
-  height: 500px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.modal-content h2 {
-  margin-bottom: 15px;
-  color: #455a64;
-}
-
-.modal-content p {
-  font-size: 14px;
-  color: #546e7a;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
-
-.modal-content button {
-  align-self: center; /* Center the button horizontally */
-  background-color: #607d8b;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 10px 20px;
+.react-datepicker__navigation--next,
+.react-datepicker__navigation--previous {
+  background: transparent;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 20px; /* Add space between content and button */
+  outline: none;
 }
 
-.modal-content button:hover {
-  background-color: #455a64;
+.react-datepicker__navigation-icon::before {
+  border-color: white;
 }
 
-
-/* Send Button */
-.contact-form .send-message-button {
-  grid-column: span 2;
-  background-color: #607d8b;
-  color: white;
+/* 📅 Date input field (manual typing support) */
+.form-group input[type="date"] {
+  padding: 12px 15px;
   font-size: 14px;
-  font-weight: 600;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease, box-shadow 0.3s ease;
 }
 
-.contact-form .send-message-button:hover {
-  background-color: #455a64;
+.form-group input[type="date"]:focus {
+  outline: none;
+  border-color: #00bf63;
+  box-shadow: 0 0 8px rgba(0, 191, 99, 0.3);
 }
 
 /* Right Section: Contact Information */
 .contact-information {
   flex: 1;
-  background: #37474f;
-  color: white;
-  padding: 30px;
+  background: #304c31;
+  color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 30px;
 }
 
 .contact-information h2 {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 22px;
+  color: #f6c971;
+  font-weight: bold;
   text-transform: uppercase;
-  margin-bottom: 10px;
-  border-bottom: 2px solid #90caf9;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #f6c971;
   padding-bottom: 8px;
 }
-
-.contact-information p {
-  font-size: 12px;
-  color: #cfd8dc;
-  line-height: 1.5;
+/* 📝 Info Block Layout */
+.info-block {
+  display: flex;
+  align-items: flex-start;  /* Align items to the start of the container */
+  gap: 12px;  /* Space between the icon and text */
+  margin-bottom: 20px;  /* Add margin for spacing between blocks */
 }
 
-.contact-information .info-block h3 {
-  font-size: 14px;
-  color: #90caf9;
-  margin-bottom: 5px;
+/* 🖼️ Icon Styling */
+.info-block i {
+  font-size: 20px;
+  color: #f6c971;  /* Sun yellow for icons */
+  min-width: 24px;  /* Minimum width to align icons consistently */
+  display: inline-block;  /* Ensures the icon aligns properly with text */
 }
 
-.contact-information a {
-  color: #90caf9;
-  text-decoration: none;
+/* 📄 Text and Link Styling */
+.info-block p,
+.info-block a {
+  margin: 0;  /* Remove default margin */
+  color: #d2d27d;  /* Light brown color for text */
   font-weight: 500;
+  text-decoration: none;  /* Remove underline from links */
+  font-family: 'Inter', sans-serif;  /* Clean, readable font */
+  line-height: 1.5;  /* Add line height for better spacing */
 }
 
-.contact-information a:hover {
-  text-decoration: underline;
+.info-block a:hover {
+  text-decoration: underline;  /* Underline on hover for links */
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .contact-page-container {
-    flex-direction: column;
-    width: 95%;
-  }
+/* 🌍 iframe Styling (for maps, embeds, etc.) */
+.info-block iframe {
+  width: 100%;
+  height: 250px;  /* Fixed height for iframe */
+  border: none;  /* Remove border */
+  border-radius: 8px;  /* Smooth corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /* Subtle shadow for iframe */
+}
 
-  .get-in-touch,
-  .contact-information {
-    width: 100%;
-    padding: 20px;
-  }
+/* Modal */
+.modal {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
 
+.modal-content {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 600px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  color: #4a954e;
+}
+
+.modal-content p {
+  font-size: 14px;
+  color: #607d8b;
+  line-height: 1.8;
+  margin-bottom: 25px;
+}
+
+.modal-content button {
+  background-color: #f6c971;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #d2d27d;
+}
+/* Applies to all select elements for consistency */
+.contact-form select {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 14px;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  appearance: none;
+}
+
+/* On focus for dropdown */
+.contact-form select:focus {
+  outline: none;
+  border-color: #00bf63;
+  box-shadow: 0 0 8px rgba(0, 191, 99, 0.2);
+}
+
+/* 📱 Mobile */
+@media (max-width: 770px) {
   .contact-form {
     grid-template-columns: 1fr;
   }
-}
 
-/* Email Input Group */
-.email-group {
-  display: flex;
-  flex-direction: column;
-}
+  .send-message-button {
+    width: 100%;
+  }
 
-.email-container {
-  display: flex;
-  align-items: center;
-}
-
-.verify-email-button {
-  margin-left: 8px;
-  padding: 8px;
-  background-color: #607d8b;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.verify-email-button:hover {
-  background-color: #455a64;
-}
-
-.verify-email-button:disabled {
-  background-color: #b0bec5;
-  cursor: default;
-}
-
-.contact-container {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.country-code {
-  background: #ddd;
-  padding: 8px;
-  border-radius: 5px;
-  font-weight: bold;
+  .get-in-touch {
+    padding: 20px 25px;
+  }
 }
