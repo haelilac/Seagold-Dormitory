@@ -80,7 +80,12 @@ const RoomInfoTenant = () => {
         alert("✅ Amenity request submitted!");
         setAmenityType('');
         setOtherAmenity('');
-        fetchRequests();
+        
+        // Update local state to show the request instantly
+        setRequests(prevRequests => [
+          ...prevRequests,
+          { amenity_type: finalAmenity, status: 'pending', created_at: new Date().toLocaleDateString() }
+        ]);
       } else {
         alert("❌ Failed to submit request.");
       }
@@ -175,9 +180,9 @@ const RoomInfoTenant = () => {
               requests.map(req => (
                 <li key={req.id}>
                   {req.amenity_type} - <strong>{req.status}</strong><br />
-                  Requested: {req.created_at || '—'}<br />
+                  Requested: {new Date(req.created_at).toLocaleDateString()}<br />
                   {req.status === 'approved' && req.approved_at && (
-                    <>Approved: {req.approved_at}</>
+                    <>Approved: {new Date(req.approved_at).toLocaleDateString()}</>
                   )}
                 </li>
               ))
