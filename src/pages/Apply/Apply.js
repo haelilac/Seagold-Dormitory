@@ -27,7 +27,7 @@ const ContactUs = () => {
         reservation_details: '',
         stay_type: '', 
         valid_id: null,
-        valid_id_url: '',
+        valid_id: '',
         accept_privacy: false,
     });
   useEffect(() => {
@@ -361,7 +361,7 @@ const ContactUs = () => {
             // Set the valid ID URL to the ID's URL
             setFormData(prev => ({
                 ...prev,
-                valid_id_url: data.file_url, // This should be the URL of the uploaded ID
+                valid_id: data.file_url, // This should be the URL of the uploaded ID
             }));
             setUploadedValidIdPath(data.file_url); // For fallback if needed
     
@@ -436,7 +436,7 @@ const ContactUs = () => {
     console.log('paymentData:', paymentData);
     console.log("✅ Submitting data with receipt URL:", receiptUrl);
     console.log("💸 Payment:", paymentData);
-    console.log("✅ ID URL used:", formData.valid_id_url || uploadedValidIdPath || receiptUrl);
+    console.log("✅ ID URL used:", formData.valid_id || uploadedValidIdPath || receiptUrl);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -456,7 +456,7 @@ const ContactUs = () => {
         }
     
         // Ensure the correct URL is assigned
-        const idUrl = formData.valid_id_url || uploadedValidIdPath;
+        const idUrl = formData.valid_id || uploadedValidIdPath;
         if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
             alert("❌ Valid ID URL is missing or invalid.");
             setLoading(false);
@@ -483,7 +483,7 @@ const ContactUs = () => {
                 }
             });
     
-            requestData.append("valid_id_url", idUrl);
+            requestData.append("valid_id", idUrl);
             requestData.append("receipt_url", receiptUrl); // Ensure receipt URL is used here
         
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
@@ -519,7 +519,7 @@ const ContactUs = () => {
                 reservation_details: '',
                 stay_type: '', 
                 valid_id: null,
-                valid_id_url: '',
+                valid_id: '',
                 accept_privacy: false,
             });
             setIsVerified(false);
