@@ -440,7 +440,7 @@ const ContactUs = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const idUrl = formData.valid_id_url || uploadedValidIdPath;
+        const idUrl = formData.valid_id_url || uploadedValidIdPath || receiptUrl;
         console.log("✅ ID URL used:", idUrl);
         console.log("🧾 Receipt URL:", receiptUrl);
         if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
