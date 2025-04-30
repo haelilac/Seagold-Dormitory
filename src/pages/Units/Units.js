@@ -158,7 +158,8 @@ const Units = () => {
       </div>
 
       <div id="rental-container" className={animateContainer ? "animate" : ""}>
-        
+  {filteredUnits.length > 0 ? (
+    filteredUnits.map((unit) => (
       <div key={unit.id} className="rental-card">
         <div className="rental-header">
           <span className="verified-badge">{unit.unit_code}</span>
@@ -174,12 +175,12 @@ const Units = () => {
               </button>
               <div
                 className="carousel-images"
-                      style={{
-                        transform: `translateX(-${
-                          (carouselIndices[unit.id] || 0) * 100
-                        }%)`,
-                      }}
-                    >
+                style={{
+                  transform: `translateX(-${
+                    carouselIndices[unit.id] || 0
+                  }%)`,
+                }}
+              >
                 {unit.images.map((img, i) => (
                   <img
                     key={i}
@@ -194,39 +195,40 @@ const Units = () => {
                     onClick={() => openFullscreen(unit.images.map(i => i.image_path), i)}
                   />
                 ))}
-
-
-                    </div>
-                    <button
-                      className="carousel-btn next"
-                      onClick={() =>
-                        handleCarousel(unit.id, "next", unit.images.length)
-                      }
-                    >
-                      &#8594;
-                    </button>
-                  </div>
-                )}
               </div>
-
-              <div className="rental-content">
-              <h3 className="rental-title">{unit.unit_code}</h3>
-              <button className="view-price-btn" onClick={() => openPriceModal(unit)}>
-                View Price
+              <button
+                className="carousel-btn next"
+                onClick={() =>
+                  handleCarousel(unit.id, "next", unit.images.length)
+                }
+              >
+                &#8594;
               </button>
-                <p className="rental-availability">
-                    {unit.is_force_occupied
-                      ? "FULLY OCCUPIED"
-                      : `Slots Available: ${unit.max_capacity - (unit.monthly_users_count || 0)} / ${unit.max_capacity}`}
-                </p>
-              </div>
             </div>
-          ))
-          <div className="no-availability">
-              <p>Oops! It looks like no rooms are available for your selected filters.</p>
-              <img src="sad.svg" alt="Room Not Available" style={{ maxWidth: "200px", width: "100%" }} />
-            </div>
+          )}
+        </div>
+
+        <div className="rental-content">
+          <h3 className="rental-title">{unit.unit_code}</h3>
+          <button className="view-price-btn" onClick={() => openPriceModal(unit)}>
+            View Price
+          </button>
+          <p className="rental-availability">
+            {unit.is_force_occupied
+              ? "FULLY OCCUPIED"
+              : `Slots Available: ${unit.max_capacity - (unit.monthly_users_count || 0)} / ${unit.max_capacity}`}
+          </p>
+        </div>
       </div>
+    ))
+  ) : (
+    <div className="no-availability">
+      <p>Oops! It looks like no rooms are available for your selected filters.</p>
+      <img src="sad.svg" alt="Room Not Available" style={{ maxWidth: "200px", width: "100%" }} />
+    </div>
+  )}
+</div>
+
 
       {fullscreenImage && (
         <div
