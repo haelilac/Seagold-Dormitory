@@ -27,7 +27,8 @@ const ContactUs = () => {
         reservation_details: '',
         stay_type: '', 
         valid_id: null,
-        valid_id: '',
+        receipt_url: null,
+        id_type: '',
         accept_privacy: false,
     });
   useEffect(() => {
@@ -469,7 +470,7 @@ const ContactUs = () => {
             return;
         }
     
-        setLoading(true); // 🔥 Start loading
+        setLoading(true);
         
         try {
             const requestData = new FormData();
@@ -477,15 +478,16 @@ const ContactUs = () => {
                 if (key === 'check_in_date') {
                     requestData.append(key, formatDateTime(formData[key]));
                 } else if (key === 'valid_id') {
-                    return;
+                    // Skip here, we'll add it separately
                 } else {
                     requestData.append(key, formData[key]);
                 }
             });
     
-            requestData.append("valid_id", idUrl);
-            requestData.append("receipt_url", receiptUrl); // Ensure receipt URL is used here
-        
+            // Add the files with correct field names
+            requestData.append("valid_id", idUrl);  // This is the ID URL
+            requestData.append("receipt_url", receiptUrl);  // This is the receipt URL
+            
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
