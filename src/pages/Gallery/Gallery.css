@@ -1,95 +1,193 @@
-/* 🌟 General Gallery Styles */
+
+/* 🌟 Gallery Container */
 .gallery-container {
+  position: relative;
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  z-index: 1;
+  overflow: hidden;
 }
 
+/* 🔹 Overlay for Opacity */
+.gallery-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);  /* White overlay with 50% opacity */
+  z-index: 0;
+}
+
+/* Make sure your content stays above the overlay */
+.gallery-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+
 .gallery-title {
-  color: #f4a261;
-  font-size: 24px;
-  font-weight: bold;
+  color: #4a954e;  /* Dark Green */
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .gallery-description {
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 25px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* 🔹 Explore Now Button */
 .explore-btn {
-  background-color: #ffcc00;
+  background: linear-gradient(135deg, #00bf63, #4a954e);
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 12px 30px;
+  font-size: 1rem;
+  color: #fff;
+  border-radius: 30px;
   cursor: pointer;
-  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.explore-btn:hover {
+  background: #f6c971;  /* Sun Color */
+  color: #333;
+  transform: translateY(-3px);
 }
 
 /* 🏢 Facilities Section */
 .facilities-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 30px;
   margin-top: 40px;
 }
 
+/* Facility Card */
 .facility-card {
-  text-align: center;
-  width: 250px;
+  background: #ffffff;
+  border: 2px solid #f6c971;   /* Added border */
+  border-radius: 16px;
+  width: 260px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
+/* Hover Effect */
+.facility-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #00bf63;   /* Change border color on hover */
+}
+
+/* Circular Image Holder */
 .facility-circle {
-  width: 190px;
+  width: 180px;
   height: 180px;
-  background-color: gray;
+  background-color: #e0e0e0;
   border-radius: 50%;
   margin: 0 auto 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  border: 3px solid #f6c971;
+  transition: border-color 0.3s ease;
 }
 
+.facility-card:hover .facility-circle {
+  border-color: #00bf63;
+}
+
+/* Facility Image */
 .facility-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
+.facility-card:hover .facility-image {
+  transform: scale(1.05);
+}
+
+/* Text Styles */
 .facility-heading {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #4a954e;
   margin-bottom: 10px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .facility-description {
-  font-size: 14px;
-  margin-bottom: 15px;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 20px;
+  min-height: 60px;
 }
 
-/* 🔹 Facilities View Button */
+/* 🔹 View Button */
 .view-btn {
-  background-color: #6c757d;
+  background-color: #00bf63;
   color: white;
-  padding: 8px 16px;
+  padding: 10px 22px;
   border: none;
+  border-radius: 25px;
   cursor: pointer;
-  font-size: 14px;
-  border-radius: 5px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .view-btn:hover {
-  background-color: #545b62;
+  background-color: #4a954e;
+  transform: translateY(-2px);
 }
+
+/* 🌐 Responsive */
+@media (max-width: 768px) {
+  .facilities-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .facility-card {
+    width: 90%;
+  }
+}
+
 
 /* 🎠 Hero Carousel */
 .hero-carousel {
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 450px;
   overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Each Slide */
 .hero-slide {
   width: 100%;
   height: 100%;
@@ -97,61 +195,165 @@
   background-position: center;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   position: relative;
 }
 
+/* Dark Overlay for Better Text Contrast */
+.hero-slide::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* 🔥 Hero Content */
 .hero-content {
-  color: white;
-  text-align: left;
-  padding-left: 5%;
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+  padding: 0 5%;
   max-width: 50%;
+  animation: fadeInUp 1s ease;
 }
 
 .hero-content h1 {
-  font-size: 32px;
-  font-weight: bold;
+  font-size: 3rem;                  /* Slightly larger title for impact */
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.2;
+  color: #4a954e;
 }
 
 .hero-content p {
-  font-size: 18px;
-  margin-top: 10px;
+  font-size: 1.2rem;                /* Improved readability */
+  color: #f2ede3;
+  margin-top: 8px;
+  line-height: 1.5;
 }
 
+/* 🚀 Hero Button */
 .hero-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 12px 20px;
+  background: linear-gradient(135deg, #00bf63, #4a954e);
+  color: #ffffff;
+  padding: 14px 30px;
   border: none;
+  border-radius: 30px;
+  margin-top: 25px;
+  font-size: 1rem;
   cursor: pointer;
-  margin-top: 15px;
-  font-size: 16px;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
 
 .hero-btn:hover {
-  background-color: #0056b3;
+  background: #f6c971;
+  color: #333333;
+  transform: translateY(-4px);
 }
 
 /* 🔄 Carousel Arrows */
 .carousel-arrow {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.8);
   border: none;
-  color: white;
+  color: #4a954e;
   font-size: 24px;
-  padding: 10px;
+  padding: 12px;
+  border-radius: 50%;
   cursor: pointer;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  transition: background 0.3s ease, transform 0.3s ease;
+  z-index: 3;
+}
+
+.carousel-arrow:hover {
+  background: #f6c971;
+  color: #333333;
+  transform: translateY(-50%) scale(1.15);
 }
 
 .left-arrow {
-  left: 20px;
+  left: 25px;
 }
 
 .right-arrow {
-  right: 20px;
+  right: 25px;
+}
+
+
+/* ✨ Fade-In Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero-content {
+    max-width: 90%;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .hero-btn {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+
+  .carousel-arrow {
+    padding: 10px;
+    font-size: 20px;
+  }
+
+  .left-arrow, .right-arrow {
+    left: 15px;
+    right: 15px;
+  }
+}
+
+
+/* 🌐 Responsive */
+@media (max-width: 768px) {
+  .hero-content {
+    max-width: 90%;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-btn {
+    padding: 10px 24px;
+    font-size: 0.95rem;
+  }
+
+  .carousel-arrow {
+    padding: 8px;
+    font-size: 20px;
+  }
 }
 
 /* 🔘 Dots for Carousel */
@@ -174,164 +376,251 @@
 .active-dot {
   background: rgb(193, 92, 92);
 }
-
-/* 🔲 ROOM MODAL (Same as Facility Modal) */
-.room-modal, .facility-modal {
+/* 🔲 Common Modal Overlay */
+.room-modal,
+.facility-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6);  /* Slightly lighter overlay */
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 999;
 }
 
-.room-modal-content, .facility-modal-content {
-  background: white;
+/* 📦 Modal Content Box */
+.room-modal-content,
+.facility-modal-content {
+  background-color: #f2ede3;   /* Dirty White */
   padding: 25px;
-  border-radius: 12px;
+  border-radius: 16px;
   text-align: center;
   position: relative;
-  width: 60%;
+  width: 85%;
   max-width: 800px;
   height: 90%;
   max-height: 650px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  margin-top: 5%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border: 2px solid #d2d27d;   /* Light Brown Border */
+  overflow-y: auto;
 }
 
-.room-modal-title, .facility-modal-title {
-  font-size: 60px;
+/* ✨ Modal Titles */
+.room-modal-title,
+.facility-modal-title {
+  font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 15px;
+  font-style: italic;
+  font-family: 'Georgia', serif;
+  color: #f6c971;   /* Sun Color */
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f6c971;
 }
 
-/* 🖼 Image Container (Same for both modals) */
-.modal-image-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 70%;
-  margin-top: 5%;
-  margin-bottom: 7%;
-}
-
-.modal-image {
-  width: 85%;
-  max-height: 500px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-/* 🔄 Modal Navigation Buttons */
-.arrow-btn {
-  background: #34495e;
-  font-size: 15px;
-  cursor: pointer;
-  padding: 10px;
-  margin: 10px;
-}
-
-.modal-controls {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 10px;
-  
-}
-
-.category-btn {
-  background-color: gray;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  color: white;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-.category-btn:hover {
-  background-color: darkgray;
-}
-
-/* 🚻 Facility Modal Image Container */
+/* 🖼 Modal Image Container */
+.modal-image-container,
 .facility-modal-image-container {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   height: 70%;
+  margin: 25px auto;
+}
+
+/* 📸 Modal Image Styling */
+.modal-image {
+  width: 90%;
+  height: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 3px solid #d2d27d;   /* Light Brown Border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.modal-image:hover {
+  transform: scale(1.02);
+}
+
+/* 🔄 Modal Navigation Buttons */
+.arrow-btn {
+  background: #4a954e;   /* Dark Green */
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 50%;
+  transition: transform 0.2s, background-color 0.2s;
+  border: none;
+}
+
+.arrow-btn:hover {
+  background: #00bf63;   /* Light Green */
+  transform: scale(1.15);
+}
+
+/* 🖱 Modal Controls Container */
+.modal-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* Category Buttons */
+.category-btn {
+  background-color: #4a954e;   /* Dark Green */
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.category-btn:hover {
+  background-color: #00bf63;   /* Light Green */
 }
 
 /* ❌ Close Button */
 .close-btn {
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 15px;
-  font-size: 34px;
+  font-size: 32px;
   cursor: pointer;
-
-
-
+  color: #d2d27d;   /* Light Brown */
+  transition: color 0.3s ease;
 }
 
-/* 🔘 Dots for Image Navigation */
+.close-btn:hover {
+  color: #4a954e;   /* Dark Green */
+}
+
+/* 🔘 Dots Navigation */
 .dots-container {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 15px;
 }
 
 .dot {
   width: 12px;
   height: 12px;
-  margin: 5px;
   border-radius: 50%;
-  background: gray;
-  display: inline-block;
+  background: #d2d27d;   /* Light Brown */
   cursor: pointer;
+  transition: background 0.3s;
 }
 
-.active-dot {
-  background: black;
+.active-dot,
+.dot:hover {
+  background: #4a954e;   /* Dark Green */
 }
+
+
+/* 🌟 Facilities Title (Outside Modal) */
 .facilities-title {
-  display: block;
-  font-size: 2.5rem;
+  font-size: 2.6rem;                /* Slightly increased for emphasis */
   color: #f1c40f;
   font-weight: bold;
-  font-style: italic;
-  margin-top: 2%;
-  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
+  font-family: 'Montserrat', serif;
   text-align: center;
-  font-family: 'Georgia', serif;
-  line-height: 1.2;
-}
-.facility-modal h2 {
-  font-size: 35px; /* Adjust size as needed */
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 15px;
-  position: relative;
-  padding-bottom: 10px; /* Space between text and line */
-  color: #f1c40f;
-  font-family: 'Georgia', serif;
-  font-style: italic;
-
-}
-.room-modal h2 {
-  font-size: 35px; /* Adjust size as needed */
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 15px;
-  position: relative;
-  padding-bottom: 10px; /* Space between text and line */
-  color: #f1c40f;
-  font-family: 'Georgia', serif;
-  font-style: italic;
+  margin: 25px auto;                /* Adjusted vertical spacing */
+  text-shadow: 2px 3px 5px rgba(0,0,0,0.15); /* Enhanced shadow for depth */
+  line-height: 1.3;                 /* Improved readability */
+  letter-spacing: 0.5px;            /* Subtle spacing improvement */
 }
 
+.modal-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  font-style: italic;
+  font-family: 'Georgia', serif;
+  color: #f6c971;   /* Sun Color */
+  text-transform: capitalize;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #d2d27d;  /* Light Brown underline */
+  display: inline-block;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+@media (max-width: 770px) {
+  .hero-container {
+    flex-direction: column; /* ❗❗ stack content vertically */
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-content {
+    padding: 10px;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1.2rem;
+  }
+
+  .carousel-arrow {
+    position: relative; /* ❗ no more absolute */
+    top: auto;
+    transform: none;
+    margin: 10px;
+    font-size: 1.5rem;
+    padding: 8px;
+  }
+
+  .left-arrow {
+    order: -1; /* left arrow goes on top */
+     left: 0%;
+  }
+
+  .right-arrow {
+    order: 1; /* right arrow below */
+    left: 0%;
+  }
+}
+/* 📱 RESPONSIVE SETTINGS */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1.2rem;
+  }
+
+  .carousel-arrow {
+    font-size: 1.5rem;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .left-arrow,
+  .right-arrow {
+    padding: 6px;
+  }
+}
