@@ -438,6 +438,7 @@ const ContactUs = () => {
     console.log('paymentData:', paymentData);
     console.log("✅ Submitting data with receipt URL:", receiptUrl);
     console.log("💸 Payment:", paymentData);
+
         const handleSubmit = async (e) => {
             e.preventDefault();
             if (!isVerified) {
@@ -452,6 +453,9 @@ const ContactUs = () => {
                 alert("❌ Receipt validation failed. Please upload a clearer image.");
                 return;
             }
+            if (!formData.valid_id_url && uploadedValidIdPath) {
+                requestData.append("valid_id_url", uploadedValidIdPath);
+              }
         
             setLoading(true); // 🔥 Start loading
             console.log("✅ valid_id_url:", formData.valid_id_url);
@@ -459,19 +463,22 @@ const ContactUs = () => {
                 const requestData = new FormData();
                 Object.keys(formData).forEach((key) => {
                     if (key === 'check_in_date') {
-                        requestData.append(key, formatDateTime(formData[key]));
+                      requestData.append(key, formatDateTime(formData[key]));
                     } else if (key === 'valid_id') {
-                        return; // skip the non-URL field
+                      return; // you're skipping only 'valid_id'
                     } else {
-                        requestData.append(key, formData[key]);
+                      requestData.append(key, formData[key]);
                     }
-                });
+                  });
+                  
                 console.log("✅ valid_id_url:", formData.valid_id_url);
                 requestData.append("reservation_fee", reservationFee);
                 requestData.append("receipt_url", receiptUrl);
                 requestData.append("reference_number", paymentData.reference_number);
                 requestData.append("payment_amount", paymentData.amount);
-        
+                console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
+                console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
+                
                 const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                     method: 'POST',
                     body: requestData,
