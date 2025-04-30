@@ -437,12 +437,12 @@ const ContactUs = () => {
     console.log('paymentData:', paymentData);
     console.log("✅ Submitting data with receipt URL:", receiptUrl);
     console.log("💸 Payment:", paymentData);
-    console.log("✅ ID URL used:", idUrl);
-    console.log("🧾 Receipt URL:", receiptUrl);
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const idUrl = formData.valid_id_url || uploadedValidIdPath;
+        console.log("✅ ID URL used:", idUrl);
+        console.log("🧾 Receipt URL:", receiptUrl);
         if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
             alert("❌ valid_id_url is missing or invalid.");
             setLoading(false);
