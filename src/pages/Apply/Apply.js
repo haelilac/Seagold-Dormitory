@@ -457,6 +457,18 @@ const ContactUs = () => {
             alert("❌ Receipt validation failed. Please upload a clearer image.");
             return;
         }
+
+        if (!formData.valid_id_url && !uploadedValidIdPath) {
+            alert("❌ Please upload a valid ID.");
+            setLoading(false);
+            return;
+        }
+        
+        if (!receiptUrl || !/^https?:\/\//i.test(receiptUrl)) {
+            alert("❌ Receipt URL is missing or invalid.");
+            setLoading(false);
+            return;
+        }
     
         setLoading(true); // 🔥 Start loading
     
@@ -474,16 +486,15 @@ const ContactUs = () => {
             });
     
             // ✅ Safely add fallback for valid_id_url here
-            const idUrl = formData.valid_id_url || uploadedValidIdPath || receiptUrl; // ✅ fallback
+            const idUrl = formData.valid_id_url || uploadedValidIdPath;
             if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
                 alert("❌ valid_id_url is missing or invalid.");
                 setLoading(false);
                 return;
             }
             requestData.append("valid_id_url", idUrl);
-    
-            requestData.append("reservation_fee", reservationFee);
             requestData.append("receipt_url", receiptUrl);
+            requestData.append("reservation_fee", reservationFee);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
     
