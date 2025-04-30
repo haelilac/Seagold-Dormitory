@@ -26,8 +26,9 @@ const ContactUs = () => {
         duration: '',
         reservation_details: '',
         stay_type: '', 
-        valid_id: null,
+        receipt_url: '',
         valid_id_url: '',
+        valid_id: null,
         accept_privacy: false,
     });
   useEffect(() => {
@@ -520,6 +521,8 @@ const ContactUs = () => {
                 duration: '',
                 reservation_details: '',
                 stay_type: '',
+                receipt_url: '',
+                valid_id_url: '',
                 valid_id: null,
                 accept_privacy: false,
             });
