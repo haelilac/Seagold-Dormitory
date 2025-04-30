@@ -359,22 +359,20 @@ const ContactUs = () => {
             const data = await response.json();
             console.log("✅ Upload ID OCR Response:", data);
     
-            setUploadedValidIdPath(data.file_url);
-
             setFormData(prev => ({
-              ...prev,
-              valid_id: data.file_url,
-              valid_id_url: data.file_url
-            }));
-            
-            if (data.id_type_matched) {
-
+                ...prev,
+                valid_id_url: data.file_url, // ✅ always set this
+                valid_id: data.file_url,     // optional if you still use this
+              }));
+              setUploadedValidIdPath(data.file_url); // still useful for fallback
+              
+              if (data.id_type_matched) {
                 alert(`✅ ID Verified Successfully!`);
                 setIsIdVerified(true);
-            } else {
+              } else {
                 alert(`❌ ID Mismatch detected!`);
                 setIsIdVerified(false);
-            }
+              }
         } catch (error) {
             console.error("❌ Error uploading ID:", error);
             alert("❌ Failed to upload ID. Check console.");
@@ -470,9 +468,13 @@ const ContactUs = () => {
             });
     
             // ✅ Safely add fallback for valid_id_url here
-            if (!formData.valid_id_url && uploadedValidIdPath) {
-                requestData.append("valid_id_url", uploadedValidIdPath);
+            const idUrl = formData.valid_id_url || uploadedValidIdPath;
+            if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
+                alert("❌ valid_id_url is missing or invalid.");
+                setLoading(false);
+                return;
             }
+            requestData.append("valid_id_url", idUrl);
     
             requestData.append("reservation_fee", reservationFee);
             requestData.append("receipt_url", receiptUrl);
