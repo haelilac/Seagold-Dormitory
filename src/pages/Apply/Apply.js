@@ -362,11 +362,10 @@ const ContactUs = () => {
     
             setFormData(prev => ({
                 ...prev,
-                valid_id_url: data.file_url, // ✅ always set this
-                valid_id: data.file_url,     // optional if you still use this
+                valid_id_url: data.file_url || prev.valid_id_url,
               }));
-              setUploadedValidIdPath(data.file_url); // still useful for fallback
               
+              setUploadedValidIdPath(data.file_url || uploadedValidIdPath);
               if (data.id_type_matched) {
                 alert('✅ ID Verified Successfully!');
                 setIsIdVerified(true);
@@ -442,8 +441,8 @@ const ContactUs = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.valid_id_url && !uploadedValidIdPath && receiptUrl) {
-            setFormData(prev => ({ ...prev, valid_id_url: receiptUrl }));
+        if (!formData.valid_id_url && uploadedValidIdPath) {
+            setFormData(prev => ({ ...prev, valid_id_url: uploadedValidIdPath }));
         }
         if (!isVerified) {
             alert('Please verify your email using Google Sign-In before submitting.');
@@ -474,7 +473,7 @@ const ContactUs = () => {
             });
     
             // ✅ Safely add fallback for valid_id_url here
-            const idUrl = formData.valid_id_url || uploadedValidIdPath || receiptUrl; // ✅ fallback
+            const idUrl = formData.valid_id_url || uploadedValidIdPath;
             if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
                 alert("❌ valid_id_url is missing or invalid.");
                 setLoading(false);
@@ -486,7 +485,7 @@ const ContactUs = () => {
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
-    
+            requestData.append("set_price", null); 
             console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
             console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
     

@@ -355,6 +355,13 @@ const PendingApplications = () => {
                           <img src={selectedApplication.valid_id} alt="Valid ID" />
                         </div>
                       )}
+
+                      {selectedApplication.receipt_url && (
+                        <div className="details-right">
+                          <p>Receipt</p>
+                          <img src={selectedApplication.receipt_url} alt="Receipt" />
+                        </div>
+                      )}
                     </div>
     
                     {/* Footer Prices */}
