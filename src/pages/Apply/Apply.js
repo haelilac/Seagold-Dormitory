@@ -461,6 +461,9 @@ const ContactUs = () => {
             alert("❌ valid_id_url is missing or invalid.");
             return;
         }
+        
+        // Force it into the main formData state
+        formData.valid_id_url = fallbackValidIdUrl;
     
         setLoading(true);
     
