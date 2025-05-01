@@ -32,7 +32,7 @@ const PendingApplications = () => {
     });
     const { getCachedData, updateCache } = useDataCache();
     const cachedApplications = getCachedData('applications');
-    
+    const [processingAction, setProcessingAction] = useState(null); // 'accept' | 'decline' | 'save'
      useEffect(() => {
        document.body.style.overflow = "auto"; // force scroll back on
      }, []);
@@ -153,57 +153,78 @@ const PendingApplications = () => {
     };
 
     const handleUpdateApplication = async (applicationId) => {
-        try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/update`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) throw new Error('Failed to update application.');
-            
-            alert('Application updated successfully.');
-            handleCloseDetails();
-            window.location.reload();
-        } catch (error) {
-            alert('An error occurred while updating the application.');
-        }
-    };
+      setProcessingAction('save');
+  
+      try {
+          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/update`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData)
+          });
+  
+          if (!response.ok) throw new Error('Failed to update application.');
+          
+          alert('Application updated successfully.');
+          handleCloseDetails();
+          window.location.reload();
+      } catch (error) {
+          alert('An error occurred while updating the application.');
+      } finally {
+          setProcessingAction(null);
+      }
+  };
+  
 
     const handleAccept = async (applicationId, tenantName, tenantEmail, unitCode) => {
-        if (!window.confirm('Accept this application and create a tenant account?')) return;
-    
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            alert('Auth token not found. Please log in again.');
-            return;
-        }
-    
-        console.log("Sending POST to /accept with ID:", applicationId);
-    
-        try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    name: tenantName,
-                    email: tenantEmail,
-                    unit_code: unitCode
-                }),
-            });
-    
-            if (!response.ok) throw new Error('Failed to accept the application.');
-            alert('Application accepted! Tenant account created.');
-            setApplications((prev) => prev.filter((app) => app.id !== applicationId));
-            handleCloseDetails();
-        } catch (error) {
-            console.error('Error accepting application:', error);
-            alert('An error occurred while accepting the application.');
-        }
-    };
+      if (!window.confirm('Accept this application and create a tenant account?')) return;
+  
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (!token) {
+          alert('Auth token not found. Please log in again.');
+          return;
+      }
+  
+      setProcessingAction('accept');
+  
+      try {
+          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                  name: tenantName,
+                  email: tenantEmail,
+                  unit_code: unitCode
+              }),
+          });
+  
+          const responseData = await response.json();
+  
+          if (!response.ok) {
+              if (response.status === 409 && responseData.message?.includes("User already exists")) {
+                  alert("❌ This user already exists. The application may have already been accepted.");
+                  setApplications((prev) => prev.filter((app) => app.id !== applicationId));
+                  handleCloseDetails();
+              } else {
+                  alert("❌ Failed to accept the application. " + (responseData.message || ''));
+              }
+              throw new Error(responseData.message || 'Failed to accept the application.');
+          }
+  
+          alert('✅ Application accepted! Tenant account created.');
+          setApplications((prev) => prev.filter((app) => app.id !== applicationId));
+          handleCloseDetails();
+      } catch (error) {
+          console.error('Error accepting application:', error);
+          alert('An error occurred while accepting the application.');
+      } finally {
+          setProcessingAction(null);
+      }
+  };
+  
+  
     
     
     const matchingUnit = selectedApplication
@@ -250,22 +271,27 @@ const PendingApplications = () => {
   
 
     const handleDecline = async (applicationId) => {
-        if (!window.confirm('Decline this application?')) return;
-
-        try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/decline`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) throw new Error('Failed to decline the application.');
-            
-            alert('Application declined.');
-            setApplications((prev) => prev.filter((app) => app.id !== applicationId));
-            handleCloseDetails();
-        } catch (error) {
-            alert('An error occurred while declining the application.');
-        }
-    };
+      if (!window.confirm('Decline this application?')) return;
+  
+      setProcessingAction('decline');
+  
+      try {
+          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/decline`, {
+              method: 'DELETE',
+          });
+  
+          if (!response.ok) throw new Error('Failed to decline the application.');
+  
+          alert('Application declined.');
+          setApplications((prev) => prev.filter((app) => app.id !== applicationId));
+          handleCloseDetails();
+      } catch (error) {
+          alert('An error occurred while declining the application.');
+      } finally {
+          setProcessingAction(null);
+      }
+  };
+  
 
     if (loading) return <div className="application-spinner"></div>;
 
@@ -351,19 +377,28 @@ const PendingApplications = () => {
                     <div className="action-buttons">
                       <button className="accept-button"
                               onClick={() => handleAccept(
-                                selectedApplication.id,
-                                selectedApplication.first_name,
-                                selectedApplication.email,
-                                selectedApplication.reservation_details
-                              )}>
-                        Accept
+                                  selectedApplication.id,
+                                  selectedApplication.first_name,
+                                  selectedApplication.email,
+                                  selectedApplication.reservation_details
+                              )}
+                              disabled={processingAction !== null}>
+                        {processingAction === 'accept' ? (
+                          <span className="spinner"></span>
+                        ) : 'Accept'}
                       </button>
+
                       <button className="decline-button"
-                              onClick={() => handleDecline(selectedApplication.id)}>
-                        Decline
+                              onClick={() => handleDecline(selectedApplication.id)}
+                              disabled={processingAction !== null}>
+                        {processingAction === 'decline' ? (
+                          <span className="spinner"></span>
+                        ) : 'Decline'}
                       </button>
+
                       <button className="edit-button"
-                              onClick={() => setEditMode(true)}>
+                              onClick={() => setEditMode(true)}
+                              disabled={processingAction !== null}>
                         Edit
                       </button>
                     </div>
@@ -403,9 +438,14 @@ const PendingApplications = () => {
                     </div>
     
                     <div className="save-button">
-                      <button onClick={() => handleUpdateApplication(selectedApplication.id)}>
-                        Save
-                      </button>
+                    <button 
+                      onClick={() => handleUpdateApplication(selectedApplication.id)}
+                      disabled={processingAction !== null}
+                    >
+                      {processingAction === 'save' ? (
+                        <span className="spinner"></span>
+                      ) : 'Save'}
+                    </button>
                     </div>
                   </div>
                 )}
