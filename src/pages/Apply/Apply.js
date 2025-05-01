@@ -483,7 +483,6 @@ const ContactUs = () => {
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
-            requestData.append("set_price", "");
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
