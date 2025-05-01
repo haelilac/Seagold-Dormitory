@@ -440,24 +440,29 @@ const ContactUs = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!formData.valid_id_url && uploadedValidIdPath) {
-            setFormData(prev => ({ ...prev, valid_id_url: uploadedValidIdPath }));
-        }
+    
         if (!isVerified) {
             alert('Please verify your email using Google Sign-In before submitting.');
             return;
         }
+    
         if (!formData.accept_privacy) {
             alert('You must accept the privacy terms.');
             return;
         }
+    
         if (!paymentData.reference_number || !paymentData.amount) {
             alert("❌ Receipt validation failed. Please upload a clearer image.");
             return;
         }
     
-        setLoading(true); // 🔥 Start loading
+        const fallbackValidIdUrl = formData.valid_id_url || uploadedValidIdPath;
+        if (!fallbackValidIdUrl || !/^https?:\/\//i.test(fallbackValidIdUrl)) {
+            alert("❌ valid_id_url is missing or invalid.");
+            return;
+        }
+    
+        setLoading(true);
     
         try {
             const requestData = new FormData();
@@ -465,29 +470,17 @@ const ContactUs = () => {
             Object.keys(formData).forEach((key) => {
                 if (key === 'check_in_date') {
                     requestData.append(key, formatDateTime(formData[key]));
-                } else if (key === 'valid_id') {
-                    return;
-                } else {
+                } else if (key !== 'valid_id' && key !== 'valid_id_url') {
                     requestData.append(key, formData[key]);
                 }
             });
     
-            // ✅ Safely add fallback for valid_id_url here
-            const idUrl = formData.valid_id_url || uploadedValidIdPath;
-            if (!idUrl || !/^https?:\/\//i.test(idUrl)) {
-                alert("❌ valid_id_url is missing or invalid.");
-                setLoading(false);
-                return;
-            }
-            requestData.append("valid_id_url", idUrl);
-    
+            requestData.append("valid_id_url", fallbackValidIdUrl);
             requestData.append("reservation_fee", reservationFee);
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
-            requestData.append("set_price", null); 
-            console.log("🔍 final formData.valid_id_url =", formData.valid_id_url);
-            console.log("🧾 typeof valid_id_url:", typeof formData.valid_id_url);
+            requestData.append("set_price", null);
     
             const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
