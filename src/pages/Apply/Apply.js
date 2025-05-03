@@ -170,7 +170,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
         if (!formData.reservation_details || !formData.stay_type) return;
 
         try {
-            const response = await axios.get("https://seagold-laravel-production.up.railway.app/api/room-pricing", {
+            const response = await axios.get("http://localhost:8000/api/room-pricing", {
                 params: {
                     unit_code: formData.reservation_details,
                     stay_type: formData.stay_type
@@ -198,7 +198,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units-only');
+                const response = await fetch('http://localhost:8000/api/units-only');
                 if (!response.ok) throw new Error('Failed to fetch units');
                 const data = await response.json();
                 console.log('✅ Units fetched:', data);
@@ -262,7 +262,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
         formDataUpload.append("receipt", file);
     
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
+            const response = await fetch("http://localhost:8000/api/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -317,7 +317,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
     
      
     const sendToApplication = (applicationId, referenceNumber, amount, dateTime) => {
-        fetch("https://seagold-laravel-production.up.railway.app/api/applications/payment", {
+        fetch("http://localhost:8000/api/applications/payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -398,41 +398,40 @@ const [showReservationModal, setShowReservationModal] = useState(true);
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
+            
+            const idToken = await user.getIdToken(); // ✅ get actual ID token
     
-            const token = await user.getIdToken(); // ✅ renamed from idToken to token
-    
+            // 🌟 Dynamic API URL based on environment
             const baseUrl = window.location.hostname.includes('localhost')
-                ? 'http://localhost:8000'
-                : 'https://seagold-laravel-production.up.railway.app';
-    
-            console.log("✅ Google ID Token:", token);
-    
+              ? 'http://localhost:8000'
+              : 'https://seagold-laravel-production.up.railway.app';
+            
+            console.log("✅ ID Token:", idToken);
             const verifyResponse = await fetch(`${baseUrl}/api/google-verify-email`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token }) // ✅ renamed key to match Laravel controller
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: idToken }),
             });
-    
+            
             const verifyData = await verifyResponse.json();
             console.log("✅ Google Verify API response:", verifyData);
-    
             if (verifyData.email) {
-                setFormData((prev) => ({
-                    ...prev,
-                    email: verifyData.email,
-                    first_name: verifyData.name.split(" ")[0],
-                    last_name: verifyData.name.split(" ").slice(-1)[0],
-                }));
-                setIsVerified(true);
-                alert(`Email verified: ${verifyData.email}`);
+              setFormData((prev) => ({
+                ...prev,
+                email: verifyData.email,
+                first_name: verifyData.name.split(" ")[0],
+                last_name: verifyData.name.split(" ").slice(-1)[0],
+              }));
+              setIsVerified(true);
+              alert(`Email verified: ${verifyData.email}`);
             } else {
-                alert("Failed to verify Google account.");
+              alert("Failed to verify Google account.");
             }
         } catch (error) {
             console.error("Google Sign-In Error:", error);
             alert("Failed to verify email. Please try again.");
         }
-    };
+    }
     
     console.log('receiptUrl:', receiptUrl);
     console.log('paymentData:', paymentData);
@@ -485,7 +484,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
+            const response = await fetch('http://localhost:8000/api/applications', {
                 method: 'POST',
                 body: requestData,
             });
