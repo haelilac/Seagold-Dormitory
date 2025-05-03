@@ -133,34 +133,57 @@ const RoomInfoTenant = () => {
 
   return (
     <div className="roomCard-wrapper">
-      <div className="roomCard-header">ROOM {info.unit_code}</div>
-
+      <div className="roomCard-header">Room Information</div>
       <div className="roomCard-container">
+        <div className="unitCodeDisplay">{info.unit_code}</div>
         <div className="roomImageGallery">
           {info.images && info.images.length > 0 ? (
-            info.images.map((img, index) => (
+            <>
               <img
-                key={index}
-                src={img.image_path}
-                alt={`Room image ${index + 1}`}
-                className="thumbnail"
-                onClick={() => setSelectedImage(img.image_path)}
+                src={info.images[0].image_path}
+                alt="Main Room"
+                className="mainImage"
+                onClick={() => setSelectedImage(info.images[0].image_path)}
               />
-            ))
+              <div className="thumbnailGrid">
+                {info.images.slice(1, 5).map((img, index) => (
+                  <img
+                    key={index}
+                    src={img.image_path}
+                    alt={`Room image ${index + 2}`}
+                    onClick={() => setSelectedImage(img.image_path)}
+                  />
+                ))}
+              </div>
+            </>
           ) : (
-            <img
-              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg"
-              alt="Default Room"
-              className="thumbnail"
-            />
+            <>
+              <img
+                src="http://localhost:8000/Dorm.jpg"
+                alt="Default Room"
+                className="mainImage"
+              />
+            </>
           )}
         </div>
 
         <div className="roomDetails">
-          <div className="infoBlock"><span className="infoLabel">UNIT TYPE:</span> {info.stay_types?.join(", ") || "N/A"}</div>
-          <div className="infoBlock"><span className="infoLabel">CAPACITY:</span> {info.max_capacity} occupants</div>
-          <div className="infoBlock"><span className="infoLabel">MONTHLY RENT:</span> ₱{info.base_price?.toLocaleString()}</div>
-          <div className="infoBlock"><span className="infoLabel">RENT DUE DATE:</span> 15th of every month</div>
+          <div className="infoBlock">
+            <FaDoorOpen className="infoIcon" />
+            <span className="infoLabel">UNIT TYPE:</span> {info.stay_types?.join(", ") || "N/A"}
+          </div>
+          <div className="infoBlock">
+            <FaUsers className="infoIcon" />
+            <span className="infoLabel">CAPACITY:</span> {info.max_capacity} occupants
+          </div>
+          <div className="infoBlock">
+            <FaMoneyBillWave className="infoIcon" />
+            <span className="infoLabel">MONTHLY RENT:</span> ₱{info.base_price?.toLocaleString()}
+          </div>
+          <div className="infoBlock">
+            <FaCalendarAlt className="infoIcon" />
+            <span className="infoLabel">RENT DUE DATE:</span> 15th of every month
+          </div>
         </div>
 
         <div className="amenitiesSection">
@@ -177,54 +200,72 @@ const RoomInfoTenant = () => {
             )}
           </div>
         </div>
+      </div>
 
-        {/* ⭐ Amenity Request Section */}
+      {/* New separate container for "Request Additional Amenities" */}
+      <div className="amenityRequestContainer">
         <div className="amenityRequestSection">
           <h3>Request Additional Amenities</h3>
+          <div className="amenityRequestRow">
+            <select
+              value={amenityType}
+              onChange={(e) => setAmenityType(e.target.value)}
+              className="amenitySelect"
+            >
+              <option value="">-- Select Amenity --</option>
+              <option value="Mini Fridge">Mini Fridge</option>
+              <option value="Electric Fan">Electric Fan</option>
+              <option value="Extra Chair">Extra Chair</option>
+            </select>
+            <button onClick={handleRequestAmenity} className="requestButton">
+              Request Amenity
+            </button>
+          </div>
+        </div>
+      </div>
 
-          <select value={amenityType} onChange={(e) => setAmenityType(e.target.value)}>
-            <option value="">-- Select Amenity --</option>
-            <option value="Mini Fridge">Mini Fridge</option>
-            <option value="Electric Fan">Electric Fan</option>
-            <option value="Extra Chair">Extra Chair</option>
-            <option value="Extra Mattress">Extra Mattress</option>
-            <option value="Air Conditioner">Air Conditioner</option>
-            <option value="Microwave">Microwave</option>
-            <option value="Water Dispenser">Water Dispenser</option>
-            <option value="TV">TV</option>
-            <option value="Others">Others (Specify)</option>
-          </select>
-
-          {amenityType === "Others" && (
-            <input
-              type="text"
-              placeholder="Specify other amenity"
-              value={otherAmenity}
-              onChange={(e) => setOtherAmenity(e.target.value)}
-              style={{ marginTop: "10px", padding: "8px", width: "100%" }}
-            />
-          )}
-
-          <button onClick={handleRequestAmenity} style={{ marginTop: "10px" }}>
-            Request Amenity
-          </button>
-
-          <h4>My Requests</h4>
-          <ul>
-            {requests.length > 0 ? (
-              requests.map(req => (
-                <li key={req.id}>
-                  {req.amenity_type} - <strong>{req.status}</strong><br />
-                  Requested: {new Date(req.created_at).toLocaleDateString()}<br />
-                  {req.status === 'approved' && req.approved_at && (
-                    <>Approved: {new Date(req.approved_at).toLocaleDateString()}</>
-                  )}
-                </li>
-              ))
-            ) : (
-              <p>No amenity requests yet.</p>
-            )}
-          </ul>
+      {/* New container for "My Requests" Table */}
+      <div className="myRequestsContainer">
+        <h4>My Requests</h4>
+        <div className="myRequestsTableContainer">
+          <table className="myRequestsTable">
+            <thead>
+              <tr>
+                <th>Amenity Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requests.length > 0 ? (
+                requests.map((req) => (
+                  <tr key={req.id}>
+                    <td>{req.amenity_type}</td>
+                    <td
+                      className={
+                        req.status.toLowerCase() === "pending"
+                          ? "status-pending"
+                          : "status-approved"
+                      }
+                    >
+                      {req.status.toLowerCase() === "pending" ? (
+                        <>
+                          <FaClock /> <strong>{req.status}</strong>
+                        </>
+                      ) : (
+                        <>
+                          <FaCheckCircle /> <strong>{req.status}</strong>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="2">No amenity requests yet.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -232,7 +273,9 @@ const RoomInfoTenant = () => {
         <div className="imageModalOverlay" onClick={() => setSelectedImage(null)}>
           <div className="imageModalContent" onClick={(e) => e.stopPropagation()}>
             <img src={selectedImage} alt="Preview" className="modalImage" />
-            <button className="closeModal" onClick={() => setSelectedImage(null)}>Close</button>
+            <button className="closeModal" onClick={() => setSelectedImage(null)}>
+              Close
+            </button>
           </div>
         </div>
       )}
