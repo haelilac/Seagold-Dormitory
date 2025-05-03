@@ -14,56 +14,59 @@ const LoginModal = ({ onClose, onLogin }) => {
   const [gender, setGender] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  const [formLoading, setFormLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  
   const handleGoogleLogin = () => {
+    setGoogleLoading(true);
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((result) => {
         const idToken = result.user.accessToken;
-        fetch("https://seagold-laravel-production.up.railway.app/api/google-login-guest", {
+        return fetch("https://seagold-laravel-production.up.railway.app/api/google-login-guest", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: idToken }),
-        })
-          .then((response) => {
-            if (!response.ok) throw new Error("Google login failed");
-            return response.json();
-          })
-          .then((data) => {
-            if (data.access_token) {
-              localStorage.setItem("token", data.access_token);
-              localStorage.setItem("role", "guest"); // 👈 Add this line
-              onLogin();
-              onClose();
-            } else {
-              setErrorMessage("Google login failed. Please try again.");
-            }
-          })
-          .catch(() => setErrorMessage("Google login failed. Please try again."));
+        });
       })
-      .catch(() => setErrorMessage("Google sign-in failed. Please try again."));
+      .then((response) => {
+        if (!response.ok) throw new Error("Google login failed");
+        return response.json();
+      })
+      .then((data) => {
+        if (data.access_token) {
+          localStorage.setItem("token", data.access_token);
+          localStorage.setItem("role", "guest");
+          onLogin();
+          onClose();
+        } else {
+          setErrorMessage("Google login failed. Please try again.");
+        }
+      })
+      .catch(() => setErrorMessage("Google sign-in failed. Please try again."))
+      .finally(() => setGoogleLoading(false));
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
+    setFormLoading(true);
     fetch("https://seagold-laravel-production.up.railway.app/api/login-guest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     })
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => {
         if (data.access_token) {
           localStorage.setItem("token", data.access_token);
           onLogin();
           onClose();
         } else {
-          setErrorMessage(data.error || "Invalid credentials. Please try again.");
+          setErrorMessage(data.error || "Invalid credentials.");
         }
       })
-      .catch(() =>
-        setErrorMessage("Failed to log in. Please check your credentials and try again.")
-      );
+      .catch(() => setErrorMessage("Failed to log in."))
+      .finally(() => setFormLoading(false));
   };
 
   const handleRegister = (e) => {
@@ -178,15 +181,21 @@ const LoginModal = ({ onClose, onLogin }) => {
                 </select>
               </div>
             </div>
-            <button type="submit" className="form-button">
-              Register
+            <button type="submit" className="form-button" disabled={formLoading}>
+              {formLoading ? <span className="spinner" /> : isRegisterMode ? "Register" : "Sign In"}
             </button>
             <div className="divider-text">
              <span>Or sign up with</span>
             </div>
-            <button className="google-login-button" onClick={handleGoogleLogin}>
-              <img src={require("../../assets/google-icon.png")} alt="Google" />
-              Sign up with Google
+            <button className="google-login-button" onClick={handleGoogleLogin} disabled={googleLoading}>
+              {googleLoading ? (
+                <span className="spinner" />
+              ) : (
+                <>
+                  <img src={require("../../assets/google-icon.png")} alt="Google" />
+                  {isRegisterMode ? "Sign up with Google" : "Sign in with Google"}
+                </>
+              )}
             </button>
           </form>
         ) : (
