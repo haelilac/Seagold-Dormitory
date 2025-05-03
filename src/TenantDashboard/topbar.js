@@ -346,11 +346,6 @@ const TopBar = ({
                 <li className={styles.profileEmail}>{userData?.email}</li>
                 <li><button onClick={handleLogout}>Logout</button></li>
                 <li>
-                  <button className={`${styles.darkModeToggle} ${darkMode ? styles.lightModeBtn : styles.darkModeBtn}`} onClick={toggleDarkMode}>
-                    {darkMode ? <><FaSun /> Light</> : <><FaMoon /> Dark</>}
-                  </button>
-                </li>
-                <li>
                   <button onClick={() => setShowChangePassModal(true)}>Change Password</button>
                 </li>
               </ul>

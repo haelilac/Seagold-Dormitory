@@ -273,14 +273,6 @@ const TopBarAdmin = ({
               <li>
                 <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>
               </li>
-              <li>
-                <button
-                  className={`${styles.darkModeToggle} ${darkMode ? styles.lightModeBtn : styles.darkModeBtn}`}
-                  onClick={toggleDarkMode}
-                >
-                  {darkMode ? <><FaSun /> Light Mode</> : <><FaMoon /> Dark Mode</>}
-                </button>
-              </li>
             </ul>
             {showChangePassModal && (
   <div className={styles.modalBackdrop} onClick={() => setShowChangePassModal(false)}>
