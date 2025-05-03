@@ -48,6 +48,7 @@ const GoogleMapComponent = () => {
     };
   }, []);
 
+
   const handleGetUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(

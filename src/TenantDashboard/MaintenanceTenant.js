@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import './MaintenanceTenant.css';
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from "../contexts/DataContext";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 const MaintenanceTenant = () => {
     const { sidebarOpen } = useOutletContext();
@@ -46,6 +48,50 @@ const MaintenanceTenant = () => {
                 }
             }, []);
             
+            useEffect(() => {
+                if (!userId) return;
+            
+                window.Pusher = Pusher;
+                window.Echo = new Echo({
+                    broadcaster: 'pusher',
+                    key: '865f456f0873a587bc36',
+                    cluster: 'ap3',
+                    forceTLS: true,
+                    authEndpoint: 'http://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
+                    auth: {
+                        headers: {
+                            Authorization: `Bearer ${getAuthToken()}`
+                        }
+                    }
+                });
+                
+                const channel = window.Echo.private(`tenant.notifications.${userId}`);
+                channel.listen('.tenant-notification', (event) => {
+
+                    console.log("🔔 Tenant Notification Received:", event);
+
+                    // Optionally alert the user
+                    alert(event.message);
+            
+                    // Re-fetch updated request list
+                    fetch("http://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
+                        headers: {
+                            Authorization: `Bearer ${getAuthToken()}`,
+                            Accept: 'application/json',
+                        },
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        setSubmittedRequests(data);
+                        updateCache("tenant-maintenance", data);
+                    })
+                    .catch(err => console.error("Realtime fetch failed:", err));
+                });
+            
+                return () => {
+                    window.Echo.leave(`tenant.notifications.${userId}`);
+                };
+            }, [userId]);
 
     // Session Check & Scroll Reset
     useEffect(() => {
@@ -56,6 +102,7 @@ const MaintenanceTenant = () => {
         }
     }, [token]);
 
+    
     // Fetch Maintenance Requests
     useEffect(() => {
         const fetchRequests = async () => {
@@ -64,7 +111,7 @@ const MaintenanceTenant = () => {
                 if (cached) {
                     setSubmittedRequests(cached);
                 } else {
-                    const response = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
+                    const response = await fetch("http://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json',
@@ -145,7 +192,7 @@ const MaintenanceTenant = () => {
         setProgress(0);
     
         try {
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
+            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData,
@@ -178,7 +225,7 @@ const MaintenanceTenant = () => {
     // Cancel Request
     const handleCancel = async (id) => {
         try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/cancel`, {
+            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/cancel`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -198,7 +245,7 @@ const MaintenanceTenant = () => {
     // Follow-Up Request
     const handleFollowUp = async (id) => {
         try {
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/follow-up`, {
+            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/follow-up`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -230,6 +277,7 @@ const MaintenanceTenant = () => {
             </div>
         );
     };
+
 
     if (loading) return <div className="maintenancetenant-spinner"></div>;
 

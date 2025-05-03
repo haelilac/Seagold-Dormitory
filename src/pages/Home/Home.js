@@ -14,8 +14,8 @@ import laundryShop from '../../assets/laundry-shop.jpg';
 import ustCampus from '../../assets/ust-campus.jpg';
 import ueMnlCampus from '../../assets/ue-mnl-campus.jpg';
 import feuTech from '../../assets/feu-tech.jpg';
-import exactTrainingImage from "../../assets/exacttraining.jpg"; 
-import seamacTrainingImage from "../../assets/seamactraining.jpg"; 
+import exactTrainingImage from "../../assets/exact-training-image.jpg";  // Replace with the actual image path for EXACT Training Center
+import seamacTrainingImage from "../../assets/seamac-training-image.jpg"; 
 
 const Home = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -47,7 +47,7 @@ const Home = () => {
     }
 
     try {
-      const response = await fetch("https://seagold-laravel-production.up.railway.app/api/feedback", {
+      const response = await fetch("http://seagold-laravel-production.up.railway.app/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -320,26 +320,30 @@ const Home = () => {
     </div>
   </div>
 </section>
+{/* Feedback Form */}
+ {/* White Background Div */}
+<section className="feedback-form">
+<div className="feedbackhome-container">
+  <div className="container">
+    <h2 className="text-center">We Value Your Feedback</h2>
+    <p className="text-center">How was your experience with Seagold Dormitory?</p>
+  </div>
 
+ 
+    {/* Emoji Rating */}
+    <div className="emoji-container">
+      {["in-love", "happy", "neutral", "sad", "angry"].map((emoji) => (
+        <img
+          key={emoji}
+          src={`http://seagold-laravel-production.up.railway.app/storage/icons/${emoji}.gif`}
+          alt={emoji}
+          className={`emoji ${selectedEmoji === emoji ? "selected" : ""}`}
+          onClick={() => setSelectedEmoji(emoji)}
+        />
+      ))}
+    </div>
+    
 
-      {/* Feedback Form */}
-      <section className="feedback-form">
-        <div className="container">
-          <h2 className="text-center">We Value Your Feedback</h2>
-          <p className="text-center">How was your experience with Seagold Dormitory?</p>
-
-          {/* Emoji Rating */}
-          <div className="emoji-container">
-            {["in-love", "happy", "neutral", "sad", "angry"].map((emoji) => (
-              <img
-                key={emoji}
-                src={`https://seagold-laravel-production.up.railway.app/storage/icons/${emoji}.gif`}
-                alt={emoji}
-                className={`emoji ${selectedEmoji === emoji ? "selected" : ""}`}
-                onClick={() => setSelectedEmoji(emoji)}
-              />
-            ))}
-          </div>
 
           {/* Feedback Textbox */}
           <textarea

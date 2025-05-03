@@ -1,59 +1,134 @@
 .maintenance-requests {
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px #0000001a;
-    margin: 20px;
-    padding: 20px;
-    position: absolute;
-    left: -10%;
-    top: 90%;
-    width: 249%;
+    position: relative;
+    top: 7%;
+    width: 1096px;
+    right: 2%;
+
 }
 
 .maintenance-requests h2 {
-    margin-bottom: 15px;
-}
-.filters {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        position: absolute;
-        z-index: 300;
-        top: 10%;
-        left: 17%;
+    top: 59%;
+    position: relative;
+    font-size: 1.8rem;
+    text-align: left;
+    padding-bottom: 10px;
+    border-bottom: 2px solid#bf9e1b;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.filters select,
-.filters input {
-    padding: 5px 10px;
-    font-size: 14px;
-}
 
-.maintenance-table {
+.filter-container {
+    width: 100%;
+    padding-left: 20px;
+    padding-bottom: 17px;
+    height: 2%;
+    background-color: #ffffff;
+    border-radius: 8px;
+  }
+  
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .filters select,
+  .filters input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 343px;
+  }
+  
+
+  .maintenance-requests-table table {
     width: 100%;
     border-collapse: collapse;
-}
-
-.maintenance-table th,
-.maintenance-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
+    margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+  }
+  
+  /* Table Header */
+  .maintenance-requests-table th {
+    background-color: #366e39;
+    color: #ffffff;
+    padding: 12px 15px;
     text-align: center;
-}
+    font-size: 1rem;
+  }
+  
+  /* Table Rows */
+  .maintenance-requests-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95rem;
+    color: #333;
+  }
+  
+  /* Hover Effect */
+  .maintenance-requests-table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  
+  /* Alternate Row Background */
+  .maintenance-requests-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Last Row Border Removal */
+  .maintenance-requests-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  /* Remove Button Styling */
+  .remove-button {
+    background-color: #bf9e1b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  
+  .remove-button:hover {
+    background-color: #d4ba4f;
+  }
+  
+  /* Spinner Style (optional) */
+  .maintenancerequests-spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #366e39;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 50px auto;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
 
-.maintenance-table th {
-    background-color: #f0f0f0;
-    font-weight: bold;
-}
 
-.maintenance-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
 
-.error {
-    color: red;
-    font-weight: bold;
-}
+
+
+
+
+
+
+
+
+
+
 
 /* Modal Overlay - Full Screen */
 .custom-overlay {
@@ -70,63 +145,74 @@
 }
 
 /* Full-screen modal content */
-.custom-modal {
-    width: 55%; /* Adjust width as needed */
-    max-height: 90vh; /* Ensure it doesn't exceed the viewport height */
-    background-color: #ffffff; /* White background */
-    border-radius: 2px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    padding: 10px; /* Add some padding */
-    position: relative;
-    outline: none;
-    overflow-y: auto; /* Adds vertical scroll when content overflows */
+.manage-custom-modal {
+    background: white;
+    width: 60%;
+    padding: 20%;
 }
 
 /* Center the text inside the modal */
-.modal-content {
+.maintenance-modal-content {
     text-align: left;
     line-height: 1.6;
     color: #333; /* Darker text for better readability */
+    background-color: #ffffff;
 }
 
-.modal-buttons button {
+.maintenance-modal-buttons button {
     margin: 5px;
     padding: 8px 12px;
+    width: 31%;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     color: white;
-    background-color: #5cb85c; /* Green */
+    position: relative;
+    left: 1.5%;
 }
 
-.modal-buttons button:hover {
-    background-color: #4cae4c;
+.close-button {
+    background-color: #ffffff; /* Red */
 }
 
-.modal-buttons .close-button {
-    background-color: #d9534f; /* Red */
+.mark-as-complete-buttons,
+.schedule-buttons{
+    background-color: #366e39;;
+}
+.mark-as-complete-buttons:hover,
+.schedule-buttons:hover{
+    background-color:  #4a954e;
+}
+.cancel-buttons{
+    background-color: #bf9e1b;
+    
+}
+.cancel-buttons:hover {
+    background-color: #d4ba4f;
+    
 }
 
 /* Close button styling */
-.close-button {
+.maintenance-close-button {
     position: absolute;
     top: 10px;
     right: 15px;
-    background-color: #d9534f;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000000;
     border: none;
     border-radius: 50%;
     width: 30px;
     height: 30px;
-    font-size: 14px;
+    font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.close-button:hover {
-    background-color: #c9302c;
+.maintenance-close-button:hover {
+    background-color: #ffffff;
+    color: #000000;
 }
 /* File Preview Styles */
 
@@ -138,6 +224,7 @@
 .file-preview img,
 .file-preview video {
     max-width: 100%;
+    min-width: 100%;
     height: auto;
     display: block;
     margin: 10px auto;
@@ -145,18 +232,43 @@
     border-radius: 4px;
 }
 
+.modal-body{
+display: grid;
+grid-template-columns: 1.3fr 1fr;  /* Two equal columns */
+align-items: center;
+}
+
+.modal-body input,
+.modal-body label{
+width: 95%;
+font-weight: 500;
+position: relative;
+left:5%;
+}
+
+
+.modal-body label{
+width: 100%;
+font-weight: 500;
+position: relative;
+left:4%;
+}
+
+
+
+.modal-body p {
+margin-bottom: 0%;
+}
+
+
 .maintenancerequests-spinner {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #366e39;
+    border-top: 6px solid #366e39;  /* SEAGOLD green */
     border-radius: 50%;
     width: 50px;
     height: 50px;
     animation: spin 1s linear infinite;
-    z-index: 1000; 
+    margin: 100px auto;
 }
 
 .open-file-button {

@@ -42,6 +42,9 @@ const PaymentAdmin = () => {
     const [selectedTenantName, setSelectedTenantName] = useState('');
     const [selectedTenantId, setSelectedTenantId] = useState(null);
     const [selectedMonthData, setSelectedMonthData] = useState(null);
+    const [showExpandedModal, setShowExpandedModal] = useState(false);
+    const [selectedPayment, setSelectedPayment] = useState(null);
+
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
@@ -76,7 +79,7 @@ const PaymentAdmin = () => {
         }
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/payments`, {
+            const res = await fetch(`http://seagold-laravel-production.up.railway.app/api/payments`, {
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const allPayments = await res.json();
@@ -154,8 +157,8 @@ const PaymentAdmin = () => {
         try {
             setLoading(true);
             const [paymentsRes, unpaidRes] = await Promise.all([
-                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
-                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`http://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`http://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
             ]);
             const payments = await paymentsRes.json();
             const unpaid = await unpaidRes.json();
@@ -205,8 +208,8 @@ const PaymentAdmin = () => {
     const handleStatusUpdate = async (paymentId, status) => {
         const token = localStorage.getItem('token');
         const endpoint = status === 'Confirmed'
-            ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
-            : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
+            ? `http://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
+            : `http://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
 
         try {
             const response = await fetch(endpoint, {
@@ -256,7 +259,7 @@ const PaymentAdmin = () => {
       
         const token = localStorage.getItem('token');
         try {
-          const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
+          const res = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${getAuthToken()}`,
@@ -325,72 +328,49 @@ const filteredData = selectedStatus === 'All'
                 ))}
                 </div>
 
+                {Object.keys(groupedData).map((unit) => (
+  <div key={unit} className="unit-section">
+    <h3>Unit {unit}</h3>
+    <table className="payment-table">
+      <thead>
+        <tr>
+          <th>Tenant</th>
+          <th>Total Due</th>
+          <th>Balance</th>
+          <th>Payment Period</th>
+          <th>Date & Time</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {groupedData[unit].map((tenant) => (
+          <tr key={tenant.id}>
+            <td>{tenant.name}</td>
+            <td>{tenant.total_due}</td>
+            <td>{tenant.balance}</td>
+            <td>{tenant.payment_period}</td>
+            <td>{formatDate(tenant.payment_date)}</td>
+            <td>{tenant.status}</td>
+            <td>
+              {tenant.status?.toLowerCase() === 'pending' && (
+                <button
+                  onClick={() => {
+                    setSelectedPayment(tenant);
+                    setShowExpandedModal(true);
+                  }}
+                >
+                  Actions
+                </button>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+))}
 
-            {Object.keys(groupedData).map((unit) => (
-                <div key={unit} className="unit-section">
-                    <h3>Unit {unit}</h3>
-                    <table className="payment-table">
-                        <thead>
-                            <tr>
-                                <th>Tenant</th>
-                                <th>Total Due</th>
-                                <th>Balance</th>
-                                <th>Payment Period</th>
-                                <th>Date & Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {groupedData[unit].map((tenant) => (
-                                <React.Fragment key={tenant.id}>
-                                    <tr>
-                                        <td>{tenant.name}</td>
-                                        <td>{tenant.total_due}</td>
-                                        <td>{tenant.balance}</td>
-                                        <td>{tenant.payment_period}</td>
-                                        <td>{formatDate(tenant.payment_date)}</td>
-                                        <td>{tenant.status}</td>
-                                        <td>
-                                            {tenant.status?.toLowerCase() === 'pending' && (
-                                                <button onClick={() =>
-                                                    setExpandedRow(expandedRow === tenant.id ? null : tenant.id)
-                                                }>
-                                                    {expandedRow === tenant.id ? 'Close' : 'Actions'}
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                    {expandedRow === tenant.id && tenant.id && (
-                                        <tr>
-                                            <td colSpan="7">
-                                                <div className="expanded-details">
-                                                    <p>Amount Given: ₱{Number(tenant.total_paid).toFixed(2)}</p>
-                                                    <p>Remaining Balance: ₱{Number(tenant.remaining_balance).toFixed(2)}</p>
-                                                    <p>Payment Type: {tenant.payment_type}</p>
-                                                    <p>Payment Method: {tenant.payment_method}</p>
-                                                    <p>Payment Date: {formatDate(tenant.payment_date)}</p>
-                                                    <p>Reference Number: {tenant.reference_number}</p>
-                                                    {console.log("Receipt Path:", tenant.receipt_path)}
-                                                    {tenant.receipt_path && (
-                                                        <img src={tenant.receipt_path} alt="Receipt" className="receipt-preview" />
-                                                    )}
-                                                    {tenant.status?.toLowerCase() === 'pending' && (
-                                                        <>
-                                                            <button onClick={() => handleStatusUpdate(tenant.id, 'Confirmed')}>Confirm</button>
-                                                            <button onClick={() => handleStatusUpdate(tenant.id, 'Rejected')}>Reject</button>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            ))}
             {selectedStatus === 'Unpaid' && (
                 <div className="unpaid-section">
                     <h3>Unpaid Tenants</h3>
@@ -500,6 +480,44 @@ const filteredData = selectedStatus === 'All'
                     </div>
                 </div>
             )}
+{showExpandedModal && selectedPayment && (
+  <div className="modal-overlay">
+    <div className="custom-modal-content">
+      <h3>Payment Details for {selectedPayment.name}</h3>
+      <button
+        className="close-modal"
+        onClick={() => {
+          setShowExpandedModal(false);
+          setSelectedPayment(null);
+        }}
+      >
+        ✖
+      </button>
+
+      <div className="expanded-details">
+        <p><strong>Amount Given:</strong> ₱{parseFloat(selectedPayment.amount).toFixed(2)}</p>
+        <p><strong>Remaining Balance:</strong> ₱{Number(selectedPayment.remaining_balance).toFixed(2)}</p>
+        <p><strong>Payment Type:</strong> {selectedPayment.payment_type}</p>
+        <p><strong>Payment Method:</strong> {selectedPayment.payment_method}</p>
+        <p><strong>Payment Date:</strong> {formatDate(selectedPayment.payment_date)}</p>
+        <p><strong>Reference Number:</strong> {selectedPayment.reference_number}</p>
+
+        {selectedPayment.receipt_path && (
+          <img
+            src={selectedPayment.receipt_path}
+            alt="Receipt"
+            className="receipt-preview"
+          />
+        )}
+
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+          <button onClick={() => handleStatusUpdate(selectedPayment.id, 'Confirmed')}>Confirm</button>
+          <button onClick={() => handleStatusUpdate(selectedPayment.id, 'Rejected')}>Reject</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
         </div>
     );

@@ -69,8 +69,8 @@ body,
 
 .application-spinner {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 350px;
+  left: 770px;
   transform: translate(-50%, -50%);
   border: 6px solid #f3f3f3;
   border-top: 6px solid #366e39;
@@ -90,7 +90,7 @@ body,
   background-color: #f2ede3;
   text-align: center;
   width: 110%;
-  right:2%;
+  right:6%;
   position: relative;
 
 }
@@ -102,9 +102,7 @@ body,
   font-family: 'Montserrat', sans-serif; /* Header title */
 }
 .applications-table {
-  width: 100%;
-  border-collapse: separate; /* Allow rounded corners */
-  border-spacing: 0;
+  max-width:100%;
   background-color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -169,6 +167,7 @@ body,
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   width: 100%;            
   max-width: 1000px;   
+  min-height: 35% ;
   margin: 0 10px;   
   overflow: hidden;
   display: flex;
@@ -192,9 +191,10 @@ body,
 /* ─── Body: Two-column grid ─── */
 .details-body {
   display: grid;                                 
-  grid-template-columns: 1fr 300px;              
+  grid-template-columns: 1fr 1fr 1fr;              
   padding: 20px;
   align-items: start;
+  gap: 2%;
 }
 
 /* Left Column: Labels & Values */
@@ -212,7 +212,9 @@ body,
   justify-content: flex-start;                   
 }
 
-/* Force the <strong> label to a fixed width */
+.application-save-button{
+  width: 30%;
+}
 
 
 /* General Text Styling */
@@ -240,6 +242,28 @@ body,
   margin-bottom: 8px;
 }
 
+.details-left label,
+.details-mid label,
+.details-right label,
+.details-right input,
+.details-mid select {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 8px;
+}
+.details-left .original-price {
+  color: #444;
+  font-size:19px;
+  font-weight: 500;
+}
+
+.details-left .assigned-price {
+  color: #444;
+  font-size:19px;
+  font-weight: 500;
+}
+
 
 /* Right Column: Valid ID Image */
 .details-right {
@@ -249,15 +273,40 @@ body,
 }
 .details-right p {
   font-family: 'Open Sans', sans-serif;
+  align-items: left;
   font-size: 16px;
   font-weight: 700;
 }
+.id {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333; /* or use your dark green: #4a954e */
+}
+
 .details-right img {
   width: 100%;
+  max-height:450px;
+  max-width: 250px;
+  border: 2px solid #ccc;
+  position: relative;
+  right: 0%;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.details-mid img {
+  width: 100%;
+  max-height: 200px;
   max-width: 300px;
   border: 2px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.details-mid p{
+  font-family: 'Open Sans', sans-serif;
+  align-items: left;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 /* Footer: Prices */
@@ -434,14 +483,20 @@ body,
 
 .save-button button {
   font-family: 'Montserrat', sans-serif;
-  padding: 10px 20px;
+  padding: 10px;
   font-size: 14px;
   background-color: #366e39;
   color: white;
-  border: none;
   border-radius: 6px;
   cursor: pointer;
+  width: 32%;
   transition: background-color 0.3s ease;
+  position: absolute;
+  left: 34%;
+  top:75%;
+  margin-top:9px;
+  margin-bottom:3px;
+
 }
 
 .save-button button:hover {

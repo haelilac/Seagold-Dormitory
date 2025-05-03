@@ -52,7 +52,8 @@ const ContactUs = () => {
         reference_number: '',
         amount: '',
     });
-    
+    const [hasAgreedToReservation, setHasAgreedToReservation] = useState(false);
+const [showReservationModal, setShowReservationModal] = useState(true);
 
     // Fetch provinces on mount
     useEffect(() => {
@@ -169,7 +170,7 @@ const ContactUs = () => {
         if (!formData.reservation_details || !formData.stay_type) return;
 
         try {
-            const response = await axios.get("https://seagold-laravel-production.up.railway.app/api/room-pricing", {
+            const response = await axios.get("http://seagold-laravel-production.up.railway.app/api/room-pricing", {
                 params: {
                     unit_code: formData.reservation_details,
                     stay_type: formData.stay_type
@@ -197,7 +198,7 @@ const ContactUs = () => {
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units-only');
+                const response = await fetch('http://seagold-laravel-production.up.railway.app/api/units-only');
                 if (!response.ok) throw new Error('Failed to fetch units');
                 const data = await response.json();
                 console.log('✅ Units fetched:', data);
@@ -261,7 +262,7 @@ const ContactUs = () => {
         formDataUpload.append("receipt", file);
     
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
+            const response = await fetch("http://seagold-laravel-production.up.railway.app/api/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -316,7 +317,7 @@ const ContactUs = () => {
     
      
     const sendToApplication = (applicationId, referenceNumber, amount, dateTime) => {
-        fetch("https://seagold-laravel-production.up.railway.app/api/applications/payment", {
+        fetch("http://seagold-laravel-production.up.railway.app/api/applications/payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -483,7 +484,7 @@ const ContactUs = () => {
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
+            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
             });
@@ -533,7 +534,21 @@ const ContactUs = () => {
         <div className="contact-page-container">
             <div className="get-in-touch">
                 <h2>Interested? Be With Us!</h2>
-                <form className="contact-form" onSubmit={handleSubmit}>
+                <div 
+                    className="form-wrapper" 
+                    onClick={(e) => {
+                        if (!hasAgreedToReservation) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setShowReservationModal(true);
+                        }
+                    }}
+                    >
+                    <form 
+                        className="contact-form" 
+                        onSubmit={handleSubmit} 
+                        style={{ pointerEvents: hasAgreedToReservation ? 'auto' : 'none', opacity: hasAgreedToReservation ? 1 : 0.5 }}
+                    >
 
                     {/* Name and Email */}
                     <div className="form-row">
@@ -552,19 +567,18 @@ const ContactUs = () => {
                     </div>
 
                     <div className="form-group">
-                        <label>Birthdate</label>
-                        <DatePicker
-                        selected={formData.birthdate}
-                        onChange={(date) => {
-                            const formattedDate = date ? date.toISOString().split("T")[0] : ""; // Convert to YYYY-MM-DD
-                            setFormData({ ...formData, birthdate: formattedDate });
-                        }}
-                        dateFormat="yyyy-MM-dd"
-                        placeholderText="Select your birthdate"
-                        required
-                        />
-
-                    </div>
+                      <label>Birthdate</label>
+                        <input
+                        type="date"
+                        name="birthdate"
+                        value={formData.birthdate}
+                        onChange={(e) => setFormData({ ...formData, birthdate: e.target.value })}
+                        placeholder="YYYY-MM-DD"
+                        min="1900-01-01"
+                        max="2025-12-31"
+                  required
+                    />
+                </div>
 
                     {/* Email Verification */}
                     <div className="form-group email-group">
@@ -680,25 +694,6 @@ const ContactUs = () => {
                     required 
                 />
             </div>
-
-                    <div className="form-group">
-                    <label>Contact Number</label>
-                    <div className="contact-container">
-                        <span className="country-code">+63</span>
-                        <input 
-                            type="text" 
-                            name="contact_number" 
-                            value={formData.contact_number} 
-                            onChange={handleInputChange} 
-                            placeholder="Enter your number" 
-                            required 
-                            maxLength="10" 
-                            pattern="9[0-9]{9}" 
-                            title="Must be a valid 10-digit Philippine mobile number starting with 9 (e.g., 9123456789)" 
-                        />
-                    </div>
-                </div>
-
                     {/* Occupation */}
                     <div className="form-row">
                         <div className="form-group">
@@ -713,6 +708,7 @@ const ContactUs = () => {
                             />
                         </div>
                     </div>
+
 
                     {/* Check-in Date and Duration */}
                     <div className="form-row">
@@ -846,6 +842,24 @@ const ContactUs = () => {
                         </div>
                     )}
 
+<div className="form-group">
+                    <label>Contact Number</label>
+                    <div className="contact-container">
+                        <span className="country-code">+63</span>
+                        <input 
+                            type="text" 
+                            name="contact_number" 
+                            value={formData.contact_number} 
+                            onChange={handleInputChange} 
+                            placeholder="Enter your number" 
+                            required 
+                            maxLength="10" 
+                            pattern="9[0-9]{9}" 
+                            title="Must be a valid 10-digit Philippine mobile number starting with 9 (e.g., 9123456789)" 
+                        />
+                    </div>
+                </div>
+
                 {/* Reservation */}
                 <div className="form-group">
                 <label>Reservation</label>
@@ -939,27 +953,28 @@ const ContactUs = () => {
 
                 {/* Privacy Checkbox */}
                 <div className="form-row">
-                    <div className="form-group">
+                    <div className="terms-label">
                         <input
-                            type="checkbox"
-                            name="accept_privacy"
-                            checked={formData.accept_privacy}
-                            onChange={(e) =>
-                                setFormData({ ...formData, accept_privacy: e.target.checked })
-                            }
-                            required
+                        type="checkbox"
+                        name="accept_privacy"
+                        className="accept-privacy-checkbox"
+                        checked={formData.accept_privacy}
+                        onChange={(e) =>
+                            setFormData({ ...formData, accept_privacy: e.target.checked })
+                        }
+                        required
                         />
-                        <label>
-                            I accept the{' '}
-                            <span
-                                style={{ color: '#607d8b', cursor: 'pointer' }}
-                                onClick={() => setShowTermsModal(true)}
-                            >
-                                Terms and Privacy
-                            </span>
+                        <label className="terms-text">
+                        I accept the{' '}
+                        <span
+                            className="terms-privacy-trigger"
+                            onClick={() => setShowTermsModal(true)}
+                        >
+                            Terms and Privacy
+                        </span>
                         </label>
                     </div>
-                </div>
+                    </div>
                 <button 
                     type="submit" 
                     className={`send-message-button ${loading ? "loading" : ""}`}
@@ -974,27 +989,117 @@ const ContactUs = () => {
                 </button>
             </form> 
             </div>
-            
-                {/* Contact Information */}
-                <div className="contact-information">
-                    <h2>Contact Information</h2>
-                    <p><strong>Address:</strong> 3/F Fern Building, Sampaloc, Manila</p>
-                    <p><strong>Phone:</strong> +1235 2355 98</p>
-                    <p><strong>Facebook:</strong> <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">Visit Our Page</a></p>
+            </div>
+
+            {showReservationModal && (
+            <div className="reservation-modal-overlay">
+                <div className="reservation-modal">
+                <h3>Reservation Notice</h3>
+                <p>
+                    Before you begin, please note that submitting an application will require a reservation fee
+                    of <strong>₱500</strong> or <strong>₱1000</strong> depending on your selected stay type.
+                </p>
+                <p>
+                    This fee confirms your intent and is necessary for admin review. Do you wish to proceed?
+                </p>
+                <div className="modal-buttons">
+                    <button
+                    className="agree-btn"
+                    onClick={() => {
+                        setHasAgreedToReservation(true);
+                        setShowReservationModal(false);
+                    }}
+                    >
+                    I Agree
+                    </button>
+                    <button
+                    className="decline-btn"
+                    onClick={() => {
+                        setHasAgreedToReservation(false);
+                        setShowReservationModal(false);
+                    }}
+                    >
+                    I Do Not Agree
+                    </button>
                 </div>
-                
-                {/* Terms Modal */}
-                {showTermsModal && (
-                    <div className="modal">
-                        <div className="modal-content">
-                            <h2>Terms and Privacy</h2>
-                            <p>By submitting this form, you agree to our terms and privacy policy. Please ensure all your information is accurate. For more details, contact us directly.</p>
-                            <button onClick={() => setShowTermsModal(false)}>Close</button>
+                </div>
+            </div>
+            )}
+            {showTermsModal && (
+                <div className="terms-modal-overlay">
+                        <div className="terms-modal">
+                        <h3>Terms and Privacy Policy</h3>
+                <p>
+                This application collects and uses your personal information for the following purposes:
+                </p>
+                <ul>
+                <li>Reserving dormitory units based on your selected stay type and duration</li>
+                <li>Verifying your identity using government-issued ID uploads</li>
+                <li>Validating your payment through uploaded GCash receipts</li>
+                <li>Creating your tenant profile and account upon admin approval</li>
+                </ul>
+
+                <p>By proceeding, you agree that:</p>
+                <ul>
+                <li>Your personal and contact details may be stored securely in our system</li>
+                <li>Uploaded documents (e.g., ID, receipt) will be processed for verification</li>
+                <li>Admins reserve the right to accept, decline, or reassign applications</li>
+                <li>Any falsified or mismatched information may result in disqualification</li>
+                </ul>
+
+                <p>
+                We handle all your data with confidentiality and only use it for dormitory processing purposes.
+                </p>
+
+                        <button onClick={() => setShowTermsModal(false)} className="close-modal-button">
+                            Close
+                        </button>
                         </div>
                     </div>
-                )}
-            </div>
-        );
+                            )}
+                {/* Contact Information */}
+                <div className="contact-information">
+                <h2>Contact Information</h2>
+                <div className="info-block">
+                    <i className="fas fa-map-marker-alt"></i>
+                    <p> 3/F Fern Building, 827 P. Paredes St., Cor. S.H. Loyola St., Sampaloc, Manila 1008</p>
+                </div>
+                <div className="info-block">
+                    <i className="fas fa-phone-alt"></i>
+                    <p> (+63) 9225927385</p>
+                </div>
+                <div className="info-block">
+                    <i className="fab fa-facebook-square"></i>
+                    <a href="https://www.facebook.com/profile.php?id=61551676772866" target="_blank" rel="noopener noreferrer"> Visit Our Page</a>
+                </div>
 
-    };
+                {/* Additional Information */}
+                <div className="info-block">
+                    <i className="fas fa-clock"></i>
+                    <p>Operating Daily</p>
+                </div>
+                <div className="info-block">
+                    <i className="fas fa-envelope"></i>
+                    <a href="mailto:seagold.service@gmail.com"> seagold.service@gmail.com</a>
+                </div>
+
+                {/* Google Maps Embed (Responsive) */}
+                <div className="info-block">
+                <i className="fas fa-map"></i>
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.9160055625625!2d120.98647147414962!3d14.603860476998744!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397ca01e23c3fad%3A0x98f04273c1fedfbc!2sSeagold%20Dormitory!5e0!3m2!1sen!2sph!4v1745849998745!5m2!1sen!2sph"
+                    width="100%"
+                    height="450"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+
+                    
+                ></iframe>
+                </div>
+                </div>
+                </div>
+                )}
+
 export default ContactUs;

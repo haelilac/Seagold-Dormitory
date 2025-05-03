@@ -1,18 +1,8 @@
-/* Feedback Container */
-.feedback-container {
-    padding: 20px;
-    margin: 20px;
-    top: 5% ;
-    position: relative;
-    width: 170%;
-    right: 10%;
-    font-family: 'Inter', sans-serif;
-}
 
-.feedbackadmin-spinner {
+.feedback-spinner {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 350px;
+    left: 750px;
     transform: translate(-50%, -50%);
     border: 6px solid #f3f3f3;
     border-top: 6px solid #366e39;
@@ -21,6 +11,17 @@
     height: 50px;
     animation: spin 1s linear infinite;
     z-index: 1000; 
+  }
+
+/* Feedback Container */
+.feedback-container {
+    padding: 20px;
+    margin: 20px;
+    top: 5% ;
+    position: relative;
+    width: 1180px;
+    right: 7%;
+    font-family: 'Inter', sans-serif;
 }
 
 .feedback-header {
@@ -32,10 +33,13 @@
 
 /* Feedback Table */
 .feedback-table {
+    margin-top: 2%;
     width: 100%;
     border-collapse: collapse;
     background-color: #ffffff;
     border-radius: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -65,11 +69,6 @@
 /* Table Row Hover Effect */
 .feedback-table tr:hover {
     background-color: #f1f1f1;
-}
-
-.feedback-table a {
-    color: #3498db;
-    text-decoration: none;
 }
 
 .feedback-table a:hover {

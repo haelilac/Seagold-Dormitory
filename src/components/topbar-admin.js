@@ -322,7 +322,7 @@ const TopBarAdmin = ({
           }
 
           try {
-            const res = await fetch('http://localhost:8000/api/change-password', {
+            const res = await fetch('http://seagold-laravel-production.up.railway.app/api/change-password', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

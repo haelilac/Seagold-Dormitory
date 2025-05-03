@@ -42,7 +42,7 @@ const ManageTenants = () => {
         }
         const fetchData = async () => {
             try {
-                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/terminated-tenants');
+                const res = await fetch('http://seagold-laravel-production.up.railway.app/api/terminated-tenants');
                 const data = await res.json();
                 setTerminatedTenants(data);
                 updateCache('terminated_tenants', data);
@@ -58,7 +58,7 @@ const ManageTenants = () => {
         if (cached) { setUnits(cached); return; }
         const fetchUnits = async () => {
             try {
-                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
+                const res = await fetch('http://seagold-laravel-production.up.railway.app/api/units');
                 const data = await res.json();
                 const available = data.filter(unit => unit.status === 'available');
                 setUnits(available);
@@ -73,7 +73,7 @@ const ManageTenants = () => {
         const handleTerminateContract = async (action) => {
             if (action === 'terminate') {
                 try {
-                    const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/terminate`, {
+                    const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/terminate`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -99,7 +99,7 @@ const ManageTenants = () => {
             setIsUpdating(true);
         
             try {
-                const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/change-unit`, {
+                const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/change-unit`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const ManageTenants = () => {
         }
         const fetchTenants = async () => {
             try {
-                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/tenants');
+                const res = await fetch('http://seagold-laravel-production.up.railway.app/api/tenants');
                 const data = await res.json();
                 const formatted = data.map(t => ({
                     id: t.id,
@@ -289,18 +289,25 @@ const ManageTenants = () => {
                             <div className="modal-box" onClick={(e) => e.stopPropagation()}>
                             <button onClick={handleCloseModal} className="close-modal-button">&times;
                              </button>
+                             
                                 <h3 className="modal-header">Tenant Details</h3>
+                                 <div className="manage-details">
+                                <div className="manage-details-body">
+                                <div className="details-left">
                                     <p><strong>Name:</strong> {selectedTenant.name}</p>
                                     <p><strong>Email:</strong> {selectedTenant.email}</p>
                                     <p><strong>Address:</strong> {selectedTenant.address}</p>
-
+                                    </div>
 
                                     {selectedTenant.valid_id_url && (
-                                <div className="modal-valid-id">
-                                    <p><strong>Valid ID:</strong></p>
-                                    <img src={selectedTenant.valid_id_url} alt="Valid ID" className="valid-id-image" />
-                                </div>
-                            )}
+                                        <div className="details-mid">
+                                            <p><strong>Valid ID:</strong></p>
+                                            <img src={selectedTenant.valid_id_url} alt="Valid ID" className="valid-id-image" />
+                                        </div>
+                                        
+                                        
+                                        
+                                    )}
         
                                     <div className="termination-buttons">
                                         <button 
@@ -316,8 +323,11 @@ const ManageTenants = () => {
                                             Terminate & Make New Contract
                                         </button>
                                     </div>
+                                    </div>
+                                    
         
                                     {showNewContractForm && (
+                                        
     <form onSubmit={handleUpdateTenant} className="update-form">
         <label>
             Stay Type:
@@ -386,7 +396,7 @@ const ManageTenants = () => {
         </button>
     </form>
 )}
-
+</div>
                         </div>
                         </div>
 

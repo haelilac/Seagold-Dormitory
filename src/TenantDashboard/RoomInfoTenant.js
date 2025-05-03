@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './RoomInfo.css';
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from "../contexts/DataContext";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 const RoomInfoTenant = () => {
   const [info, setInfo] = useState(null);
@@ -19,13 +21,46 @@ const RoomInfoTenant = () => {
   }, []);
 
   useEffect(() => {
+    const userId = localStorage.getItem('user_id') || sessionStorage.getItem('user_id');
+    if (!userId) return;
+  
+    window.Pusher = Pusher;
+    window.Echo = new Echo({
+      broadcaster: 'pusher',
+      key: '865f456f0873a587bc36',
+      cluster: 'ap3',
+      forceTLS: true,
+      authEndpoint: 'http://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
+      auth: {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      },
+    });
+  
+    const channel = window.Echo.private(`tenant.notifications.${userId}`);
+    channel.listen('.tenant-notification', (event) => {
+      console.log("🔔 Amenity Notification Received:", event);
+  
+      if (event.type === 'amenity') {
+        alert(event.message);
+        fetchRequests(); // ✅ refresh amenity requests
+      }
+    });
+  
+    return () => {
+      window.Echo.leave(`tenant.notifications.${userId}`);
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchRoomInfo = async () => {
       try {
         const cached = getCachedData("tenant-room-info");
         if (cached) {
           setInfo(cached);
         } else {
-          const res = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant-room-info", {
+          const res = await fetch("http://seagold-laravel-production.up.railway.app/api/tenant-room-info", {
             headers: {
               Authorization: `Bearer ${getAuthToken()}`,
               Accept: "application/json"
@@ -49,7 +84,7 @@ const RoomInfoTenant = () => {
   // ⭐ Fetch Amenity Requests
   const fetchRequests = async () => {
     try {
-      const res = await fetch("https://seagold-laravel-production.up.railway.app/api/amenities/requests", {
+      const res = await fetch("http://seagold-laravel-production.up.railway.app/api/amenities/requests", {
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
       const data = await res.json();
@@ -68,7 +103,7 @@ const RoomInfoTenant = () => {
     }
 
     try {
-      const res = await fetch("https://seagold-laravel-production.up.railway.app/api/amenities/request", {
+      const res = await fetch("http://seagold-laravel-production.up.railway.app/api/amenities/request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +149,7 @@ const RoomInfoTenant = () => {
             ))
           ) : (
             <img
-              src="https://seagold-laravel-production.up.railway.app/Dorm.jpg"
+              src="http://seagold-laravel-production.up.railway.app/Dorm.jpg"
               alt="Default Room"
               className="thumbnail"
             />

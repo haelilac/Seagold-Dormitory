@@ -5,19 +5,6 @@
   border-bottom: 2px solid#bf9e1b;
 }
 
-.maintenancetenant-spinner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #366e39;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  z-index: 1000; 
-}
 
 /* Maintenance Form Styling */
 .maintenance-form {
@@ -205,11 +192,13 @@
 }
 
 /* Action Buttons in Table */
-.cancel-button{
+.cancel-button,
+.view-file-button{
   background-color: #366e39;
 
 }
-.cancel-button:hover{
+.cancel-button:hover,
+.view-file-button:hover{
   background-color:  #4a954e;
 
 }
@@ -221,6 +210,36 @@
   background-color: #d4ba4f;
   margin-right: 10px;
 }
+
+.file-close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-close-button:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.file-modal-content h2{
+  font-size: 1.8rem;
+  text-align: left;
+  
+}
+
+
 /* Modal */
 .custom-modal {
   background-color: #fff;

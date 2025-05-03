@@ -1,21 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './PaymentTenant.css';
 import { useResizeDetector } from 'react-resize-detector';
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from '../contexts/DataContext';
 
-// Initialize Pusher
-window.Pusher = Pusher;
-
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: '865f456f0873a587bc36', // Replace with your Pusher app key
-    cluster: 'ap3', // Replace with your cluster, e.g., 'mt1'
-    forceTLS: true, // Use secure connection
-    encrypted: true,     // To ensure WebSocket connection is encrypted
-});
 
 const PaymentTenant = () => {
 
@@ -35,7 +23,8 @@ const PaymentTenant = () => {
         payment_for: '',
         payment_type: '',
         reference_number: '',
-        receipt: null,
+        receipt: null,            // ← actual file for Laravel
+        receipt_url: '',          // ← Cloudinary-validated URL for display
         amount: '',
     });
     const [unitPrice, setUnitPrice] = useState(0);
@@ -69,32 +58,10 @@ const PaymentTenant = () => {
     });
 
 
-    useEffect(() => {
-        window.Echo.channel(`tenant-reminder.${tenantId}`).listen('.payment.reminder', (data) => {
-            alert(data.message);
-        });
-    }, [tenantId]);
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
-    useEffect(() => {
-        if (!tenantId) return;
 
-        const channel = window.Echo.channel(`tenant-reminder.${tenantId}`);
-
-        channel
-            .listen('.payment.reminder', (data) => {
-                alert(data.message);
-            })
-            .listen('.payment.rejected', () => {
-                alert("❌ Your previous payment was rejected.");
-                fetchUserAndPayment();
-            });
-
-        return () => {
-            window.Echo.leave(`tenant-reminder.${tenantId}`);
-        };
-    }, [tenantId]);
 
     const calculateRemainingBalance = (stayType, duration, unitPrice) => {
         switch (stayType) {
@@ -193,7 +160,7 @@ const PaymentTenant = () => {
       
         setLoading(true);
         try {
-          const res = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+          const res = await fetch('http://seagold-laravel-production.up.railway.app/api/auth/user', {
             headers: {
               Authorization: `Bearer ${getAuthToken()}`,
               Accept: 'application/json',
@@ -207,7 +174,7 @@ const PaymentTenant = () => {
           if (cached) {
             applyPaymentData(cached);
           } else {
-            const paymentRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
+            const paymentRes = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
               headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
       
@@ -327,44 +294,54 @@ const PaymentTenant = () => {
     
         const selectedMethod = formData.payment_method;
     
-        setFormData((prevData) => ({ ...prevData, receipt: file }));
-    
-        // ✅ Skip validation for Cash
         if (selectedMethod === 'Cash') {
+            setFormData((prevData) => ({
+                ...prevData,
+                receipt: file,
+                reference_number: `CASH-${Date.now()}`,
+            }));
             setReceiptValidated(true);
             console.log("💰 Cash selected — skipping validation.");
             return;
         }
     
-        // ✅ Continue with GCash validation
-        setReceiptValidated(false);
         setIsScanning(true);
-    
-        const formDataUpload = new FormData();
-        formDataUpload.append("receipt", file);
-        formDataUpload.append("user_reference", formData.reference_number);
-        formDataUpload.append("user_amount", formData.amount);
+        setReceiptValidated(false);
     
         try {
-            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
-                method: "POST",
-                body: formDataUpload,
+            const requestData = new FormData();
+            requestData.append('receipt', file); // ✅ send file to FastAPI
+            requestData.append('user_reference', formData.reference_number.trim());
+            requestData.append('user_amount', formData.amount.toString().replace(/,/g, ''));
+    
+            const getOcrApiUrl = () => {
+                return 'https://seagold-python-production.up.railway.app/validate-payment-receipt/';
+            };
+    
+            const response = await fetch(getOcrApiUrl(), {
+                method: 'POST',
+                body: requestData,
             });
     
-            const textResponse = await response.text();
-            const result = JSON.parse(textResponse);
+            const result = await response.json();
     
             if (response.ok && result.match === true) {
                 alert("✅ Receipt validated successfully!");
                 setReceiptValidated(true);
+    
+                // ✅ Save both file and URL
+                setFormData((prev) => ({
+                    ...prev,
+                    receipt_url: result.receipt_url, // <--- for Laravel fallback or display
+                    receipt: file,                   // <--- for Laravel Cloudinary upload
+                }));
             } else {
                 alert(result.message || "❌ Error processing receipt.");
-                setReceiptValidated(false);
             }
+    
         } catch (error) {
             console.error("❌ Error validating receipt:", error);
             alert("❌ Server error while validating receipt.");
-            setReceiptValidated(false);
         } finally {
             setIsScanning(false);
         }
@@ -393,7 +370,7 @@ const PaymentTenant = () => {
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (formData.payment_method === 'GCash' && !receiptValidated) {
             alert("⚠️ Please validate your receipt before submitting the payment.");
             return;
@@ -421,11 +398,12 @@ const PaymentTenant = () => {
         requestData.append('payment_type', formData.payment_type);
         requestData.append('reference_number', formData.reference_number);
         requestData.append('payment_for', formData.payment_for);
-        requestData.append('receipt', formData.receipt);
+        requestData.append('receipt', formData.receipt);       // Laravel expects file
+        requestData.append('receipt_url', formData.receipt_url);
         requestData.append('duration', duration); // Pass the duration here
         requestData.append('stay_type', formData.stay_type);
         try {
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
+            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/payments', {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
                 body: requestData,
@@ -480,15 +458,14 @@ const PaymentTenant = () => {
                                 year: 'numeric'
                             }) : "No Dues"}
                             </h2>
-                        {console.log("Due Date in Dashboard:", dueDate)} {/* Debug */}
                     </div>
                 </div>
 
                 {/* 🚀 Action Buttons */}
                 <div className="dashboard-buttons">
                     <button className="pay-now" onClick={() => setCurrentView("payment")}>Pay Now</button>
-                    <button className="my-bill" onClick={() => setCurrentView("bills")}>My Bill</button>
-                    <button className="transactions" onClick={() => setCurrentView("transactions")}>Transactions</button>
+                    <button className="my-bill" onClick={() => setCurrentView("bills")}>My Bills</button>
+                    <button className="transactions" onClick={() => setCurrentView("transactions")}>Transaction History</button>
                 </div>
             </div>
         )}

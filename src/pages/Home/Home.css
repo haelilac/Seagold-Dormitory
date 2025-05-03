@@ -307,7 +307,7 @@ a:hover {
 /* ⭐ Facilities Section - Seagold Themed */
 .facilities-section {
   position: relative;
-  background: url('../../assets/BG1.png');
+  background: url('../../assets/seaman.bg.png');
   overflow: hidden;
   padding-top: 6rem;
   padding-bottom: 4rem;
@@ -634,14 +634,19 @@ h1, h2, h3 {
   padding: 3rem 2rem;
   text-align: center;
 
+  /* White background for only the form */
+  background-color: #ffffff; /* White background around form */
+  
+  /* Gradient and SVG background inside */
   background-image: 
-  linear-gradient(135deg, #e5e5e5, #e7cf9f),
-  url('../../assets/write-feedback.svg');
+    linear-gradient(135deg, #e5e5e5, #e7cf9f), 
+    url('../../assets/write-feedback.svg');
 
   background-repeat: no-repeat, no-repeat;
   background-position: center, bottom right;
   background-size: cover, 300px;
-
+  
+  /* Rounded corners and shadow for form */
   border-radius: 12px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -676,6 +681,28 @@ h1, h2, h3 {
   cursor: pointer;
   transition: transform 0.3s ease, filter 0.3s ease;
 }
+
+/* 📦 White Container for Whole Feedback */
+.feedbackhome-container {
+  background-color: #ffffff;
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  margin: 2rem auto;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.feedback-container:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid #f6c971; /* optional highlight border */
+  transform: translateY(-4px);
+  transition: all 0.3s ease;
+}
+
 
 .emoji:hover {
   transform: scale(1.15);
@@ -733,7 +760,7 @@ button.btn-primary:disabled {
 /* Text Alignment Utility */
 .text-center {
   text-align: center;
-  color:#366e39;
+  color: #366e39;
 }
 
 /* Paragraph Styling */
@@ -1330,7 +1357,7 @@ p {
 }
 /* 🎯 Seagold Training Centers Section */
 .seagold-training-centers {
-  background: url('../../assets/seaman.bg.png') no-repeat center/cover;
+  background: url('../../assets/BG1.png') no-repeat center/cover;
   padding: 5rem 10%;
   text-align: center;
   position: relative;

@@ -8,32 +8,27 @@ html, body {
 
 
 .managetenant-spinner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   border: 6px solid #f3f3f3;
-  border-top: 6px solid #366e39;
+  border-top: 6px solid #366e39;  /* SEAGOLD green */
   border-radius: 50%;
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
-  z-index: 1000; 
+  margin: 100px auto;
 }
 
 .manage-tenants {
     padding: 20px;
     margin: 20px;
-    right: 2%;
+    right: 6%;
     top:5%;
-    min-width: 100%;
+    min-width: 1150px;
     position: relative;
     font-family: 'Inter', sans-serif;
 }
 
 .manage-tenants h2 {
     font-size: 1.8rem;
-    color: #2c3e50;
     text-align: left;
     padding-bottom: 10px;
     border-bottom: 2px solid#bf9e1b;
@@ -111,6 +106,8 @@ html, body {
 /* 🔍 Search Container */
 .search-container {
     position: relative;
+    border-radius: 5px;
+    padding: 10px;
     width:100%;
     height: 5%;
     background:rgb(255, 255, 255);
@@ -123,20 +120,23 @@ html, body {
 
 /* Modal Overlay */
 .modal-overlay {
+  position: fixed; /* Required for proper overlay stacking */
   top: 0;
-  left: 0%;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999; /* Make sure it's on top */
 }
 
+
 /* Modal Box */
-.modal-box {
+.manage-details {
   background-color: #ffffff;
+  min-height: 55%;
   border-radius: 10px;
   padding: 20px;
   width: 80%;
@@ -174,18 +174,26 @@ html, body {
 .modal-valid-id {
   position: absolute;
   align-items: center;
-  left: 544px;
-  top: 46px;
   width: 35%;
 }
-
-.valid-id-image {
+.modal-valid-id img{
   width: 100%;
-  max-width: 250px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 10px;
+  max-height: 200px;
+  max-width: 300px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.modal-box {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 900px;
+  z-index: 10000; /* One level higher than overlay just in case */
 }
 
 .close-modal-button {
@@ -197,10 +205,9 @@ html, body {
   right: 20px;
   font-size: 32px;
   cursor: pointer;
-  transition: color 0.3s;
-  padding: 5px;
-  line-height: 1;
+  z-index: 10001; /* Highest priority for click */
 }
+
 
 .close-modal-button:hover {
   color: #555;
@@ -216,6 +223,8 @@ html, body {
   margin: 10px 0;
   line-height: 1.6;
   text-align: left;
+  display: grid;                                 
+  grid-template-columns: 1fr; 
 }
 
 .modal-box p strong {
@@ -273,6 +282,9 @@ html, body {
   display: grid;
   grid-template-columns: 1fr 1fr;  /* 2 equal columns */
   grid-gap: 20px;                  /* space between items */
+  width: 850px;
+  position: relative;
+  right: 11.5%;
 }
 
 .update-form label {
@@ -358,6 +370,15 @@ html, body {
     font-size: 14px;
 }
 
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 4px solid #ccc;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
 
 .pagination {
   margin-top: 20px;
@@ -408,6 +429,13 @@ html, body {
   100% { transform: rotate(360deg); }
 }
 
+/* Centering helper */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 /* Fade-in Animation */
 @keyframes fadeIn {
@@ -426,6 +454,10 @@ html, body {
     display: flex;
     gap: 10px;
     justify-content: center;
+    width: 500px;
+    position: relative;
+    left: 33%;
+    
 }
 
 .terminate-button, .new-contract-button {
@@ -455,14 +487,14 @@ html, body {
     margin-top: 70px;
     padding: 20px;
     position: relative;
-    width: 100%;
+    right: 4%;
+    width: 1150px;
 }
 .manage-terminated-tenants h2 {
   font-size: 1.8rem;
-  text-align: left;
+  text-align: center;
   padding-bottom: 10px;
-  border-bottom: 2px solid#bf9e1b;
-  color: #721c24;
+
 }
 
 /*************************************
@@ -616,3 +648,15 @@ html, body {
     }
   }
   
+
+  .manage-details-body {
+    display: grid;                                 
+    grid-template-columns: 1fr 1fr;              
+    padding: 20px;
+    align-items: start;
+    gap: 2%;
+    width: 1000px;
+    right: 12%;
+    position: relative;
+    
+  }

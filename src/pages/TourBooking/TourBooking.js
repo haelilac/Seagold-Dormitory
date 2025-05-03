@@ -40,7 +40,7 @@ const TourBooking = () => {
   // Fetch Calendar Data
   useEffect(() => {
     if (!isLoggedIn) return;
-    fetch(`https://seagold-laravel-production.up.railway.app/api/tour-calendar?month=${month}&year=${year}`)
+    fetch(`http://seagold-laravel-production.up.railway.app/api/tour-calendar?month=${month}&year=${year}`)
       .then(res => res.json())
       .then(data => setCalendarDates(padCalendar(data.calendar)))
       .catch(err => console.error("Calendar Fetch Error:", err));
@@ -52,7 +52,7 @@ const TourBooking = () => {
       setAvailableSlots([]);
       return;
     }
-    fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${selectedDate}`)
+    fetch(`http://seagold-laravel-production.up.railway.app/api/tour-slots?date=${selectedDate}`)
       .then(res => res.json())
       .then(data => setAvailableSlots(data.slots))
       .catch(err => console.error("Slots Fetch Error:", err));
@@ -94,7 +94,7 @@ const TourBooking = () => {
     if (isLoggedIn) headers.Authorization = `Bearer ${getAuthToken()}`;
 
     try {
-      const res = await fetch("https://seagold-laravel-production.up.railway.app/api/book-tour", {
+      const res = await fetch("http://seagold-laravel-production.up.railway.app/api/book-tour", {
         method: "POST",
         headers,
         body: JSON.stringify({

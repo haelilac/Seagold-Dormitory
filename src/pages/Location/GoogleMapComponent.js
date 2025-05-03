@@ -243,7 +243,7 @@ const GoogleMapComponent = () => {
           <div className="map-container">
             <div className="search-bar-container">
               <Autocomplete onLoad={(auto) => setAutocomplete(auto)}>
-                <input className="search-box" placeholder="Search destination..." />
+                <input className="locsearch-box" placeholder="Search destination..." />
               </Autocomplete>
               <button
                 className="search-btn"

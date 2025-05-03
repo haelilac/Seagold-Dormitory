@@ -8,8 +8,8 @@ import Pusher from "pusher-js";
 window.Pusher = Pusher;
 window.Echo = new Echo({
   broadcaster: "pusher",
-  key: "865f456f0873a587bc36",
-  cluster: "ap3",
+  key: "fea5d607d4b38ea09320",
+  cluster: "ap1",
   forceTLS: true,
 });
 
@@ -45,7 +45,7 @@ const FeedbackAdmin = () => {
 
         const fetchFeedbacks = async () => {
             try {
-                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/feedback", {
+                const response = await fetch("http://seagold-laravel-production.up.railway.app/api/feedback", {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${getAuthToken()}`,
@@ -67,7 +67,8 @@ const FeedbackAdmin = () => {
         fetchFeedbacks();
     }, []);
 
-    if (loading) return <div className="feedbackadmin-spinner"></div>;
+    if (loading) return <div className="feedback-spinner"></div>;
+
     return (
         <div className="feedback-container">
             <h2 className="feedback-header">User Feedback</h2>

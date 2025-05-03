@@ -12,7 +12,7 @@ const ProfileUploader = ({ onUploadSuccess }) => {
     setUploading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/upload-profile", formData, {
+      const res = await axios.post("http://seagold-laravel-production.up.railway.app/api/upload-profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,

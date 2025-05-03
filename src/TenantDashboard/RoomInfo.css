@@ -7,17 +7,13 @@
  * Overall Wrapper & Header
  *************************************/
  .roominfo-spinner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   border: 6px solid #f3f3f3;
-  border-top: 6px solid #366e39;
+  border-top: 6px solid #366e39;  /* SEAGOLD green */
   border-radius: 50%;
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
-  z-index: 1000; 
+  margin: 100px auto;
 }
 
 
@@ -489,14 +485,6 @@
   object-fit: contain;
   filter: invert(85%) sepia(10%) saturate(700%) hue-rotate(180deg) brightness(110%) contrast(90%);
 }
-.otherAmenityInput {
-  margin-top: 10px;
-  padding: 10px;
-  width: 100%;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
 
 
 /*************************************

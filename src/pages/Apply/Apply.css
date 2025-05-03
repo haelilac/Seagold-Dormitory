@@ -5,6 +5,59 @@ body {
   margin: 0;
   padding: 0;
 }
+.reservation-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.reservation-modal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.modal-buttons button {
+  margin: 1rem;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.agree-btn {
+  background-color: #4a954e;
+  color: white;
+}
+
+.decline-btn {
+  background-color: #aaa;
+  color: white;
+}
+
+.form-interaction-blocker.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  position: relative;
+}
+
+.form-interaction-blocker.disabled::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 2;
+}
 
 /* Page Container */
 .contact-page-container {
@@ -62,7 +115,6 @@ body {
   margin-bottom: 8px;
 }
 
-.form-group input,
 .form-group select,
 .form-group textarea,
 .react-datepicker-wrapper input {
@@ -333,7 +385,19 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /* Subtle shadow for iframe */
 }
 
-/* Modal */
+/* === Modal Global Animation === */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Modal Wrapper === */
 .modal {
   display: flex !important;
   justify-content: center;
@@ -344,6 +408,7 @@ body {
   z-index: 9999;
 }
 
+/* === Modal Content Styling === */
 .modal-content {
   background: #ffffff;
   padding: 30px;
@@ -380,7 +445,8 @@ body {
 .modal-content button:hover {
   background-color: #d2d27d;
 }
-/* Applies to all select elements for consistency */
+
+/* === Dropdown Consistency === */
 .contact-form select {
   width: 100%;
   padding: 12px 15px;
@@ -393,11 +459,127 @@ body {
   appearance: none;
 }
 
-/* On focus for dropdown */
 .contact-form select:focus {
   outline: none;
   border-color: #00bf63;
   box-shadow: 0 0 8px rgba(0, 191, 99, 0.2);
+}
+
+/* === Terms Modal Overlay === */
+.terms-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* === Enhanced Modal Content === */
+.terms-modal {
+  background: linear-gradient(to bottom right, #f2ede3, #ffffff);
+  max-width: 800px;
+  width: 100%;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  text-align: left;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  animation: slideDown 0.3s ease;
+  border: 1px solid #d2d27d;
+}
+
+/* === Modal Heading === */
+.terms-modal h3 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: #4a954e;
+  border-bottom: 2px solid #d2d27d;
+  padding-bottom: 0.5rem;
+}
+
+/* === Text Content & Lists === */
+.terms-modal p,
+.terms-modal ul {
+  color: #444;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.terms-modal ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.terms-modal li {
+  margin-bottom: 0.5rem;
+}
+
+/* === Modal Button === */
+.close-modal-button {
+  background-color: #00bf63;
+  color: white;
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.close-modal-button:hover {
+  background-color: #4a954e;
+}
+
+
+
+.terms-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.terms-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #00bf63; /* optional Seagold green */
+}
+
+.terms-text {
+  color: #366e39;
+}
+
+.terms-privacy-trigger {
+  color: #f6c971;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
 
 /* 📱 Mobile */

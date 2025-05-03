@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate, Link, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import styles from './TenantDashboard.module.css';
-import { FaBell, FaBars, FaTimes, FaEllipsisV, FaMoon, FaSun } from 'react-icons/fa';
+import { FaBell } from 'react-icons/fa';
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from '../contexts/DataContext';
 import Sidebar from './sidebar';
 import '../components/sidebar.css';
 import TopBar from './topbar';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 const TenantDashboard = ({ onLogout }) => {
     const { updateCache, getCachedData } = useDataCache();
@@ -15,25 +17,19 @@ const TenantDashboard = ({ onLogout }) => {
     const [notifications, setNotifications] = useState([]);
     const [filteredNotifications, setFilteredNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
-    const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [showProfileDropdown, setShowProfileDropdown] = useState(false);  // Defined state
     const [darkMode, setDarkMode] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(true);
-
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const profileDropdownRef = useRef(null);
     const bellRef = useRef(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-
-        const preloadCache = async () => {
+        const fetchUserData = async () => {
             try {
-                const res = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+                const res = await axios.get('http://seagold-laravel-production.up.railway.app/api/auth/user', {
                     headers: {
                         Authorization: `Bearer ${getAuthToken()}`,
                         Accept: 'application/json',
@@ -41,46 +37,73 @@ const TenantDashboard = ({ onLogout }) => {
                 });
                 setUserData(res.data);
                 updateCache('userData', res.data);
-
-                const paymentRes = await axios.get(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${res.data.id}`, {
-                    headers: { Authorization: `Bearer ${getAuthToken()}` },
-                });
-                updateCache(`payments-${res.data.id}`, paymentRes.data);
-
-                const maintenanceRes = await axios.get(`https://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests`, {
-                    headers: { Authorization: `Bearer ${getAuthToken()}` },
-                });
-                updateCache(`tenant-maintenance`, maintenanceRes.data);
-
-                const eventsRes = await axios.get(`https://seagold-laravel-production.up.railway.app/api/events`, {
-                    headers: { Authorization: `Bearer ${getAuthToken()}` },
-                });
-                updateCache(`tenant-events`, eventsRes.data);
             } catch (err) {
-                console.error('Error preloading tenant data:', err);
+                console.error('Error fetching user data:', err);
             }
         };
 
-        preloadCache();
+        fetchUserData();
     }, []);
-  useEffect(() => {
-    document.body.style.overflow = "auto"; // force scroll back on
-  }, []);
+
+    useEffect(() => {
+        if (userData) {
+            window.Pusher = Pusher;
+            const echo = new Echo({
+                broadcaster: 'pusher',
+                key: '865f456f0873a587bc36',
+                cluster: 'ap3',
+                forceTLS: true,
+                authEndpoint: 'http://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
+                auth: {
+                    headers: {
+                        Authorization: `Bearer ${getAuthToken()}`
+                    }
+                }
+            });
+    
+            const channel = echo.private(`tenant.notifications.${userData.id}`);
+            
+            channel.listen('.tenant-notification', (event) => {
+                setNotifications((prev) => {
+                  const alreadyExists = prev.some((n) =>
+                    n.title === event.title &&
+                    n.message === event.message &&
+                    n.time === event.time
+                  );
+              
+                  if (!alreadyExists) {
+                    return [
+                      ...prev,
+                      {
+                        id: event.id, // include this if your event carries an ID
+                        title: event.title,
+                        message: event.message,
+                        time: event.time,
+                        type: event.type || 'general',
+                        read: false,
+                        created_at: new Date().toISOString(),
+                        relative_time: 'Just now'
+                      }
+                    ];
+                  }
+              
+                  return prev;
+                });
+              });
+    
+            return () => {
+                echo.leave(`tenant.notifications.${userData.id}`);
+            };
+        }
+    }, [userData]);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
+                const notifRes = await axios.get('http://seagold-laravel-production.up.railway.app/api/notifications', {
                     headers: {
                         Authorization: `Bearer ${getAuthToken()}`,
-                        Accept: "application/json",
-                    },
-                });
-                setUserData(userRes.data);
-
-                const notifRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/notifications', {
-                    headers: {
-                        Authorization: `Bearer ${getAuthToken()}`,
-                        Accept: "application/json",
+                        Accept: 'application/json',
                     },
                 });
                 setNotifications(notifRes.data);
@@ -93,11 +116,14 @@ const TenantDashboard = ({ onLogout }) => {
             }
         };
 
-        fetchData();
+        if (userData) {
+            fetchData();
+        }
+
         const interval = setInterval(fetchData, 30000); // every 30 seconds
 
         return () => clearInterval(interval); // cleanup
-    }, [navigate]);
+    }, [userData, navigate]);
 
     useEffect(() => {
         const filterNotifications = () => {
@@ -115,25 +141,6 @@ const TenantDashboard = ({ onLogout }) => {
         };
         filterNotifications();
     }, [notifications, userData]);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target) &&
-                bellRef.current &&
-                !bellRef.current.contains(event.target)
-            ) {
-                setShowNotifications(false);
-            }
-            if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
-                setShowProfileDropdown(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
     const toggleDarkMode = () => {
         setDarkMode((prev) => {
@@ -154,29 +161,80 @@ const TenantDashboard = ({ onLogout }) => {
         window.location.href = '/';
     };
 
-    const handleMarkAllAsRead = () => {
-        setNotifications((prev) => prev.map((note) => ({ ...note, read: true })));
-    };
+    const markAsRead = async (id) => {
+        try {
+          await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${getAuthToken()}`
+            }
+          });
+      
+          setNotifications((prev) =>
+            prev.map((n) => ({
+              ...n,
+              read: n.id === id ? true : (n.read ?? false),
+            }))
+          );
+        } catch (err) {
+          console.error("Failed to mark notification as read:", err);
+        }
+      };
+      
+      const deleteNotification = async (id) => {
+        await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`
+          }
+        });
+      
+        setNotifications(prev => prev.filter(n => n.id !== id));
+      };
+      const toggleNotifications = () => {
+        setShowNotifications(prev => !prev);
+      };
 
-    const handleDeleteNotification = (index) => {
-        setNotifications((prev) => prev.filter((_, i) => i !== index));
-    };
+      const handleViewDetails = (notification) => {
+        const routes = {
+          maintenance: '/tenant/maintenance',
+          payment: '/tenant/payments',
+          amenity: '/tenant/amenities',
+        };
+      
+        const target = routes[notification?.type];
+      
+        if (!target) {
+          console.warn('❌ Unrecognized or missing notification type:', notification?.type);
+          return;
+        }
+      
+        if (notification.id) {
+          markAsRead(notification.id);
+        }
+      
+        navigate(target);
+      };
 
+    const toggleDropdown = (event, index) => {
+    event.stopPropagation();
+    setActiveDropdown((prev) => (prev === index ? null : index));
+    };
     return (
         <div className={`${styles.dashboardContainer} ${darkMode ? styles.dark : ''}`}>
-<Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+            <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
             <TopBar
                 sidebarOpen={sidebarOpen}
                 toggleSidebar={toggleSidebar}
                 userData={userData}
                 setUserData={setUserData}
+                notifications={notifications}
                 filteredNotifications={filteredNotifications}
                 showNotifications={showNotifications}
                 setShowNotifications={setShowNotifications}
                 showProfileDropdown={showProfileDropdown}
                 setShowProfileDropdown={setShowProfileDropdown}
-                handleMarkAllAsRead={handleMarkAllAsRead}
-                handleDeleteNotification={handleDeleteNotification}
+                toggleNotifications={toggleNotifications} 
                 darkMode={darkMode}
                 toggleDarkMode={toggleDarkMode}
                 handleLogout={handleLogout}
@@ -184,7 +242,13 @@ const TenantDashboard = ({ onLogout }) => {
                 bellRef={bellRef}
                 profileDropdownRef={profileDropdownRef}
                 setNotifications={setNotifications}
-            />
+                handleViewDetails={handleViewDetails}
+                markAsRead={markAsRead}
+                deleteNotification={deleteNotification}
+                clearAllNotifications={() => setNotifications([])}
+                activeDropdown={activeDropdown}
+                toggleDropdown={toggleDropdown}
+                />
             <div className={`${styles.mainContent} ${sidebarOpen ? styles.shifted : ''}`}>
                 <Outlet context={{ sidebarOpen }} />
             </div>

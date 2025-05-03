@@ -62,7 +62,7 @@ const PendingApplications = () => {
       
         const fetchApplications = async () => {
           try {
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications-only');
+            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/applications-only');
             const data = await response.json();
             setApplications(data.applications);
             updateCache('applications', data.applications); // ✅ save to cache
@@ -82,13 +82,13 @@ const PendingApplications = () => {
     
             try {
                 console.time("📄 Fetch Applications");
-                const appRes = await fetch('https://seagold-laravel-production.up.railway.app/api/applications-only');
+                const appRes = await fetch('http://seagold-laravel-production.up.railway.app/api/applications-only');
                 const appData = await appRes.json();
                 setApplications(appData.applications || []);
                 console.timeEnd("📄 Fetch Applications");
     
                 console.time("🏘️ Fetch Units");
-                const unitRes = await fetch('https://seagold-laravel-production.up.railway.app/api/units-only');
+                const unitRes = await fetch('http://seagold-laravel-production.up.railway.app/api/units-only');
                 const unitData = await unitRes.json();
                 setUnits(unitData.units || []);
                 console.timeEnd("🏘️ Fetch Units");
@@ -115,7 +115,7 @@ const PendingApplications = () => {
       
         const fetchApplications = async () => {
           try {
-            const res = await fetch('https://seagold-laravel-production.up.railway.app/api/applications-only');
+            const res = await fetch('http://seagold-laravel-production.up.railway.app/api/applications-only');
             const data = await res.json();
             updateCache('applications', data.applications || []);
             setApplications(data.applications || []);
@@ -156,7 +156,7 @@ const PendingApplications = () => {
       setProcessingAction('save');
   
       try {
-          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/update`, {
+          const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/update`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(formData)
@@ -187,7 +187,7 @@ const PendingApplications = () => {
       setProcessingAction('accept');
   
       try {
-          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
+          const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/accept`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
@@ -276,7 +276,7 @@ const PendingApplications = () => {
       setProcessingAction('decline');
   
       try {
-          const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/decline`, {
+          const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/applications/${applicationId}/decline`, {
               method: 'DELETE',
           });
   
@@ -347,10 +347,23 @@ const PendingApplications = () => {
                           {selectedApplication.stay_type === 'daily' && ' day(s)'}
                         </p>
                         <p><strong>Reservation:</strong> {selectedApplication.reservation_details}</p>
+                      <p className="original-price">
+                        <strong>Original Price:</strong> ₱{matchingUnit
+                          ? parseFloat(matchingUnit.price).toLocaleString()
+                          : '—'}
+                      </p>
+                      <p className="assigned-price" >
+                        <strong>Assigned Price:</strong> ₱{selectedApplication.set_price > 0
+                          ? parseFloat(selectedApplication.set_price).toLocaleString()
+                          : matchingUnit
+                            ? parseFloat(matchingUnit.price).toLocaleString()
+                            : '—'}
+                      </p>
                       </div>
-    
+
+
                       {selectedApplication.valid_id && (
-                        <div className="details-right">
+                        <div className="details-mid">
                           <p>Valid ID</p>
                           <img src={selectedApplication.valid_id} alt="Valid ID" />
                         </div>
@@ -364,21 +377,7 @@ const PendingApplications = () => {
                       )}
                     </div>
     
-                    {/* Footer Prices */}
-                    <div className="details-footer">
-                      <p>
-                        <strong>Auto Price:</strong> ₱{matchingUnit
-                          ? parseFloat(matchingUnit.price).toLocaleString()
-                          : '—'}
-                      </p>
-                      <p>
-                        <strong>Rent Price:</strong> ₱{selectedApplication.set_price > 0
-                          ? parseFloat(selectedApplication.set_price).toLocaleString()
-                          : matchingUnit
-                            ? parseFloat(matchingUnit.price).toLocaleString()
-                            : '—'}
-                      </p>
-                    </div>
+
     
                     {/* Actions */}
                     <div className="action-buttons">
@@ -421,7 +420,9 @@ const PendingApplications = () => {
                         value={formData.duration}
                         onChange={handleInputChange}
                       />
-    
+                       </div>
+
+                       <div className="details-mid">
                       <label>Reservation:</label>
                       <select
                         name="reservation_details"
@@ -434,7 +435,9 @@ const PendingApplications = () => {
                           </option>
                         ))}
                       </select>
-    
+                      </div>
+
+                      <div className="details-right">
                       <label>Set Price:</label>
                       <input
                         type="number"
