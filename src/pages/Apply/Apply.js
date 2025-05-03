@@ -398,40 +398,41 @@ const [showReservationModal, setShowReservationModal] = useState(true);
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-            
-            const idToken = await user.getIdToken(); // ✅ get actual ID token
     
-            // 🌟 Dynamic API URL based on environment
+            const idToken = await user.getIdToken(); // ✅ get actual ID token
+            console.log("✅ ID Token:", idToken); // Log ID token
+    
             const baseUrl = window.location.hostname.includes('localhost')
-              ? 'http://localhost:8000'
-              : 'https://seagold-laravel-production.up.railway.app';
+                ? 'http://localhost:8000'
+                : 'https://seagold-laravel-production.up.railway.app';
             
-            console.log("✅ ID Token:", idToken);
             const verifyResponse = await fetch(`${baseUrl}/api/google-verify-email`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token: idToken }),
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: idToken }),
             });
-            
+    
             const verifyData = await verifyResponse.json();
-            console.log("✅ Google Verify API response:", verifyData);
+            console.log("✅ Google Verify API response:", verifyData); // Log API response
+    
             if (verifyData.email) {
-              setFormData((prev) => ({
-                ...prev,
-                email: verifyData.email,
-                first_name: verifyData.name.split(" ")[0],
-                last_name: verifyData.name.split(" ").slice(-1)[0],
-              }));
-              setIsVerified(true);
-              alert(`Email verified: ${verifyData.email}`);
+                setFormData((prev) => ({
+                    ...prev,
+                    email: verifyData.email,
+                    first_name: verifyData.name.split(" ")[0],
+                    last_name: verifyData.name.split(" ").slice(-1)[0],
+                }));
+                setIsVerified(true);
+                alert(`Email verified: ${verifyData.email}`);
             } else {
-              alert("Failed to verify Google account.");
+                alert("Failed to verify Google account.");
             }
         } catch (error) {
             console.error("Google Sign-In Error:", error);
             alert("Failed to verify email. Please try again.");
         }
-    }
+    };
+    
     
     console.log('receiptUrl:', receiptUrl);
     console.log('paymentData:', paymentData);
