@@ -147,8 +147,6 @@ const Sidebar = ({ sidebarOpen }) => {
         <NavLink to="feedback-admin" className={location.pathname === '/admin/feedback-admin' ? 'active' : ''}>
           <FaCommentDots />
         </NavLink>
-
-        {/* ⭐ Mobile Amenity Requests Link */}
         <NavLink to="amenity-requests" className={location.pathname === '/admin/amenity-requests' ? 'active' : ''}>
           <FaConciergeBell />
         </NavLink>
