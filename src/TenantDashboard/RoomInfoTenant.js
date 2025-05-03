@@ -161,7 +161,7 @@ const RoomInfoTenant = () => {
           ) : (
             <>
               <img
-                src="http://localhost:8000/Dorm.jpg"
+                src="https://seagold-laravel-production.up.railway.app/Dorm.jpg"
                 alt="Default Room"
                 className="mainImage"
               />
