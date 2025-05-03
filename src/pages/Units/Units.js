@@ -37,7 +37,7 @@ const Units = () => {
     } else {
       const fetchUnits = async () => {
         try {
-          const res = await fetch('http://seagold-laravel-production.up.railway.app/api/public-units');
+          const res = await fetch('https://seagold-laravel-production.up.railway.app/api/public-units');
           const data = await res.json();
           setUnits(data);
           updateCache("public-units", data); // ✅ Save to cache

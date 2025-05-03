@@ -42,7 +42,7 @@ const ManageTenants = () => {
         }
         const fetchData = async () => {
             try {
-                const res = await fetch('http://seagold-laravel-production.up.railway.app/api/terminated-tenants');
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/terminated-tenants');
                 const data = await res.json();
                 setTerminatedTenants(data);
                 updateCache('terminated_tenants', data);
@@ -58,7 +58,7 @@ const ManageTenants = () => {
         if (cached) { setUnits(cached); return; }
         const fetchUnits = async () => {
             try {
-                const res = await fetch('http://seagold-laravel-production.up.railway.app/api/units');
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
                 const data = await res.json();
                 const available = data.filter(unit => unit.status === 'available');
                 setUnits(available);
@@ -73,7 +73,7 @@ const ManageTenants = () => {
         const handleTerminateContract = async (action) => {
             if (action === 'terminate') {
                 try {
-                    const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/terminate`, {
+                    const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/terminate`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -99,7 +99,7 @@ const ManageTenants = () => {
             setIsUpdating(true);
         
             try {
-                const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/change-unit`, {
+                const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${selectedTenant.id}/change-unit`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const ManageTenants = () => {
         }
         const fetchTenants = async () => {
             try {
-                const res = await fetch('http://seagold-laravel-production.up.railway.app/api/tenants');
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/tenants');
                 const data = await res.json();
                 const formatted = data.map(t => ({
                     id: t.id,

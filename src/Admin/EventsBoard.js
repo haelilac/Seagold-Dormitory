@@ -60,7 +60,7 @@ const EventsBoard = () => {
    */
   const fetchEvents = async (token) => {
     try {
-      const response = await fetch("http://seagold-laravel-production.up.railway.app/api/events", {
+      const response = await fetch("https://seagold-laravel-production.up.railway.app/api/events", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.status === 401) {
@@ -126,7 +126,7 @@ const EventsBoard = () => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     console.log("[handleDelete] Deleting event id:", id);
 
-    await fetch(`http://seagold-laravel-production.up.railway.app/api/events/${id}`, {
+    await fetch(`https://seagold-laravel-production.up.railway.app/api/events/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${getAuthToken()}` },
     });

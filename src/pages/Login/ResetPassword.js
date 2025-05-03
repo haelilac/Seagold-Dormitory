@@ -14,7 +14,7 @@ const ResetPassword = () => {
   const handleReset = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://seagold-laravel-production.up.railway.app/api/reset-password', {
+      const res = await axios.post('https://seagold-laravel-production.up.railway.app/api/reset-password', {
         token,
         email,
         password,

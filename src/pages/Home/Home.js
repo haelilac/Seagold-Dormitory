@@ -47,7 +47,7 @@ const Home = () => {
     }
 
     try {
-      const response = await fetch("http://seagold-laravel-production.up.railway.app/api/feedback", {
+      const response = await fetch("https://seagold-laravel-production.up.railway.app/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -335,7 +335,7 @@ const Home = () => {
       {["in-love", "happy", "neutral", "sad", "angry"].map((emoji) => (
         <img
           key={emoji}
-          src={`http://seagold-laravel-production.up.railway.app/storage/icons/${emoji}.gif`}
+          src={`https://seagold-laravel-production.up.railway.app/storage/icons/${emoji}.gif`}
           alt={emoji}
           className={`emoji ${selectedEmoji === emoji ? "selected" : ""}`}
           onClick={() => setSelectedEmoji(emoji)}

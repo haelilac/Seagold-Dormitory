@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getAuthToken } from "../../utils/auth";
 
 const axiosInstance = axios.create({
-  baseURL: 'http://seagold-laravel-production.up.railway.app/',
+  baseURL: 'https://seagold-laravel-production.up.railway.app/',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

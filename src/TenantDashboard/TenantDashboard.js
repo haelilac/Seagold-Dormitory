@@ -29,7 +29,7 @@ const TenantDashboard = ({ onLogout }) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const res = await axios.get('http://seagold-laravel-production.up.railway.app/api/auth/user', {
+                const res = await axios.get('https://seagold-laravel-production.up.railway.app/api/auth/user', {
                     headers: {
                         Authorization: `Bearer ${getAuthToken()}`,
                         Accept: 'application/json',
@@ -53,7 +53,7 @@ const TenantDashboard = ({ onLogout }) => {
                 key: '865f456f0873a587bc36',
                 cluster: 'ap3',
                 forceTLS: true,
-                authEndpoint: 'http://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
+                authEndpoint: 'https://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
                 auth: {
                     headers: {
                         Authorization: `Bearer ${getAuthToken()}`
@@ -100,7 +100,7 @@ const TenantDashboard = ({ onLogout }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const notifRes = await axios.get('http://seagold-laravel-production.up.railway.app/api/notifications', {
+                const notifRes = await axios.get('https://seagold-laravel-production.up.railway.app/api/notifications', {
                     headers: {
                         Authorization: `Bearer ${getAuthToken()}`,
                         Accept: 'application/json',
@@ -163,7 +163,7 @@ const TenantDashboard = ({ onLogout }) => {
 
     const markAsRead = async (id) => {
         try {
-          await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
+          await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
             method: "PUT",
             headers: {
               Authorization: `Bearer ${getAuthToken()}`
@@ -182,7 +182,7 @@ const TenantDashboard = ({ onLogout }) => {
       };
       
       const deleteNotification = async (id) => {
-        await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
+        await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${getAuthToken()}`

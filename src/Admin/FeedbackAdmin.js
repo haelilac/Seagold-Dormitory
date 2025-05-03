@@ -45,7 +45,7 @@ const FeedbackAdmin = () => {
 
         const fetchFeedbacks = async () => {
             try {
-                const response = await fetch("http://seagold-laravel-production.up.railway.app/api/feedback", {
+                const response = await fetch("https://seagold-laravel-production.up.railway.app/api/feedback", {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${getAuthToken()}`,

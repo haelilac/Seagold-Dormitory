@@ -20,7 +20,7 @@ const LoginModal = ({ onClose, onLogin }) => {
     signInWithPopup(auth, provider)
       .then((result) => {
         const idToken = result.user.accessToken;
-        fetch("http://seagold-laravel-production.up.railway.app/api/google-login-guest", {
+        fetch("https://seagold-laravel-production.up.railway.app/api/google-login-guest", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: idToken }),
@@ -46,7 +46,7 @@ const LoginModal = ({ onClose, onLogin }) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    fetch("http://seagold-laravel-production.up.railway.app/api/login-guest", {
+    fetch("https://seagold-laravel-production.up.railway.app/api/login-guest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -68,7 +68,7 @@ const LoginModal = ({ onClose, onLogin }) => {
 
   const handleRegister = (e) => {
     e.preventDefault();
-    fetch("http://seagold-laravel-production.up.railway.app/api/register-guest", {
+    fetch("https://seagold-laravel-production.up.railway.app/api/register-guest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

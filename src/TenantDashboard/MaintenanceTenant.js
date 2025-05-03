@@ -57,7 +57,7 @@ const MaintenanceTenant = () => {
                     key: '865f456f0873a587bc36',
                     cluster: 'ap3',
                     forceTLS: true,
-                    authEndpoint: 'http://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
+                    authEndpoint: 'https://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
                     auth: {
                         headers: {
                             Authorization: `Bearer ${getAuthToken()}`
@@ -74,7 +74,7 @@ const MaintenanceTenant = () => {
                     alert(event.message);
             
                     // Re-fetch updated request list
-                    fetch("http://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
+                    fetch("https://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
                         headers: {
                             Authorization: `Bearer ${getAuthToken()}`,
                             Accept: 'application/json',
@@ -111,7 +111,7 @@ const MaintenanceTenant = () => {
                 if (cached) {
                     setSubmittedRequests(cached);
                 } else {
-                    const response = await fetch("http://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
+                    const response = await fetch("https://seagold-laravel-production.up.railway.app/api/tenant/maintenance-requests", {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json',
@@ -192,7 +192,7 @@ const MaintenanceTenant = () => {
         setProgress(0);
     
         try {
-            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData,
@@ -225,7 +225,7 @@ const MaintenanceTenant = () => {
     // Cancel Request
     const handleCancel = async (id) => {
         try {
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/cancel`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/cancel`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -245,7 +245,7 @@ const MaintenanceTenant = () => {
     // Follow-Up Request
     const handleFollowUp = async (id) => {
         try {
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/follow-up`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/follow-up`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

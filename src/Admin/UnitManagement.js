@@ -52,7 +52,7 @@ const UnitManagement = () => {
     const fetchUnits = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/units');
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
             const data = await response.json();
             setUnits(data);
             updateCache('unit_groups', data);
@@ -79,7 +79,7 @@ const UnitManagement = () => {
     const handleViewDetails = async (unitCode) => {
         try {
             setSelectedUnit(null);
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
             const data = await response.json();
             setPricingDetails(data);
             if (data.length > 0) {
@@ -101,7 +101,7 @@ const UnitManagement = () => {
 
     const fetchUnitImages = async () => {
         try {
-            const res = await fetch(`http://seagold-laravel-production.up.railway.app/api/unit-images/${selectedUnit.unit_code}`);
+            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${selectedUnit.unit_code}`);
             const data = await res.json();
             setUnitImages(data);
         } catch (err) {
@@ -112,7 +112,7 @@ const UnitManagement = () => {
     const handleToggleStatus = async (unitId, currentStatus) => {
         const newStatus = currentStatus === 'unavailable' ? 'available' : 'unavailable';
         try {
-            await fetch(`http://seagold-laravel-production.up.railway.app/api/units/${unitId}/status`, {
+            await fetch(`https://seagold-laravel-production.up.railway.app/api/units/${unitId}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),
@@ -128,7 +128,7 @@ const UnitManagement = () => {
         if (!window.confirm(`Are you sure you want to ${unit.is_force_occupied ? 'make available' : 'force occupy'} ${unit.unit_code}?`)) return;
 
         try {
-            const res = await fetch(`http://seagold-laravel-production.up.railway.app/api/units/${unit.id}/force-occupy`, {
+            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/${unit.id}/force-occupy`, {
                 method: 'PUT',
                 headers: { 'Accept': 'application/json' },
             });
@@ -157,7 +157,7 @@ const UnitManagement = () => {
         };
 
         try {
-            await fetch('http://seagold-laravel-production.up.railway.app/api/units', {
+            await fetch('https://seagold-laravel-production.up.railway.app/api/units', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newUnit),
@@ -169,7 +169,7 @@ const UnitManagement = () => {
                     imageForm.append('image', file);
                     imageForm.append('unit_code', newUnit.unit_code);
 
-                    await fetch('http://seagold-laravel-production.up.railway.app/api/unit-images/upload', {
+                    await fetch('https://seagold-laravel-production.up.railway.app/api/unit-images/upload', {
                         method: 'POST',
                         body: imageForm,
                     });
@@ -191,7 +191,7 @@ const UnitManagement = () => {
 
     const handleUpdateUnit = async () => {
         try {
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/units/${selectedUnit.id}`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/${selectedUnit.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -286,7 +286,7 @@ const UnitManagement = () => {
                       formData.append('image', file);
                       formData.append('unit_code', selectedUnit.unit_code);
   
-                      await fetch('http://seagold-laravel-production.up.railway.app/api/unit-images/upload', {
+                      await fetch('https://seagold-laravel-production.up.railway.app/api/unit-images/upload', {
                         method: 'POST',
                         body: formData,
                       });
@@ -309,7 +309,7 @@ const UnitManagement = () => {
       <button 
         onClick={async () => {
           if (!window.confirm('Delete this image?')) return;
-          await fetch(`http://seagold-laravel-production.up.railway.app/api/unit-images/${img.id}`, {
+          await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${img.id}`, {
             method: 'DELETE',
           });
           fetchUnitImages();
@@ -334,7 +334,7 @@ const UnitManagement = () => {
                     formData.append('image', file);
                     formData.append('unit_code', selectedUnit.unit_code);
 
-                    await fetch('http://seagold-laravel-production.up.railway.app/api/unit-images/pricing-upload', {
+                    await fetch('https://seagold-laravel-production.up.railway.app/api/unit-images/pricing-upload', {
                       method: 'POST',
                       body: formData,
                     });

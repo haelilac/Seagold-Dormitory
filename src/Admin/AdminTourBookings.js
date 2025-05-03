@@ -32,7 +32,7 @@ const AdminTourBookings = () => {
     const handleToggleSlot = async (time, status) => {
       try {
         const formattedDate = selectedDate.toISOString().split('T')[0];
-        const response = await fetch('http://seagold-laravel-production.up.railway.app/api/tour-availability/toggle', {
+        const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ const AdminTourBookings = () => {
           const formattedDate = selectedDate.toISOString().split("T")[0];
       
           for (const time of predefinedTimes) {
-            await fetch("http://seagold-laravel-production.up.railway.app/api/tour-availability/toggle", {
+            await fetch("https://seagold-laravel-production.up.railway.app/api/tour-availability/toggle", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -92,7 +92,7 @@ const AdminTourBookings = () => {
           setMessage(`All slots marked as ${status}`);
           
           // Refresh the availability UI
-          fetch(`http://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
+          fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${formattedDate}`)
             .then((res) => res.json())
             .then((data) => setAvailability(data.slots))
             .catch((err) => {
@@ -114,7 +114,7 @@ const AdminTourBookings = () => {
         }
     
         try {
-            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/tour-bookings', {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const data = await response.json();
@@ -134,7 +134,7 @@ const AdminTourBookings = () => {
 
     const handleConfirmBooking = async (id) => {
         try {
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/bookings/confirm/${id}`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/confirm/${id}`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
@@ -152,7 +152,7 @@ const AdminTourBookings = () => {
 
     const handleCancelBooking = async (id) => {
         try {
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/bookings/cancel/${id}`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/bookings/cancel/${id}`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
@@ -171,7 +171,7 @@ const AdminTourBookings = () => {
     // Helper function to refresh cache
     const refreshBookingsCache = async () => {
         try {
-            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/tour-bookings', {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/tour-bookings', {
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const data = await response.json();
@@ -206,7 +206,7 @@ const AdminTourBookings = () => {
         onChange={(e) => {
           const date = new Date(e.target.value);
           setSelectedDate(date);
-          fetch(`http://seagold-laravel-production.up.railway.app/api/tour-slots?date=${e.target.value}`)
+          fetch(`https://seagold-laravel-production.up.railway.app/api/tour-slots?date=${e.target.value}`)
             .then((res) => res.json())
             .then((data) => setAvailability(data.slots))
             .catch((err) => {

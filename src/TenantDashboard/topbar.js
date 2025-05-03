@@ -69,7 +69,7 @@ const TopBar = ({
         key: '865f456f0873a587bc36',
         cluster: 'ap3',
         forceTLS: true,
-        authEndpoint: 'http://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
+        authEndpoint: 'https://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
         auth: {
           headers: {
             Authorization: `Bearer ${getAuthToken()}`
@@ -121,7 +121,7 @@ const TopBar = ({
   };
 
   const markAsRead = async (id) => {
-    await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
+    await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${getAuthToken()}`
@@ -134,7 +134,7 @@ const TopBar = ({
   };
   
   const deleteNotification = async (id) => {
-    await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
+    await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${getAuthToken()}`
@@ -378,7 +378,7 @@ const TopBar = ({
                 return;
               }
               try {
-                const res = await fetch('http://seagold-laravel-production.up.railway.app/api/change-password', {
+                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/change-password', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',

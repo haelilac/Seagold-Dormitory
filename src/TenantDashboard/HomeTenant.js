@@ -26,7 +26,7 @@ const Home = ({ userName, darkMode }) => {
             }
     
             try {
-                const response = await fetch('http://seagold-laravel-production.up.railway.app/api/events', {
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/events', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${getAuthToken()}`,

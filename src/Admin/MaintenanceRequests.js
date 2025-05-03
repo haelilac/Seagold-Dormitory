@@ -13,7 +13,7 @@ window.Echo = new Echo({
     key: '865f456f0873a587bc36',
     cluster: 'ap3',
     forceTLS: true,
-    authEndpoint: 'http://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
+    authEndpoint: 'https://seagold-laravel-production.up.railway.app/api/broadcasting/auth',
     auth: {
       headers: {
         Authorization: `Bearer ${getAuthToken()}`
@@ -50,7 +50,7 @@ const MaintenanceRequests = () => {
 
         const fetchMaintenanceRequests = async () => {
             try {
-                const response = await fetch('http://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/maintenance-requests', {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${getAuthToken()}`,
@@ -127,7 +127,7 @@ const MaintenanceRequests = () => {
     const updateStatus = async (id, status) => {
         try {
             console.log("Sending update status:", { id, status });
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/update`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}/update`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ const MaintenanceRequests = () => {
         if (!window.confirm('Are you sure you want to delete this maintenance request?')) return;
     
         try {
-            const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}`, {
+            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -183,7 +183,7 @@ const MaintenanceRequests = () => {
     const scheduleMaintenance = async () => {
         try {
             const response = await fetch(
-                `http://seagold-laravel-production.up.railway.app/api/maintenance-requests/${selectedRequest.id}/schedule`,
+                `https://seagold-laravel-production.up.railway.app/api/maintenance-requests/${selectedRequest.id}/schedule`,
                 {
                     method: 'POST',
                     headers: {

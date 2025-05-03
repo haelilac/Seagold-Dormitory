@@ -160,7 +160,7 @@ const PaymentTenant = () => {
       
         setLoading(true);
         try {
-          const res = await fetch('http://seagold-laravel-production.up.railway.app/api/auth/user', {
+          const res = await fetch('https://seagold-laravel-production.up.railway.app/api/auth/user', {
             headers: {
               Authorization: `Bearer ${getAuthToken()}`,
               Accept: 'application/json',
@@ -174,7 +174,7 @@ const PaymentTenant = () => {
           if (cached) {
             applyPaymentData(cached);
           } else {
-            const paymentRes = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
+            const paymentRes = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenant-payments/${user.id}`, {
               headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
       
@@ -403,7 +403,7 @@ const PaymentTenant = () => {
         requestData.append('duration', duration); // Pass the duration here
         requestData.append('stay_type', formData.stay_type);
         try {
-            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/payments', {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
                 body: requestData,

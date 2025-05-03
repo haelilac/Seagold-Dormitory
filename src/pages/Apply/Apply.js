@@ -170,7 +170,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
         if (!formData.reservation_details || !formData.stay_type) return;
 
         try {
-            const response = await axios.get("http://seagold-laravel-production.up.railway.app/api/room-pricing", {
+            const response = await axios.get("https://seagold-laravel-production.up.railway.app/api/room-pricing", {
                 params: {
                     unit_code: formData.reservation_details,
                     stay_type: formData.stay_type
@@ -198,7 +198,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
     useEffect(() => {
         const fetchUnits = async () => {
             try {
-                const response = await fetch('http://seagold-laravel-production.up.railway.app/api/units-only');
+                const response = await fetch('https://seagold-laravel-production.up.railway.app/api/units-only');
                 if (!response.ok) throw new Error('Failed to fetch units');
                 const data = await response.json();
                 console.log('✅ Units fetched:', data);
@@ -262,7 +262,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
         formDataUpload.append("receipt", file);
     
         try {
-            const response = await fetch("http://seagold-laravel-production.up.railway.app/api/validate-receipt", {
+            const response = await fetch("https://seagold-laravel-production.up.railway.app/api/validate-receipt", {
                 method: "POST",
                 body: formDataUpload,
             });
@@ -317,7 +317,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
     
      
     const sendToApplication = (applicationId, referenceNumber, amount, dateTime) => {
-        fetch("http://seagold-laravel-production.up.railway.app/api/applications/payment", {
+        fetch("https://seagold-laravel-production.up.railway.app/api/applications/payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -484,7 +484,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
             requestData.append("receipt_url", receiptUrl);
             requestData.append("reference_number", paymentData.reference_number);
             requestData.append("payment_amount", paymentData.amount);
-            const response = await fetch('http://seagold-laravel-production.up.railway.app/api/applications', {
+            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/applications', {
                 method: 'POST',
                 body: requestData,
             });

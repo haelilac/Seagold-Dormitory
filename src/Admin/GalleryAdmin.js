@@ -32,7 +32,7 @@ const AdminGallery = () => {
   };
   const fetchImages = async () => {
     try {
-      const response = await fetch('http://seagold-laravel-production.up.railway.app/api/gallery', {
+      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery', {
         headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       const data = await response.json();
@@ -50,7 +50,7 @@ const AdminGallery = () => {
     formData.append('category', category);
   
     try {
-      const response = await fetch('http://seagold-laravel-production.up.railway.app/api/gallery/upload', {
+      const response = await fetch('https://seagold-laravel-production.up.railway.app/api/gallery/upload', {
         method: 'POST',
         body: formData,
         headers: {
@@ -73,7 +73,7 @@ const AdminGallery = () => {
     if (!window.confirm('Are you sure you want to delete this image?')) return;
   
     try {
-      const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
+      const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${getAuthToken()}`,
@@ -103,7 +103,7 @@ const handleImageEdit = async (id) => {
   formData.append('category', category);
 
   try {
-    const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
+    const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/gallery/${id}`, {
       method: 'POST', // Change to 'PUT' if Laravel route is defined as PUT
       body: formData,
       headers: {

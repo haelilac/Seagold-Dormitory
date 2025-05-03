@@ -11,7 +11,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setMessage('');
     try {
-      const res = await axios.post('http://seagold-laravel-production.up.railway.app/api/forgot-password', {
+      const res = await axios.post('https://seagold-laravel-production.up.railway.app/api/forgot-password', {
         email,
       });
       setMessage(res.data.message || 'Reset link sent to your email.');

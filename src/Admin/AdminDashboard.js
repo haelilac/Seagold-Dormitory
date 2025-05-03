@@ -52,7 +52,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchAdminData = async () => {
             try {
-              const response = await fetch("http://seagold-laravel-production.up.railway.app/api/auth/user", {
+              const response = await fetch("https://seagold-laravel-production.up.railway.app/api/auth/user", {
                 headers: {
                   Authorization: `Bearer ${getAuthToken()}`,
                   Accept: "application/json",
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-              const response = await fetch("http://seagold-laravel-production.up.railway.app/api/notifications", {
+              const response = await fetch("https://seagold-laravel-production.up.railway.app/api/notifications", {
                 headers: {
                   Authorization: `Bearer ${getAuthToken()}`,
                   Accept: "application/json",
@@ -128,7 +128,7 @@ const AdminDashboard = () => {
     const markAsRead = async (id) => {
       try {
         // Update in backend
-        await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
+        await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}/read`, {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${getAuthToken()}`,
@@ -151,7 +151,7 @@ const AdminDashboard = () => {
 
     const deleteNotification = async (id) => {
       try {
-        const response = await fetch(`http://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
+        const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/notifications/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${getAuthToken()}`,

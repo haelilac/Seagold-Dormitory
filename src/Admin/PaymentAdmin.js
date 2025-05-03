@@ -79,7 +79,7 @@ const PaymentAdmin = () => {
         }
         const token = localStorage.getItem('token');
         try {
-            const res = await fetch(`http://seagold-laravel-production.up.railway.app/api/payments`, {
+            const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/payments`, {
                 headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
             const allPayments = await res.json();
@@ -157,8 +157,8 @@ const PaymentAdmin = () => {
         try {
             setLoading(true);
             const [paymentsRes, unpaidRes] = await Promise.all([
-                fetch(`http://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
-                fetch(`http://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`https://seagold-laravel-production.up.railway.app/api/payments?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
+                fetch(`https://seagold-laravel-production.up.railway.app/api/unpaid-tenants?${query}`, { headers: { Authorization: `Bearer ${getAuthToken()}` } }),
             ]);
             const payments = await paymentsRes.json();
             const unpaid = await unpaidRes.json();
@@ -208,8 +208,8 @@ const PaymentAdmin = () => {
     const handleStatusUpdate = async (paymentId, status) => {
         const token = localStorage.getItem('token');
         const endpoint = status === 'Confirmed'
-            ? `http://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
-            : `http://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
+            ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
+            : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
 
         try {
             const response = await fetch(endpoint, {
@@ -259,7 +259,7 @@ const PaymentAdmin = () => {
       
         const token = localStorage.getItem('token');
         try {
-          const res = await fetch(`http://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
+          const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/tenants/${id}/send-reminder`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${getAuthToken()}`,
