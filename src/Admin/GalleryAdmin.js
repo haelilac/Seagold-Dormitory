@@ -134,111 +134,135 @@ const handleImageEdit = async (id) => {
   if (loading) return <div className="galleryadmin-spinner"></div>;
   return (
     <div className="admin-gallery">
-      <h2>Manage Gallery</h2>
-
-      {/* Image Upload Form */}
-      <form
-        className="upload-form"
-        onSubmit={(e) => {
+      <div className="form-wrapper">
+        <h2>Manage Gallery</h2>
+  
+        {/* Image Upload Form */}
+        <form
+          className="upload-form"
+          onSubmit={(e) => {
             e.preventDefault();
             if (editMode) {
-            handleImageEdit(editMode);
+              handleImageEdit(editMode);
             } else {
-            handleImageUpload();
+              handleImageUpload();
             }
-        }}
+          }}
         >
-
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter image title"
-            />
-          </div>
-        <div className="form-group">
-          <label htmlFor="image">Select Image</label>
-          <input type="file" id="image" onChange={(e) => setNewImage(e.target.files[0])} required={!editMode} />
-        </div>
-        </div>
-
-        <div className="form-row">
-        <div className="form-group">
-          <label htmlFor="category">Category</label>
-          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} required>
-            <option value="">Select a category</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter image description"
-          ></textarea>
-        </div>
-        </div>
-
-      {/* Image Gallery */}
-      <div className="gallery-grid">
-      {images
-        .filter((img) => activeCategory === 'ALL' || img.category === activeCategory)
-        .map((img) => (
-
-          <div key={img.id} className="gallery-card">
-            <img src={img.image_url} alt={img.title} />
-            <div className="gallery-info">
-              <h4>{img.title}</h4>
-              <p>{img.description}</p>
-              <p>Category: {img.category}</p>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="title">Title</label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter image title"
+              />
             </div>
-            <div className="gallery-actions">
-              <button className="edit-action" onClick={() => {
-                setEditMode(img.id);
-                setTitle(img.title);
-                setDescription(img.description);
-                setCategory(img.category);
-              }}>
-                Edit
+            <div className="form-group">
+              <label htmlFor="image">Select Image</label>
+              <input
+                type="file"
+                id="image"
+                onChange={(e) => setNewImage(e.target.files[0])}
+                required={!editMode}
+              />
+            </div>
+          </div>
+  
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="category">Category</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="">Select a category</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter image description"
+              ></textarea>
+              <div className="button-wrapper"></div>
+              <button className="upload-action" type="submit">
+                {editMode ? 'Update Image' : 'Upload Image'}
               </button>
-              <button className="delete-action" onClick={() => handleImageDelete(img.id)}>Delete</button>
             </div>
           </div>
-        ))}
-      </div>
-
-      <button className= "upload-action"type="submit">{editMode ? 'Update Image' : 'Upload Image'}</button>
-      </form>
-      <div className="category-filter">
-        <button
-          onClick={() => setActiveCategory('ALL')}
-          className={activeCategory === 'ALL' ? 'active-category' : ''}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+        </form>
+  
+        <div className="category-filter">
           <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={activeCategory === cat ? 'active-category' : ''}
+            onClick={() => setActiveCategory('ALL')}
+            className={activeCategory === 'ALL' ? 'active-category' : ''}
           >
-            {cat}
+            All
           </button>
-        ))}
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={activeCategory === cat ? 'active-category' : ''}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+  
+        {/* Image Gallery */}
+        <div className="gallery-grid">
+          {images
+            .filter(
+              (img) => activeCategory === 'ALL' || img.category === activeCategory
+            )
+            .map((img) => (
+              <div key={img.id} className="gallery-card">
+                <img src={img.image_url} alt={img.title} />
+                <div className="gallery-info">
+                  <h4>{img.title}</h4>
+                  <p>{img.description}</p>
+                  <p>Category: {img.category}</p>
+                </div>
+                <div className="gallery-actions">
+                  <button
+                    className="edit-action"
+                    onClick={() => {
+                      setEditMode(img.id);
+                      setTitle(img.title);
+                      setDescription(img.description);
+                      setCategory(img.category);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="delete-action"
+                    onClick={() => handleImageDelete(img.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
-      
     </div>
   );
 };
+  
+  
 
 export default AdminGallery;

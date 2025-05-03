@@ -433,59 +433,108 @@ const PaymentTenant = () => {
     };
     
     if (loading) {
-        return <div className="paymenttenantspinner"></div>;
+        return <div className="payment-tenant-spinner"></div>;
       }
     
-    return (
+      return (
         <div ref={ref} className={`payment-container payment-background ${isCompact ? 'compact-mode' : ''}`}>
+            
 
-        {/* 🚀 Dashboard View */}
-        {currentView === "dashboard" && (
-            <div className="dashboard-container">
-                <h1>Tenant Dashboard</h1>
+{/* 🚀 Dashboard View */}
+{currentView === "dashboard" && (
+    <div className="dashboard-container">
+        <h1>Payment Dashboard</h1>
 
-                <div className="balance-section">
-                    <div className="balance-box">
-                        <p>Remaining Bill for This Month</p>
-                        <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>
-                    </div>
-                    <div className="balance-box due">
-                        <p>Next Payment Due</p>
-                        <h2>
-                            {firstPartialMonth ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric'
-                            }) : "No Dues"}
-                            </h2>
-                    </div>
-                </div>
+        <div className="dashboard-buttons">
+  <button
+    className={`tab-button ${currentView === "dashboard" ? "active" : ""}`}
+    onClick={() => setCurrentView("dashboard")}
+  >
+    Payment Dashboard
+  </button>
+  <button
+    className={`tab-button ${currentView === "payment" ? "active" : ""}`}
+    onClick={() => setCurrentView("payment")}
+  >
+    Pay Now
+  </button>
+  <button
+    className={`tab-button ${currentView === "bills" ? "active" : ""}`}
+    onClick={() => setCurrentView("bills")}
+  >
+    My Bills
+  </button>
+  <button
+    className={`tab-button ${currentView === "transactions" ? "active" : ""}`}
+    onClick={() => setCurrentView("transactions")}
+  >
+    Transactions
+  </button>
+</div>
 
-                {/* 🚀 Action Buttons */}
-                <div className="dashboard-buttons">
-                    <button className="pay-now" onClick={() => setCurrentView("payment")}>Pay Now</button>
-                    <button className="my-bill" onClick={() => setCurrentView("bills")}>My Bills</button>
-                    <button className="transactions" onClick={() => setCurrentView("transactions")}>Transaction History</button>
-                </div>
+
+        <div className="balance-section">
+            <div className="balance-box">
+                <p>Remaining Bill for This Month</p>
+                <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>
             </div>
-        )}
+            <div className="balance-box due">
+                <p>Next Payment Due</p>
+                <h2>
+                    {firstPartialMonth ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    }) : "No Dues"}
+                </h2>
+            </div>
+        </div>
+    </div>
+)}
+
 
 
             {currentView === "payment" && (
-                <div className="payment-page">
-                    <h1>Payment Dashboard</h1>
-            <p>Current Width: {width}px</p>
+                <div className="dashboard-container">
+        <h1>Payment Dashboard</h1>
+                <div className="payment-page-hearder">
+                    <h2>Pay Now</h2>
+                    <div className="dashboard-buttons">
+  <button
+    className={`tab-button ${currentView === "dashboard" ? "active" : ""}`}
+    onClick={() => setCurrentView("dashboard")}
+  >
+    Payment Dashboard
+  </button>
+  <button
+    className={`tab-button ${currentView === "payment" ? "active" : ""}`}
+    onClick={() => setCurrentView("payment")}
+  >
+    Pay Now
+  </button>
+  <button
+    className={`tab-button ${currentView === "bills" ? "active" : ""}`}
+    onClick={() => setCurrentView("bills")}
+  >
+    My Bills
+  </button>
+  <button
+    className={`tab-button ${currentView === "transactions" ? "active" : ""}`}
+    onClick={() => setCurrentView("transactions")}
+  >
+    Transactions
+  </button>
+</div>
+</div>
+
+                    <div className="payment-page">     
             {isCompact && <p>Switched to Compact Mode</p>}
-            <button className="back-button" onClick={() => setCurrentView("dashboard")}>← Back to Dashboard</button>
-            
             {warningMessage && <div className="warning-message">{warningMessage}</div>}
             {unitPrice > 0 && (
                 <p>
-                    Unit Price: <strong>₱{unitPrice}</strong>
+                    Unit Price: ₱{unitPrice}
                 </p>
             )}
-
-
 
             {/* Payment Form */}
             <form className="payment-form" onSubmit={handleSubmit}>
@@ -537,9 +586,9 @@ const PaymentTenant = () => {
                         <option value="GCash">GCash</option>
                         <option value="Cash">Cash (Please direct to Landlord)</option>
                     </select>
-                <p>
+                <label>
                     <strong>Payment Type:</strong> {formData.payment_type || "N/A"}
-                </p>
+                </label>
 
                 {formData.payment_method === 'GCash' && (
                     <>
@@ -581,7 +630,9 @@ const PaymentTenant = () => {
                     </>
                 )}
 
-                <button
+            </form>
+
+            <button className="submit-payment-button"
                     type="submit"
                     disabled={
                         isScanning ||
@@ -598,73 +649,127 @@ const PaymentTenant = () => {
                 </button>
 
 
-            </form>
-
-            {dueDate && <p>Next Payment Due Date: <strong>{dueDate}</strong></p>}
+            {dueDate && <p >Next Payment Due Date: {dueDate}</p>}
+                </div>
                 </div>
             )}
 
             {/* 🚀 My Bills Page (Main Bill Page) */}
             {currentView === "bills" && (
+                <div className="dashboard-container">
+        <h1>Payment Dashboard</h1>
                 <div className="bills-container">
-                    <h1>My Bills</h1>
-                    <button className="back-button" onClick={() => setCurrentView("dashboard")}>← Back to Dashboard</button>
+                    <h2>My Bills</h2>
+                    <div className="dashboard-buttons">
+  <button
+    className={`tab-button ${currentView === "dashboard" ? "active" : ""}`}
+    onClick={() => setCurrentView("dashboard")}
+  >
+    Payment Dashboard
+  </button>
+  <button
+    className={`tab-button ${currentView === "payment" ? "active" : ""}`}
+    onClick={() => setCurrentView("payment")}
+  >
+    Pay Now
+  </button>
+  <button
+    className={`tab-button ${currentView === "bills" ? "active" : ""}`}
+    onClick={() => setCurrentView("bills")}
+  >
+    My Bills
+  </button>
+  <button
+    className={`tab-button ${currentView === "transactions" ? "active" : ""}`}
+    onClick={() => setCurrentView("transactions")}
+  >
+    Transactions
+  </button>
 
-                    {/* ✅ Navigation to separate pages */}
-                    <div className="bill-navigation">
-                        <button onClick={() => setCurrentBillView("toPay")}>To Pay</button>
-                        <button onClick={() => setCurrentBillView("paid")}>Paid</button>
-                    </div>
+</div>
 
-                    {/* ✅ To Pay Section */}
-                    {currentBillView === "toPay" && (
-                        <div className="to-pay-section">
-                            <h2>Months Remaining to Pay</h2>
-                            {availableMonths.length > 0 ? (
-                                <ul>
-                                    {availableMonths.map((month, index) => (
-                                        <li key={index}>
-                                            {/* Format the date to include day, month, and year */}
-                                            {new Date(month).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} 
-                                            {getPaymentLabel(month)}
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>All months are paid.</p>
-                            )}
-                        </div>
-                    )}
+<div className="bill-sections-grid">
+  <div className="to-pay-section">
+    <h2>Months Remaining to Pay</h2>
+    {availableMonths.length > 0 ? (
+      <ul>
+        {availableMonths.map((month, index) => (
+          <li key={index}>
+            {new Date(month).toLocaleDateString('default', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric'
+            })}
+            {getPaymentLabel(month)}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>All months are paid.</p>
+    )}
+  </div>
 
-                    {/* ✅ Paid Section */}
-                    {currentBillView === "paid" && (
-                        <div className="paid-section">
-                            <h2>Months Already Paid</h2>
-                            {paymentHistory.length > 0 ? (
-                                <ul>
-                                    {paymentHistory
-                                        .filter(payment => payment.remaining_balance === 0) // Show only fully paid months
-                                        .map((payment, index) => (
-                                            <li key={index}>
-                                                {/* Format the payment date to include day, month, and year */}
-                                                {new Date(payment.payment_period).toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-                                            </li>
-                                        ))}
-                                </ul>
-                            ) : (
-                                <p>No months have been fully paid yet.</p>
-                            )}
-                        </div>
-                    )}
-                </div>
+  <div className="paid-section">
+    <h2>Months Already Paid</h2>
+    {paymentHistory.length > 0 ? (
+      <ul>
+        {paymentHistory
+          .filter(payment => payment.remaining_balance === 0)
+          .map((payment, index) => (
+            <li key={index}>
+              {new Date(payment.payment_period).toLocaleDateString('default', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+              })}
+            </li>
+          ))}
+      </ul>
+    ) : (
+      <p>No months have been fully paid yet.</p>
+    )}
+  </div>
+</div>
+</div>
+</div>
+
             )}
 
             {/* 🚀 Transactions Page */}
             {currentView === "transactions" && (
+                <div className="dashboard-container">
+        <h1>Payment Dashboard</h1>
                 <div className="transactions-container">
-                    <h1>Transaction History</h1>
-                    <button className="back-button" onClick={() => setCurrentView("dashboard")}>← Back to Dashboard</button>
+                    <h2>Transaction History</h2>
+                    <div className="transaction-dashboard-buttons">
+  <button
+    className={`tab-button ${currentView === "dashboard" ? "active" : ""}`}
+    onClick={() => setCurrentView("dashboard")}
+  >
+    Payment Dashboard
+  </button>
+  <button
+    className={`tab-button ${currentView === "payment" ? "active" : ""}`}
+    onClick={() => setCurrentView("payment")}
+  >
+    Pay Now
+  </button>
+  <button
+    className={`tab-button ${currentView === "bills" ? "active" : ""}`}
+    onClick={() => setCurrentView("bills")}
+  >
+    My Bills
+  </button>
+  <button
+    className={`tab-button ${currentView === "transactions" ? "active" : ""}`}
+    onClick={() => setCurrentView("transactions")}
+  >
+    Transactions
+  </button>
 
+</div>
                     {paymentHistory.length > 0 ? (
                         <div className="payment-history">
                             <table>
@@ -696,10 +801,10 @@ const PaymentTenant = () => {
                                             <td>
                                                 {payment.status.toLowerCase() === "pending" ? ( // 🔥 convert to lowercase
                                                     <span style={{ 
-                                                    backgroundColor: "orange", 
+                                                    backgroundColor: "#bf9e1b",
                                                     color: "white", 
                                                     padding: "4px 8px", 
-                                                    borderRadius: "12px", 
+                                                    borderRadius: "5px", 
                                                     fontWeight: "bold",
                                                     fontSize: "0.9rem"
                                                     }}>
@@ -707,10 +812,10 @@ const PaymentTenant = () => {
                                                     </span>
                                                 ) : (
                                                     <span style={{ 
-                                                    backgroundColor: "green", 
+                                                    backgroundColor: "#366e39", 
                                                     color: "white", 
                                                     padding: "4px 8px", 
-                                                    borderRadius: "12px", 
+                                                    borderRadius: "5px", 
                                                     fontWeight: "bold",
                                                     fontSize: "0.9rem"
                                                     }}>
@@ -727,6 +832,7 @@ const PaymentTenant = () => {
                     ) : (
                         <p>No transaction history found.</p>
                     )}
+                </div>
                 </div>
             )}
         </div>
