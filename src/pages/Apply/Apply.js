@@ -410,7 +410,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
             const verifyResponse = await fetch(`${baseUrl}/api/google-verify-email`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token: idToken }),
+              body: JSON.stringify({ idToken: credential })
             });
             
             const verifyData = await verifyResponse.json();
