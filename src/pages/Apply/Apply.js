@@ -405,7 +405,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
             const baseUrl = window.location.hostname.includes('localhost')
                 ? 'http://localhost:8000'
                 : 'https://seagold-laravel-production.up.railway.app';
-            
+            console.log("✅ ID Token:", idToken);
             const verifyResponse = await fetch(`${baseUrl}/api/google-verify-email`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
