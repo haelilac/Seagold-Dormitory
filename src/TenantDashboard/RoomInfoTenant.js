@@ -4,6 +4,8 @@ import { getAuthToken } from "../utils/auth";
 import { useDataCache } from "../contexts/DataContext";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { FaDoorOpen, FaUsers, FaMoneyBillWave, FaCalendarAlt } from 'react-icons/fa';
+import { FaClock, FaCheckCircle } from 'react-icons/fa';
 
 const RoomInfoTenant = () => {
   const [info, setInfo] = useState(null);
