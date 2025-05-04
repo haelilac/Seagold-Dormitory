@@ -231,48 +231,64 @@ const RoomInfoTenant = () => {
         <h4>My Requests</h4>
         <div className="myRequestsTableContainer">
           <table className="myRequestsTable">
-            <thead>
-              <tr>
-                <th>Amenity Type</th>
-                <th>Status</th>
-                <th>Date Requested</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requests.length > 0 ? (
-                requests.map((req) => (
-                  <tr key={req.id}>
-                    <td>{req.amenity_type}</td>
-                    <td
-                      className={
-                        req.status.toLowerCase() === "pending"
-                          ? "status-pending"
-                          : "status-approved"
-                      }
-                    >
-                      {req.status.toLowerCase() === "pending" ? (
-                        <>
-                          <FaClock /> <strong>{req.status}</strong>
-                        </>
-                      ) : (
-                        <>
-                          <FaCheckCircle /> <strong>{req.status}</strong>
-                        </>
-                      )}
-                    </td>
-                    <td>{new Date(req.created_at).toLocaleDateString('en-PH', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3">No amenity requests yet.</td>
-                </tr>
-              )}
-            </tbody>
+          <thead>
+  <tr>
+    <th>Amenity Type</th>
+    <th>Status</th>
+    <th>Date Requested</th>
+    <th>Date Approved</th>
+  </tr>
+</thead>
+<tbody>
+  {requests.length > 0 ? (
+    requests.map((req) => (
+      <tr key={req.id}>
+        <td>{req.amenity_type}</td>
+        <td
+          className={
+            req.status.toLowerCase() === "pending"
+              ? "status-pending"
+              : "status-approved"
+          }
+        >
+          {req.status.toLowerCase() === "pending" ? (
+            <>
+              <FaClock /> <strong>{req.status}</strong>
+            </>
+          ) : (
+            <>
+              <FaCheckCircle /> <strong>{req.status}</strong>
+            </>
+          )}
+        </td>
+        <td>
+          {new Date(req.created_at).toLocaleDateString("en-PH", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </td>
+        <td>
+          {req.status.toLowerCase() === "approved" && req.approved_at ? (
+            new Date(req.approved_at).toLocaleDateString("en-PH", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          ) : (
+            "—"
+          )}
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="4">No amenity requests yet.</td>
+    </tr>
+  )}
+</tbody>
+
+
           </table>
         </div>
       </div>
