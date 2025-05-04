@@ -806,8 +806,8 @@ const PaymentTenant = () => {
                                             </td>
                                             <td>₱{payment.amount}</td>
                                             <td>₱{payment.remaining_balance}</td>
-                                            <td>{payment.payment_type}</td>   // "Fully Paid" or "Partially Paid"
-                                            <td>{payment.payment_method}</td> // "GCash" or "Cash"
+                                            <td>{payment.payment_type}</td>   
+                                            <td>{payment.payment_method}</td> 
                                             <td>{payment.reference_number}</td>
                                             <td>
                                                 {payment.status.toLowerCase() === "pending" ? ( // 🔥 convert to lowercase
