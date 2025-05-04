@@ -162,7 +162,7 @@
   }
   
   /* === Responsive Mobile Nav === */
-  @media screen and (max-width: 900px) {
+  @media screen and (max-width: 767px) {
     .desktop-only {
       display: none !important;
     }
