@@ -3,7 +3,7 @@ import {
   FaBell, FaBars, FaEllipsisV, FaMoon, FaSun, FaCheckCircle, FaTrash, FaCog
 } from 'react-icons/fa';
 import styles from './sidebar.module.css';
-import './Topbar-tenant.module.css';
+import styles from './Topbar-tenant.module.css';
 import logo from '../assets/seagoldlogo.png';
 import ProfileUploader from '../components/ProfileUploader';
 import { getAuthToken } from '../utils/auth';
