@@ -550,7 +550,40 @@ const [showReservationModal, setShowReservationModal] = useState(true);
                         onSubmit={handleSubmit} 
                         style={{ pointerEvents: hasAgreedToReservation ? 'auto' : 'none', opacity: hasAgreedToReservation ? 1 : 0.5 }}
                     >
-
+        {showReservationModal && (
+            <div className="reservation-modal-overlay">
+                <div className="reservation-modal">
+                <h3>Reservation Notice</h3>
+                <p>
+                    Before you begin, please note that submitting an application will require a reservation fee
+                    of <strong>₱500</strong> or <strong>₱1000</strong> depending on your selected stay type.
+                </p>
+                <p>
+                    This fee confirms your intent and is necessary for admin review. Do you wish to proceed?
+                </p>
+                <div className="modal-buttons">
+                    <button
+                    className="agree-btn"
+                    onClick={() => {
+                        setHasAgreedToReservation(true);
+                        setShowReservationModal(false);
+                    }}
+                    >
+                    I Agree
+                    </button>
+                    <button
+                    className="decline-btn"
+                    onClick={() => {
+                        setHasAgreedToReservation(false);
+                        setShowReservationModal(false);
+                    }}
+                    >
+                    I Do Not Agree
+                    </button>
+                </div>
+                </div>
+            </div>
+            )}
                     {/* Name and Email */}
                     <div className="form-row">
                         <div className="form-group">
@@ -843,7 +876,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
                         </div>
                     )}
 
-<div className="form-group">
+                <div className="form-group">
                     <label>Contact Number</label>
                     <div className="contact-container">
                         <span className="country-code">+63</span>
@@ -991,41 +1024,6 @@ const [showReservationModal, setShowReservationModal] = useState(true);
             </form> 
             </div>
             </div>
-
-            {showReservationModal && (
-            <div className="reservation-modal-overlay">
-                <div className="reservation-modal">
-                <h3>Reservation Notice</h3>
-                <p>
-                    Before you begin, please note that submitting an application will require a reservation fee
-                    of <strong>₱500</strong> or <strong>₱1000</strong> depending on your selected stay type.
-                </p>
-                <p>
-                    This fee confirms your intent and is necessary for admin review. Do you wish to proceed?
-                </p>
-                <div className="modal-buttons">
-                    <button
-                    className="agree-btn"
-                    onClick={() => {
-                        setHasAgreedToReservation(true);
-                        setShowReservationModal(false);
-                    }}
-                    >
-                    I Agree
-                    </button>
-                    <button
-                    className="decline-btn"
-                    onClick={() => {
-                        setHasAgreedToReservation(false);
-                        setShowReservationModal(false);
-                    }}
-                    >
-                    I Do Not Agree
-                    </button>
-                </div>
-                </div>
-            </div>
-            )}
             {showTermsModal && (
                 <div className="terms-modal-overlay">
                         <div className="terms-modal">
