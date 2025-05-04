@@ -342,57 +342,158 @@ const TopBar = ({
           {showProfileDropdown && (
             <div className={styles.profileDropdown}>
               <ul>
-                <li className={styles.userName}>{userData?.name}</li>
-                <li className={styles.profileEmail}>{userData?.email}</li>
-                <li><button onClick={handleLogout}>Logout</button></li>
                 <li>
-                  <button onClick={() => setShowChangePassModal(true)}>Change Password</button>
+                  <img
+                    src={userData?.profile_picture || "https://res.cloudinary.com/seagold/image/upload/v1/profile/default.png"}
+                    alt="User"
+                    className={styles.dropdownProfilePicture}
+                    onClick={() => setShowPreviewModal(true)}
+                  />
+                </li>
+                <li className={styles.userName} style={{ cursor: "pointer", color: "#4a954e" }}>
+                  {userData?.name}
+                </li>
+                <li className={styles.profileEmail} style={{ fontSize: "0.85rem", color: "#00bf63" }}>
+                  {userData?.email}
+                </li>
+                <li>
+                  <button className={styles.changePasswordBtn} onClick={() => setShowChangePassModal(true)}>
+                    Change Password
+                  </button>
+                </li>
+                <li>
+                  <button className={styles.logoutButton} onClick={handleLogout}>
+                    Logout
+                  </button>
                 </li>
               </ul>
             </div>
           )}
-        </div>
-      </div>
 
-      {/* 🔐 Change Password Modal */}
-      {showChangePassModal && (
-        <div className={styles.modalBackdrop} onClick={() => setShowChangePassModal(false)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h3>Change Password</h3>
-            <input type="password" placeholder="Current Password" value={passwordForm.current_password}
-              onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })} />
-            <input type="password" placeholder="New Password" value={passwordForm.new_password}
-              onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })} />
-            <input type="password" placeholder="Confirm New Password" value={passwordForm.new_password_confirmation}
-              onChange={(e) => setPasswordForm({ ...passwordForm, new_password_confirmation: e.target.value })} />
-            {passwordFeedback && <p className={styles.feedbackMsg}>{passwordFeedback}</p>}
-            <button onClick={async () => {
-              setPasswordFeedback('');
-              if (passwordForm.new_password !== passwordForm.new_password_confirmation) {
-                setPasswordFeedback("Passwords do not match.");
-                return;
-              }
-              try {
-                const res = await fetch('https://seagold-laravel-production.up.railway.app/api/change-password', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${getAuthToken()}`,
-                  },
-                  body: JSON.stringify(passwordForm),
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'Password change failed.');
-                setPasswordFeedback("Password changed successfully!");
-              } catch (err) {
-                setPasswordFeedback(err.message);
-              }
-            }}>Confirm</button>
+          {/* 🔍 Preview Modal */}
+          {showPreviewModal && (
+            <div className={styles.modalBackdrop} onClick={() => setShowPreviewModal(false)}>
+              <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <h3>Current Profile Picture</h3>
+                <img
+                  src={userData?.profile_picture || "https://res.cloudinary.com/seagold/image/upload/v1/profile/default.png"}
+                  alt="Preview"
+                  className={styles.previewImage}
+                />
+                <button
+                  className={styles.uploadTriggerBtn}
+                  onClick={() => {
+                    setShowPreviewModal(false);
+                    setShowUploadModal(true);
+                  }}
+                >
+                  Change Picture
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 📤 Upload Modal */}
+          {showUploadModal && (
+            <div className={styles.modalBackdrop} onClick={() => setShowUploadModal(false)}>
+              <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <h3>Upload New Profile Picture</h3>
+                <ProfileUploader
+                  onUploadSuccess={(newUrl) => {
+                    setUserData((prev) => ({ ...prev, profile_picture: newUrl }));
+                    setShowUploadModal(false);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          {/* 🔐 Change Password Modal */}
+          {showChangePassModal && (
+            <div className={styles.modalBackdrop} onClick={() => setShowChangePassModal(false)}>
+              <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <h3>Change Password</h3>
+                <input
+                  type="password"
+                  placeholder="Current Password"
+                  value={passwordForm.current_password}
+                  onChange={(e) =>
+                    setPasswordForm({ ...passwordForm, current_password: e.target.value })
+                  }
+                  className={styles.inputField}
+                />
+                <input
+                  type="password"
+                  placeholder="New Password"
+                  value={passwordForm.new_password}
+                  onChange={(e) =>
+                    setPasswordForm({ ...passwordForm, new_password: e.target.value })
+                  }
+                  className={styles.inputField}
+                />
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={passwordForm.new_password_confirmation}
+                  onChange={(e) =>
+                    setPasswordForm({
+                      ...passwordForm,
+                      new_password_confirmation: e.target.value,
+                    })
+                  }
+                  className={styles.inputField}
+                />
+
+                {passwordFeedback && <p className={styles.feedbackMsg}>{passwordFeedback}</p>}
+
+                <button
+                  className={styles.confirmBtn}
+                  onClick={async () => {
+                    setPasswordFeedback("");
+                    if (passwordForm.new_password !== passwordForm.new_password_confirmation) {
+                      setPasswordFeedback("New passwords do not match.");
+                      return;
+                    }
+
+                    try {
+                      const res = await fetch(
+                        "https://seagold-laravel-production.up.railway.app/api/change-password",
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+                          },
+                          body: JSON.stringify({
+                            current_password: passwordForm.current_password,
+                            new_password: passwordForm.new_password,
+                            new_password_confirmation: passwordForm.new_password_confirmation,
+                          }),
+                        }
+                      );
+                      const data = await res.json();
+
+                      if (!res.ok) throw new Error(data.message || "Password change failed.");
+
+                      setPasswordFeedback("Password changed successfully!");
+                      setPasswordForm({
+                        current_password: "",
+                        new_password: "",
+                        new_password_confirmation: "",
+                      });
+                    } catch (err) {
+                      setPasswordFeedback(err.message);
+                    }
+                  }}
+                >
+                  Confirm Change
+                </button>
+              </div>
+            </div>
+          )}
           </div>
         </div>
-      )}
-    </div>
-  );
-};
-
-export default TopBar;
+      </div>
+    );
+  };
+  
+          export default TopBar;
