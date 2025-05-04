@@ -72,29 +72,38 @@
 .imageModalContent {
   position: relative;
   background: #fff;
-  padding: 1rem;
   border-radius: 12px;
-  max-width: 90%;
-  max-height: 90%;
+  min-width: 55%;
+  min-height: 70%;
   text-align: center;
+  align-items: center;
 }
 
 .modalImage {
   max-width: 100%;
-  max-height: 80vh;
+  max-height: 65vh;
   border-radius: 8px;
+  padding-top: 5%;
 }
+
 
 .closeModal {
-  margin-top: 10px;
-  padding: 6px 14px;
-  background: #333;
-  color: #fff;
+  background-color: transparent;
   border: none;
+  color: #030303;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 32px;
   cursor: pointer;
-  border-radius: 6px;
+  z-index: 10001; /* Highest priority for click */
 }
 
+
+.closeModal:hover {
+  color: #555;
+  background-color: transparent;
+}
  
 .roomCard-wrapper {
   width: 100%;
@@ -487,110 +496,142 @@
 }
 
 
-/*************************************
- * RESPONSIVE MEDIA QUERIES
- *************************************/
+@media (max-width: 768px) {
+  .roomCard-header {
+    font-size: 2.2rem;
+    text-align: center;
+    padding-bottom: 5px;
+    margin-bottom: 2%;
+    font-family: 'Montserrat', sans-serif;
+    border-bottom: none;
+  }
+ 
+  .roomImageGallery {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 
-/* Medium to small devices (Tablets & Phones) */
-@media screen and (max-width: 768px) {
-  .roomCard-container {
-    width: 100%;
-    padding: 2rem 1rem;
-    margin: 0;
-    border-radius: 0;
-    box-shadow: none;
+  .mainImage {
+    height: 220px;
+  }
+
+  .thumbnailGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .roomContent {
     flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .roomImage {
-    max-height: 30vh;
-    border-radius: 4px;
+    gap: 1rem;
   }
 
   .roomDetails {
-    margin-left: 0;
-    font-size: 1rem;
-  }
-
-  .infoLabel {
-    font-size: 0.95rem;
-  }
-
-  .infoValue {
-    font-size: 0.95rem;
-  }
-
-  .infoIcon,
-  .amenityIcon {
-    width: 24px;
-  }
-
-  .roomCard-header {
-    font-size: 1.5rem;
-    padding: 0.75rem;
-  }
-
-  .amenitiesSection h3 {
-    font-size: 1.1rem;
-  }
-
-  .amenitiesList {
-    font-size: 1rem;
-    gap: 0.75rem 1.25rem;
-  }
-
-  .amenityContainer {
-    font-size: 0.95rem;
-    padding: 0.4rem 0.6rem;
-  }
-}
-
-/* Small screens (Phones) */
-@media screen and (max-width: 480px) {
-  .roomCard-wrapper {
-    height: 100vh;
-    overflow: hidden;
-    position: relative;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
 
   .roomCard-container {
+    padding: 2rem 1rem 1rem;
+    height: auto;
+    top: 0;
+  }
+
+  .amenityRequestContainer,
+  .myRequestsContainer {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .amenityRequestRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .amenitySelect {
     width: 100%;
-    padding: 1rem 0.5rem;
-    margin: 0;
-    border-radius: 0;
-    box-shadow: none;
   }
 
-  .roomCard-header {
-    font-size: 1.2rem;
-    padding: 0.5rem;
+  .myRequestContainer{
+    margin-bottom: 5%;
   }
 
-  .roomDetails {
+  .requestButton {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .roomCard-header,
+  .amenityRequestSection h3,
+  .amenityRequestSection h4 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .unitCodeDisplay {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .modalImage {
+    max-height: 50vh;
+    padding-top: 0;
+  }
+
+  .imageModalContent {
+    width: 90%;
+    height: auto;
+    padding: 1rem;
+  }
+
+  .myRequestsTable th,
+  .myRequestsTable td {
+    padding: 10px 8px;
     font-size: 0.9rem;
   }
 
-  .infoLabel,
-  .infoValue {
-    font-size: 0.85rem;
-  }
-
-  .infoIcon,
-  .amenityIcon {
-    width: 20px;
+  .myRequestsTableContainer {
+    overflow-x: auto;
   }
 
   .amenitiesList {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
   }
 
   .amenityContainer {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.6rem;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .roomCard-header {
+    font-size: 2.2rem;
+    text-align: center;
+    padding-bottom: 5px;
+    margin-bottom: 2%;
+    font-family: 'Montserrat', sans-serif;
+    border-bottom: none;
+  }
+  .mainImage {
+    height: 180px;
+  }
+
+  .thumbnailGrid img {
+    height: 100px;
+  }
+
+  .amenityRequestRow {
+    gap: 0.75rem;
+  }
+
+  .roomCard-container {
+    padding: 1rem;
+  }
+
+  .myRequestsTable td {
+    font-size: 0.85rem;
   }
 }

@@ -48,7 +48,6 @@ const GoogleMapComponent = () => {
     };
   }, []);
 
-
   const handleGetUserLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -210,7 +209,7 @@ const GoogleMapComponent = () => {
                       <option value="gas_station">⛽ Gas Stations</option>
                     </select>
                     <button onClick={() => handleFindNearbyPlaces(selectedCategory)} className={styles.mapBtn}>
-                      🔎 Search
+                      🔎
                     </button>
                   </div>
 

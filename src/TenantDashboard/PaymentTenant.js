@@ -366,7 +366,14 @@ const PaymentTenant = () => {
         setTempAmount("");  // Clear amount input
     };
 
-    
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 768);
+      handleResize(); // call once
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -381,6 +388,8 @@ const PaymentTenant = () => {
             return;
         }
     
+
+
         const hasPendingPaymentForMonth = paymentHistory.some(
             (payment) =>
                 payment.payment_period === formData.payment_for &&
@@ -436,7 +445,7 @@ const PaymentTenant = () => {
         return <div className="payment-tenant-spinner"></div>;
       }
     
-      return (
+    return (
         <div ref={ref} className={`payment-container payment-background ${isCompact ? 'compact-mode' : ''}`}>
             
 
@@ -473,31 +482,22 @@ const PaymentTenant = () => {
 </div>
 
 
-<div className="balance-section">
-  <div className="balance-box">
-    <p>Remaining Bill for This Month</p>
-    <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>
-
-    {formData.payment_type === 'Partially Paid' && (
-      <p>
-        <strong>Expected Total:</strong>{' '}
-        ₱{(Number(formData.amount || 0) + Number(displayedRemainingBalance || 0)).toFixed(2)}
-      </p>
-    )}
-  </div>
-  <div className="balance-box-due">
-    <p>Next Payment Due</p>
-    <h2>
-      {firstPartialMonth
-        ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          })
-        : 'No Dues'}
-    </h2>
-  </div>
-</div>
+        <div className="balance-section">
+            <div className="balance-box">
+                <p>Remaining Bill for This Month</p>
+                <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>
+            </div>
+            <div className="balance-box due">
+                <p>Next Payment Due</p>
+                <h2>
+                    {firstPartialMonth ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    }) : "No Dues"}
+                </h2>
+            </div>
+        </div>
     </div>
 )}
 
@@ -639,6 +639,8 @@ const PaymentTenant = () => {
                     </>
                 )}
 
+            </form>
+
             <button className="submit-payment-button"
                     type="submit"
                     disabled={
@@ -654,8 +656,6 @@ const PaymentTenant = () => {
                         ? "Submit Payment"
                         : "Waiting for Receipt Validation..."}
                 </button>
-            </form>
-
 
 
             {dueDate && <p >Next Payment Due Date: {dueDate}</p>}
@@ -710,9 +710,7 @@ const PaymentTenant = () => {
               day: 'numeric',
               year: 'numeric'
             })}
-            {getPaymentLabel(month).includes("Partial") && (
-              <span className="badge warning">Partially Paid</span>
-            )}
+            {getPaymentLabel(month)}
           </li>
         ))}
       </ul>
@@ -781,68 +779,124 @@ const PaymentTenant = () => {
   </button>
 
 </div>
-                    {paymentHistory.length > 0 ? (
-                        <div className="payment-history">
-                            <table>
-                            <thead>
-                                <tr>
-                                    <th>Date & Time</th>
-                                    <th>Amount Paid</th>
-                                    <th>Remaining Balance</th>
-                                    <th>Payment Type</th>
-                                    <th>Payment Method</th>
-                                    <th>Reference Number</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                                <tbody>
-                                    {paymentHistory.map((payment, index) => (
-                                        <tr key={index}>
-                                            <td>
-                                            {new Date(payment.created_at || payment.payment_period).toLocaleString('en-PH', {
-                                                dateStyle: 'medium',
-                                                timeStyle: 'short',
-                                            })}
-                                            </td>
-                                            <td>₱{payment.amount}</td>
-                                            <td>₱{payment.remaining_balance}</td>
-                                            <td>{payment.payment_type}</td>   
-                                            <td>{payment.payment_method}</td> 
-                                            <td>{payment.reference_number}</td>
-                                            <td>
-                                                {payment.status.toLowerCase() === "pending" ? ( // 🔥 convert to lowercase
-                                                    <span style={{ 
-                                                    backgroundColor: "#bf9e1b",
-                                                    color: "white", 
-                                                    padding: "4px 8px", 
-                                                    borderRadius: "5px", 
-                                                    fontWeight: "bold",
-                                                    fontSize: "0.9rem"
-                                                    }}>
-                                                    Pending
-                                                    </span>
-                                                ) : (
-                                                    <span style={{ 
-                                                    backgroundColor: "#366e39", 
-                                                    color: "white", 
-                                                    padding: "4px 8px", 
-                                                    borderRadius: "5px", 
-                                                    fontWeight: "bold",
-                                                    fontSize: "0.9rem"
-                                                    }}>
-                                                    Confirmed
-                                                    </span>
-                                                )}
-                                                </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
+{paymentHistory.length > 0 ? (
+  <div className="payment-history">
+    {isMobile ? (
+      <table>
+        <tbody>
+          {paymentHistory.map((payment, index) => (
+            <React.Fragment key={index}>
+              <tr>
+                <td>Date & Time</td>
+                <td>{new Date(payment.created_at || payment.payment_period).toLocaleString('en-PH', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                })}</td>
+              </tr>
+              <tr>
+                <td>Amount Paid</td>
+                <td>₱{payment.amount}</td>
+              </tr>
+              <tr>
+                <td>Remaining Balance</td>
+                <td>₱{payment.remaining_balance}</td>
+              </tr>
+              <tr>
+                <td>Payment Type</td>
+                <td>{payment.payment_type}</td>
+              </tr>
+              <tr>
+                <td>Payment Method</td>
+                <td>{payment.payment_method}</td>
+              </tr>
+              <tr>
+                <td>Reference Number</td>
+                <td>{payment.reference_number}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>
+                  {payment.status.toLowerCase() === 'pending' ? (
+                    <span style={{
+                      backgroundColor: '#bf9e1b',
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '5px',
+                      fontWeight: 'bold',
+                      fontSize: '0.9rem'
+                    }}>Pending</span>
+                  ) : (
+                    <span style={{
+                      backgroundColor: '#366e39',
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '5px',
+                      fontWeight: 'bold',
+                      fontSize: '0.9rem'
+                    }}>Confirmed</span>
+                  )}
+                </td>
+              </tr>
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <table>
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Amount Paid</th>
+            <th>Remaining Balance</th>
+            <th>Payment Type</th>
+            <th>Payment Method</th>
+            <th>Reference Number</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paymentHistory.map((payment, index) => (
+            <tr key={index}>
+              <td>{new Date(payment.created_at || payment.payment_period).toLocaleString('en-PH', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+              })}</td>
+              <td>₱{payment.amount}</td>
+              <td>₱{payment.remaining_balance}</td>
+              <td>{payment.payment_method}</td>
+              <td>{payment.payment_type}</td>
+              <td>{payment.reference_number}</td>
+              <td>
+                {payment.status.toLowerCase() === 'pending' ? (
+                  <span style={{
+                    backgroundColor: '#bf9e1b',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '5px',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem'
+                  }}>Pending</span>
+                ) : (
+                  <span style={{
+                    backgroundColor: '#366e39',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '5px',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem'
+                  }}>Confirmed</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+) : (
+  <p>No transaction history found.</p>
+)}
 
-                            </table>
-                        </div>
-                    ) : (
-                        <p>No transaction history found.</p>
-                    )}
                 </div>
                 </div>
             )}

@@ -396,10 +396,10 @@ const MaintenanceTenant = () => {
                 className="custom-modal"
                 overlayClassName="custom-overlay"
             >
-                <div className="modal-content">
+                <div className="file-modal-content">
                     <h2>File Preview</h2>
                     {renderFilePreview()}
-                    <button onClick={() => setIsFileModalOpen(false)} className="close-button">Close</button>
+                    <button onClick={() => setIsFileModalOpen(false)} className="file-close-button">&times;</button>
                 </div>
             </Modal>
         </div>

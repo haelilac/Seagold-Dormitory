@@ -373,7 +373,6 @@ margin: 0;
 /* When sidebar is open */
 .mainContent.shifted {
   margin-left: 255px; /* Match open sidebar */
-  width: calc(111% - 450px);
 }
 
 
@@ -688,6 +687,16 @@ color: var(--color-text) !important;
 
 /* === Responsive Layout for Mobile (phones) === */
 @media screen and (max-width: 768px) {
+  /* ✅ Hide scrollbar across browsers but allow scrolling */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body, html {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
 .dashboardContainer {
   flex-direction: column;
   min-height: 100vh;
@@ -725,9 +734,11 @@ color: var(--color-text) !important;
 
 .mainContent,
 .mainContent.shifted {
-  width: 100% !important;
+  min-width: 100% !important;
   margin-left: 0 !important;
   padding: 15px;
+  min-height: 140vh;
+  max-height: fit-content;
 }
 
 .notificationContainer {

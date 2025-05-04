@@ -1,10 +1,9 @@
 /* === General === */
 .locationPage {
-  position: sticky;
+  position: relative;
   background: none;
   font-family: Roboto, sans-serif;
   margin: 0 auto;
-  left: 445px;
   bottom: 100px;
   position: relative;
   transition: margin-left 0.3s ease;
@@ -18,7 +17,7 @@
   background: #ffffff;
   position: relative;
   top: 200px;
-  left: -130px;
+  left: 340px;
   width: 250px;
   max-width: 300px;
   min-width: 250px;
@@ -38,9 +37,9 @@
 }
 
 .mapContainer {
-  width: 120%;
+  width: 113%;
   height: 100vh;
-  right: 35%;
+  right: -5.2%;
   top:13%;
   position: absolute;
   transition: right 0.3s ease-in-out;
@@ -88,7 +87,7 @@
 .toggleSidebar {
   position: absolute;
   top: 300px;
-  left: -250px;
+  left: 220px;
   transform: translateY(-50%);
   z-index: 20;
   background-color: #366e39;
@@ -276,136 +275,25 @@
 }
 
 @media (max-width: 768px) {
-  .locationPage {
-    left: 353px;
-    bottom: -40px;
-    padding: 10px;
-    width: 117%;
-  }
   /* === Sidebar === */
 .mapSidebar {
-  background: #ffffff;
-  position: relative;
-  top: 0px;
-  left: 0px;
-  height: 220px;
-  width: 160px;
-  max-width: 266px;
-  min-width: 150px;
-  padding: 11px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #0003;
-  z-index: 10;
+position: relative;
+margin-left: 25px;
+}
+
+.toggleSidebar {
+  margin-left: 26px;
+  transform: translateY(-50%);
+  cursor: pointer;
   transition: transform 0.3s ease;
-  transform: translateX(-370px);
 }
 
-.mapUi {
-  right: 400px;
-  position: relative;
-  top: -363px;
-}
-
+/* 🔽 Collapsed state shifts sidebar off-screen */
 .mapSidebar.collapsed {
-  transform: translateX(-750px);
+  transform: translateX(100%);
 }
 
-.mapSidebar h2,
-.mapSidebar h3 {
-  font-size: 10px;
-  text-align: center;
-  margin-top: -3px;
+.toggleSidebar.collapsed {
+  left: -40px;
 }
-
-  .toggleSidebar {
-    top: 126px;
-    left: -199px;
 }
-
-  .toggleSidebar.collapsed {
-    top: 126px;
-    left: -370px;
-  }
-
-  .travelModeSelector,
-  .routeSelect select {
-    position: relative;
-    width: 100%;
-    height: 32px;
-    font-size: 0.9rem;
-    margin-top: -3px;
-  }
-
-  .travelModeSelector option::before {
-    content: attr(data-icon);
-    font-size: 18px;
-  }
-
-  .mapBtn {
-  font-size: 8px;
-  position: relative;
-  top: -9px;
-  text-align: center;
-  padding: 3px;
-  width: 60%;
-  }
-
-
-  .trafficBtn {
-    position: relative;
-    top: -6px;
-    left: 14px;
-    text-align: center;
-    width: 24%;
-    height: 23px;
-    padding: 0px;
-}
-
-  .nearbyBtn {
-    position: relative;
-    top: -57px;
-    left: 110px;
-    text-align: center;
-    width: 20%;
-    height: 22px;
-    padding: 0px;
-  }
-
-  .routeSelect {
-    position: relative;
-    border: none;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    padding: 10px;
-    top: -10px;
-    left: -10px;
-    width: 90%;
-  }
-
-  .routeInfo {
-    font-size: 10px;
-    padding: 2px;
-    width: 100%;
-    height: 18%;
-  }
-
-  .routeInfoInner {
-    font-size: 0;
-    padding: 4px;
-    width: 100%;
-    height: 100%;
-  }
-
-  .routeInfoInner p {
-    font-size: 10px;
-    position: relative;
-    top: -11px;
-}
-  .routeSelect select {
-    padding: 6px;
-  }
-}
-
-

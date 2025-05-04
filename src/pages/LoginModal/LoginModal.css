@@ -21,21 +21,7 @@ body {
     margin-bottom: 1rem;
   }
   
-  .spinner {
-    width: 18px;
-    height: 18px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #00bf63;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+
 /* Modal Overlay */
 .login-modal-overlay {
     position: fixed;
@@ -60,15 +46,17 @@ body {
   background-color: rgba(255, 255, 255, 0.9); /* slightly more solid base */
   border-radius: 16px;
   padding: 2rem;
-  width: 800px;
-  max-width: 90%;
+  width: 300%;
+  max-width: 800px;
   text-align: center;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   position: relative;
-  overflow: hidden;
-  min-height: 100px;
-  max-height: 800px;
+  max-height: 90vh;        /* Limit modal to 90% of screen height */
+  overflow-y: auto;        /* Allow internal scroll */
+  margin-top: 2vh;         /* Small top spacing for breathing room */
+  margin-bottom: 2vh;
 }
+
 
 
 /* Logo Container becomes the circular frame */
@@ -273,298 +261,150 @@ body {
     margin: 0 12px;
     border-radius: 1px;
   }
+/* Responsive Adjustments */
 
-  /* === Enhanced Modal Content === */
-.terms-modal {
-  background: linear-gradient(to bottom right, #f2ede3, #ffffff);
-  max-width: 800px;
-  width: 100%;
-  border-radius: 16px;
-  padding: 2.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  text-align: left;
-  position: relative;
-  font-family: 'Inter', sans-serif;
-  animation: slideDown 0.3s ease;
-  border: 1px solid #d2d27d;
-}
-
-/* === Modal Heading === */
-.terms-modal h3 {
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.75rem;
-  color: #4a954e;
-  border-bottom: 2px solid #d2d27d;
-  padding-bottom: 0.5rem;
-}
-
-/* === Text Content & Lists === */
-.terms-modal p,
-.terms-modal ul {
-  color: #444;
-  font-size: 0.95rem;
-  line-height: 1.75;
-  margin-bottom: 1rem;
-}
-
-.terms-modal ul {
-  padding-left: 1.5rem;
-  list-style-type: disc;
-}
-
-.terms-modal li {
-  margin-bottom: 0.5rem;
-}
-
-/* === Modal Button === */
-.close-modal-button {
-  background-color: #00bf63;
-  color: white;
-  width: 100%;
-  padding: 0.8rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  margin-top: 1.5rem;
-  transition: background-color 0.3s ease;
-  border: none;
-  cursor: pointer;
-}
-
-.close-modal-button:hover {
-  background-color: #4a954e;
-}
-
-
-
-.terms-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.terms-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #00bf63; /* optional Seagold green */
-}
-
-.terms-text {
-  color: #366e39;
-}
-
-.terms-privacy-trigger {
-  color: #f6c971;
-  font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* Animation */
-@keyframes slideDown {
-  from {
-    transform: translateY(-30px);
-    opacity: 0;
+/* Small Devices (phones) */
+@media (max-width: 576px) {
+  .login-modal {
+    width: 95%;
+    padding: 1.5rem 1rem;
   }
-  to {
-    transform: translateY(0px);
-    opacity: 1;
+
+  .input-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-button,
+  .google-login-button {
+    width: 100%;
+    margin: 0.5rem 0;
+    margin-left: 0;
+  }
+
+  .tab {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .form-title {
+    font-size: 1.3rem;
+  }
+
+  .logo-container {
+    width: 100px;
   }
 }
 
-  
-  /* 🌐 Responsive: Tablets (max-width: 1024px) */
-@media (max-width: 1024px) {
-    .login-modal {
-      width: 90%;
-      padding: 1.5rem;
-      height: 62px;
-    }
-  
-    .input-row {
-      flex-direction: column;
-      gap: 0.8rem;
-    }
-  
-    .google-login-button {
-      width: 70%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  
-    .form-button {
-      width: 70%;
-    }
+/* Medium Devices (tablets) */
+@media (min-width: 577px) and (max-width: 768px) {
+  .login-modal {
+    width: 90%;
+    padding: 2rem 1.5rem;
   }
-  
-  /* 📱 Responsive: Small Tablets & Phones (max-width: 768px) */
-  @media (max-width: 768px) {
-    .login-modal {
-      width: 90%;
-      padding: 0.8rem 1rem;
-      height: auto; /* allow natural height */
-      height: 826px;
-    }
-  
-    .tab-navigation {
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-  
-    .input-row {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  
-    .form-title {
-      font-size: 1.2rem;
-    }
-  
-    .form-button,
-    .google-login-button {
-      width: 100%;
-      margin: 0.5rem auto 0;
-    }
-  
-    .divider-text {
-      font-size: 0.8rem;
-    }
-  
-    .logo-container {
-      width: 100px;
-      margin-bottom: 0.5rem;
-    }
-  
-    .logo {
-      width: 100%;
-    }
+
+  .form-button,
+  .google-login-button {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
   }
-  
-  
-  /* 📱 Responsive: Small Devices (max-width: 540px) */
-@media (max-width: 540px) {
-    .login-modal {
-      padding: 0.6rem;
-      width: 95%;
-      height: 76vh; /* ✅ minimizes height dynamically */
-      max-height: 95vh; /* Optional: prevents modal from being too tall */
-      overflow-y: auto; /* Allows scroll if content overflows */
-    }
-  
-    .logo-container {
-      width: 80px;
-    }
-  
-    .form-title {
-      font-size: 1rem;
-      margin-bottom: 1rem;
-    }
-  
-    .form-button,
-    .google-login-button {
-      width: 100%;
-      padding: 0.6rem;
-      font-size: 0.9rem;
-    }
-  
-    .tab {
-      font-size: 0.85rem;
-      padding: 0.4rem 0.6rem;
-    }
-  
-    .input-container input,
-    .input-container select {
-      font-size: 0.85rem;
-      padding: 8px 12px 8px 42px;
-      border-radius: 20px;
-    }
-  
-    .input-row {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  
-    .divider-text {
-      font-size: 0.8rem;
-      margin: 1rem 0;
-    }
+
+  .form-title {
+    font-size: 1.4rem;
   }
-  @media (max-width: 775px) and (min-width: 541px) {
-    .maintenance-wrapper {
-      padding: 30px 10px;
-    }
-  
-    .maintenance-container {
-      margin: 0 auto;
-      padding: 25px 15px;
-      max-width: 100%;
-    }
-  
-    .maintenance-header {
-      font-size: 1.8rem;
-      text-align: center;
-    }
-  
-    .maintenance-description {
-      font-size: 1rem;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-  
-    .maintenance-form {
-      padding: 20px;
-      margin-right: 0;
-    }
-  
-    .issue-label {
-      font-size: 0.95rem;
-      justify-content: center;
-    }
-  
-    .label-icon {
-      font-size: 1rem;
-    }
-  
-    .maintenance-form textarea {
-      font-size: 0.9rem;
-      padding: 12px;
-    }
-  
-    .file-upload-container {
-      padding: 15px;
-    }
-  
-    .upload-icon {
-      font-size: 1.8rem;
-    }
-  
-    .status-header {
-      font-size: 1.3rem;
-      margin-top: 30px;
-      text-align: center;
-    }
-  
-    .history-table {
-      font-size: 0.85rem;
-      overflow-x: auto;
-      display: block;
-      white-space: nowrap;
-    }
-  
-    .history-table th,
-    .history-table td {
-      padding: 8px;
-    }
-  
-    button.submit-button,
-    .cancel-button,
-    .view-file-button {
-      font-size: 0.9rem;
-      padding: 10px 14px;
-    }
+
+  .tab {
+    font-size: 1rem;
   }
-  
+}
+
+@media (max-width: 1366px) and (min-height: 650px) {
+  .login-modal {
+    width: 90%;
+    max-width: 710px;
+    max-height: 727px;
+    padding: 1.5rem 1.5rem;
+    overflow-y: visible;
+    margin: auto;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .form-button,
+  .google-login-button {
+    width: 90%;
+    margin: 0.5rem auto;
+  }
+
+  .input-row {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .login-modal-overlay {
+    align-items: center;
+    justify-content: center;
+    overflow-y: hidden;
+    padding: 0;
+  }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .login-modal {
+    width: 85%;
+    padding: 2rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 2vh auto;
+  }
+
+  .form-button,
+  .google-login-button {
+    width: 60%;
+    margin: 0.5rem auto;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .tab {
+    font-size: 1rem;
+  }
+
+  .input-row {
+    gap: 1rem;
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
+  .input-container {
+    flex: 1 1 45%;
+    margin-bottom: 1rem;
+  }
+
+  .logo-container {
+    width: 120px;
+    margin-bottom: 1rem;
+  }
+
+  .divider-text {
+    font-size: 0.95rem;
+    margin: 1rem 0;
+  }
+
+  .google-login-button {
+    font-size: 1rem;
+  }
+
+  .login-modal-overlay {
+    padding: 1rem;
+    align-items: center;
+    justify-content: center;
+    
+  }
+}
