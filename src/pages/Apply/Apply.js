@@ -535,22 +535,7 @@ const [showReservationModal, setShowReservationModal] = useState(true);
         <div className="contact-page-container">
             <div className="get-in-touch">
                 <h2>Interested? Be With Us!</h2>
-                <div 
-                    className="form-wrapper" 
-                    onClick={(e) => {
-                        if (!hasAgreedToReservation) {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        setShowReservationModal(true);
-                        }
-                    }}
-                    >
-                    <form 
-                        className="contact-form" 
-                        onSubmit={handleSubmit} 
-                        style={{ pointerEvents: hasAgreedToReservation ? 'auto' : 'none', opacity: hasAgreedToReservation ? 1 : 0.5 }}
-                    >
-        {showReservationModal && (
+                {showReservationModal && (
             <div className="reservation-modal-overlay">
                 <div className="reservation-modal">
                 <h3>Reservation Notice</h3>
@@ -584,6 +569,21 @@ const [showReservationModal, setShowReservationModal] = useState(true);
                 </div>
             </div>
             )}
+                <div 
+                    className="form-wrapper" 
+                    onClick={(e) => {
+                        if (!hasAgreedToReservation) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setShowReservationModal(true);
+                        }
+                    }}
+                    >
+                    <form 
+                        className="contact-form" 
+                        onSubmit={handleSubmit} 
+                        style={{ pointerEvents: hasAgreedToReservation ? 'auto' : 'none', opacity: hasAgreedToReservation ? 1 : 0.5 }}
+                    >
                     {/* Name and Email */}
                     <div className="form-row">
                         <div className="form-group">
