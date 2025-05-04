@@ -3,7 +3,7 @@ import {
   FaBell, FaBars, FaEllipsisV, FaMoon, FaSun, FaCheckCircle, FaTrash, FaCog
 } from 'react-icons/fa';
 import styles from './sidebar.module.css';
-import styles from './Topbar-tenant.module.css';
+import topbarStyles from './Topbar-tenant.module.css';
 import logo from '../assets/seagoldlogo.png';
 import ProfileUploader from '../components/ProfileUploader';
 import { getAuthToken } from '../utils/auth';
@@ -171,70 +171,70 @@ const TopBar = ({
   };
 
   return (
-    <div className={`${styles.topBar} ${isSidebarCollapsed ? styles.shifted : ""}`}>
-      <div className={`${styles.branding} ${sidebarOpen ? styles.shifted : ""}`}>
+    <div className={`${topbarStyles.topBar} ${isSidebarCollapsed ? topbarStyles.shifted : ""}`}>
+      <div className={`${topbarStyles.branding} ${sidebarOpen ? topbarStyles.shifted : ""}`}>
         <h1>Welcome, {userData?.name?.split(' ')[0] || 'User'}</h1>
       </div>
 
 
-          <div className={styles.topBarRight}>
+          <div className={topbarStyles.topBarRight}>
         <div
-          className={styles.notificationContainer}
+          className={topbarStyles.notificationContainer}
           ref={bellRef}
           onClick={toggleNotifications}
         >
-          <div className={styles.bellWrapper}>
-            <FaBell className={styles.notificationIcon} />
+          <div className={topbarStyles.bellWrapper}>
+            <FaBell className={topbarStyles.notificationIcon} />
             {notifications.length > 0 && (
-              <span className={styles.notificationBadge}>{notifications.length}</span>
+              <span className={topbarStyles.notificationBadge}>{notifications.length}</span>
             )}
           </div>
 
           {showNotifications && (
               <div
                 ref={dropdownRef}
-                className={styles.notificationDropdown} onClick={(e) => e.stopPropagation()}>
-              <h4 className={styles.notificationHeader}>
+                className={topbarStyles.notificationDropdown} onClick={(e) => e.stopPropagation()}>
+              <h4 className={topbarStyles.notificationHeader}>
                 Notifications
                 <button
-                  className={styles.settingsButton}
+                  className={topbarStyles.settingsButton}
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowSettingsDropdown((prev) => !prev);
                   }}
                 >
-                  <FaCog className={styles.settingsIcon}/>
+                  <FaCog className={topbarStyles.settingsIcon}/>
                 </button>
               </h4>
-              <ul className={styles.notificationList}>
+              <ul className={topbarStyles.notificationList}>
                 {notifications.length === 0 ? (
-                  <li className={styles.noNotifications}>No Notifications</li>
+                  <li className={topbarStyles.noNotifications}>No Notifications</li>
                 ) : (
                   notifications.map((note, index) => (
                   <li
                     key={index}
-                    className={`${styles.notificationItem} ${note.read !== undefined ? (note.read ? styles.read : styles.unread) : ""}`}
+                    className={`${topbarStyles.notificationItem} ${note.read !== undefined ? (note.read ? topbarStyles.read : topbarStyles.unread) : ""}`}
                     onClick={() => handleViewDetails(note)}
                   >
-                      <div className={styles.notificationContent}>
+                      <div className={topbarStyles.notificationContent}>
                         <span>{note.message}</span>
                         <small>{note.created_at} ({note.relative_time})</small>
                       </div>
-                      <div className={styles.menuWrapper}>
-                        <div className={styles.menuContainer}>
+                      <div className={topbarStyles.menuWrapper}>
+                        <div className={topbarStyles.menuContainer}>
                           <button
-                            className={styles.menuButton}
+                            className={topbarStyles.menuButton}
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleDropdown(e, index);
                             }}
                           >
-                            <FaEllipsisV className={styles.menuIcon}/>
+                            <FaEllipsisV className={topbarStyles.menuIcon}/>
                           </button>
                           {activeDropdown === index && (
-                            <div className={styles.dropdownMenu}>
+                            <div className={topbarStyles.dropdownMenu}>
                               <button
-                                className={`${styles.dropdownItem} ${styles.markAsRead}`}
+                                className={`${topbarStyles.dropdownItem} ${topbarStyles.markAsRead}`}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   console.log("Mark as Read clicked for id:", note.id); // 🐛 Debug line
@@ -243,7 +243,7 @@ const TopBar = ({
                               >
                                 <FaCheckCircle /> {note.read ? "Mark as Unread" : "Mark as Read"}
                               </button>
-                              <button className={`${styles.dropdownItem} ${styles.deleteNotification}`} onClick={() => deleteNotification(note.id)}>
+                              <button className={`${topbarStyles.dropdownItem} ${topbarStyles.deleteNotification}`} onClick={() => deleteNotification(note.id)}>
                                 <FaTrash /> Delete Notification
                               </button>
                             </div>
@@ -255,32 +255,32 @@ const TopBar = ({
                 )}
               </ul>
               {showSettingsDropdown && (
-                <div className={styles.settingsDropdownWrapper}>
-                  <div className={styles.settingsDropdown}>
+                <div className={topbarStyles.settingsDropdownWrapper}>
+                  <div className={topbarStyles.settingsDropdown}>
                     <div
-                      className={styles.settingCategory}
+                      className={topbarStyles.settingCategory}
                       onClick={() => setExpandSettings((prev) => (prev === "notifications" ? null : "notifications"))}
                     >
                       <span>Notifications</span>
-                      <span className={styles.arrow}>{expandSettings === "notifications" ? "▲" : "▼"}</span>
+                      <span className={topbarStyles.arrow}>{expandSettings === "notifications" ? "▲" : "▼"}</span>
                     </div>
                     {expandSettings === "notifications" && (
-                      <div className={styles.settingOptions}>
-                        <label className={styles.enableNotificationsWrapper}>
+                      <div className={topbarStyles.settingOptions}>
+                        <label className={topbarStyles.enableNotificationsWrapper}>
                           <input type="checkbox" checked={notificationsEnabled} onChange={() => setNotificationsEnabled(!notificationsEnabled)} />
-                          <span className={styles.labelText}>Enable Notifications</span>
+                          <span className={topbarStyles.labelText}>Enable Notifications</span>
                         </label>
                       </div>
                     )}
 
-                    <div className={styles.settingCategory} onClick={() => setExpandSettings((prev) => (prev === "sound" ? null : "sound"))}>
+                    <div className={topbarStyles.settingCategory} onClick={() => setExpandSettings((prev) => (prev === "sound" ? null : "sound"))}>
                       <span>Notification Sound</span>
-                      <span className={`${styles.arrow} ${expandSettings === "sound" ? styles.rotated : ""}`}>{expandSettings === "sound" ? "▲" : "▼"}</span>
+                      <span className={`${topbarStyles.arrow} ${expandSettings === "sound" ? topbarStyles.rotated : ""}`}>{expandSettings === "sound" ? "▲" : "▼"}</span>
                     </div>
                     {expandSettings === "sound" && (
-                      <div className={styles.settingOptions}>
-                        <div className={styles.selectInputWrapper}>
-                          <select className={styles.selectInput} value={notificationSound} onChange={handleSoundChange}>
+                      <div className={topbarStyles.settingOptions}>
+                        <div className={topbarStyles.selectInputWrapper}>
+                          <select className={topbarStyles.selectInput} value={notificationSound} onChange={handleSoundChange}>
                             <option value="Default">Default</option>
                             <option value="Doorbell">Chime</option>
                             <option value="Beep">Beep</option>
@@ -292,12 +292,12 @@ const TopBar = ({
                       </div>
                     )}
 
-                    <div className={styles.settingCategory} onClick={() => setExpandSettings((prev) => (prev === "mute" ? null : "mute"))}>
+                    <div className={topbarStyles.settingCategory} onClick={() => setExpandSettings((prev) => (prev === "mute" ? null : "mute"))}>
                       <span>Mute for</span>
-                      <span className={styles.arrow}>{expandSettings === "mute" ? "▲" : "▼"}</span>
+                      <span className={topbarStyles.arrow}>{expandSettings === "mute" ? "▲" : "▼"}</span>
                     </div>
                     {expandSettings === "mute" && (
-                      <div className={styles.settingOptions}>
+                      <div className={topbarStyles.settingOptions}>
                         <select value={muteDuration} onChange={handleMuteDurationChange}>
                           <option value="">None</option>
                           <option value="5 Minutes">5 Minutes</option>
@@ -317,8 +317,8 @@ const TopBar = ({
                       </div>
                     )}
 
-                    <button className={styles.clearNotifBtn} onClick={clearAllNotifications}>
-                      <FaTrash className={styles.icon} /> Clear All
+                    <button className={topbarStyles.clearNotifBtn} onClick={clearAllNotifications}>
+                      <FaTrash className={topbarStyles.icon} /> Clear All
                     </button>
                   </div>
                 </div>
@@ -329,40 +329,40 @@ const TopBar = ({
 
         {/* 👤 Profile */}
         <div
-          className={styles.topBarProfile}
+          className={topbarStyles.topBarProfile}
           ref={profileDropdownRef}
           onClick={(e) => {
             e.stopPropagation();
             setShowProfileDropdown((prev) => !prev);
           }}
         >
-          <img src={userData?.profile_picture || "https://res.cloudinary.com/seagold/image/upload/v1/profile/default.png"} alt="User" className={styles.profilePicture} />
+          <img src={userData?.profile_picture || "https://res.cloudinary.com/seagold/image/upload/v1/profile/default.png"} alt="User" className={topbarStyles.profilePicture} />
           <span>{userData?.name || 'User'}</span>
 
           {showProfileDropdown && (
-            <div className={styles.profileDropdown}>
+            <div className={topbarStyles.profileDropdown}>
               <ul>
                 <li>
                   <img
                     src={userData?.profile_picture || "https://res.cloudinary.com/seagold/image/upload/v1/profile/default.png"}
                     alt="User"
-                    className={styles.dropdownProfilePicture}
+                    className={topbarStyles.dropdownProfilePicture}
                     onClick={() => setShowPreviewModal(true)}
                   />
                 </li>
-                <li className={styles.userName} style={{ cursor: "pointer", color: "#4a954e" }}>
+                <li className={topbarStyles.userName} style={{ cursor: "pointer", color: "#4a954e" }}>
                   {userData?.name}
                 </li>
-                <li className={styles.profileEmail} style={{ fontSize: "0.85rem", color: "#00bf63" }}>
+                <li className={topbarStyles.profileEmail} style={{ fontSize: "0.85rem", color: "#00bf63" }}>
                   {userData?.email}
                 </li>
                 <li>
-                  <button className={styles.changePasswordBtn} onClick={() => setShowChangePassModal(true)}>
+                  <button className={topbarStyles.changePasswordBtn} onClick={() => setShowChangePassModal(true)}>
                     Change Password
                   </button>
                 </li>
                 <li>
-                  <button className={styles.logoutButton} onClick={handleLogout}>
+                  <button className={topbarStyles.logoutButton} onClick={handleLogout}>
                     Logout
                   </button>
                 </li>
@@ -372,16 +372,16 @@ const TopBar = ({
 
           {/* 🔍 Preview Modal */}
           {showPreviewModal && (
-            <div className={styles.modalBackdrop} onClick={() => setShowPreviewModal(false)}>
-              <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={topbarStyles.modalBackdrop} onClick={() => setShowPreviewModal(false)}>
+              <div className={topbarStyles.modalContent} onClick={(e) => e.stopPropagation()}>
                 <h3>Current Profile Picture</h3>
                 <img
                   src={userData?.profile_picture || "https://res.cloudinary.com/seagold/image/upload/v1/profile/default.png"}
                   alt="Preview"
-                  className={styles.previewImage}
+                  className={topbarStyles.previewImage}
                 />
                 <button
-                  className={styles.uploadTriggerBtn}
+                  className={topbarStyles.uploadTriggerBtn}
                   onClick={() => {
                     setShowPreviewModal(false);
                     setShowUploadModal(true);
@@ -395,8 +395,8 @@ const TopBar = ({
 
           {/* 📤 Upload Modal */}
           {showUploadModal && (
-            <div className={styles.modalBackdrop} onClick={() => setShowUploadModal(false)}>
-              <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={topbarStyles.modalBackdrop} onClick={() => setShowUploadModal(false)}>
+              <div className={topbarStyles.modalContent} onClick={(e) => e.stopPropagation()}>
                 <h3>Upload New Profile Picture</h3>
                 <ProfileUploader
                   onUploadSuccess={(newUrl) => {
@@ -409,8 +409,8 @@ const TopBar = ({
           )}
           {/* 🔐 Change Password Modal */}
           {showChangePassModal && (
-  <div className={styles.modalBackdrop} onClick={() => setShowChangePassModal(false)}>
-    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+  <div className={topbarStyles.modalBackdrop} onClick={() => setShowChangePassModal(false)}>
+    <div className={topbarStyles.modalContent} onClick={(e) => e.stopPropagation()}>
       <h3>Change Password</h3>
 
       <input
@@ -420,7 +420,7 @@ const TopBar = ({
         onChange={(e) =>
           setPasswordForm({ ...passwordForm, current_password: e.target.value })
         }
-        className={styles.inputField}
+        className={topbarStyles.inputField}
       />
       <input
         type="password"
@@ -429,7 +429,7 @@ const TopBar = ({
         onChange={(e) =>
           setPasswordForm({ ...passwordForm, new_password: e.target.value })
         }
-        className={styles.inputField}
+        className={topbarStyles.inputField}
       />
       <input
         type="password"
@@ -438,13 +438,13 @@ const TopBar = ({
         onChange={(e) =>
           setPasswordForm({ ...passwordForm, new_password_confirmation: e.target.value })
         }
-        className={styles.inputField}
+        className={topbarStyles.inputField}
       />
 
-      {passwordFeedback && <p className={styles.feedbackMsg}>{passwordFeedback}</p>}
+      {passwordFeedback && <p className={topbarStyles.feedbackMsg}>{passwordFeedback}</p>}
 
       <button
-        className={styles.confirmBtn}
+        className={topbarStyles.confirmBtn}
         onClick={async () => {
           setPasswordFeedback("");
           if (passwordForm.new_password !== passwordForm.new_password_confirmation) {
