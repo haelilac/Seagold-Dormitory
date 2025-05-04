@@ -485,7 +485,7 @@ const PaymentTenant = () => {
       </p>
     )}
   </div>
-  <div className="balance-box due">
+  <div className="balance-box-due">
     <p>Next Payment Due</p>
     <h2>
       {firstPartialMonth
