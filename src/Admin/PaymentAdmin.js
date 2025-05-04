@@ -58,7 +58,7 @@ const PaymentAdmin = () => {
             unit_code: e.payment.unit?.unit_code || 'N/A',
             total_due: `₱${parseFloat(e.payment.amount).toFixed(2)}`,
             balance: `₱${parseFloat(e.payment.remaining_balance || 0).toFixed(2)}`,
-            payment_date: e.payment.created_at,
+            payment_date: e.payment.submitted_at || e.payment.created_at,
             status: e.payment.status,
           };
       
@@ -206,38 +206,55 @@ const PaymentAdmin = () => {
     };
 
     const handleStatusUpdate = async (paymentId, status) => {
-        const token = localStorage.getItem('token');
-        const endpoint = status === 'Confirmed'
-            ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
-            : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
-
-        try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json' },
-            });
-            if (!response.ok) throw new Error(`Failed to ${status.toLowerCase()} payment`);
-            alert(`Payment ${status} successfully!`);
-            setExpandedRow(null);
-            fetchMergedData();
-        } catch (error) {
-            console.error(error.message);
-            alert(`Failed to ${status.toLowerCase()} payment`);
-        }
-    };
+      const token = localStorage.getItem('token');
+      const endpoint = status === 'Confirmed'
+          ? `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/confirm`
+          : `https://seagold-laravel-production.up.railway.app/api/payments/${paymentId}/reject`;
+  
+      try {
+          const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                  Authorization: `Bearer ${getAuthToken()}`,
+                  'Content-Type': 'application/json'
+              },
+          });
+  
+          if (!response.ok) throw new Error(`Failed to ${status.toLowerCase()} payment`);
+  
+          // ✅ Update mergedData directly without full refetch
+          setMergedData(prev =>
+              prev.map(p => p.id === paymentId ? { ...p, status } : p)
+          );
+  
+          alert(`Payment ${status} successfully!`);
+          setExpandedRow(null);
+          setShowExpandedModal(false);
+          setSelectedPayment(null);
+  
+          updateCache('payments', mergedData.map(p => p.id === paymentId ? { ...p, status } : p));
+  
+          // ❌ Comment this out if avoiding full refetch
+          // fetchMergedData();
+  
+      } catch (error) {
+          console.error(error.message);
+          alert(`Failed to ${status.toLowerCase()} payment`);
+      }
+  };
 
     useEffect(() => { getPaymentStatusCounts(); }, [mergedData]);
+
     useEffect(() => {
-        const cached = getCache('payments');
-        if (cached?.length > 0) {
+      const cached = getCache('payments');
+      if (Array.isArray(cached) && cached.length > 0) {
           setMergedData(cached);
           setLoading(false);
-        } else {
-          fetchMergedData(); // only fetch if no cache
-        }
-      }, []);
+      } else {
+          fetchMergedData();
+      }
+  }, []);
 
-    <button onClick={fetchMergedData}>🔄 Refresh Payments</button>
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -293,6 +310,7 @@ const filteredData = selectedStatus === 'All'
 
     const years = getYearsFromData(mergedData);
     if (loading) return <div className="paymentadmin-spinner"></div>;
+
     return (
         <div className="admin-payment-container">
             <h2>Admin Payment Dashboard</h2>
@@ -327,6 +345,9 @@ const filteredData = selectedStatus === 'All'
                     </button>
                 ))}
                 </div>
+<div className="refresh-bar">
+  <button onClick={fetchMergedData}>🔄 Refresh Payments</button>
+</div>
 
                 {Object.keys(groupedData).map((unit) => (
   <div key={unit} className="unit-section">
@@ -458,11 +479,12 @@ const filteredData = selectedStatus === 'All'
                                             <td>{payment.status}</td>
                                         </tr>
                                     ))}
-                                    {selectedMonthData && (
-                                        <div className="modal-balance-info">
-                                            <p><strong>Remaining Balance:</strong> {selectedMonthData.balance}</p>
-                                        </div>
-                                    )}
+                                {selectedMonthData && (
+                                    <div className="modal-balance-info">
+                                        <p><strong>Expected Amount:</strong> {selectedMonthData.total_due}</p>
+                                        <p><strong>Remaining Balance:</strong> {selectedMonthData.balance}</p>
+                                    </div>
+                                )}
                                 </tbody>
                             </table>
                         ) : (

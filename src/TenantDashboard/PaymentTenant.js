@@ -473,22 +473,31 @@ const PaymentTenant = () => {
 </div>
 
 
-        <div className="balance-section">
-            <div className="balance-box">
-                <p>Remaining Bill for This Month</p>
-                <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>
-            </div>
-            <div className="balance-box due">
-                <p>Next Payment Due</p>
-                <h2>
-                    {firstPartialMonth ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                    }) : "No Dues"}
-                </h2>
-            </div>
-        </div>
+<div className="balance-section">
+  <div className="balance-box">
+    <p>Remaining Bill for This Month</p>
+    <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>
+
+    {formData.payment_type === 'Partially Paid' && (
+      <p>
+        <strong>Expected Total:</strong>{' '}
+        ₱{(Number(formData.amount || 0) + Number(displayedRemainingBalance || 0)).toFixed(2)}
+      </p>
+    )}
+  </div>
+  <div className="balance-box due">
+    <p>Next Payment Due</p>
+    <h2>
+      {firstPartialMonth
+        ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          })
+        : 'No Dues'}
+    </h2>
+  </div>
+</div>
     </div>
 )}
 
@@ -630,8 +639,6 @@ const PaymentTenant = () => {
                     </>
                 )}
 
-            </form>
-
             <button className="submit-payment-button"
                     type="submit"
                     disabled={
@@ -647,6 +654,8 @@ const PaymentTenant = () => {
                         ? "Submit Payment"
                         : "Waiting for Receipt Validation..."}
                 </button>
+            </form>
+
 
 
             {dueDate && <p >Next Payment Due Date: {dueDate}</p>}
@@ -701,7 +710,9 @@ const PaymentTenant = () => {
               day: 'numeric',
               year: 'numeric'
             })}
-            {getPaymentLabel(month)}
+            {getPaymentLabel(month).includes("Partial") && (
+              <span className="badge warning">Partially Paid</span>
+            )}
           </li>
         ))}
       </ul>
@@ -795,8 +806,8 @@ const PaymentTenant = () => {
                                             </td>
                                             <td>₱{payment.amount}</td>
                                             <td>₱{payment.remaining_balance}</td>
-                                            <td>{payment.payment_method}</td> {/* ✅ "E-Wallet" or "Bank Transfer" */}
-                                            <td>{payment.payment_type}</td> {/* ✅ "Partially Paid" or "Fully Paid" */}
+                                            <td>{payment.payment_type}</td>   // "Fully Paid" or "Partially Paid"
+                                            <td>{payment.payment_method}</td> // "GCash" or "Cash"
                                             <td>{payment.reference_number}</td>
                                             <td>
                                                 {payment.status.toLowerCase() === "pending" ? ( // 🔥 convert to lowercase
