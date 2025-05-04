@@ -235,6 +235,7 @@ const RoomInfoTenant = () => {
               <tr>
                 <th>Amenity Type</th>
                 <th>Status</th>
+                <th>Date Requested</th>
               </tr>
             </thead>
             <tbody>
@@ -259,11 +260,16 @@ const RoomInfoTenant = () => {
                         </>
                       )}
                     </td>
+                    <td>{new Date(req.created_at).toLocaleDateString('en-PH', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="2">No amenity requests yet.</td>
+                  <td colSpan="3">No amenity requests yet.</td>
                 </tr>
               )}
             </tbody>

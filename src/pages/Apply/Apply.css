@@ -5,59 +5,6 @@ body {
   margin: 0;
   padding: 0;
 }
-.reservation-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.reservation-modal {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  text-align: center;
-}
-
-.modal-buttons button {
-  margin: 1rem;
-  padding: 0.7rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.agree-btn {
-  background-color: #4a954e;
-  color: white;
-}
-
-.decline-btn {
-  background-color: #aaa;
-  color: white;
-}
-
-.form-interaction-blocker.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-  position: relative;
-}
-
-.form-interaction-blocker.disabled::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255, 255, 255, 0.7);
-  z-index: 2;
-}
 
 /* Page Container */
 .contact-page-container {
