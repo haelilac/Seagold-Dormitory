@@ -409,87 +409,78 @@ const TopBar = ({
           )}
           {/* 🔐 Change Password Modal */}
           {showChangePassModal && (
-            <div className={styles.modalBackdrop} onClick={() => setShowChangePassModal(false)}>
-              <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                <h3>Change Password</h3>
-                <input
-                  type="password"
-                  placeholder="Current Password"
-                  value={passwordForm.current_password}
-                  onChange={(e) =>
-                    setPasswordForm({ ...passwordForm, current_password: e.target.value })
-                  }
-                  className={styles.inputField}
-                />
-                <input
-                  type="password"
-                  placeholder="New Password"
-                  value={passwordForm.new_password}
-                  onChange={(e) =>
-                    setPasswordForm({ ...passwordForm, new_password: e.target.value })
-                  }
-                  className={styles.inputField}
-                />
-                <input
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={passwordForm.new_password_confirmation}
-                  onChange={(e) =>
-                    setPasswordForm({
-                      ...passwordForm,
-                      new_password_confirmation: e.target.value,
-                    })
-                  }
-                  className={styles.inputField}
-                />
+  <div className={styles.modalBackdrop} onClick={() => setShowChangePassModal(false)}>
+    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      <h3>Change Password</h3>
 
-                {passwordFeedback && <p className={styles.feedbackMsg}>{passwordFeedback}</p>}
+      <input
+        type="password"
+        placeholder="Current Password"
+        value={passwordForm.current_password}
+        onChange={(e) =>
+          setPasswordForm({ ...passwordForm, current_password: e.target.value })
+        }
+        className={styles.inputField}
+      />
+      <input
+        type="password"
+        placeholder="New Password"
+        value={passwordForm.new_password}
+        onChange={(e) =>
+          setPasswordForm({ ...passwordForm, new_password: e.target.value })
+        }
+        className={styles.inputField}
+      />
+      <input
+        type="password"
+        placeholder="Confirm Password"
+        value={passwordForm.new_password_confirmation}
+        onChange={(e) =>
+          setPasswordForm({ ...passwordForm, new_password_confirmation: e.target.value })
+        }
+        className={styles.inputField}
+      />
 
-                <button
-                  className={styles.confirmBtn}
-                  onClick={async () => {
-                    setPasswordFeedback("");
-                    if (passwordForm.new_password !== passwordForm.new_password_confirmation) {
-                      setPasswordFeedback("New passwords do not match.");
-                      return;
-                    }
+      {passwordFeedback && <p className={styles.feedbackMsg}>{passwordFeedback}</p>}
 
-                    try {
-                      const res = await fetch(
-                        "https://seagold-laravel-production.up.railway.app/api/change-password",
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
-                          },
-                          body: JSON.stringify({
-                            current_password: passwordForm.current_password,
-                            new_password: passwordForm.new_password,
-                            new_password_confirmation: passwordForm.new_password_confirmation,
-                          }),
-                        }
-                      );
-                      const data = await res.json();
+      <button
+        className={styles.confirmBtn}
+        onClick={async () => {
+          setPasswordFeedback("");
+          if (passwordForm.new_password !== passwordForm.new_password_confirmation) {
+            setPasswordFeedback("New passwords do not match.");
+            return;
+          }
 
-                      if (!res.ok) throw new Error(data.message || "Password change failed.");
+          try {
+            const res = await fetch(
+              "https://seagold-laravel-production.up.railway.app/api/change-password",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token") || sessionStorage.getItem("token")}`,
+                },
+                body: JSON.stringify(passwordForm),
+              }
+            );
+            const data = await res.json();
 
-                      setPasswordFeedback("Password changed successfully!");
-                      setPasswordForm({
-                        current_password: "",
-                        new_password: "",
-                        new_password_confirmation: "",
-                      });
-                    } catch (err) {
-                      setPasswordFeedback(err.message);
-                    }
-                  }}
-                >
-                  Confirm Change
-                </button>
-              </div>
-            </div>
-          )}
+            if (!res.ok) throw new Error(data.message || "Password change failed.");
+
+            setPasswordFeedback("Password changed successfully!");
+            setPasswordForm({ current_password: '', new_password: '', new_password_confirmation: '' });
+
+          } catch (err) {
+            setPasswordFeedback(err.message);
+          }
+        }}
+      >
+        Confirm Change
+      </button>
+    </div>
+  </div>
+)}
           </div>
         </div>
       </div>
