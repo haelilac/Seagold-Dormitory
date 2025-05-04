@@ -179,8 +179,16 @@ const RoomInfoTenant = () => {
             <span className="infoLabel">CAPACITY:</span> {info.max_capacity} occupants
           </div>
           <div className="infoBlock">
+            <FaCheckCircle className="infoIcon" />
+            <span className="infoLabel">STATUS:</span>{" "}
+            <span style={{ color: info.status === 'available' ? '#00bf63' : 'red' }}>
+              {info.status === 'available' ? 'Available' : 'Unavailable'}
+            </span>
+          </div>
+          <div className="infoBlock">
             <FaMoneyBillWave className="infoIcon" />
-            <span className="infoLabel">MONTHLY RENT:</span> ₱{info.base_price?.toLocaleString()}
+            <span className="infoLabel">MONTHLY RENT:</span>{" "}
+            ₱{(info.set_price || info.base_price)?.toLocaleString()}
           </div>
           <div className="infoBlock">
             <FaCalendarAlt className="infoIcon" />
