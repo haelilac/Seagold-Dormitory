@@ -9,13 +9,14 @@ const PaymentTenant = () => {
 
     const { getCachedData, updateCache } = useDataCache();
     const getPaymentLabel = (date) => {
-        if (balanceDue[date] > 0 && paymentHistory.some(p => p.payment_period === date && p.amount > 0)) {
-          return " (Partially Paid)";
-        } else if (balanceDue[date] > 0) {
-          return " (Unpaid)";
-        }
-        return "";
-      };
+      const normalizedDate = normalized(date);
+      if (balanceDue[normalizedDate] > 0 && paymentHistory.some(p => normalized(p.payment_period) === normalizedDate && p.amount > 0)) {
+        return " (Partially Paid)";
+      } else if (balanceDue[normalizedDate] > 0) {
+        return " (Unpaid)";
+      }
+      return "";
+    };
     const [isCompact, setIsCompact] = useState(false);
     const [currentView, setCurrentView] = useState("dashboard");
     const [currentBillView, setCurrentBillView] = useState("bills");
@@ -267,14 +268,16 @@ const start = (checkIn.getDate() >= 25)
         const periodStatus = {};
 
         payments.forEach((p) => {
-            const period = p.payment_period;
-            if (!periodStatus[period]) {
-                periodStatus[period] = { amountPaid: 0, remainingBalance: unitPrice };
-            }
-        
-            periodStatus[period].amountPaid += parseFloat(p.amount);
-            periodStatus[period].remainingBalance = Math.max(0, unitPrice - periodStatus[period].amountPaid);
-        });
+          const period = new Date(p.payment_period);
+          const normalized = `${period.getFullYear()}-${String(period.getMonth() + 1).padStart(2, '0')}-01`;
+      
+          if (!periodStatus[normalized]) {
+              periodStatus[normalized] = { amountPaid: 0, remainingBalance: unitPrice };
+          }
+      
+          periodStatus[normalized].amountPaid += parseFloat(p.amount);
+          periodStatus[normalized].remainingBalance = Math.max(0, unitPrice - periodStatus[normalized].amountPaid);
+      });
     
         let unpaidPeriods = [];
         let partiallyPaidPeriods = [];
