@@ -420,7 +420,8 @@ const PaymentTenant = () => {
         const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${getAuthToken()}`
+            Authorization: `Bearer ${getAuthToken()}`,
+            Accept: 'application/json' 
           },
           body: requestData
         });
