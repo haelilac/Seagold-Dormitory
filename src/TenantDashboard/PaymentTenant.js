@@ -178,6 +178,10 @@ const PaymentTenant = () => {
               headers: { Authorization: `Bearer ${getAuthToken()}` },
             });
       
+            if (!paymentRes.ok) {
+              const errorData = await paymentRes.json();
+              throw new Error(errorData.error || 'Failed to fetch payments');
+            }
             const paymentData = await paymentRes.json();
             updateCache(`payments-${user.id}`, paymentData);
             applyPaymentData(paymentData);
