@@ -181,6 +181,22 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
 }
+
+.close-login-button {
+  background-color: #d32f2f;
+  position: absolute;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  left: 92%;
+  top: 14px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+.close-login-button:hover {
+  background-color: #b71c1c;
+}
   
 .form-button:hover {
     background: #4a954e;

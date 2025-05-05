@@ -33,6 +33,7 @@ const PendingApplications = () => {
     const { getCachedData, updateCache } = useDataCache();
     const cachedApplications = getCachedData('applications');
     const [processingAction, setProcessingAction] = useState(null); // 'accept' | 'decline' | 'save'
+    const [previewImageUrl, setPreviewImageUrl] = useState(null);
      useEffect(() => {
        document.body.style.overflow = "auto"; // force scroll back on
      }, []);
@@ -296,6 +297,7 @@ const PendingApplications = () => {
     if (loading) return <div className="application-spinner"></div>;
 
     return (
+      <>
         <div className="pending-applications">
           <h2 className="pending-title">Pending Applications</h2>
           <table className="applications-table">
@@ -324,7 +326,6 @@ const PendingApplications = () => {
               ))}
             </tbody>
           </table>
-    
           {selectedApplication && (
             <div className="modal-overlay" onClick={handleCloseDetails}>
               <div className="application-details" onClick={e => e.stopPropagation()}>
@@ -365,19 +366,26 @@ const PendingApplications = () => {
                       {selectedApplication.valid_id && (
                         <div className="details-mid">
                           <p>Valid ID</p>
-                          <img src={selectedApplication.valid_id} alt="Valid ID" />
+                          <img
+                            src={selectedApplication.valid_id}
+                            alt="Valid ID"
+                            onClick={() => setPreviewImageUrl(selectedApplication.valid_id)}
+                            style={{ cursor: "pointer", maxHeight: '150px' }}
+                          />
                         </div>
                       )}
 
                       {selectedApplication.receipt_url && (
                         <div className="details-right">
                           <p>Receipt</p>
-                          <img src={selectedApplication.receipt_url} alt="Receipt" />
+                          <img
+                            src={selectedApplication.receipt_url}
+                            alt="Receipt"
+                            onClick={() => setPreviewImageUrl(selectedApplication.receipt_url)}
+                            style={{ cursor: "pointer", maxHeight: '150px' }}
+                          />
                         </div>
                       )}
-                    </div>
-    
-
     
                     {/* Actions */}
                     <div className="action-buttons">
@@ -407,6 +415,7 @@ const PendingApplications = () => {
                               disabled={processingAction !== null}>
                         Edit
                       </button>
+                    </div>
                     </div>
                   </>
                 ) : (
@@ -455,15 +464,23 @@ const PendingApplications = () => {
                       {processingAction === 'save' ? (
                         <span className="spinner"></span>
                       ) : 'Save'}
-                    </button>
+                      </button>
                     </div>
                   </div>
                 )}
               </div>
             </div>
           )}
+          {previewImageUrl && (
+            <div className="modal-overlay" onClick={() => setPreviewImageUrl(null)}>
+              <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
+                <img src={previewImageUrl} alt="Preview" style={{ maxWidth: '90vw', maxHeight: '90vh' }} />
+              </div>
+            </div>
+          )}
         </div>
-      );
-    };
+      </>
+    );
+  };
     
     export default PendingApplications;
