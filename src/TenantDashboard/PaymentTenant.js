@@ -273,8 +273,7 @@ const start = (checkIn.getDate() >= 25)
 
         payments.forEach((p) => {
           if (p.status !== 'Confirmed') return;
-          const period = new Date(p.payment_period);
-          const normalized = `${period.getFullYear()}-${String(period.getMonth() + 1).padStart(2, '0')}-01`;
+          const normalized = new Date(p.payment_period).toISOString().split('T')[0]; 
       
           if (!periodStatus[normalized]) {
               periodStatus[normalized] = { amountPaid: 0, remainingBalance: unitPrice };
