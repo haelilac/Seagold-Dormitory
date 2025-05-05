@@ -553,7 +553,6 @@ const PaymentTenant = () => {
                         }} />
                       </>
                     )}
-                  </form>
                   <button
                     className="submit-payment-button"
                     type="submit"
@@ -573,6 +572,7 @@ const PaymentTenant = () => {
                       'Waiting for Receipt Validation...'
                     )}
                   </button>
+                  </form>
                   {dueDate && <p>Next Payment Due Date: {dueDate}</p>}
                 </div>
               )}
