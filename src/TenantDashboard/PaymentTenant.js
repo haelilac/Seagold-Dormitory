@@ -85,43 +85,49 @@ const PaymentTenant = () => {
     const [displayedRemainingBalance, setDisplayedRemainingBalance] = useState(unitPrice);
 
     const handleAmountChange = (e) => {
-        const enteredAmount = parseFloat(e.target.value) || 0;
-        setTempAmount(e.target.value);
-    
-        const originalRemainingBalance = calculateRemainingBalance(formData.stay_type, duration, unitPrice);
-    
-        // 💥 Prevent partial payments for non-monthly tenants
-        if (formData.stay_type && formData.stay_type !== 'monthly' && enteredAmount < originalRemainingBalance) {
-            setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
-            setFormData((prevData) => ({
-                ...prevData,
-                amount: '',
-                payment_type: '',
-            }));
-            setTempAmount('');
-            setDisplayedRemainingBalance(originalRemainingBalance);
-            return;
-        }
-    
-        setWarningMessage(""); // Clear warning if valid
-    
-        const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
-        let newPaymentType = 'Fully Paid';
-    
-        if (formData.stay_type === 'monthly' && newRemainingBalance > 0) {
-            newPaymentType = 'Partially Paid';
-        }
-    
-        setFormData((prevData) => ({
-            ...prevData,
-            amount: enteredAmount,
-            payment_type: newPaymentType,
-        }));
-    
-        setDisplayedRemainingBalance(newRemainingBalance);
-    };
-    
-    
+      const enteredAmount = parseFloat(e.target.value) || 0;
+      setTempAmount(e.target.value);
+  
+      const selectedMonth = formData.payment_for;
+      const originalRemainingBalance = balanceDue[selectedMonth] !== undefined
+          ? balanceDue[selectedMonth]
+          : unitPrice;
+  
+      // 💥 Prevent partial payments for non-monthly tenants
+      if (formData.stay_type && formData.stay_type !== 'monthly' && enteredAmount < originalRemainingBalance) {
+          setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
+          setFormData((prevData) => ({
+              ...prevData,
+              amount: '',
+              payment_type: '',
+          }));
+          setTempAmount('');
+          setDisplayedRemainingBalance(originalRemainingBalance);
+          return;
+      }
+  
+      // ✅ Show overpayment warning
+      if (enteredAmount > originalRemainingBalance) {
+          setWarningMessage("⚠️ You've entered more than the remaining balance.");
+      } else {
+          setWarningMessage(""); // Clear warning if valid
+      }
+  
+      const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
+      let newPaymentType = 'Fully Paid';
+  
+      if (formData.stay_type === 'monthly' && newRemainingBalance > 0) {
+          newPaymentType = 'Partially Paid';
+      }
+  
+      setFormData((prevData) => ({
+          ...prevData,
+          amount: enteredAmount,
+          payment_type: newPaymentType,
+      }));
+  
+      setDisplayedRemainingBalance(newRemainingBalance);
+  };
     
     // ✅ Ensures final amount is registered properly on blur
     const handleAmountBlur = () => {
