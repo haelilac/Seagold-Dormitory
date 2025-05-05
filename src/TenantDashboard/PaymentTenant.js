@@ -12,6 +12,7 @@ const PaymentTenant = () => {
       const normalizedDate = normalized(date);
       if (balanceDue[normalizedDate] > 0 && paymentHistory.some(p => normalized(p.payment_period) === normalizedDate && p.amount > 0)) {
         return " (Partially Paid)";
+      
       } else if (balanceDue[normalizedDate] > 0) {
         return " (Unpaid)";
       }
@@ -304,7 +305,10 @@ const start = (checkIn.getDate() >= 25)
         });
         
         setAvailableMonths(allUnpaidPeriods);
-        setFirstPartialMonth(allUnpaidPeriods[0]);
+        const earliestWithBalance = periods.find(period => {
+          return periodStatus[period]?.remainingBalance > 0 || !periodStatus[period];
+        });
+        setFirstPartialMonth(earliestWithBalance);
     };
     
     
