@@ -411,7 +411,12 @@ const PaymentTenant = () => {
       requestData.append('payment_type', formData.payment_type);
       requestData.append('reference_number', formData.reference_number);
       requestData.append('payment_for', formData.payment_for);
-      requestData.append('receipt', formData.receipt);
+      
+      // ✅ Only attach if there's a file
+      if (formData.receipt instanceof File) {
+        requestData.append('receipt', formData.receipt);
+      }
+      
       requestData.append('receipt_url', formData.receipt_url);
       requestData.append('duration', duration);
       requestData.append('stay_type', formData.stay_type);
