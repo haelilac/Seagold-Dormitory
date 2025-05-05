@@ -1338,3 +1338,17 @@
         transform: translateX(0);
     }
 }
+
+/* mobile / small screens */
+@media (max-width: 768px) {
+    .main-content {
+        transition: margin-left 0.3s ease-in-out;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .pending-applications {
+        padding: 10px;
+        margin-left: -30%;
+    }
+}
