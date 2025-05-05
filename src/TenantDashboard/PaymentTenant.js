@@ -260,11 +260,15 @@ const PaymentTenant = () => {
     
         // Separate fully paid, partially paid, and unpaid periods
         const periodStatus = {};
+
         payments.forEach((p) => {
-            periodStatus[p.payment_period] = {
-                amountPaid: parseFloat(p.amount),
-                remainingBalance: parseFloat(p.remaining_balance),
-            };
+            const period = p.payment_period;
+            if (!periodStatus[period]) {
+                periodStatus[period] = { amountPaid: 0, remainingBalance: unitPrice };
+            }
+        
+            periodStatus[period].amountPaid += parseFloat(p.amount);
+            periodStatus[period].remainingBalance = Math.max(0, unitPrice - periodStatus[period].amountPaid);
         });
     
         let unpaidPeriods = [];
