@@ -7,7 +7,7 @@ import { useDataCache } from '../contexts/DataContext';
 
 const normalized = (dateStr) => {
   const date = new Date(dateStr);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 };
 
 const PaymentTenant = () => {
@@ -262,7 +262,8 @@ const start = (checkIn.getDate() >= 25)
                     break;
             }
     
-            const formattedDate = paymentDate.toISOString().split('T')[0];
+            const formattedDate = `${paymentDate.getFullYear()}-${String(paymentDate.getMonth() + 1).padStart(2, '0')}`;
+
             periods.push(formattedDate);
         }
     
@@ -660,8 +661,9 @@ const start = (checkIn.getDate() >= 25)
                       <ul>
                         {availableMonths.map((month, index) => (
                           <li key={index}>
-                            {new Date(month).toLocaleDateString('default', {
-                              weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+                            {new Date(month + "-01").toLocaleDateString('default', {
+
+                              weekday: 'long', month: 'long', year: 'numeric'
                             })}{getPaymentLabel(month)}
                           </li>
                         ))}
