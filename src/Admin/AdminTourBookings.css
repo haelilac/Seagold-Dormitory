@@ -13,9 +13,30 @@
 }
 
 .admin-tour-bookings {
-  top: 7%;
-  position: relative;
+  position: absolute;
+  top: 8%;
+  left: 21%;
+  transition: left 0.3s ease, width 0.3s ease;
 }
+
+/* when sidebar is collapsed (adjust selector to your markup) */
+.sidebar.collapsed + .main-content .admin-tour-bookings {
+  left: 60px; /* e.g. collapsed‐sidebar width + margin */
+  max-width: calc(100% - 60px - 4%); 
+}
+
+/* mobile / small screens */
+@media (max-width: 600px) {
+  .admin-tour-bookings {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    max-width: none;
+    margin: 1rem 0;
+  }
+}
+
 
 .admin-tour-bookings h2 {
   font-size: 1.8rem;
