@@ -196,7 +196,7 @@ html, body {
   z-index: 10000; /* One level higher than overlay just in case */
 }
 
-.close-modal-button {
+.close-tenant-modal-button {
   background-color: transparent;
   border: none;
   color: #030303;
