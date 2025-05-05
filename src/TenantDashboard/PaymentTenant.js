@@ -224,7 +224,12 @@ const PaymentTenant = () => {
     
     const generatePaymentPeriods = (startDate, duration, stayType, payments) => {
         const periods = [];
-        const start = new Date(startDate);
+        const checkIn = new Date(startDate);
+
+// If check-in is on or after the 25th, shift to next month
+const start = (checkIn.getDate() >= 25)
+  ? new Date(checkIn.getFullYear(), checkIn.getMonth() + 1, 1)
+  : new Date(checkIn.getFullYear(), checkIn.getMonth(), 1);
     
         // Generate payment periods based on stayType
         for (let i = 0; i < duration; i++) {
