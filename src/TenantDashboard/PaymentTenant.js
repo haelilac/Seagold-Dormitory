@@ -382,6 +382,7 @@ const PaymentTenant = () => {
     const handleSubmit = async (e) => {
       e.preventDefault();
     
+      // 🚫 Guard checks
       if (formData.payment_method === 'GCash' && !receiptValidated) {
         alert("⚠️ Please validate your receipt before submitting the payment.");
         return;
@@ -403,6 +404,7 @@ const PaymentTenant = () => {
         return;
       }
     
+      // 🧾 Prepare request
       const requestData = new FormData();
       requestData.append('amount', formData.amount);
       requestData.append('payment_method', formData.payment_method);
@@ -417,42 +419,52 @@ const PaymentTenant = () => {
       try {
         const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
           method: 'POST',
-          headers: { Authorization: `Bearer ${getAuthToken()}` },
-          body: requestData,
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`
+          },
+          body: requestData
         });
-      
+    
         const contentType = response.headers.get("content-type");
-      
-        let responseData;
+    
+        // 🧠 Detect if JSON
         if (contentType && contentType.includes("application/json")) {
-          responseData = await response.json();
-        } else {
-          const rawText = await response.text();
-          console.error("❌ Server returned non-JSON:", rawText);
-          alert("❌ Unexpected server response.");
-          return;
-        }
-      
-        if (!response.ok) {
-          if (responseData.details?.includes("reference number has already been used")) {
-            alert("❌ The reference number has already been used.");
-          } else {
-            alert(`❌ Payment failed: ${responseData.message || "Unknown error."}`);
+          const data = await response.json();
+    
+          if (!response.ok) {
+            if (data.details?.includes("reference number has already been used")) {
+              alert("❌ The reference number has already been used.");
+            } else {
+              alert(`❌ Payment failed: ${data.message || "Unknown error."}`);
+            }
+            return;
           }
-          return;
+    
+          // ✅ Success
+          alert('✅ Payment submitted successfully!');
+          setFormData({
+            payment_for: '',
+            reference_number: '',
+            receipt: null,
+            amount: '',
+            payment_method: ''
+          });
+          setReceiptValidated(false);
+          await fetchUserAndPayment();
+    
+        } else {
+          // 💥 Unexpected response format
+          const raw = await response.text();
+          console.error("❌ Server returned non-JSON:", raw);
+          alert("❌ Unexpected server response. Please try again later.");
         }
-      
-        alert('✅ Payment submitted successfully!');
-        setFormData({ payment_for: '', reference_number: '', receipt: null, amount: '', payment_method: '' });
-        setReceiptValidated(false);
-        await fetchUserAndPayment();
-      
+    
       } catch (error) {
-        console.error("❌ Error submitting payment:", error);
+        console.error("❌ Network/server error:", error);
         alert("❌ Server error: Please try again later.");
       }
-      
     };
+    
     
     useEffect(() => {
       if (!formData.payment_for && firstPartialMonth) {
