@@ -387,8 +387,6 @@ const PaymentTenant = () => {
             alert('❌ Please select a payment period.');
             return;
         }
-    
-
 
         const hasPendingPaymentForMonth = paymentHistory.some(
             (payment) =>
@@ -440,7 +438,12 @@ const PaymentTenant = () => {
             alert("❌ Server error: Please try again later.");
         }
     };
-    
+    useEffect(() => {
+      if (!formData.payment_for && firstPartialMonth) {
+        setFormData((prev) => ({ ...prev, payment_for: firstPartialMonth }));
+      }
+    }, [firstPartialMonth]);
+
     if (loading) {
         return <div className="payment-tenant-spinner"></div>;
       }
@@ -501,7 +504,10 @@ const PaymentTenant = () => {
                   {unitPrice > 0 && <p>Unit Price: ₱{unitPrice}</p>}
                   <form className="payment-form" onSubmit={handleSubmit}>
                     <label>Amount to Pay</label>
-                    <input type="number" name="amount" value={tempAmount} onChange={handleAmountChange} onBlur={handleAmountBlur} />
+                    <input
+                      type="number"
+                      name="amount"
+                      disabled={!formData.payment_for} value={tempAmount} onChange={handleAmountChange} onBlur={handleAmountBlur} />
                     <label>Remaining Balance for Selected Month</label>
                     <p>₱{formData.payment_for ? displayedRemainingBalance : unitPrice}</p>
                     <label>Payment For</label>
