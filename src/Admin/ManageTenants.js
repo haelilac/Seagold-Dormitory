@@ -287,7 +287,7 @@ const ManageTenants = () => {
                     {selectedTenant && (
                         <div className="modal-overlay" onClick={handleCloseModal}>
                             <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                            <button onClick={handleCloseModal} className="close-modal-button">&times;
+                            <button onClick={handleCloseModal} className="close-tenant-modal-button">&times;
                              </button>
                              
                                 <h3 className="modal-header">Tenant Details</h3>
