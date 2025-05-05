@@ -5,6 +5,11 @@ import { getAuthToken } from "../utils/auth";
 import { useDataCache } from '../contexts/DataContext';
 
 
+const normalized = (dateStr) => {
+  const date = new Date(dateStr);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+};
+
 const PaymentTenant = () => {
 
     const { getCachedData, updateCache } = useDataCache();
@@ -18,6 +23,7 @@ const PaymentTenant = () => {
       }
       return "";
     };
+    
     const [isCompact, setIsCompact] = useState(false);
     const [currentView, setCurrentView] = useState("dashboard");
     const [currentBillView, setCurrentBillView] = useState("bills");
