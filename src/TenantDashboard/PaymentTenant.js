@@ -268,6 +268,7 @@ const start = (checkIn.getDate() >= 25)
         const periodStatus = {};
 
         payments.forEach((p) => {
+          if (p.status !== 'Confirmed') return;
           const period = new Date(p.payment_period);
           const normalized = `${period.getFullYear()}-${String(period.getMonth() + 1).padStart(2, '0')}-01`;
       
