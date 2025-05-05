@@ -554,14 +554,24 @@ const PaymentTenant = () => {
                       </>
                     )}
                   </form>
-                  <button className="submit-payment-button" type="submit" disabled={isScanning || (formData.payment_method === 'GCash' && !receiptValidated && !isScanning)}>
-                    {formData.payment_method === 'Cash'
-                      ? 'Submit Cash Payment'
-                      : isScanning
-                      ? 'Scanning Receipt...'
-                      : receiptValidated
-                      ? 'Submit Payment'
-                      : 'Waiting for Receipt Validation...'}
+                  <button
+                    className="submit-payment-button"
+                    type="submit"
+                    disabled={isScanning || (formData.payment_method === 'GCash' && !receiptValidated && !isScanning)}
+                  >
+                    {formData.payment_method === 'Cash' && isScanning ? (
+                      <>
+                        <span className="spinner"></span> Submitting Cash...
+                      </>
+                    ) : formData.payment_method === 'Cash' ? (
+                      'Submit Cash Payment'
+                    ) : isScanning ? (
+                      'Scanning Receipt...'
+                    ) : receiptValidated ? (
+                      'Submit Payment'
+                    ) : (
+                      'Waiting for Receipt Validation...'
+                    )}
                   </button>
                   {dueDate && <p>Next Payment Due Date: {dueDate}</p>}
                 </div>
