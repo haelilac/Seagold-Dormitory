@@ -146,10 +146,10 @@ const PaymentTenant = () => {
     const [nextDueMonth, setNextDueMonth] = useState(null);
     
     const getNextDueMonth = () => {
-      for (const month of availableMonths) {
-        const key = normalized(month);
-        if (balanceDue[key] > 0) return key;
-    
+        for (const month of availableMonths) {
+            if (balanceDue[month] > 0) {
+                return month;
+            }
         }
         return null; // No unpaid months left
     };
@@ -220,11 +220,7 @@ const PaymentTenant = () => {
         setDueDate(data.due_date);
         setCheckInDate(data.check_in_date);
         setDuration(data.duration);
-        const normalizedBalances = {};
-for (const key in data.unpaid_balances) {
-  normalizedBalances[normalized(key)] = data.unpaid_balances[key];
-}
-setBalanceDue(normalizedBalances);
+        setBalanceDue(data.unpaid_balances || {});
         generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
     
         // 🛠️ FIX: Set stay_type in formData also!
@@ -266,10 +262,7 @@ const start = (checkIn.getDate() >= 25)
                     break;
             }
     
-            const formattedDate = new Date(
-              paymentDate.getFullYear(),
-              paymentDate.getMonth(), 1
-            ).toISOString().split('T')[0];
+            const formattedDate = paymentDate.toISOString().split('T')[0];
             periods.push(formattedDate);
         }
     
@@ -314,7 +307,7 @@ const start = (checkIn.getDate() >= 25)
             return false; // fully paid
         });
         
-        setAvailableMonths(allUnpaidPeriods.map(normalized));
+        setAvailableMonths(allUnpaidPeriods);
         const earliestWithBalance = periods.find(period => {
           return periodStatus[period]?.remainingBalance > 0 || !periodStatus[period];
         });
