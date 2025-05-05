@@ -376,68 +376,77 @@ const PaymentTenant = () => {
     }, []);
     
     const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (formData.payment_method === 'GCash' && !receiptValidated) {
-            alert("⚠️ Please validate your receipt before submitting the payment.");
-            return;
-        }
+      e.preventDefault();
     
-        if (!formData.payment_for) {
-            alert('❌ Please select a payment period.');
-            return;
-        }
-
-        const hasPendingPaymentForMonth = paymentHistory.some(
-            (payment) =>
-                payment.payment_period === formData.payment_for &&
-                payment.status === "Pending"
-        );
+      if (formData.payment_method === 'GCash' && !receiptValidated) {
+        alert("⚠️ Please validate your receipt before submitting the payment.");
+        return;
+      }
     
-        if (hasPendingPaymentForMonth) {
-            alert("⚠️ You already have a pending payment for this month. Please wait for it to be confirmed or rejected before submitting another.");
-            return;
-        }
+      if (!formData.payment_for) {
+        alert('❌ Please select a payment period.');
+        return;
+      }
     
-        const requestData = new FormData();
-        requestData.append('amount', formData.amount);
-        requestData.append('payment_method', formData.payment_method);
-        requestData.append('payment_type', formData.payment_type);
-        requestData.append('reference_number', formData.reference_number);
-        requestData.append('payment_for', formData.payment_for);
-        requestData.append('receipt', formData.receipt);       // Laravel expects file
-        requestData.append('receipt_url', formData.receipt_url);
-        requestData.append('duration', duration); // Pass the duration here
-        requestData.append('stay_type', formData.stay_type);
+      const hasPendingPaymentForMonth = paymentHistory.some(
+        (payment) =>
+          payment.payment_period === formData.payment_for &&
+          payment.status === "Pending"
+      );
+    
+      if (hasPendingPaymentForMonth) {
+        alert("⚠️ You already have a pending payment for this month.");
+        return;
+      }
+    
+      const requestData = new FormData();
+      requestData.append('amount', formData.amount);
+      requestData.append('payment_method', formData.payment_method);
+      requestData.append('payment_type', formData.payment_type);
+      requestData.append('reference_number', formData.reference_number);
+      requestData.append('payment_for', formData.payment_for);
+      requestData.append('receipt', formData.receipt);
+      requestData.append('receipt_url', formData.receipt_url);
+      requestData.append('duration', duration);
+      requestData.append('stay_type', formData.stay_type);
+    
+      try {
+        const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${getAuthToken()}` },
+          body: requestData,
+        });
+    
+        let responseData;
         try {
-            const response = await fetch('https://seagold-laravel-production.up.railway.app/api/payments', {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${getAuthToken()}` },
-                body: requestData,
-            });
-    
-            const responseData = await response.json();
-    
-            if (!response.ok) {
-                if (responseData.details?.includes("reference number has already been used")) {
-                    alert("❌ The reference number has already been used. Please enter a new one.");
-                } else {
-                    alert(`❌ Payment failed: ${responseData.message || "An error occurred. Please try again."}`);
-                }
-                return;
-            }
-    
-            alert('✅ Payment submitted successfully!');
-            setFormData({ payment_for: '', reference_number: '', receipt: null, amount: '', payment_method: '' });
-            setReceiptValidated(false);
-            await fetchUserAndPayment(); // ✅ refresh payment data using cache logic
-
-    
-        } catch (error) {
-            console.error("Error submitting payment:", error);
-            alert("❌ Server error: Please try again later.");
+          responseData = await response.json();
+        } catch (jsonError) {
+          const text = await response.text(); // fallback for inspection
+          console.error("❌ Non-JSON response from Laravel:", text);
+          alert("❌ Server error: Unexpected response. Please try again later.");
+          return;
         }
+    
+        if (!response.ok) {
+          if (responseData.details?.includes("reference number has already been used")) {
+            alert("❌ The reference number has already been used.");
+          } else {
+            alert(`❌ Payment failed: ${responseData.message || "Unknown error."}`);
+          }
+          return;
+        }
+    
+        alert('✅ Payment submitted successfully!');
+        setFormData({ payment_for: '', reference_number: '', receipt: null, amount: '', payment_method: '' });
+        setReceiptValidated(false);
+        await fetchUserAndPayment();
+    
+      } catch (error) {
+        console.error("Error submitting payment:", error);
+        alert("❌ Server error: Please try again later.");
+      }
     };
+    
     useEffect(() => {
       if (!formData.payment_for && firstPartialMonth) {
         setFormData((prev) => ({ ...prev, payment_for: firstPartialMonth }));
