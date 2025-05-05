@@ -34,7 +34,7 @@
 /* === Dashboard Container -=== */
 .dashboardContainer {
   display: flex;
-  background-color: white;
+  background-color: #f2ede3;
   margin: 0;
   min-height: 1050px;
   width: 100%;
@@ -364,8 +364,7 @@ margin: 0;
 .mainContent {
   background-color: #f2ede3;
   margin-top: 80px;
-  margin-left:10px; /* Match closed sidebar */
-  padding: 20px;
+  margin-left:10px; 
   width: calc(96.7% - 60px);
   transition: margin-left 0.3s ease, width 0.3s ease;
 }
@@ -615,10 +614,6 @@ margin: 0;
   transform: scale(1.05);
 }
 
-.mainContent {
-  background-color: var(--color-background);
-  color: var(--color-text);
-}
 
 /* Ensure text visibility for content */
 .topBarProfile span,

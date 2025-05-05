@@ -100,7 +100,7 @@
   overflow: hidden;
 }
 .branding.shifted {
-  padding-left: 80px; /* when sidebar collapsed */
+  padding-left: 195px; /* when sidebar collapsed */
 }
 
 .branding h1 {
@@ -897,6 +897,9 @@ margin-top: 5px;
   max-width: 80vw;
 }
 
+.branding.shifted {
+  padding-left: 10px; /* when sidebar collapsed */
+}
 
 .topBar {
   flex-direction: row;
