@@ -420,17 +420,19 @@ const PaymentTenant = () => {
           headers: { Authorization: `Bearer ${getAuthToken()}` },
           body: requestData,
         });
-    
+      
+        const contentType = response.headers.get("content-type");
+      
         let responseData;
-        try {
+        if (contentType && contentType.includes("application/json")) {
           responseData = await response.json();
-        } catch (jsonError) {
-          const text = await response.text(); // fallback for inspection
-          console.error("❌ Non-JSON response from Laravel:", text);
-          alert("❌ Server error: Unexpected response. Please try again later.");
+        } else {
+          const rawText = await response.text();
+          console.error("❌ Server returned non-JSON:", rawText);
+          alert("❌ Unexpected server response.");
           return;
         }
-    
+      
         if (!response.ok) {
           if (responseData.details?.includes("reference number has already been used")) {
             alert("❌ The reference number has already been used.");
@@ -439,16 +441,17 @@ const PaymentTenant = () => {
           }
           return;
         }
-    
+      
         alert('✅ Payment submitted successfully!');
         setFormData({ payment_for: '', reference_number: '', receipt: null, amount: '', payment_method: '' });
         setReceiptValidated(false);
         await fetchUserAndPayment();
-    
+      
       } catch (error) {
-        console.error("Error submitting payment:", error);
+        console.error("❌ Error submitting payment:", error);
         alert("❌ Server error: Please try again later.");
       }
+      
     };
     
     useEffect(() => {
