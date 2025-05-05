@@ -249,7 +249,10 @@ const PaymentTenant = () => {
                     break;
             }
     
-            const formattedDate = paymentDate.toISOString().split('T')[0];
+            const formattedDate = new Date(
+              paymentDate.getFullYear(),
+              paymentDate.getMonth(), 1
+            ).toISOString().split('T')[0];
             periods.push(formattedDate);
         }
     
