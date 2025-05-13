@@ -3,12 +3,13 @@ import './PaymentTenant.css';
 import { useResizeDetector } from 'react-resize-detector';
 import { getAuthToken } from "../utils/auth";
 import { useDataCache } from '../contexts/DataContext';
-
+import Select from 'react-select';
 
 const normalized = (dateStr) => {
   const date = new Date(dateStr);
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 };
+
 
 const PaymentTenant = () => {
 
@@ -28,7 +29,7 @@ const PaymentTenant = () => {
     const [currentView, setCurrentView] = useState("dashboard");
     const [currentBillView, setCurrentBillView] = useState("bills");
     const [formData, setFormData] = useState({
-        payment_for: '',
+        payment_for: [],
         payment_type: '',
         reference_number: '',
         receipt: null,            // ← actual file for Laravel
@@ -107,50 +108,49 @@ const PaymentTenant = () => {
     const [confirmedAmount, setConfirmedAmount] = useState(0); 
     const [displayedRemainingBalance, setDisplayedRemainingBalance] = useState(unitPrice);
 
-    const handleAmountChange = (e) => {
-      const enteredAmount = parseFloat(e.target.value) || 0;
-      setTempAmount(e.target.value);
-  
-      const selectedMonth = formData.payment_for;
-      const originalRemainingBalance = balanceDue[selectedMonth] !== undefined
-          ? balanceDue[selectedMonth]
-          : unitPrice;
-  
-      // 💥 Prevent partial payments for non-monthly tenants
-      if (formData.stay_type && formData.stay_type !== 'monthly' && enteredAmount < originalRemainingBalance) {
-          setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
-          setFormData((prevData) => ({
-              ...prevData,
-              amount: '',
-              payment_type: '',
-          }));
-          setTempAmount('');
-          setDisplayedRemainingBalance(originalRemainingBalance);
-          return;
-      }
-  
-      // ✅ Show overpayment warning
-      if (enteredAmount > originalRemainingBalance) {
-          setWarningMessage("⚠️ You've entered more than the remaining balance.");
-      } else {
-          setWarningMessage(""); // Clear warning if valid
-      }
-  
-      const newRemainingBalance = Math.max(0, originalRemainingBalance - enteredAmount);
-      let newPaymentType = 'Fully Paid';
-  
-      if (formData.stay_type === 'monthly' && newRemainingBalance > 0) {
-          newPaymentType = 'Partially Paid';
-      }
-  
-      setFormData((prevData) => ({
-          ...prevData,
-          amount: enteredAmount,
-          payment_type: newPaymentType,
-      }));
-  
-      setDisplayedRemainingBalance(newRemainingBalance);
-  };
+const handleAmountChange = (e) => {
+  const enteredAmount = parseFloat(e.target.value) || 0;
+  setTempAmount(e.target.value);
+
+  const selectedMonths = formData.payment_for;
+
+  const totalBalance = Array.isArray(selectedMonths)
+    ? selectedMonths.reduce((sum, month) => {
+        const balance = balanceDue[month] !== undefined ? balanceDue[month] : unitPrice;
+        return sum + balance;
+      }, 0)
+    : (balanceDue[selectedMonths] || unitPrice);
+
+  // Prevent partial payments for non-monthly
+  if (formData.stay_type && formData.stay_type !== 'monthly' && enteredAmount < totalBalance) {
+    setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
+    setFormData((prevData) => ({
+      ...prevData,
+      amount: '',
+      payment_type: '',
+    }));
+    setTempAmount('');
+    setDisplayedRemainingBalance(totalBalance);
+    return;
+  }
+
+  if (enteredAmount > totalBalance) {
+    setWarningMessage("⚠️ You've entered more than the remaining balance.");
+  } else {
+    setWarningMessage('');
+  }
+
+  const newRemaining = Math.max(0, totalBalance - enteredAmount);
+  const newType = formData.stay_type === 'monthly' && newRemaining > 0 ? 'Partially Paid' : 'Fully Paid';
+
+  setFormData((prevData) => ({
+    ...prevData,
+    amount: enteredAmount,
+    payment_type: newType,
+  }));
+  setDisplayedRemainingBalance(newRemaining);
+};
+
     
     // ✅ Ensures final amount is registered properly on blur
     const handleAmountBlur = () => {
@@ -236,7 +236,13 @@ const PaymentTenant = () => {
         setDueDate(data.due_date);
         setCheckInDate(data.check_in_date);
         setDuration(data.duration);
-        setBalanceDue(data.unpaid_balances || {});
+        setBalanceDue(
+          Object.fromEntries(
+            Object.entries(data.unpaid_balances || {}).map(([key, val]) => [
+              normalized(key), parseFloat(val)
+            ])
+          )
+        );
         generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
     
         // 🛠️ FIX: Set stay_type in formData also!
@@ -293,15 +299,16 @@ const PaymentTenant = () => {
 
         payments.forEach((p) => {
           if (p.status !== 'Confirmed') return;
-          const normalized = new Date(p.payment_period).toISOString().split('T')[0]; 
-      
-          if (!periodStatus[normalized]) {
-              periodStatus[normalized] = { amountPaid: 0, remainingBalance: unitPrice };
+          const fullDate = new Date(p.payment_period); // Ex: 2025-04-23
+          const monthKey = normalized(fullDate.toISOString()); // → 2025-04
+
+          if (!periodStatus[monthKey]) {
+              periodStatus[monthKey] = { amountPaid: 0, remainingBalance: unitPrice };
           }
-      
-          periodStatus[normalized].amountPaid += parseFloat(p.amount);
-          periodStatus[normalized].remainingBalance = Math.max(0, unitPrice - periodStatus[normalized].amountPaid);
-      });
+
+          periodStatus[monthKey].amountPaid += parseFloat(p.amount);
+          periodStatus[monthKey].remainingBalance = Math.max(0, unitPrice - periodStatus[monthKey].amountPaid);
+        });
     
         let unpaidPeriods = [];
         let partiallyPaidPeriods = [];
@@ -400,24 +407,23 @@ const PaymentTenant = () => {
     };
     
 
-    const handleMonthSelection = (e) => {
-        const selectedMonth = e.target.value;
-        
-        setFormData((prevData) => ({
-            ...prevData,
-            payment_for: selectedMonth,
-        }));
-    
-        // ✅ Fetch the correct remaining balance for the selected month
-        const originalRemainingBalance = balanceDue[selectedMonth] !== undefined
-            ? balanceDue[selectedMonth]  // Get actual remaining balance
-            : unitPrice;  // Default to full unit price if no previous payment
-    
-        // ✅ Reset displayed balance when switching months
-        setDisplayedRemainingBalance(originalRemainingBalance);
-        setTempAmount("");  // Clear amount input
-    };
+      const handleMonthSelection = (e) => {
+        const selected = Array.from(e.target.selectedOptions, option => option.value);
 
+        setFormData((prevData) => ({
+          ...prevData,
+          payment_for: selected,
+        }));
+
+        const totalRemaining = selected.reduce((sum, month) => {
+          const balance = balanceDue[month] !== undefined ? balanceDue[month] : unitPrice;
+          return sum + balance;
+        }, 0);
+
+        setDisplayedRemainingBalance(totalRemaining);
+        setTempAmount("");  // reset amount input
+      };
+      
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
@@ -443,7 +449,7 @@ const PaymentTenant = () => {
     
       const hasPendingPaymentForMonth = paymentHistory.some(
         (payment) =>
-          payment.payment_period === formData.payment_for &&
+          formData.payment_for.includes(normalized(payment.payment_period)) &&
           payment.status === "Pending"
       );
     
@@ -458,7 +464,10 @@ const PaymentTenant = () => {
       requestData.append('payment_method', formData.payment_method);
       requestData.append('payment_type', formData.payment_type);
       requestData.append('reference_number', formData.reference_number);
-      requestData.append('payment_for', formData.payment_for);
+      const checkInDay = new Date(checkInDate).getDate().toString().padStart(2, '0');
+      formData.payment_for.forEach((month) => {
+        requestData.append('payment_for[]', `${month}-${checkInDay}`);
+      });
       
       // ✅ Only attach if there's a file
       if (formData.receipt instanceof File) {
@@ -594,37 +603,49 @@ const PaymentTenant = () => {
                       name="amount"
                       disabled={!formData.payment_for} value={tempAmount} onChange={handleAmountChange} onBlur={handleAmountBlur} />
                     <label>Remaining Balance for Selected Month</label>
-                    <p>₱{formData.payment_for ? displayedRemainingBalance : unitPrice}</p>
-                    <label>Payment For</label>
-                    <select name="payment_for" value={formData.payment_for} onChange={handleMonthSelection} required>
-                      <option value="">Select Payment Date</option>
-                        {availableMonths.map((month, index) => {
-                          const today = new Date();
-                          const monthDate = new Date(`${month}-${new Date(checkInDate).getDate()}`);
-                          const isOverdue = monthDate < today;
+                    <p>₱{Number(displayedRemainingBalance).toFixed(2)}</p>
+                      <label>Payment For</label>
+                      <Select
+                        isMulti
+                        name="payment_for"
+                        options={availableMonths.map((month) => ({
+                          value: month,
+                          label: new Date(month + '-01').toLocaleDateString('default', {
+                            month: 'long',
+                            year: 'numeric',
+                            day: 'numeric'
+                          }) + getPaymentLabel(month)
+                        }))}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        value={availableMonths
+                          .map((month) => ({
+                            value: month,
+                            label: new Date(month + '-01').toLocaleDateString('default', {
+                              month: 'long',
+                              year: 'numeric',
+                              day: 'numeric'
+                            }) + getPaymentLabel(month)
+                          }))
+                          .filter(option => formData.payment_for.includes(option.value))
+                        }
+                        onChange={(selectedOptions) => {
+                          const selectedValues = selectedOptions.map(opt => opt.value);
+                          setFormData((prevData) => ({
+                            ...prevData,
+                            payment_for: selectedValues,
+                          }));
 
-                          return (
-                            <option
-                              key={index}
-                              value={month}
-                              style={{
-                                color: isOverdue ? 'red' : 'black',
-                                fontWeight: isOverdue ? 'bold' : 'normal',
-                              }}
-                            >
-                              {monthDate.toLocaleDateString('default', {
-                                weekday: 'long',
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric',
-                              })}{getPaymentLabel(month)}
-                            </option>
-                          );
-                        })}
-                        <p style={{ fontSize: '0.9rem', marginTop: '4px' }}>
-                          <span style={{ color: 'red', fontWeight: 'bold' }}>●</span> Overdue
-                        </p>
-                    </select>
+                          const totalRemaining = selectedValues.reduce((sum, month) => {
+                            const balance = balanceDue[month] !== undefined ? parseFloat(balanceDue[month]) : parseFloat(unitPrice);
+                            return sum + (isNaN(balance) ? 0 : balance);
+                          }, 0);
+                          console.log("💡 balanceDue keys:", Object.keys(balanceDue));
+                          console.log("🧾 Selected months:", selectedValues);
+                          setDisplayedRemainingBalance(totalRemaining);
+                          setTempAmount('');
+                        }}
+                      />
                     <label>Payment Method</label>
                     <select
                       name="payment_method"
