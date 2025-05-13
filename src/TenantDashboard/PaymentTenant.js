@@ -563,13 +563,13 @@ const handleAmountChange = (e) => {
                 </div>
                 <div className="balance-box due">
                   <p>Next Payment Due</p>
-                  <h2>
-                    {firstPartialMonth && checkInDate ? new Date(`${firstPartialMonth}-${new Date(checkInDate).getDate()}`).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    }) : 'No Dues'}
-                  </h2>
+                    <h2>
+                      {firstPartialMonth && checkInDate ? new Date(`${firstPartialMonth}-${new Date(checkInDate).getDate()}`).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      }) : 'No Dues'}
+                    </h2>
                 </div>
               </div>
             </div>
@@ -800,7 +800,7 @@ const handleAmountChange = (e) => {
                               <td>{p.payment_type}</td>
                               <td>{p.payment_method}</td>
                               <td>{p.reference_number}</td>
-                              <td>{new Date(p.payment_period).toLocaleDateString('default', { month: 'long', year: 'numeric' })}</td>
+                              <td>{new Date(p.payment_period).toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' })}</td>
                               <td><span style={{ backgroundColor: p.status.toLowerCase() === 'pending' ? '#bf9e1b' : '#366e39', color: 'white', padding: '4px 8px', borderRadius: '5px', fontWeight: 'bold', fontSize: '0.9rem' }}>{p.status}</span></td>
                             </tr>
                           ))}
