@@ -250,11 +250,14 @@ const PaymentTenant = () => {
         const periods = [];
         const checkIn = new Date(startDate);
 
-// If check-in is on or after the 25th, shift to next month
-const start = (checkIn.getDate() >= 25)
-  ? new Date(checkIn.getFullYear(), checkIn.getMonth() + 1, 1)
-  : new Date(checkIn.getFullYear(), checkIn.getMonth(), 1);
-    
+        let start;
+        if (stayType === 'monthly') {
+          start = new Date(checkIn);
+          start.setMonth(start.getMonth() + 1); // Start 1 month after check-in
+          start.setDate(checkIn.getDate());     // Keep the same day (e.g., 23)
+        } else {
+          start = new Date(checkIn); // No change for non-monthly
+        }
         // Generate payment periods based on stayType
         for (let i = 0; i < duration; i++) {
             const paymentDate = new Date(start);
@@ -516,12 +519,11 @@ const start = (checkIn.getDate() >= 25)
       }
     };
     
-    
     useEffect(() => {
-      if (!formData.payment_for && firstPartialMonth) {
-        setFormData((prev) => ({ ...prev, payment_for: firstPartialMonth }));
+      if (!formData.payment_for && availableMonths.length > 0) {
+        setFormData((prev) => ({ ...prev, payment_for: availableMonths[0] }));
       }
-    }, [firstPartialMonth]);
+    }, [availableMonths]);
 
     if (loading) {
         return <div className="payment-tenant-spinner"></div>;
@@ -553,7 +555,7 @@ const start = (checkIn.getDate() >= 25)
                 <div className="balance-box due">
                   <p>Next Payment Due</p>
                   <h2>
-                    {firstPartialMonth ? new Date(firstPartialMonth).toLocaleDateString('en-US', {
+                    {firstPartialMonth && checkInDate ? new Date(`${firstPartialMonth}-${new Date(checkInDate).getDate()}`).toLocaleDateString('en-US', {
                       month: 'long',
                       day: 'numeric',
                       year: 'numeric',
@@ -596,13 +598,32 @@ const start = (checkIn.getDate() >= 25)
                     <label>Payment For</label>
                     <select name="payment_for" value={formData.payment_for} onChange={handleMonthSelection} required>
                       <option value="">Select Payment Date</option>
-                      {firstPartialMonth && (
-                        <option value={firstPartialMonth}>
-                          {new Date(firstPartialMonth).toLocaleDateString('default', {
-                            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-                          })}{getPaymentLabel(firstPartialMonth)}
-                        </option>
-                      )}
+                        {availableMonths.map((month, index) => {
+                          const today = new Date();
+                          const monthDate = new Date(`${month}-${new Date(checkInDate).getDate()}`);
+                          const isOverdue = monthDate < today;
+
+                          return (
+                            <option
+                              key={index}
+                              value={month}
+                              style={{
+                                color: isOverdue ? 'red' : 'black',
+                                fontWeight: isOverdue ? 'bold' : 'normal',
+                              }}
+                            >
+                              {monthDate.toLocaleDateString('default', {
+                                weekday: 'long',
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}{getPaymentLabel(month)}
+                            </option>
+                          );
+                        })}
+                        <p style={{ fontSize: '0.9rem', marginTop: '4px' }}>
+                          <span style={{ color: 'red', fontWeight: 'bold' }}>●</span> Overdue
+                        </p>
                     </select>
                     <label>Payment Method</label>
                     <select
