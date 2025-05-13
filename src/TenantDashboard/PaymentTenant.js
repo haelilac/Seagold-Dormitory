@@ -48,6 +48,7 @@ const PaymentTenant = () => {
     const [balanceDue, setBalanceDue] = useState({}); // Track remaining balances
     const [availableCredits, setAvailableCredits] = useState(0);
     const [paymentDue, setPaymentDue] = useState(0);
+    const [totalUnpaidAmount, setTotalUnpaidAmount] = useState(0);
     const [showTransactions, setShowTransactions] = useState(false);
     const [billingDetails, setBillingDetails] = useState([]);
     const [receiptValidated, setReceiptValidated] = useState(false); // Track receipt validation
@@ -69,6 +70,20 @@ const PaymentTenant = () => {
   useEffect(() => {
     document.body.style.overflow = "auto"; // force scroll back on
   }, []);
+
+    const calculateTotalUnpaidAmount = () => {
+      const now = new Date();
+      const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+      let total = 0;
+      for (const [rawMonth, amount] of Object.entries(balanceDue)) {
+        const month = normalized(rawMonth); // normalize "2025-06-01" → "2025-06"
+        if (month <= currentYearMonth && amount > 0) {
+          total += amount;
+        }
+      }
+      return total;
+    };
 
 
     const calculateRemainingBalance = (stayType, duration, unitPrice) => {
@@ -166,6 +181,7 @@ const PaymentTenant = () => {
     useEffect(() => {
         setAvailableCreditsForMonth(getRemainingBillForMonth()); // ✅ Now shows the bill due
         setNextDueMonth(getNextDueMonth());
+        setTotalUnpaidAmount(calculateTotalUnpaidAmount());
     }, [balanceDue, availableMonths]);
 
     const fetchUserAndPayment = async () => {
@@ -526,6 +542,10 @@ const start = (checkIn.getDate() >= 25)
                 <button className={`tab-button ${currentView === 'transactions' ? 'active' : ''}`} onClick={() => setCurrentView('transactions')}>Transactions</button>
               </div>
               <div className="balance-section">
+                <div className="balance-box overdue">
+                    <p>Total Unpaid Bills (Up to This Month)</p>
+                    <h2>₱{Number(totalUnpaidAmount || 0).toFixed(2)}</h2>
+                  </div>
                 <div className="balance-box">
                   <p>Remaining Bill for This Month</p>
                   <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>

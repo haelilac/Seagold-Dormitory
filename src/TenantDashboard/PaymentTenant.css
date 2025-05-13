@@ -32,8 +32,13 @@
       justify-content: center;
       font-family: 'Open Sans', sans-serif;
   
-  
   }
+
+  .balance-box.overdue {
+    background-color: #ffd4d4;
+    border-left: 5px solid #d43f3a;
+  }
+
   .balance-box {
       background-color: rgb(255, 255, 255);
       padding: 20px;
@@ -57,7 +62,7 @@
     
     .balance-box h2 {
       font-size: 2rem;
-      padding-bottom: 50%;
+      padding-bottom: 7%;
       text-align: center;
     }
     
