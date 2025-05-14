@@ -221,10 +221,6 @@
   transition: background 0.3s ease;
 }
 
-.bulk-buttons button:hover {
-  background-color: #4a954e;
-}
-
 
 
 .bookings-table {
