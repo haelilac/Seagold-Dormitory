@@ -200,6 +200,8 @@
 
 .bulk-buttons button {
   padding: 8px 14px;
+  width: 120px; /* Maintain width */
+  height: 40px; /* Maintain height */
   border: none;
   border-radius: 5px;
   background-color: #366e39;
