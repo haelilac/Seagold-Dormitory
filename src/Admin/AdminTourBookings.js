@@ -222,14 +222,13 @@
             className="bulk-available-btn"
           >
             <span className="color-dot available"></span>
-            <span>All Available</span>
+
           </button>
           <button 
             className="bulk-unavailable-btn" 
             onClick={() => handleBulkToggle("unavailable")}
           >
             <span className="color-dot unavailable"></span>
-            <span>All Unavailable</span>
           </button>
         </div>
         <div className="compact-legend">
