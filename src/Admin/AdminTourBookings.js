@@ -215,10 +215,15 @@ const AdminTourBookings = () => {
             });
         }}
       />
-    <div className="bulk-buttons">
-      <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
-      <button onClick={() => handleBulkToggle("unavailable")}>Mark All Unavailable</button>
-    </div>
+      <div className="bulk-buttons">
+        <button onClick={() => handleBulkToggle("available")}>Mark All Available</button>
+        <button 
+          className="mark-unavailable-btn" 
+          onClick={() => handleBulkToggle("unavailable")}
+        >
+          Mark All Unavailable
+        </button>
+      </div>
       {/* Render time slots with toggle buttons */}
       <div className="time-slots-container">
         {predefinedTimes.map((time) => {

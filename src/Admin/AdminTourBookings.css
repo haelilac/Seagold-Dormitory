@@ -209,6 +209,18 @@
   transition: background 0.3s ease;
 }
 
+/* Add this at the end of your CSS file */
+.bulk-buttons .mark-unavailable-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  background-color:#bf9e1b;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
 .bulk-buttons button:hover {
   background-color: #4a954e;
 }
