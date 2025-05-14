@@ -313,3 +313,48 @@
 .bookings-table button:nth-child(2):hover {
   background-color: #d4ba4f;
 }
+
+/* Color Dots */
+.color-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.color-dot.available {
+  background-color: #366e39;
+}
+
+.color-dot.unavailable {
+  background-color: #bf9e1b;
+}
+
+/* Compact Legend */
+.compact-legend {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.available {
+  background-color: #366e39;
+}
+
+.legend-dot.unavailable {
+  background-color: #bf9e1b;
+}

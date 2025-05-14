@@ -215,14 +215,34 @@
               });
           }}
         />
+      <div className="bulk-actions-container">
         <div className="bulk-buttons">
-          <button onClick={() => handleBulkToggle("available")}></button>
           <button 
-            className="mark-unavailable-btn" 
+            onClick={() => handleBulkToggle("available")}
+            className="bulk-available-btn"
+          >
+            <span className="color-dot available"></span>
+            <span>All Available</span>
+          </button>
+          <button 
+            className="bulk-unavailable-btn" 
             onClick={() => handleBulkToggle("unavailable")}
           >
+            <span className="color-dot unavailable"></span>
+            <span>All Unavailable</span>
           </button>
         </div>
+        <div className="compact-legend">
+          <span className="legend-item">
+            <span className="legend-dot available"></span>
+            <span>Available</span>
+          </span>
+          <span className="legend-item">
+            <span className="legend-dot unavailable"></span>
+            <span>Unavailable</span>
+          </span>
+        </div>
+      </div>
         {/* Render time slots with toggle buttons */}
         <div className="time-slots-container">
           {predefinedTimes.map((time) => {
