@@ -225,7 +225,7 @@
 
           </button>
           <button 
-            className="bulk-unavailable-btn" 
+            className="mark-unavailable-btn" 
             onClick={() => handleBulkToggle("unavailable")}
           >
             <span className="color-dot unavailable"></span>
