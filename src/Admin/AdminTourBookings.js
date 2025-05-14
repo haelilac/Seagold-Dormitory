@@ -239,7 +239,7 @@
                     handleToggleSlot(time, currentStatus === "available" ? "unavailable" : "available")
                   }
                 >
-                  {currentStatus === "available" ? "Mark Unavailable" : "Mark Available"}
+                  /*{currentStatus === "available" ? "" : ""}
                 </button>
               </div>
             );
