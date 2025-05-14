@@ -230,29 +230,35 @@ const handleAmountChange = (e) => {
       }, []);
     
     
-      const applyPaymentData = (data) => {
-        setUnitPrice(data.unit_price || 0);
-        setPaymentHistory(data.payments || []);
-        setDueDate(data.due_date);
-        setCheckInDate(data.check_in_date);
-        setDuration(data.duration);
-        setBalanceDue(
-          Object.fromEntries(
-            Object.entries(data.unpaid_balances || {}).map(([key, val]) => [
-              normalized(key), parseFloat(val)
-            ])
-          )
-        );
-        generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments);
-    
-        // 🛠️ FIX: Set stay_type in formData also!
-        setFormData((prev) => ({
-            ...prev,
-            stay_type: data.stay_type || 'monthly', // fallback if missing
-        }));
+    const applyPaymentData = (data) => {
+      setUnitPrice(data.unit_price || 0);
+      setPaymentHistory(data.payments || []);
+      setDueDate(data.due_date);
+      setCheckInDate(data.check_in_date);
+      setDuration(data.duration);
+      setBalanceDue(
+        Object.fromEntries(
+          Object.entries(data.unpaid_balances || {}).map(([key, val]) => [
+            normalized(key), parseFloat(val)
+          ])
+        )
+      );
+
+      // 🛠️ Set stay_type
+      setFormData((prev) => ({
+        ...prev,
+        stay_type: data.stay_type || 'monthly',
+      }));
+
+      // 🛠️ Delay calling generatePaymentPeriods until unitPrice is available
+      // Wrap in a timeout to ensure state is updated first
+      setTimeout(() => {
+        generatePaymentPeriods(data.check_in_date, data.duration, data.stay_type, data.payments, data.unit_price);
+      }, 0);
     };
+
     
-    const generatePaymentPeriods = (startDate, duration, stayType, payments) => {
+    const generatePaymentPeriods = (startDate, duration, stayType, payments, unitPrice) => {
         const periods = [];
         const checkIn = new Date(startDate);
 
@@ -298,7 +304,7 @@ const handleAmountChange = (e) => {
         const periodStatus = {};
 
         payments.forEach((p) => {
-          if (p.status !== 'Confirmed') return;
+          if ((p.status || '').toLowerCase() !== 'confirmed') return;
           const fullDate = new Date(p.payment_period); // Ex: 2025-04-23
           const monthKey = normalized(fullDate.toISOString()); // → 2025-04
 
@@ -554,7 +560,7 @@ const handleAmountChange = (e) => {
               </div>
               <div className="balance-section">
                 <div className="balance-box overdue">
-                    <p>Total Unpaid Bills (Up to This Month)</p>
+                    <p>Total Unpaid Bills</p>
                     <h2>₱{Number(totalUnpaidAmount || 0).toFixed(2)}</h2>
                   </div>
                 <div className="balance-box">
