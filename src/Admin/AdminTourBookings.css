@@ -168,6 +168,8 @@
 .toggle-btn.available {
   background-color: #366e39;
   color: #fff;
+  width: 120px; /* Maintain width */
+  height: 40px; /* Maintain height */
 }
 
 .toggle-btn.available:hover {
@@ -179,6 +181,8 @@
 .toggle-btn.unavailable {
   background-color: #dc3545;
   color: #fff;
+  width: 120px; /* Maintain width */
+  height: 40px; /* Maintain height */
 }
 
 
