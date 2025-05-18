@@ -76,29 +76,44 @@ const UnitManagement = () => {
         };
     }, []);
 
-    const handleViewDetails = async (unitCode) => {
-        try {
-            setSelectedUnit(null);
-            const response = await fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${unitCode}`);
-            const data = await response.json();
-            setPricingDetails(data);
-            if (data.length > 0) {
-                const sample = data[0];
-                setFormData({
-                    name: sample.name,
-                    capacity: sample.capacity,
-                    max_capacity: sample.max_capacity,
-                    occupancy: sample.occupancy,
-                    price: sample.price,
-                });
-                setSelectedUnit(sample);
-            }
-            setShowModal(true);
-        } catch (error) {
-            console.error('Error fetching unit details:', error.message);
-        }
-    };
+    const [unitTenants, setUnitTenants] = useState([]);
+const handleViewDetails = async (unitCode) => {
+  try {
+    setSelectedUnit(null);
+    const encoded = encodeURIComponent(unitCode);
 
+    const [unitRes, tenantRes] = await Promise.all([
+      fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${encoded}`),
+      fetch(`https://seagold-laravel-production.up.railway.app/api/units/by-code/${encoded}/tenants`)
+    ]);
+
+    if (!unitRes.ok || !tenantRes.ok) {
+      throw new Error('One of the responses failed');
+    }
+
+    const unitData = await unitRes.json();
+    const tenantData = await tenantRes.json();
+
+    setPricingDetails(Array.isArray(unitData) ? unitData : []);
+    setUnitTenants(Array.isArray(tenantData) ? tenantData : []);
+
+    const sample = unitData[0];
+    if (sample) {
+      setFormData({
+        name: sample.name,
+        capacity: sample.capacity,
+        max_capacity: sample.max_capacity,
+        occupancy: sample.occupancy,
+        price: sample.price,
+      });
+      setSelectedUnit(sample);
+    }
+
+    setShowModal(true);
+  } catch (error) {
+    console.error('Error fetching unit or tenant details:', error.message);
+  }
+};
     const fetchUnitImages = async () => {
         try {
             const res = await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${selectedUnit.unit_code}`);
@@ -296,31 +311,31 @@ const UnitManagement = () => {
                     fetchUnitImages();
                   }}>
                     <div className="file-input-wrapper">
-    <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
-    <button type="submit">Upload</button>
-  </div>
+                      <input type="file" multiple onChange={(e) => setUnitImageFiles(Array.from(e.target.files))} />
+                      <button type="submit">Upload</button>
+                    </div>
                   </form>
   
-{/* Preview Images */}
-<div className="image-preview-grid">
-  {unitImages.map((img) => (
-    <div key={img.id} className="image-preview-wrapper">
-      <img src={img.image_path} alt="Room" className="room-image-preview" />
-      <button 
-        onClick={async () => {
-          if (!window.confirm('Delete this image?')) return;
-          await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${img.id}`, {
-            method: 'DELETE',
-          });
-          fetchUnitImages();
-        }}
-        className="delete-icon-button"
-      >
-          <FaTrash className="delete-icon" />
-      </button>
-    </div>
-  ))}
-</div>
+                {/* Preview Images */}
+                <div className="image-preview-grid">
+                  {unitImages.map((img) => (
+                    <div key={img.id} className="image-preview-wrapper">
+                      <img src={img.image_path} alt="Room" className="room-image-preview" />
+                      <button 
+                        onClick={async () => {
+                          if (!window.confirm('Delete this image?')) return;
+                          await fetch(`https://seagold-laravel-production.up.railway.app/api/unit-images/${img.id}`, {
+                            method: 'DELETE',
+                          });
+                          fetchUnitImages();
+                        }}
+                        className="delete-icon-button"
+                      >
+                          <FaTrash className="delete-icon" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
   
                 {/* Close Modal */}
                 <button onClick={() => setShowModal(false)} className="unit-close-button">X</button>
@@ -351,9 +366,9 @@ const UnitManagement = () => {
                 
 
                 {/* Single Save Button for Updating the Unit */}
-<div className="save-button-container">
-  <button onClick={handleUpdateUnit} className="save-button">Save Unit Info</button>
-</div>
+                <div className="save-button-container">
+                  <button onClick={handleUpdateUnit} className="save-button">Save Unit Info</button>
+                </div>
                 
                 {/* Pricing Summary */}
                 <div style={{ fontWeight: 'bold', marginTop: '20px' }}>
@@ -394,7 +409,31 @@ const UnitManagement = () => {
                     ))}
                   </tbody>
                 </table>
-  
+                  <div className="tenant-list-section">
+                  <h4>Current Tenants in this Unit</h4>
+                  {unitTenants.length === 0 ? (
+                    <p>No tenants currently assigned.</p>
+                  ) : (
+                    <table className="tenant-table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Stay Type</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {unitTenants.map((tenant, idx) => (
+                          <tr key={idx}>
+                            <td>{tenant.name}</td>
+                            <td>{tenant.email}</td>
+                            <td>{tenant.stay_type}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
               </div>
             </div>
             </div>

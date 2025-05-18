@@ -50,6 +50,7 @@ const PaymentTenant = () => {
     const [availableCredits, setAvailableCredits] = useState(0);
     const [paymentDue, setPaymentDue] = useState(0);
     const [totalUnpaidAmount, setTotalUnpaidAmount] = useState(0);
+    const [arrearsAmount, setArrearsAmount] = useState(0);
     const [showTransactions, setShowTransactions] = useState(false);
     const [billingDetails, setBillingDetails] = useState([]);
     const [receiptValidated, setReceiptValidated] = useState(false); // Track receipt validation
@@ -109,19 +110,31 @@ const PaymentTenant = () => {
     const [displayedRemainingBalance, setDisplayedRemainingBalance] = useState(unitPrice);
 
 const handleAmountChange = (e) => {
-  const enteredAmount = parseFloat(e.target.value) || 0;
-  setTempAmount(e.target.value);
+  const rawValue = e.target.value;
+  const enteredAmount = parseFloat(rawValue);
+
+  if (enteredAmount < 0) {
+    setWarningMessage("❌ Negative payments are not allowed.");
+    setTempAmount('');
+    return;
+  }
+
+  setTempAmount(rawValue);
 
   const selectedMonths = formData.payment_for;
 
-  const totalBalance = Array.isArray(selectedMonths)
-    ? selectedMonths.reduce((sum, month) => {
-        const balance = balanceDue[month] !== undefined ? balanceDue[month] : unitPrice;
-        return sum + balance;
-      }, 0)
-    : (balanceDue[selectedMonths] || unitPrice);
+const totalBalance = Array.isArray(selectedMonths)
+  ? selectedMonths.reduce((sum, month) => {
+      const raw = balanceDue[month];
+      const parsed = typeof raw === 'number' ? raw : parseFloat(unitPrice);
+      return sum + (isNaN(parsed) ? 0 : parsed);
+    }, 0)
+  : (() => {
+      const raw = balanceDue[selectedMonths];
+      const parsed = typeof raw === 'number' ? raw : parseFloat(unitPrice);
+      return isNaN(parsed) ? 0 : parsed;
+    })();
 
-  // Prevent partial payments for non-monthly
   if (formData.stay_type && formData.stay_type !== 'monthly' && enteredAmount < totalBalance) {
     setWarningMessage("⚠️ Partial payments are only allowed for monthly stay type.");
     setFormData((prevData) => ({
@@ -130,7 +143,7 @@ const handleAmountChange = (e) => {
       payment_type: '',
     }));
     setTempAmount('');
-    setDisplayedRemainingBalance(totalBalance);
+    setDisplayedRemainingBalance(isNaN(totalBalance) ? 0 : totalBalance);
     return;
   }
 
@@ -150,6 +163,7 @@ const handleAmountChange = (e) => {
   }));
   setDisplayedRemainingBalance(newRemaining);
 };
+
 
     
     // ✅ Ensures final amount is registered properly on blur
@@ -182,7 +196,24 @@ const handleAmountChange = (e) => {
         setAvailableCreditsForMonth(getRemainingBillForMonth()); // ✅ Now shows the bill due
         setNextDueMonth(getNextDueMonth());
         setTotalUnpaidAmount(calculateTotalUnpaidAmount());
+        setArrearsAmount(calculateArrears());
     }, [balanceDue, availableMonths]);
+
+    const calculateArrears = () => {
+      const now = new Date();
+      const currentMonthKey = normalized(now.toISOString());
+
+      let arrearsTotal = 0;
+
+      for (const [monthKey, amount] of Object.entries(balanceDue)) {
+        if (monthKey < currentMonthKey && amount > 0) {
+          arrearsTotal += amount;
+        }
+      }
+
+      return arrearsTotal;
+    };
+
 
     const fetchUserAndPayment = async () => {
         // Skip re-fetch if already loaded
@@ -231,7 +262,7 @@ const handleAmountChange = (e) => {
     
     
     const applyPaymentData = (data) => {
-      setUnitPrice(data.unit_price || 0);
+      setUnitPrice(isNaN(data.unit_price) ? 0 : parseFloat(data.unit_price));
       setPaymentHistory(data.payments || []);
       setDueDate(data.due_date);
       setCheckInDate(data.check_in_date);
@@ -265,7 +296,7 @@ const handleAmountChange = (e) => {
         let start;
         if (stayType === 'monthly') {
           start = new Date(checkIn);
-          start.setMonth(start.getMonth() + 1); // Start 1 month after check-in
+          start.setMonth (start.getMonth() + 1); // Start 1 month after check-in
           start.setDate(checkIn.getDate());     // Keep the same day (e.g., 23)
         } else {
           start = new Date(checkIn); // No change for non-monthly
@@ -463,7 +494,7 @@ const handleAmountChange = (e) => {
         alert("⚠️ You already have a pending payment for this month.");
         return;
       }
-    
+
       // 🧾 Prepare request
       const requestData = new FormData();
       requestData.append('amount', formData.amount);
@@ -560,11 +591,15 @@ const handleAmountChange = (e) => {
               </div>
               <div className="balance-section">
                 <div className="balance-box overdue">
-                    <p>Total Unpaid Bills</p>
+                    <p>Total Unpaid Balance</p>
                     <h2>₱{Number(totalUnpaidAmount || 0).toFixed(2)}</h2>
                   </div>
+                  <div className="balance-box warning">
+                    <p>Unpaid Arrears</p>
+                    <h2>₱{Number(arrearsAmount || 0).toFixed(2)}</h2>
+                  </div>
                 <div className="balance-box">
-                  <p>Remaining Bill for This Month</p>
+                  <p>Current Month Balance</p>
                   <h2>₱{Number(availableCreditsForMonth || 0).toFixed(2)}</h2>
                 </div>
                 <div className="balance-box due">
@@ -601,14 +636,14 @@ const handleAmountChange = (e) => {
                 <div className="payment-page">
                   {isCompact && <p>Switched to Compact Mode</p>}
                   {warningMessage && <div className="warning-message">{warningMessage}</div>}
-                  {unitPrice > 0 && <p>Unit Price: ₱{unitPrice}</p>}
+                  {arrearsAmount > 0 && <p>Arrears (Past Unpaid Months): ₱{arrearsAmount.toFixed(2)}</p>}
                   <form className="payment-form" onSubmit={handleSubmit}>
                     <label>Amount to Pay</label>
                     <input
                       type="number"
                       name="amount"
                       disabled={!formData.payment_for} value={tempAmount} onChange={handleAmountChange} onBlur={handleAmountBlur} />
-                    <label>Remaining Balance for Selected Month</label>
+                    <label>Remaining Balance</label>
                     <p>₱{Number(displayedRemainingBalance).toFixed(2)}</p>
                       <label>Payment For</label>
                       <Select
@@ -616,7 +651,7 @@ const handleAmountChange = (e) => {
                         name="payment_for"
                         options={availableMonths.map((month) => ({
                           value: month,
-                          label: new Date(month + '-01').toLocaleDateString('default', {
+                          label: new Date(`${month}-${new Date(checkInDate).getDate().toString().padStart(2, '0')}`).toLocaleDateString('default', {
                             month: 'long',
                             year: 'numeric',
                             day: 'numeric'
@@ -627,7 +662,7 @@ const handleAmountChange = (e) => {
                         value={availableMonths
                           .map((month) => ({
                             value: month,
-                            label: new Date(month + '-01').toLocaleDateString('default', {
+                            label: new Date(`${month}-${new Date(checkInDate).getDate().toString().padStart(2, '0')}`).toLocaleDateString('default', {
                               month: 'long',
                               year: 'numeric',
                               day: 'numeric'
@@ -704,7 +739,6 @@ const handleAmountChange = (e) => {
                     )}
                   </button>
                   </form>
-                  {dueDate && <p>Next Payment Due Date: {dueDate}</p>}
                 </div>
               )}
             </div>

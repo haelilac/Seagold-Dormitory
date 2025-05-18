@@ -462,6 +462,21 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.tenant-list-section {
+  margin-top: 20px;
+}
+
+.tenant-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tenant-table th, .tenant-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
   
 /*************************************
  * RESPONSIVE MEDIA QUERIES
