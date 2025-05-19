@@ -19,10 +19,7 @@ const ManageTenants = () => {
 
     // Search States
     const [searchActive, setSearchActive] = useState('');
-    const [filteredActiveTenants, setFilteredActiveTenants] = useState([]);
-
     const [searchTerminated, setSearchTerminated] = useState('');
-    const [filteredTerminatedTenants, setFilteredTerminatedTenants] = useState([]);
     const [entriesPerPage, setEntriesPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [terminatedEntriesPerPage, setTerminatedEntriesPerPage] = useState(10);
@@ -61,8 +58,8 @@ const ManageTenants = () => {
                 const res = await fetch('https://seagold-laravel-production.up.railway.app/api/units');
                 const data = await res.json();
                 const available = data.filter(unit => unit.status === 'available');
-                setUnits(available);
-                updateCache('available_units', available);
+                setUnits(data);
+                updateCache('available_units', data);
             } catch (e) { console.error(e); }
         };
         fetchUnits();
@@ -146,7 +143,7 @@ const ManageTenants = () => {
                     check_in_date: t.check_in_date,
                     duration: t.duration || 'N/A',
                     occupation: t.occupation || 'N/A',
-                    unit_code: t.unit_id || 'Not Assigned',
+                    unit_id: t.unit_id || null,
                     valid_id_url: t.valid_id_url || null,
                 }));
                 setTenants(formatted);
@@ -160,42 +157,56 @@ const ManageTenants = () => {
         fetchTenants();
     }, []);
 
-    // Sync Filtered Lists Initially
-    useEffect(() => { setFilteredActiveTenants(tenants); }, [tenants]);
-    useEffect(() => { setFilteredTerminatedTenants(terminatedTenants); }, [terminatedTenants]);
+    const unitCodeMap = units.reduce((acc, unit) => {
+        acc[unit.id] = unit.unit_code;
+        return acc;
+        }, {});
 
-    const filteredActiveTenantsList = tenants.filter(t => 
-        (t.name || '').toLowerCase().includes(searchActive.toLowerCase())
+
+    const filteredActiveTenants = tenants.filter(t => {
+        const unitCode = unitCodeMap[t.unit_id] || '';
+        return (
+            Object.values(t).some(val =>
+                typeof val === 'string' && val.toLowerCase().includes(searchActive.toLowerCase())
+            ) ||
+            unitCode.toLowerCase().includes(searchActive.toLowerCase())
+        );
+    });
+
+    const paginatedActiveTenants = filteredActiveTenants.slice(
+        (currentPage - 1) * entriesPerPage,
+        currentPage * entriesPerPage
     );
-    
-    // Pagination logic
-    const indexOfLastEntry = currentPage * entriesPerPage;
-    const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-    const currentActiveTenants = filteredActiveTenantsList.slice(indexOfFirstEntry, indexOfLastEntry);
-    const totalPages = Math.ceil(filteredActiveTenantsList.length / entriesPerPage);    
 
-    const filteredTerminatedList = terminatedTenants.filter(t => 
-        (t.full_name || '').toLowerCase().includes(searchTerminated.toLowerCase())
+    const totalPages = Math.ceil(filteredActiveTenants.length / entriesPerPage);
+    
+    const filteredTerminatedTenants = terminatedTenants.filter(t => {
+        const unitCode = unitCodeMap[t.unit_id] || '';
+        return (
+            Object.values(t).some(val =>
+                typeof val === 'string' && val.toLowerCase().includes(searchTerminated.toLowerCase())
+            ) ||
+            unitCode.toLowerCase().includes(searchTerminated.toLowerCase())
+        );
+    });
+
+    const paginatedTerminatedTenants = filteredTerminatedTenants.slice(
+        (terminatedCurrentPage - 1) * terminatedEntriesPerPage,
+        terminatedCurrentPage * terminatedEntriesPerPage
     );
-    
-    const indexOfLastTerminated = terminatedCurrentPage * terminatedEntriesPerPage;
-    const indexOfFirstTerminated = indexOfLastTerminated - terminatedEntriesPerPage;
-    const currentTerminatedTenants = filteredTerminatedList.slice(indexOfFirstTerminated, indexOfLastTerminated);
-    const totalTerminatedPages = Math.ceil(filteredTerminatedList.length / terminatedEntriesPerPage);    
 
+    const totalTerminatedPages = Math.ceil(filteredTerminatedTenants.length / terminatedEntriesPerPage);
     // Search Handlers
     const handleActiveSearchChange = (e) => {
         const query = e.target.value;
         setSearchActive(query);
         const filtered = tenants.filter(t => (t.name || '').toLowerCase().includes(query.toLowerCase()));
-        setFilteredActiveTenants(filtered);
     };
 
     const handleTerminatedSearchChange = (e) => {
         const query = e.target.value;
         setSearchTerminated(query);
         const filtered = terminatedTenants.filter(t => (t.full_name || '').toLowerCase().includes(query.toLowerCase()));
-        setFilteredTerminatedTenants(filtered);
     };
 
     const handleCloseModal = () => {
@@ -255,13 +266,13 @@ const ManageTenants = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-    {currentActiveTenants.map((tenant) => (
+    {paginatedActiveTenants.map((tenant) => (
         <tr key={tenant.id} className="clickable-row" onClick={() => handleRowClick(tenant)}>
             <td>{tenant.name}</td>
             <td>{tenant.email}</td>
             <td>{tenant.check_in_date ? new Date(tenant.check_in_date).toLocaleString() : 'N/A'}</td>
             <td>{tenant.duration} months</td>
-            <td>{tenant.unit_code}</td>
+            <td>{unitCodeMap[tenant.unit_id] || 'Not Assigned'}</td>
         </tr>
     ))}
 </tbody>
@@ -456,7 +467,7 @@ const ManageTenants = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-    {currentTerminatedTenants.map((tenant) => (
+    {paginatedTerminatedTenants.map((tenant) => (
         <tr key={tenant.id}>
             <td>{tenant.full_name}</td>
             <td>{tenant.email}</td>
@@ -465,7 +476,7 @@ const ManageTenants = () => {
             <td>{tenant.check_in_date || 'N/A'}</td>
             <td>{tenant.duration || 'N/A'} months</td>
             <td>{tenant.occupation || 'N/A'}</td>
-            <td>{tenant.unit_id || 'N/A'}</td>
+            <td>{unitCodeMap[tenant.unit_id] || 'N/A'}</td>
             <td>{tenant.terminated_at}</td>
         </tr>
     ))}

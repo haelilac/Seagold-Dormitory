@@ -222,7 +222,19 @@ const TourBooking = () => {
 </div>
             <div className="input-group">
               <label>Number of Visitors</label>
-              <input type="number" min="1" value={numVisitors} onChange={e => setNumVisitors(e.target.value)} placeholder="How Many People?" />
+              <input
+                type="number"
+                min="1"
+                max="30"
+                value={numVisitors}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d{0,2}$/.test(value) && +value >= 0) {
+                    setNumVisitors(value);
+                  }
+                }}
+                placeholder="How Many People?"
+              />
             </div>
           </div>
 
