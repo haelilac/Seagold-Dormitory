@@ -18,16 +18,15 @@ h3 {
     margin-top: 20px;
 }
 
-.admin-payment-container {
-    width: 78%;
-    position: absolute;
-    right: 4%;
-    top: 13%;
+.admin-payment-container1 {
+    width: 85vw;
+    margin: 2rem auto;
     padding: 10px;
-    background-color: #ffffff; /* dirty white */
+    background-color: #ffffff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     border-radius: 10px;
     font-family: 'Inter', sans-serif;
+    position: relative; /* ✅ replaces absolute */
 }
 
 .paymentadmin-spinner {
@@ -583,6 +582,8 @@ button:hover {
       top: 40px;
   }
 
+}
+
 @media (max-width: 1024px) {
   .admin-payment-container {
       position: relative;
@@ -622,4 +623,4 @@ button:hover {
         box-sizing: border-box;
     }
 }
-}}
+}

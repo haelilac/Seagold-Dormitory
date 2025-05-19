@@ -258,7 +258,11 @@ const PaymentAdmin = () => {
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters({ ...filters, [name]: value.padStart(2, '0') });
+
+        setFilters((prev) => ({
+            ...prev,
+            [name]: name === 'month' ? value.padStart(2, '0') : value
+        }));
     };
 
     const groupByUnit = (data) => data.reduce((acc, tenant) => {
@@ -300,10 +304,19 @@ const PaymentAdmin = () => {
     
 const normalizedStatus = selectedStatus.toLowerCase();
 
-const filteredData = selectedStatus === 'All'
-    ? mergedData.filter((t) => t.status?.toLowerCase() !== 'unpaid')
-    : mergedData.filter((t) => t.status?.toLowerCase() === normalizedStatus);
+const searchLower = filters.search.toLowerCase();
 
+const filteredData = mergedData.filter(t => {
+    const matchesStatus = selectedStatus === 'All'
+        ? true // Include all statuses including Unpaid
+        : t.status?.toLowerCase() === normalizedStatus;
+
+    const matchesSearch = Object.values(t).some(val =>
+        typeof val === 'string' && val.toLowerCase().includes(searchLower)
+    );
+
+    return matchesStatus && matchesSearch;
+});
     const groupedData = selectedStatus !== 'Unpaid'
         ? groupByUnit(filteredData)
         : {};
@@ -312,7 +325,7 @@ const filteredData = selectedStatus === 'All'
     if (loading) return <div className="paymentadmin-spinner"></div>;
 
     return (
-        <div className="admin-payment-container">
+        <div className="admin-payment-container1">
             <h2>Admin Payment Dashboard</h2>
 
             <div className="payment-filters">
