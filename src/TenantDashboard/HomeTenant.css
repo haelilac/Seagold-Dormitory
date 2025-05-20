@@ -53,14 +53,13 @@ body {
 /* Calendar Section Card */
 .calendar-section {
   position: relative;
-  left: 164px;
-  top: 74px;
+  left: 5px;
+  top: 34px;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   padding: 24px;
-  max-width: 400px;
-  width: 100%;
+  width: 700px;
   transition: transform 0.3s ease;
 }
 
@@ -91,13 +90,14 @@ body {
 
 /* React Calendar Theme */
 .react-calendar {
-  width: 100%;
+  width: 700px;
   border: none;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   padding: 8px;
   font-family: inherit;
   background: #fafafa;
+  margin-bottom: 5%;
 }
 .react-calendar__navigation {
   display: flex;
@@ -159,12 +159,13 @@ body {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   padding: 165px;
   /* max-width: 405px; */
-  width: 49%;
+  width: 870px;
+  height: 455px;
   text-align: center;
   margin: 0 auto;
   position: relative;
-  left: 304px;
-  top: -346px;
+  left: 344px;
+  top: -416px;
 }
 .event-board-title {
   margin-bottom: 16px;
