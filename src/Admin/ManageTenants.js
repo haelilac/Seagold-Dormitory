@@ -222,6 +222,7 @@ const ManageTenants = () => {
     if (loading) return <div className="managetenant-spinner"></div>;
     return (
             <>
+             <div className="manage-tenants-container">
                 {/* Active Tenants Section */}
                 <section className="manage-tenants">
                     <h2>Manage Tenants</h2>
@@ -450,7 +451,8 @@ const ManageTenants = () => {
         onChange={handleTerminatedSearchChange}
         className="search-tenant"
     />
-</div>                      
+</div>              
+        
 
                             <table className="tenants-table">
                                 <thead>
@@ -508,8 +510,12 @@ const ManageTenants = () => {
         Next
     </button>
 </div>
+
+
                 </section>
+                </div>
             </>
+            
         );
         
     

@@ -135,7 +135,7 @@ const handleImageEdit = async (id) => {
   return (
     <div className="admin-gallery">
       <div className="form-wrapper">
-        <h2>Manage Gallery</h2>
+        <h2 className="admin ">Manage Gallery</h2>
   
         {/* Image Upload Form */}
         <form
