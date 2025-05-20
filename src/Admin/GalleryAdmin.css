@@ -17,21 +17,21 @@ body {
 
 h1, h2, h3 {
   font-family: 'Montserrat', sans-serif;
-  color: #366e39; /* dark green */
 }
 
-h2 {
-  font-size: 26px;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 50px;
-  border-bottom: 3px solid #bf9e1b; /* gold-like */
-  padding-bottom: 10px;
+.admin {
+    position: relative;
+    font-size: 1.8rem;
+    text-align: left;
+    padding-bottom: 10px;
+    border-bottom: 2px solid#bf9e1b;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .admin-gallery {
-  padding: 20px;
-  margin-top: 5%;
+  position: relative;
+  top: 4%;
+  width: 1600px;
   background-color: #f2ede3;
 }
 
@@ -150,7 +150,7 @@ h2 {
 }
 
 .edit-action {
-  background-color: #00bf63; /* light green */
+  background-color: #366e39; /* light green */
   color: white;
   padding: 6px 12px;
   border: none;
@@ -159,11 +159,11 @@ h2 {
 }
 
 .edit-action:hover {
-  background-color: #029e54;
+  background-color:  #4a954e;
 }
 
 .delete-action {
-  background-color: #9c0005;
+  background-color: #bf9e1b;
   color: white;
   padding: 6px 12px;
   border: none;
@@ -172,7 +172,7 @@ h2 {
 }
 
 .delete-action:hover {
-  background-color: #c10a0a;
+  background-color: #eccd4e;
 }
 
 /* Category Filter Buttons */
@@ -198,7 +198,7 @@ h2 {
 }
 
 .category-filter button:hover {
-  background-color: #f6c971; /* kulay ng sun */
+  background-color: #bf9e1b; /* kulay ng sun */
   color: white;
 }
 
@@ -228,11 +228,13 @@ h2 {
   text-align: center;
   width: 300px;
   max-width: 100%;
+  position: relative;
+  right: 23%;
 }
 
 /* Hover effect */
 .upload-action:hover {
-  background-color: #f59e0b;
+  background-color: #e4c342;
 }
 .admin-payment-container {
   margin: 0 auto;

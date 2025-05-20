@@ -114,11 +114,11 @@ body,
 }
 
 .pending-applications {
-  padding: 20px;
   background-color: #f2ede3;
   text-align: center;
-  width: 110%;
-  right:6%;
+  width: 1600px;
+  top: -1%;
+  right:1%;
   position: relative;
 
 }

@@ -1,12 +1,9 @@
 .admin-events-page {
-  width: 76vw;        /* full viewport width */
-  max-width: 90vw;    /* no max constraint */
-  padding: 0;
-  margin: 0 auto;
+  width: 1600px;        /* full viewport width */
   position: relative;
   max-height: 220vh;
   box-sizing: border-box;
-  right: 2%;
+  right: 1.5%;
 }
 
     .header-bar {
@@ -15,7 +12,6 @@
       font-size: 1.75rem;
       font-weight: bold;
       position: relative;
-      top: 5%;
     }
 
     

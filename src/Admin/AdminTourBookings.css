@@ -14,8 +14,8 @@
 
 .admin-tour-bookings {
   position: absolute;
+  width: 1600px;
   top: 8%;
-  left: 21%;
   transition: left 0.3s ease, width 0.3s ease;
 }
 

@@ -1,8 +1,8 @@
-.maintenance-requests {
+.maintenance{
     position: relative;
-    top: 7%;
-    width: 1096px;
-    right: 2%;
+    top: 4%;
+    width: 1600px;
+    right: 1%;
 
 }
 
@@ -177,7 +177,7 @@
 
 .mark-as-complete-buttons,
 .schedule-buttons{
-    background-color: #366e39;;
+    background-color: #366e39;
 }
 .mark-as-complete-buttons:hover,
 .schedule-buttons:hover{

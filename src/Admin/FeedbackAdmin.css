@@ -15,12 +15,9 @@
 
 /* Feedback Container */
 .feedback-container {
-    padding: 20px;
-    margin: 20px;
-    top: 5% ;
+    top: 3% ;
     position: relative;
-    width: 1180px;
-    right: 7%;
+    width: 1600px;
     font-family: 'Inter', sans-serif;
 }
 
